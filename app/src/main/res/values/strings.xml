@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">feeltalk</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--  fragment_home.xml  -->
+    <string name="home_d_day_prefix">서로를\t</string>
+    <string name="home_d_day_unit">일</string>
+    <string name="home_d_day_suffix">째</string>
+    <string name="home_d_day_suffix_second_line">알아가는 중입니다.</string>
+    <string name="my_profile_default_name">내 이름</string>
+    <string name="partner_profile_default_name">상대방 이름</string>
+    <string name="today_question_title_text">오늘의 질문</string>
+    <string name="letter_paper_title_empty">오늘의 질문 도착 !</string>
+    <string name="letter_paper_title_partner_written">상대의 답변 도착 !</string>
+    <string name="letter_paper_message">오늘도 그에 대해 더 알아가봐요 !</string>
+
+    <!--  item_question_list_header.xml  -->
+    <string name="question_list_header_title">오늘의 질문 !</string>
+    <string name="question_list_header_title_second_line">서로를 더 알아가보세요 !</string>
+
+    <!--  item_question_list.xml  -->
+    <string name="question_mark_text">Q.</string>
+    <string name="default_question_text">오늘의 질문</string>
+
+    <!--  fragment_setting.xml  -->
+    <string name="start_date_default_text">2021. 04. 16</string>
+    <string name="setting_d_day_prefix">(D-</string>
+    <string name="setting_d_day_default_text">628</string>
+    <string name="setting_d_day_suffix">)</string>
+    <string name="setting_notification_header_title">알림 설정</string>
+    <string name="setting_push_notification">푸쉬 알림 설정</string>
+
+</resources>
