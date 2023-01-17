@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentSettingBinding
 import com.clonect.feeltalk.presentation.util.addTextGradient
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SettingFragment : Fragment() {
 
     private lateinit var binding: FragmentSettingBinding
@@ -18,18 +20,43 @@ class SettingFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
+        binding.apply {
 
-        binding.textLogo.addTextGradient()
+            textLogo.addTextGradient()
 
-        binding.btnAnotherSetting.setOnClickListener {
+            btnAnotherSetting.setOnClickListener {
 
+            }
+
+            textMyName.text = "jenny"
+
+            textMyName.setOnClickListener { navigateToLogPage() }
+            ivHalfArrowRight.setOnClickListener { navigateToLogPage() }
+
+            layoutPushNotification.setOnClickListener {
+                switchPushNotification.toggle()
+            }
+            layoutUsageInfoNotification.setOnClickListener {
+                switchUsageInfoNotification.toggle()
+            }
+
+            switchPushNotification.apply {
+                setOnCheckedChangeListener { _, isChecked ->
+                    if (isChecked)
+                        setThumbDrawableRes(R.drawable.ic_switch_thumb_on)
+                    else
+                        setThumbDrawableRes(R.drawable.ic_switch_thumb_off)
+                }
+            }
+            switchUsageInfoNotification.apply {
+                setOnCheckedChangeListener { _, isChecked ->
+                    if (isChecked)
+                        setThumbDrawableRes(R.drawable.ic_switch_thumb_on)
+                    else
+                        setThumbDrawableRes(R.drawable.ic_switch_thumb_off)
+                }
+            }
         }
-
-        binding.textMyName.text = "jenny"
-
-        binding.textMyName.setOnClickListener { navigateToLogPage() }
-        binding.ivHalfArrowRight.setOnClickListener { navigateToLogPage() }
-
 
         return binding.root
     }

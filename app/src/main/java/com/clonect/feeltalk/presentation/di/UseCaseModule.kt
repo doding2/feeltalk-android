@@ -1,8 +1,8 @@
 package com.clonect.feeltalk.presentation.di
 
 import com.clonect.feeltalk.domain.repository.UserRepository
-import com.clonect.feeltalk.domain.usecase.LogInWithGoogle
-import com.clonect.feeltalk.domain.usecase.SignUpWithEmail
+import com.clonect.feeltalk.domain.usecase.LogInWithGoogleUseCase
+import com.clonect.feeltalk.domain.usecase.SignUpWithEmailUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,14 +15,14 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesLogInWithGoogle(userRepository: UserRepository): LogInWithGoogle {
-        return LogInWithGoogle(userRepository)
+    fun providesLogInWithGoogle(userRepository: UserRepository): LogInWithGoogleUseCase {
+        return LogInWithGoogleUseCase(userRepository)
     }
 
     @Singleton
     @Provides
-    fun providesSignUpWithEmail(userRepository: UserRepository): SignUpWithEmail {
-        return SignUpWithEmail(userRepository)
+    fun providesSignUpWithEmail(userRepository: UserRepository): SignUpWithEmailUseCase {
+        return SignUpWithEmailUseCase(userRepository)
     }
 
 }

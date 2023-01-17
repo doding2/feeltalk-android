@@ -101,18 +101,18 @@ class LogInFragment : Fragment() {
             val idToken = account?.idToken.toString()
             val authCode = account.serverAuthCode
 
-            // TODO 클로넥트 서버에 이 계정이 이미 회원가입 되어있나 체크 후 안 되어있으면 아래 코드 실행
+            // TODO 클로넥트 서버에 이 계정이 이미 회원가입 되어있나 체크 후, 안 되어있으면 아래 코드 실행
 
             Log.i("LogInFragment", "email: ${email}, idToken: ${idToken}, authCode: $authCode")
             authCode?.let {
-                getAccessToken(it, email, displayName)
+                signUpUsingClonectServer(it, email, displayName)
             }
         } catch (e: ApiException) {
             Log.e("LogInFragment", "Fail to Google Sign In: ${e.message}")
         }
     }
 
-    private fun getAccessToken(authCode: String, email: String, displayName: String) = this.lifecycleScope.launch {
+    private fun signUpUsingClonectServer(authCode: String, email: String, displayName: String) = this.lifecycleScope.launch {
         val result = viewModel.fetchGoogleAuthInfo(authCode)
         if (result is Resource.Success<LogInGoogleResponse>) {
             // TODO send accessToken to backend server

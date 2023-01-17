@@ -168,10 +168,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="10dp"
                 android:background="@color/setting_spacer_color"
-                android:layout_marginVertical="10dp"/>
+                android:layout_marginVertical="10dp"
+                android:alpha="0.1"/>
 
 
-            <!--  Settings  -->
+            <!--  Notification Settings  -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -184,10 +185,12 @@
                 android:fontFamily="@font/pretendard_bold"/>
 
             <LinearLayout
+                android:id="@+id/layout_push_notification"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginHorizontal="21dp">
+                android:layout_marginStart="21dp"
+                android:layout_marginEnd="15dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -205,16 +208,143 @@
                     android:layout_height="0dp"
                     android:layout_weight="1" />
 
-                <com.google.android.material.switchmaterial.SwitchMaterial
+                <com.kyleduo.switchbutton.SwitchButton
                     android:id="@+id/switch_push_notification"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    app:track="@drawable/selector_switch_track"
-                    android:thumb="@drawable/selector_switch_thumb"/>
+                    app:kswThumbDrawable="@drawable/ic_switch_thumb_off"
+                    app:kswThumbWidth="40dp"
+                    app:kswThumbHeight="40dp"
+                    app:kswThumbRangeRatio="1.5"
+                    app:kswThumbMarginTop="-7dp"
+                    app:kswThumbMarginBottom="-7dp"
+                    app:kswThumbMarginLeft="-6dp"
+                    app:kswThumbMarginRight="-6dp"
+                    app:kswBackDrawable="@drawable/ic_switch_track"/>
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/layout_usage_info_notification"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="21dp"
+                android:layout_marginEnd="15dp">
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="21dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/setting_usage_info_notification"
+                    android:textColor="@color/setting_component_text_color"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/pretendard_regular"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <com.kyleduo.switchbutton.SwitchButton
+                    android:id="@+id/switch_usage_info_notification"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    app:kswThumbDrawable="@drawable/ic_switch_thumb_off"
+                    app:kswThumbWidth="40dp"
+                    app:kswThumbHeight="40dp"
+                    app:kswThumbRangeRatio="1.5"
+                    app:kswThumbMarginTop="-7dp"
+                    app:kswThumbMarginBottom="-7dp"
+                    app:kswThumbMarginLeft="-6dp"
+                    app:kswThumbMarginRight="-6dp"
+                    app:kswBackDrawable="@drawable/ic_switch_track"/>
+            </LinearLayout>
+
+            <!--  Spacer  -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:background="@color/setting_spacer_color"
+                android:layout_marginVertical="10dp"
+                android:alpha="0.1"/>
+
+            <!--  Customer Service  -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="21dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/setting_customer_service_header_title"
+                android:textColor="@color/setting_header_title_color"
+                android:textSize="14sp"
+                android:fontFamily="@font/pretendard_bold"/>
+
+            <LinearLayout
+                android:id="@+id/layout_customer_question_service"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="21dp"
+                android:layout_marginEnd="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="21dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/setting_customer_question_service"
+                    android:textColor="@color/setting_component_text_color"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/pretendard_regular"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_gradient_arrow_right"
+                    android:layout_gravity="center_vertical"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_customer_feedback_service"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="21dp"
+                android:layout_marginEnd="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="21dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/setting_customer_feedback_service"
+                    android:textColor="@color/setting_component_text_color"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/pretendard_regular"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_gradient_arrow_right"
+                    android:layout_gravity="center_vertical"/>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

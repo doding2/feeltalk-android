@@ -29,5 +29,9 @@
     <string name="setting_d_day_suffix">)</string>
     <string name="setting_notification_header_title">알림 설정</string>
     <string name="setting_push_notification">푸쉬 알림 설정</string>
+    <string name="setting_usage_info_notification">이용 정보 알림 설정</string>
+    <string name="setting_customer_service_header_title">고객센터</string>
+    <string name="setting_customer_question_service">필톡 질문방</string>
+    <string name="setting_customer_feedback_service">필톡 피드백방</string>
 
 </resources>
