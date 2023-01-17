@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/text_content"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/today_question_content"
+    android:textSize="24sp"
+    android:textColor="@color/main"
+    android:fontFamily="@font/pretendard_medium"
+    android:lineSpacingExtra="5sp"/>

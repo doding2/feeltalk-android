@@ -28,6 +28,8 @@ class QuestionListAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     val differ = AsyncListDiffer(this, callback)
 
+    private var onItemClickListener: ((Question) -> Unit)? = null
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == TYPE_HEADER) {
@@ -54,12 +56,20 @@ class QuestionListAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         else TYPE_ITEM
     }
 
+    fun setOnItemClickListener(listener: (Question) -> Unit) {
+        onItemClickListener = listener
+    }
+
+
     inner class QuestionListViewHolder(
         val binding: ItemQuestionListBinding
     ): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(question: Question) {
-            binding.textQuestionTitle.text = question.questionContent
+            binding.textQuestionTitle.text = question.content
+            binding.root.setOnClickListener { _ ->
+                onItemClickListener?.let { it(question) }
+            }
         }
     }
 

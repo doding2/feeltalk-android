@@ -20,6 +20,7 @@
             android:layout_marginHorizontal="21dp"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="14dp"
+            android:layout_gravity="center_vertical"
             android:text="@string/app_name"
             android:textSize="26sp"
             android:fontFamily="@font/fredoka_one_regular"/>
@@ -35,6 +36,7 @@
             android:layout_height="wrap_content"
             android:paddingHorizontal="8dp"
             android:paddingVertical="10dp"
+            android:layout_gravity="center_vertical"
             android:src="@drawable/ic_more_selection" />
     </LinearLayout>
 

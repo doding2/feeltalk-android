@@ -11,14 +11,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
-import com.clonect.feeltalk.data.util.Resource
+import com.clonect.feeltalk.data.util.Result
 import com.clonect.feeltalk.databinding.FragmentSignUpBinding
 import com.clonect.feeltalk.domain.model.user.SignUpEmailRequest
 import com.clonect.feeltalk.domain.model.user.SignUpEmailResponse
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class SignUpFragment : Fragment() {
@@ -56,14 +54,14 @@ class SignUpFragment : Fragment() {
         }
 
         val response = viewModel.signUp(request)
-        if (response is Resource.Success<SignUpEmailResponse>) {
+        if (response is Result.Success<SignUpEmailResponse>) {
             // TODO 이메일 회원가입 성공
             Log.i("SignUpFragment", "sign up server response: ${response.data}")
             navigateToHomePage()
             return@launch
         }
 
-        if (response is Resource.Error) {
+        if (response is Result.Error) {
             val exception = response.throwable
             Log.i("SignUpFragment", "Fail to sign up with email: ${exception.message}")
         }

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".presentation.ui.today_question.TodayQuestionFragment">
+
+    <!--  Today Question Title Bar  -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_black_half_arrow_left"
+            android:layout_marginHorizontal="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tv_title"
+            app:layout_constraintHorizontal_bias="0"/>
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/today_question_title"
+            android:textColor="@color/today_question_title_color"
+            android:textSize="18sp"
+            android:fontFamily="@font/pretendard_bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--  Today Question Content  -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/text_content_decoration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/today_question_content_decoration"
+                android:textColor="@color/today_question_content_decoration_color"
+                android:textSize="24sp"
+                android:fontFamily="@font/pretendard_thin"
+                android:lineSpacingExtra="5sp"
+                android:layout_marginTop="30dp"
+                android:layout_marginHorizontal="21dp"/>
+
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/layout_question_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginHorizontal="21dp"
+                app:flexDirection="row"
+                app:flexWrap="wrap">
+
+
+                <include
+                    layout="@layout/text_view_question_content_prefix" />
+
+                <include
+                    layout="@layout/text_view_question_content" />
+
+                <include
+                    layout="@layout/text_view_question_content_suffix" />
+            </com.google.android.flexbox.FlexboxLayout>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="21dp">
+
+                <TextView
+                    android:id="@+id/text_partner_state_prefix"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/today_question_partner_state_already_done_prefix"
+                    android:textColor="@color/today_question_partner_state_color"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/pretendard_regular"
+                    android:lineSpacingExtra="5sp"/>
+
+                <TextView
+                    android:id="@+id/text_partner_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/today_question_partner_state_already_done"
+                    android:textColor="@color/today_question_partner_state_color"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/pretendard_semi_bold"
+                    android:lineSpacingExtra="5sp"/>
+
+                <TextView
+                    android:id="@+id/text_partner_state_emoji"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/today_question_partner_state_already_done_emoji"
+                    android:textColor="@color/today_question_partner_state_color"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/pretendard_regular"
+                    android:lineSpacingExtra="5sp"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="21dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginBottom="5dp"
+                android:text="@string/today_question_my_answer_title"
+                android:textColor="@color/today_question_my_answer_title_color"
+                android:textSize="14sp"
+                android:fontFamily="@font/pretendard_medium"
+                android:lineSpacingExtra="-5sp"/>
+
+            <EditText
+                android:id="@+id/et_my_answer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="21dp"
+                android:textColor="@color/today_question_my_answer_text_color"
+                android:hint="@string/today_question_my_answer_hint"
+                android:textColorHint="@color/today_question_my_answer_hint_color"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btn_enter_answer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="21dp"
+                android:layout_marginVertical="10dp"
+                app:cardBackgroundColor="@color/today_question_enter_answer_button_enabled_color"
+                app:cardCornerRadius="500dp"
+                app:cardElevation="0dp"
+                app:rippleColor="@android:color/transparent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginBottom="14dp"
+                    android:layout_gravity="center"
+                    android:text="@string/today_question_enter_answer_button"
+                    android:textColor="@color/today_question_enter_answer_button_text_color"
+                    android:fontFamily="@font/pretendard_bold"/>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

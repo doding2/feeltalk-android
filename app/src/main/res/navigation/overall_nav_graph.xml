@@ -23,7 +23,14 @@
         android:id="@+id/bottomNavigationFragment"
         android:name="com.clonect.feeltalk.presentation.ui.bottom_navigation.BottomNavigationFragment"
         android:label="fragment_bottom_navigation"
-        tools:layout="@layout/fragment_bottom_navigation" />
+        tools:layout="@layout/fragment_bottom_navigation" >
+        <action
+            android:id="@+id/action_bottomNavigationFragment_to_todayQuestionFragment"
+            app:destination="@id/todayQuestionFragment" />
+        <action
+            android:id="@+id/action_bottomNavigationFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+    </fragment>
     <fragment
         android:id="@+id/signUpFragment"
         android:name="com.clonect.feeltalk.presentation.ui.signup.SignUpFragment"
@@ -34,5 +41,32 @@
             app:destination="@id/bottomNavigationFragment"
             app:popUpTo="@id/logInFragment"
             app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/todayQuestionFragment"
+        android:name="com.clonect.feeltalk.presentation.ui.today_question.TodayQuestionFragment"
+        android:label="fragment_today_question"
+        tools:layout="@layout/fragment_today_question" >
+        <argument
+            android:name="selectedQuestion"
+            app:argType="com.clonect.feeltalk.domain.model.question.Question"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_todayQuestionFragment_to_chatFragment"
+            app:destination="@id/chatFragment"
+            app:popUpTo="@id/todayQuestionFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.clonect.feeltalk.presentation.ui.chat.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" >
+        <argument
+            android:name="selectedQuestion"
+            app:argType="com.clonect.feeltalk.domain.model.question.Question"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
 </navigation>

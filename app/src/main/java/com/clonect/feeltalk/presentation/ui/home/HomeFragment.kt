@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.navigation.fragment.findNavController
+import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentHomeBinding
 import com.clonect.feeltalk.presentation.util.addTextGradient
 import com.clonect.feeltalk.presentation.util.dpToPx
@@ -23,18 +25,34 @@ class HomeFragment : Fragment() {
     ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        binding.textLogo.addTextGradient()
+        binding.apply {
+            textLogo.addTextGradient()
 
-        binding.textDDayValue.text = "32"
-        binding.textDDayValue.addTextGradient()
-        binding.textDDayUnit.addTextGradient()
+            textDDayValue.text = "32"
+            textDDayValue.addTextGradient()
+            textDDayUnit.addTextGradient()
 
-        binding.textMyName.text = "jenny"
-        binding.textPartnerName.text = "Daniel"
+            textMyName.text = "jenny"
+            textPartnerName.text = "Daniel"
+
+            btnTodayQuestion.setOnClickListener {
+                navigateToTodayQuestionPage()
+            }
+            layoutTodayQuestionTitle.setOnClickListener {
+                navigateToTodayQuestionPage()
+            }
+        }
 
         setLetterPaperSize()
 
         return binding.root
+    }
+
+    private fun navigateToTodayQuestionPage() {
+        requireParentFragment()
+            .requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_bottomNavigationFragment_to_todayQuestionFragment)
     }
 
     private fun makeHomeContentVisible(enabled: Boolean) {
@@ -46,7 +64,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setLetterPaperSize() {
-        makeHomeContentVisible(false)
+//        makeHomeContentVisible(false)
 
         binding.run {
             llLetterContent.post {
@@ -80,7 +98,7 @@ class HomeFragment : Fragment() {
                 params.setMargins(0, topSpacerPx, 0, 0)
                 llContentWrapper.layoutParams = params
 
-                makeHomeContentVisible(true)
+//                makeHomeContentVisible(true)
             }
         }
     }

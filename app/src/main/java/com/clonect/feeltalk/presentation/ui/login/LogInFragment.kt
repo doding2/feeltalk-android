@@ -15,7 +15,7 @@ import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.BuildConfig
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.domain.model.user.LogInGoogleResponse
-import com.clonect.feeltalk.data.util.Resource
+import com.clonect.feeltalk.data.util.Result
 import com.clonect.feeltalk.databinding.FragmentLogInBinding
 import com.clonect.feeltalk.domain.model.user.SignUpEmailRequest
 import com.clonect.feeltalk.domain.model.user.SignUpEmailResponse
@@ -114,7 +114,7 @@ class LogInFragment : Fragment() {
 
     private fun signUpUsingClonectServer(authCode: String, email: String, displayName: String) = this.lifecycleScope.launch {
         val result = viewModel.fetchGoogleAuthInfo(authCode)
-        if (result is Resource.Success<LogInGoogleResponse>) {
+        if (result is Result.Success<LogInGoogleResponse>) {
             // TODO send accessToken to backend server
             val request = SignUpEmailRequest(
                 email = email,
@@ -129,7 +129,7 @@ class LogInFragment : Fragment() {
             )
 
             val response = viewModel.signUp(request)
-            if (response is Resource.Success<SignUpEmailResponse>) {
+            if (response is Result.Success<SignUpEmailResponse>) {
                 val data = response.data
                 
                 // TODO 이 서버에서 받은 데이터 가지고 뭘 어떻게 할건지 정해야됨

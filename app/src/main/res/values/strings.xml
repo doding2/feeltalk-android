@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">feeltalk</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="white_space">&#160;</string>
 
     <!--  fragment_home.xml  -->
-    <string name="home_d_day_prefix">서로를\t</string>
+    <string name="home_d_day_prefix">서로를&#160;</string>
     <string name="home_d_day_unit">일</string>
     <string name="home_d_day_suffix">째</string>
     <string name="home_d_day_suffix_second_line">알아가는 중입니다.</string>
@@ -34,4 +35,31 @@
     <string name="setting_customer_question_service">필톡 질문방</string>
     <string name="setting_customer_feedback_service">필톡 피드백방</string>
 
+    <!--  fragment_today_question.xml  -->
+    <string name="today_question_title">오늘의 질문</string>
+    <string name="today_question_content_decoration">난 이게 가장 좋더라 !</string>
+    <string name="today_question_content_prefix">당신이&#160;</string>
+    <string name="today_question_content">가장 좋아하는 스킨십</string>
+    <string name="today_question_content_suffix">은 ?</string>
+
+    <string name="today_question_partner_state_already_done_prefix">상대방은 아직&#160;</string>
+    <string name="today_question_partner_state_already_done">답변을 등록하지 않았어요</string>
+    <string name="today_question_partner_state_already_done_emoji">😢</string>
+
+    <string name="today_question_partner_state_not_done_prefix">상대방이 먼저&#160;</string>
+    <string name="today_question_partner_state_not_done">답변을 등록했어요</string>
+    <string name="today_question_partner_state_not_done_emoji">😄</string>
+
+    <string name="today_question_my_answer_title">나의 답변</string>
+    <string name="today_question_my_answer_hint">나의 답변을 입력해 주세요.</string>
+    <string name="today_question_enter_answer_button">답변완료</string>
+
+    <!--  TodayQuestionFragment.kt  -->
+    <string name="dialog_partner_state_already_done_title">답변 확인</string>
+    <string name="dialog_partner_state_already_done_confirm">확 인</string>
+    <string name="dialog_partner_state_already_done_message">상대방의 답변을 확인하시겠습니까?</string>
+
+    <string name="dialog_partner_state_not_done_confirm">요청하기</string>
+    <string name="dialog_partner_state_not_done_title">답변 요청</string>
+    <string name="dialog_partner_state_not_done_message">상대방에게 답변 작성을 요청하시겠어요?</string>
 </resources>

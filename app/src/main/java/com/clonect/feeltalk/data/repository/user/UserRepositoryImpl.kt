@@ -8,7 +8,7 @@ import com.clonect.feeltalk.domain.model.user.LogInGoogleRequest
 import com.clonect.feeltalk.domain.model.user.LogInGoogleResponse
 import com.clonect.feeltalk.domain.model.user.SignUpEmailRequest
 import com.clonect.feeltalk.domain.model.user.SignUpEmailResponse
-import com.clonect.feeltalk.data.util.Resource
+import com.clonect.feeltalk.data.util.Result
 import com.clonect.feeltalk.domain.repository.UserRepository
 import java.util.concurrent.CancellationException
 
@@ -19,23 +19,23 @@ class UserRepositoryImpl(
 
     override suspend fun signUpWithEmail(
         signUpEmailRequest: SignUpEmailRequest
-    ): Resource<SignUpEmailResponse> {
+    ): Result<SignUpEmailResponse> {
         try {
             clonectService.signUpWithEmail(
                 signUpEmailRequest
             )?.run {
-                return Resource.Success(this.body() ?: SignUpEmailResponse())
-            } ?: return Resource.Error(Exception("Fail to sign up with email Exception"))
+                return Result.Success(this.body() ?: SignUpEmailResponse())
+            } ?: return Result.Error(Exception("Fail to sign up with email Exception"))
         } catch (e: Exception) {
             if (e is CancellationException) throw e
             Log.i("UserRepository", "Fail to Sign Up With Email: $e")
         }
-        return Resource.Error(Exception("Fail to sign up with email Exception"))
+        return Result.Error(Exception("Fail to sign up with email Exception"))
     }
 
     override suspend fun fetchGoogleAuthInfo(
         authCode: String
-    ): Resource<LogInGoogleResponse> {
+    ): Result<LogInGoogleResponse> {
         try {
             googleAuthService.fetchGoogleAuthInfo(
                 LogInGoogleRequest(
@@ -46,13 +46,13 @@ class UserRepositoryImpl(
                     code = authCode
                 )
             )?.run {
-                return Resource.Success(this.body() ?: LogInGoogleResponse())
-            } ?: return Resource.Error(Exception("Fail to get Google AccessToken Exception"))
+                return Result.Success(this.body() ?: LogInGoogleResponse())
+            } ?: return Result.Error(Exception("Fail to get Google AccessToken Exception"))
         } catch (e: Exception) {
             if (e is CancellationException) throw e
             Log.i("UserRepository", "Fail to fetch Google Auth Info: $e")
         }
-        return Resource.Error(Exception("Fail to get Google AccessToken Exception"))
+        return Result.Error(Exception("Fail to get Google AccessToken Exception"))
     }
 
 }
