@@ -8,7 +8,6 @@ import com.clonect.feeltalk.domain.model.chat.Chat
 import com.clonect.feeltalk.domain.model.question.Question
 import com.clonect.feeltalk.domain.model.user.UserInfo
 import com.clonect.feeltalk.domain.usecase.GetChatListUseCase
-import com.clonect.feeltalk.domain.usecase.GetUserInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -33,12 +32,31 @@ class ChatViewModel @Inject constructor(
     private val _dialogEvent = MutableSharedFlow<String>()
     val dialogEvent = _dialogEvent.asSharedFlow()
 
+    private val _scrollPositionState = MutableStateFlow(0)
+    val scrollPositionState = _scrollPositionState.asStateFlow()
+
     init {
         savedStateHandle.get<Question>("selectedQuestion")?.let {
             _questionState.value = it
         }
 //        getUserInfo()
         getChatList()
+    }
+
+    // TODO 나중에는 서버로 보내게 수정
+    fun sendChat(content: String, date: String) = viewModelScope.launch(Dispatchers.IO) {
+        Chat(
+            id = _chatListState.value.size.toLong(),
+            ownerEmail = "mine",
+            content = content,
+            date = date
+        ).also {
+            addNewChat(it)
+        }
+    }
+
+    fun updateScrollPosition(position: Int) {
+        _scrollPositionState.value = position
     }
 
 //    private fun getUserInfo() = viewModelScope.launch(Dispatchers.IO) {
@@ -81,6 +99,14 @@ class ChatViewModel @Inject constructor(
 
         newList.addAll(chatList)
         newList.sortBy { it.date }
+        _chatListState.value = newList
+    }
+
+    private fun addNewChat(chat: Chat) {
+        val newList = mutableListOf<Chat>().apply {
+            addAll(_chatListState.value)
+            add(chat)
+        }
         _chatListState.value = newList
     }
 }

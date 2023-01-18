@@ -21,7 +21,7 @@ class ChatAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val callback = object: DiffUtil.ItemCallback<Chat>() {
         override fun areItemsTheSame(oldItem: Chat, newItem: Chat): Boolean {
-            return oldItem.id == newItem.id
+            return oldItem.date == newItem.date && oldItem.ownerEmail == newItem.ownerEmail && oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: Chat, newItem: Chat): Boolean {
