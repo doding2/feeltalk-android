@@ -1,14 +1,16 @@
 package com.clonect.feeltalk.domain.repository
 
-import com.clonect.feeltalk.domain.model.user.LogInGoogleResponse
-import com.clonect.feeltalk.domain.model.user.SignUpEmailRequest
-import com.clonect.feeltalk.domain.model.user.SignUpEmailResponse
-import com.clonect.feeltalk.data.util.Result
+import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.domain.model.user.*
 
 interface UserRepository {
 
-    suspend fun fetchGoogleAuthInfo(authCode: String): Result<LogInGoogleResponse>
+    suspend fun getGoogleTokens(authCode: String): Resource<GoogleTokens>
 
-    suspend fun signUpWithEmail(signUpEmailRequest: SignUpEmailRequest): Result<SignUpEmailResponse>
+    suspend fun signUpWithEmail(request: SignUpEmailRequest): Resource<UserInfo>
+
+    suspend fun logInWithEmail(request: LogInEmailRequest): Resource<UserInfo>
+
+    suspend fun getUserInfo(): Resource<UserInfo>
 
 }

@@ -10,7 +10,7 @@ package com.clonect.feeltalk.domain.model.user
  *  "id_token": "string"
  */
 
-data class LogInGoogleResponse(
+data class GoogleTokens(
     var access_token: String = "",
     var refresh_token: String = "",
     var expires_in: Int = 0,

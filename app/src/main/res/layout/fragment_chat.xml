@@ -1,14 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     tools:context=".presentation.ui.chat.ChatFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <!--  Today Question Title Bar  -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_black_half_arrow_left"
+            android:layout_marginHorizontal="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0"/>
+
+        <LinearLayout
+            android:id="@+id/layout_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintStart_toEndOf="@id/btn_back"
+            app:layout_constraintEnd_toStartOf="@id/btn_more_selection"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_partner_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                app:cardElevation="0dp"
+                app:cardCornerRadius="157dp"
+                app:cardBackgroundColor="@android:color/transparent">
+
+                <ImageView
+                    android:id="@+id/iv_partner_profile"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/test_profile_2"/>
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/partner_profile_default_name"
+                android:textColor="@color/chat_title_name_color"
+                android:textSize="18sp"
+                android:lines="1"
+                android:ellipsize="end"
+                android:fontFamily="@font/pretendard_bold"/>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/btn_more_selection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_more_selection"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="30dp">
+
+        <TextView
+            android:id="@+id/text_content_decoration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/today_question_content_decoration"
+            android:textColor="@color/today_question_content_decoration_color"
+            android:textSize="24sp"
+            android:fontFamily="@font/pretendard_thin"
+            android:lineSpacingExtra="5sp"
+            android:layout_marginHorizontal="21dp"/>
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/layout_question_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginHorizontal="21dp"
+            app:flexDirection="row"
+            app:flexWrap="wrap">
+
+            <include
+                layout="@layout/text_view_question_content_prefix" />
+
+            <include
+                layout="@layout/text_view_question_content" />
+
+            <include
+                layout="@layout/text_view_question_content_suffix" />
+        </com.google.android.flexbox.FlexboxLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/chat_border_color"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="21dp"/>
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:clipChildren="false">
 
-</FrameLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_chat"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/layout_chat_field"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_chat_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/chat_field_background_color"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:clipChildren="false"
+            android:elevation="5dp">
+
+            <EditText
+                android:id="@+id/et_chat"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingVertical="17dp"
+                android:paddingStart="21dp"
+                android:paddingEnd="10dp"
+                android:background="@null"
+                android:hint="@string/chat_text_field_hint"
+                android:textSize="13sp"
+                android:textColorHint="@color/chat_field_hint_color"
+                android:fontFamily="@font/pretendard_light"
+                android:maxLines="4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btn_send_chat"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/btn_send_chat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_send_chat"
+                android:paddingEnd="20dp"
+                android:paddingVertical="6dp"
+                android:paddingStart="6dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

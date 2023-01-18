@@ -2,7 +2,7 @@ package com.clonect.feeltalk.domain.model.user
 
 import com.google.gson.annotations.SerializedName
 
-data class LogInGoogleRequest (
+data class GoogleTokenRequest (
     @SerializedName("grant_type")
     private val grant_type: String,
     @SerializedName("client_id")

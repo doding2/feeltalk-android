@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.LayoutRes
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
@@ -20,7 +21,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.clonect.feeltalk.R
-import com.clonect.feeltalk.data.util.Result
+import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.databinding.FragmentTodayQuestionBinding
 import com.clonect.feeltalk.domain.model.question.Question
 import com.clonect.feeltalk.presentation.util.addTextGradient
@@ -58,7 +59,7 @@ class TodayQuestionFragment : Fragment() {
 
                 viewModel.setMyAnswer(it.toString().trim())
 
-                val isEnterAnswerButtonReady = (viewModel.questionStateFlow.value is Result.Success)
+                val isEnterAnswerButtonReady = (viewModel.questionStateFlow.value is Resource.Success)
                         && !it.isNullOrBlank()
 
                 enableEnterAnswerButton(isEnterAnswerButtonReady)
@@ -82,7 +83,7 @@ class TodayQuestionFragment : Fragment() {
     }
 
     private fun clickEnterAnswerButton() = lifecycleScope.launch {
-        val question = (viewModel.questionStateFlow.value as? Result.Success
+        val question = (viewModel.questionStateFlow.value as? Resource.Success
             ?: return@launch)
             .data
 
@@ -119,7 +120,6 @@ class TodayQuestionFragment : Fragment() {
         val bundle = bundleOf("selectedQuestion" to question)
 
         requireParentFragment()
-            .requireParentFragment()
             .findNavController()
             .navigate(
                 R.id.action_todayQuestionFragment_to_chatFragment,
@@ -142,11 +142,11 @@ class TodayQuestionFragment : Fragment() {
     private fun changeTitleTextByQuestion() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.questionStateFlow.collectLatest {
-                val question = (it as? Result.Success
+                val question = (it as? Resource.Success
                     ?: return@collectLatest)
                     .data
 
-                reassembleQuestionContentViews(question)
+                reassembleQuestionTitle(question)
                 changePartnerStateTextView(question)
 
                 if (viewModel.myAnswerStateFlow.value != "")
@@ -180,40 +180,24 @@ class TodayQuestionFragment : Fragment() {
         textPartnerStateEmoji.setText(R.string.today_question_partner_state_already_done_emoji)
     }
 
-    private fun reassembleQuestionContentViews(question: Question) {
-        val prefixWordList = question.contentPrefix.split(" ")
-        val contentWordList = question.content.split(" ")
-        val suffixWordList = question.contentSuffix.split(" ")
-
+    private fun reassembleQuestionTitle(question: Question) {
         binding.layoutQuestionContent.removeAllViewsInLayout()
 
-        prefixWordList.forEachIndexed { index, word ->
-            prefixWordList.last()
-            val prefixTextView = LayoutInflater.from(requireContext())
-                .inflate(R.layout.text_view_question_content_prefix, null) as TextView
-            prefixTextView.text =
-                if (index == prefixWordList.lastIndex && word != " ") word else "$word "
-            Log.i("TodayQuestionFragment", prefixTextView.text.toString())
-            binding.layoutQuestionContent.addView(prefixTextView)
-        }
+        question.contentPrefix.reassembleTextView(R.layout.text_view_question_content_prefix)
+        question.content.reassembleTextView(R.layout.text_view_question_content)
+        question.contentSuffix.reassembleTextView(R.layout.text_view_question_content_suffix)
+    }
 
-        contentWordList.forEachIndexed { index, word ->
-            val contentTextView = LayoutInflater.from(requireContext())
-                .inflate(R.layout.text_view_question_content, null) as TextView
-            contentTextView.text =
-                if (index == contentWordList.lastIndex && word != " ") word else "$word "
-            Log.i("TodayQuestionFragment", contentTextView.text.toString())
-            contentTextView.addTextGradient()
-            binding.layoutQuestionContent.addView(contentTextView)
-        }
+    private fun String.reassembleTextView(@LayoutRes resource: Int) {
+        val wordList = this.split(" ")
 
-        suffixWordList.forEachIndexed { index, word ->
-            val suffixTextView = LayoutInflater.from(requireContext())
-                .inflate(R.layout.text_view_question_content_prefix, null) as TextView
-            suffixTextView.text =
-                if (index == suffixWordList.lastIndex && word != " ") word else "$word "
-            Log.i("TodayQuestionFragment", suffixTextView.text.toString())
-            binding.layoutQuestionContent.addView(suffixTextView)
+        wordList.forEachIndexed { index, word ->
+            val textView = LayoutInflater.from(requireContext()).inflate(resource, null) as TextView
+
+            textView.text =
+                if (index == wordList.lastIndex && word != " ") word else "$word "
+
+            binding.layoutQuestionContent.addView(textView)
         }
     }
 

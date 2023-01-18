@@ -50,4 +50,17 @@
 
     <!--  edit_text_background.xml  -->
     <color name="edit_text_disabled_underline_color">#F1F1F1</color>
+    
+    <!--  fragment_chat.xml  -->
+    <color name="chat_title_name_color">#1C1C1C</color>
+    <color name="chat_border_color">#F1F1F1</color>
+    <color name="chat_field_hint_color">#999999</color>
+    <color name="chat_field_background_color">@color/white</color>
+
+    <!--  item_chat_mine.xml && item_chat_partner.xml -->
+    <color name="item_chat_owner_text_color">@color/black</color>
+    <color name="item_chat_mine_text_color">@color/white</color>
+    <color name="item_chat_partner_text_color">#1A1A1A</color>
+    <color name="item_chat_date_text_color">#999999</color>
+    <color name="item_chat_partner_background_color">#F7F7F7</color>
 </resources>

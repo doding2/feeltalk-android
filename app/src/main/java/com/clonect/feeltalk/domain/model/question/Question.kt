@@ -4,24 +4,24 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class Question(
-    val id: Long?,
+    val id: Long = 0,
     val contentPrefix: String = "",
     val content: String = "",
     val contentSuffix: String = "",
-    val myAnswer: String?,
-    val partnerAnswer: String?,
-    val myAnswerDate: String?,
-    val partnerAnswerDate: String?
+    val myAnswer: String = "",
+    val partnerAnswer: String = "",
+    val myAnswerDate: String = "",
+    val partnerAnswerDate: String =""
 ): Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readValue(Long::class.java.classLoader) as? Long,
+        parcel.readValue(Long::class.java.classLoader) as Long,
         parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: "",
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString()) {
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "") {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

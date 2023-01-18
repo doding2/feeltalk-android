@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.presentation.di
 
+import com.clonect.feeltalk.presentation.ui.chat.ChatAdapter
 import com.clonect.feeltalk.presentation.ui.question_list.QuestionListAdapter
 import dagger.Module
 import dagger.Provides
@@ -17,4 +18,8 @@ class AdapterModule {
         return QuestionListAdapter()
     }
 
+    @Provides
+    fun providesChatAdapter(): ChatAdapter {
+        return ChatAdapter()
+    }
 }

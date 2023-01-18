@@ -62,4 +62,14 @@
     <string name="dialog_partner_state_not_done_confirm">요청하기</string>
     <string name="dialog_partner_state_not_done_title">답변 요청</string>
     <string name="dialog_partner_state_not_done_message">상대방에게 답변 작성을 요청하시겠어요?</string>
+
+    <!--  fragment_chat.xml  -->
+    <string name="chat_text_field_hint">메시지를 입력하세요...</string>
+
+    <!--  item_chat_mine.xml && item_chat_partner.xml -->
+    <string name="item_chat_owner_mine">나의 답변</string>
+    <string name="item_chat_owner_partner_name">상대</string>
+    <string name="item_chat_owner_partner_suffix">의 답변</string>
+    <string name="item_chat_default_text">grapes vanilla carnival florence marshmallow cresent serendipity flutter like laptop way bijou lovable charming.</string>
+    <string name="item_chat_default_date_text">12월 24일 (금)</string>
 </resources>

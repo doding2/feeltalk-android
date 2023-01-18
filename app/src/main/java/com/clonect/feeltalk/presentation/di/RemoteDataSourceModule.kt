@@ -2,10 +2,8 @@ package com.clonect.feeltalk.presentation.di
 
 import com.clonect.feeltalk.data.api.ClonectService
 import com.clonect.feeltalk.data.api.GoogleAuthService
-import com.clonect.feeltalk.data.repository.user.UserRepositoryImpl
-import com.clonect.feeltalk.data.repository.user.datasource.UserCacheDataSource
 import com.clonect.feeltalk.data.repository.user.datasource.UserRemoteDataSource
-import com.clonect.feeltalk.domain.repository.UserRepository
+import com.clonect.feeltalk.data.repository.user.datasourceImpl.UserRemoteDataSourceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,15 +12,15 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class RepositoryModule {
+class RemoteDataSourceModule {
 
     @Singleton
     @Provides
-    fun providesUserRepository(
-        remoteDataSource: UserRemoteDataSource,
-        cacheDataSource: UserCacheDataSource
-    ): UserRepository {
-        return UserRepositoryImpl(remoteDataSource, cacheDataSource)
+    fun providesUserRemoteDataSource(
+        clonectService: ClonectService,
+        googleAuthService: GoogleAuthService
+    ): UserRemoteDataSource {
+        return UserRemoteDataSourceImpl(clonectService, googleAuthService)
     }
 
 }
