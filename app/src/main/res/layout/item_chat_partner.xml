@@ -17,7 +17,7 @@
         android:gravity="center">
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/cv_my_profile"
+            android:id="@+id/cv_profile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="5dp"
@@ -29,7 +29,7 @@
                 android:id="@+id/iv_my_profile"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/test_profile_2"/>
+                android:src="@drawable/image_partner_default_profile"/>
         </androidx.cardview.widget.CardView>
 
         <TextView
@@ -64,7 +64,7 @@
         android:textColor="@color/item_chat_partner_text_color"
         android:textSize="13sp"
         android:fontFamily="@font/pretendard_regular"
-        android:background="@drawable/layout_item_chat_partner_background"/>
+        android:background="@drawable/background_item_chat_partner"/>
 
     <TextView
         android:id="@+id/text_date"

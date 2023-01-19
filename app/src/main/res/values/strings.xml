@@ -72,4 +72,17 @@
     <string name="item_chat_owner_partner_suffix">의 답변</string>
     <string name="item_chat_default_text">grapes vanilla carnival florence marshmallow cresent serendipity flutter like laptop way bijou lovable charming.</string>
     <string name="item_chat_default_date_text">12월 24일 (금)</string>
+
+    <!--  fragment_news.xml  -->
+    <string name="news_title">내 소식</string>
+
+    <!--  item_news.xml  -->
+    <string name="news_default_partner_name">상대방 이름</string>
+    <string name="news_default_my_name">내 이름</string>
+    <string name="news_default_date">5시간 전</string>
+
+
+
+
+
 </resources>

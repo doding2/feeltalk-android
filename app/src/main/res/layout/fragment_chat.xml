@@ -50,7 +50,7 @@
                     android:id="@+id/iv_partner_profile"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
-                    android:src="@drawable/test_profile_2"/>
+                    android:src="@drawable/image_partner_default_profile"/>
             </androidx.cardview.widget.CardView>
 
             <TextView

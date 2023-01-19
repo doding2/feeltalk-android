@@ -63,4 +63,11 @@
     <color name="item_chat_partner_text_color">#1A1A1A</color>
     <color name="item_chat_date_text_color">#999999</color>
     <color name="item_chat_partner_background_color">#F7F7F7</color>
+
+    <!--  item_news.xml  -->
+    <color name="item_news_content_color">#1A1A1A</color>
+    <color name="item_news_date_color">#999999</color>
+    <color name="item_news_background">@color/white</color>
+
+
 </resources>

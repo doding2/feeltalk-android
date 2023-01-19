@@ -41,4 +41,10 @@ class UseCaseModule {
     fun providesGetChatListUseCase(): GetChatListUseCase {
         return GetChatListUseCase()
     }
+
+    @Singleton
+    @Provides
+    fun providesGetNewsListUseCase(): GetNewsListUseCase {
+        return GetNewsListUseCase()
+    }
 }

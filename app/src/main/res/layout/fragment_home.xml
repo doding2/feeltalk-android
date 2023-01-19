@@ -32,6 +32,7 @@
             android:layout_weight="1" />
 
         <ImageView
+            android:id="@+id/btn_news"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingVertical="18dp"
@@ -136,7 +137,7 @@
 
                     <!-- My Profile -->
                     <androidx.cardview.widget.CardView
-                        android:id="@+id/cv_my_profile"
+                        android:id="@+id/cv_profile"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_constraintTop_toTopOf="parent"
@@ -150,7 +151,7 @@
                             android:id="@+id/iv_my_profile"
                             android:layout_width="150dp"
                             android:layout_height="150dp"
-                            android:src="@drawable/test_profile_1"/>
+                            android:src="@drawable/image_my_default_profile"/>
                     </androidx.cardview.widget.CardView>
 
                     <!-- My Profile Text -->
@@ -170,9 +171,9 @@
                         android:shadowRadius="10"
                         android:shadowColor="@color/profile_name_shadow_color"
                         app:layout_constrainedWidth="true"
-                        app:layout_constraintStart_toStartOf="@id/cv_my_profile"
-                        app:layout_constraintEnd_toEndOf="@id/cv_my_profile"
-                        app:layout_constraintTop_toBottomOf="@id/cv_my_profile"/>
+                        app:layout_constraintStart_toStartOf="@id/cv_profile"
+                        app:layout_constraintEnd_toEndOf="@id/cv_profile"
+                        app:layout_constraintTop_toBottomOf="@id/cv_profile"/>
 
                     <!-- Partner Profile -->
                     <androidx.cardview.widget.CardView
@@ -190,7 +191,7 @@
                             android:id="@+id/iv_partner_profile"
                             android:layout_width="150dp"
                             android:layout_height="150dp"
-                            android:src="@drawable/test_profile_2"/>
+                            android:src="@drawable/image_partner_default_profile"/>
                     </androidx.cardview.widget.CardView>
 
                     <!-- Partner Profile Text -->
@@ -220,7 +221,7 @@
                         android:layout_width="68dp"
                         android:layout_height="68dp"
                         android:src="@drawable/ic_profile_heart"
-                        app:layout_constraintBottom_toBottomOf="@id/cv_my_profile"
+                        app:layout_constraintBottom_toBottomOf="@id/cv_profile"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -272,7 +273,7 @@
                     android:id="@+id/iv_letter_paper"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:src="@drawable/ic_letter_paper"
+                    android:src="@drawable/background_letter_paper"
                     android:scaleType="fitXY"
                     android:layout_gravity="bottom"/>
 

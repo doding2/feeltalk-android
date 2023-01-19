@@ -41,11 +41,21 @@ class HomeFragment : Fragment() {
             layoutTodayQuestionTitle.setOnClickListener {
                 navigateToTodayQuestionPage()
             }
+            btnNews.setOnClickListener {
+                navigateToNewsPage()
+            }
         }
 
         setLetterPaperSize()
 
         return binding.root
+    }
+
+    private fun navigateToNewsPage() {
+        requireParentFragment()
+            .requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_bottomNavigationFragment_to_newsFragment)
     }
 
     private fun navigateToTodayQuestionPage() {
