@@ -33,6 +33,9 @@
         <action
             android:id="@+id/action_bottomNavigationFragment_to_newsFragment"
             app:destination="@id/newsFragment" />
+        <action
+            android:id="@+id/action_bottomNavigationFragment_to_coupleSettingFragment"
+            app:destination="@id/coupleSettingFragment" />
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
@@ -77,4 +80,9 @@
         android:name="com.clonect.feeltalk.presentation.ui.news.NewsFragment"
         android:label="fragment_news"
         tools:layout="@layout/fragment_news" />
+    <fragment
+        android:id="@+id/coupleSettingFragment"
+        android:name="com.clonect.feeltalk.presentation.ui.couple_setting.CoupleSettingFragment"
+        android:label="fragment_couple_setting"
+        tools:layout="@layout/fragment_couple_setting" />
 </navigation>

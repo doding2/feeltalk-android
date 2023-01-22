@@ -68,6 +68,8 @@
     <color name="item_news_content_color">#1A1A1A</color>
     <color name="item_news_date_color">#999999</color>
     <color name="item_news_background">@color/white</color>
+    <color name="item_news_border_color">#F1F1F1</color>
 
-
+    <!--  fragment_couple_setting.xml  -->
+    <color name="couple_setting_start_date_subtitle_color">#1A1A1A</color>
 </resources>

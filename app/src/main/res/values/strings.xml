@@ -81,8 +81,6 @@
     <string name="news_default_my_name">내 이름</string>
     <string name="news_default_date">5시간 전</string>
 
-
-
-
-
+    <!--  fragment_couple_setting.xml  -->
+    <string name="couple_setting_start_date_subtitle">우리의 첫 걸음</string>
 </resources>

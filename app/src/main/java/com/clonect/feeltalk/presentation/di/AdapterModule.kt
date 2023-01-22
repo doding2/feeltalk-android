@@ -24,6 +24,7 @@ class AdapterModule {
         return ChatAdapter()
     }
 
+    @Singleton
     @Provides
     fun providesNewsAdapter(): NewsAdapter {
         return NewsAdapter()

@@ -60,14 +60,12 @@ class NewsAdapter: RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
                     .append(news.content)
                 textContent.text = contentSpan
 
-
+                val isOneFourthRandom = Random.nextBoolean() && Random.nextBoolean()
                 val backgroundId: Int =
-                    if (Random.nextBoolean())
-                        R.color.white
-                    else if (Random.nextBoolean())
+                    if (isOneFourthRandom)
                         R.drawable.background_item_news
-                    else
-                        R.drawable.background_item_news_reverse
+                    else R
+                        .color.white
 
                 binding.clRoot.setBackgroundResource(backgroundId)
 
