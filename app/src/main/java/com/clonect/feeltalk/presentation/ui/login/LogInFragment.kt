@@ -58,7 +58,11 @@ class LogInFragment : Fragment() {
             }
 
             btnSignUp.setOnClickListener {
-                goToSignUpPage()
+                navigateToSignUpPage()
+            }
+
+            btnSkip.setOnClickListener {
+                navigateToHomePage()
             }
         }
 
@@ -76,7 +80,7 @@ class LogInFragment : Fragment() {
         findNavController().navigate(R.id.action_logInFragment_to_bottomNavigationFragment)
     }
 
-    private fun goToSignUpPage() {
+    private fun navigateToSignUpPage() {
         findNavController().navigate(R.id.action_logInFragment_to_signUpFragment)
     }
 

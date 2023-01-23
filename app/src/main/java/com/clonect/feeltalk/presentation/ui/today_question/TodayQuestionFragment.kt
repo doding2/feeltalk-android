@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.presentation.ui.today_question
 
+import android.content.Context
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.LayoutRes
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
@@ -35,6 +37,7 @@ class TodayQuestionFragment : Fragment() {
 
     private lateinit var binding: FragmentTodayQuestionBinding
     private val viewModel: TodayQuestionViewModel by viewModels()
+    private lateinit var onBackCallback: OnBackPressedCallback
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,9 +54,7 @@ class TodayQuestionFragment : Fragment() {
 
         binding.apply {
 
-            btnBack.setOnClickListener {
-                // TODO back button
-            }
+            btnBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
 
             etMyAnswer.addTextChangedListener {
 
@@ -201,4 +202,19 @@ class TodayQuestionFragment : Fragment() {
         }
     }
 
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        onBackCallback = object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                findNavController().popBackStack()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, onBackCallback)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        onBackCallback.remove()
+    }
 }

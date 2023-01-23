@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.presentation.ui.chat
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -7,15 +8,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentChatBinding
 import com.clonect.feeltalk.domain.model.question.Question
+import com.clonect.feeltalk.presentation.util.showAlertDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -30,6 +35,7 @@ class ChatFragment : Fragment() {
     private val viewModel: ChatViewModel by viewModels()
     @Inject
     lateinit var  adapter: ChatAdapter
+    private lateinit var onBackCallback: OnBackPressedCallback
 
     private var scrollRemainHeight = 0
 
@@ -46,6 +52,8 @@ class ChatFragment : Fragment() {
         collectScrollPosition()
 
         binding.btnSendChat.setOnClickListener { sendChat() }
+
+        binding.btnBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
 
         return binding.root
     }
@@ -139,5 +147,21 @@ class ChatFragment : Fragment() {
 
             binding.layoutQuestionContent.addView(textView)
         }
+    }
+
+    
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        onBackCallback = object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                findNavController().popBackStack()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, onBackCallback)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        onBackCallback.remove()
     }
 }
