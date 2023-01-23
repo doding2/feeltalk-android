@@ -21,6 +21,11 @@ class SettingFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         initSwitch()
 
@@ -28,17 +33,15 @@ class SettingFragment : Fragment() {
 
             textLogo.addTextGradient()
 
-            btnAnotherSetting.setOnClickListener {
-
-            }
+            btnAnotherSetting.setOnClickListener { }
 
             textMyName.text = "jenny"
 
             textMyName.setOnClickListener { navigateToCoupleSettingPage() }
             ivHalfArrowRight.setOnClickListener { navigateToCoupleSettingPage() }
+            flProfile.setOnClickListener { navigateToCoupleSettingPage() }
+            llDDay.setOnClickListener { navigateToCoupleSettingPage() }
         }
-
-        return binding.root
     }
 
     private fun navigateToCoupleSettingPage() {

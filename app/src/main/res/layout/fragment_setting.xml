@@ -57,6 +57,7 @@
 
             <!--  Profile Image  -->
             <FrameLayout
+                android:id="@+id/fl_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
@@ -124,10 +125,11 @@
 
             <!--  Profile D-day  -->
             <LinearLayout
+                android:id="@+id/ll_d_day"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_margin="10dp">
+                android:padding="10dp">
 
                 <TextView
                     android:id="@+id/text_start_date"

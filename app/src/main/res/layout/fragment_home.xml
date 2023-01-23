@@ -55,6 +55,12 @@
             android:layout_marginTop="0dp"
             android:orientation="vertical">
 
+            <View
+                android:id="@+id/spacer_top"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -242,7 +248,8 @@
                 android:orientation="horizontal"
                 android:layout_marginStart="21dp"
                 android:layout_marginEnd="20dp"
-                android:layout_marginTop="20dp">
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="15dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -272,10 +279,11 @@
                 <ImageView
                     android:id="@+id/iv_letter_paper"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                    android:layout_height="300dp"
                     android:src="@drawable/background_letter_paper"
                     android:scaleType="fitXY"
-                    android:layout_gravity="bottom"/>
+                    android:layout_gravity="bottom"
+                    android:layout_marginBottom="-80dp"/>
 
                 <LinearLayout
                     android:id="@+id/ll_letter_content"

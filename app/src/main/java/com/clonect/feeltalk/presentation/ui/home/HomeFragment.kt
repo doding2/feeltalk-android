@@ -24,6 +24,11 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
             textLogo.addTextGradient()
@@ -45,10 +50,6 @@ class HomeFragment : Fragment() {
                 navigateToNewsPage()
             }
         }
-
-        setLetterPaperSize()
-
-        return binding.root
     }
 
     private fun navigateToNewsPage() {
@@ -63,53 +64,5 @@ class HomeFragment : Fragment() {
             .requireParentFragment()
             .findNavController()
             .navigate(R.id.action_bottomNavigationFragment_to_todayQuestionFragment)
-    }
-
-    private fun makeHomeContentVisible(enabled: Boolean) {
-        if (enabled) {
-            binding.llContentWrapper.visibility = View.VISIBLE
-            return
-        }
-        binding.llContentWrapper.visibility = View.GONE
-    }
-
-    private fun setLetterPaperSize() {
-//        makeHomeContentVisible(false)
-
-        binding.run {
-            llLetterContent.post {
-                val contentHeight = llLetterContent.height
-                val params = llLetterContent.layoutParams as FrameLayout.LayoutParams
-                val contentMargin = params.bottomMargin + params.topMargin
-                val totalHeight = contentHeight + contentMargin * 2 + (contentMargin * 2 / 4)
-                val letterBottomMargin = (-1 * totalHeight / 3.7).toInt()
-
-                (ivLetterPaper.layoutParams as FrameLayout.LayoutParams).apply {
-                    setMargins(0, 0, 0, letterBottomMargin)
-                    height = totalHeight
-                }.also {
-                    ivLetterPaper.layoutParams = it
-                }
-
-                setTopSpacerMargin()
-            }
-        }
-    }
-
-    private fun setTopSpacerMargin() {
-        binding.run {
-            ivLetterPaper.post {
-                val bottomSpacerHeight = spacerBottom.height.toFloat()
-                val bottomSpacerDp = pxToDp(bottomSpacerHeight)
-                val topSpacerDp = if (bottomSpacerDp >= 30) 30f else bottomSpacerDp / 2
-                val topSpacerPx = dpToPx(topSpacerDp).toInt()
-
-                val params = llContentWrapper.layoutParams as FrameLayout.LayoutParams
-                params.setMargins(0, topSpacerPx, 0, 0)
-                llContentWrapper.layoutParams = params
-
-//                makeHomeContentVisible(true)
-            }
-        }
     }
 }

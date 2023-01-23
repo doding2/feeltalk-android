@@ -24,8 +24,11 @@ class BottomNavigationFragment : Fragment() {
         binding = FragmentBottomNavigationBinding.inflate(inflater, container, false)
         val navHostFragment = childFragmentManager.findFragmentById(R.id.container_bottom_navigation) as NavHostFragment
         navController = navHostFragment.navController
-        navHostFragment.navController.clearBackStack(R.id.homeFragment)
-        navHostFragment.navController.clearBackStack(R.id.questionListFragment)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         binding.btnHome.setOnClickListener {
             navigateToHomePage()
@@ -36,50 +39,82 @@ class BottomNavigationFragment : Fragment() {
         binding.btnSetting.setOnClickListener {
             navigateToSettingPage()
         }
-
-        return binding.root
     }
 
     private fun navigateToHomePage() {
-        if (navController.currentDestination?.id == R.id.homeFragment)
+        val navigateFragmentId = R.id.homeFragment
+        if (navController.currentDestination?.id == navigateFragmentId)
             return
 
-        navController.popBackStack(R.id.questionListFragment, true)
-        navController.popBackStack(R.id.settingFragment, true)
-
+        clearBottomNavBackStack(navigateFragmentId)
         navController.navigate(R.id.homeFragment)
-
-        binding.btnHome.setImageResource(R.drawable.ic_home_button_clicked)
-        binding.btnQuestionList.setImageResource(R.drawable.ic_chat)
-        binding.btnSetting.setImageResource(R.drawable.ic_users_couple)
+        correctClickedBottomButton(navigateFragmentId)
     }
 
     private fun navigateToQuestionListPage() {
-        if (navController.currentDestination?.id == R.id.questionListFragment)
+        val navigateFragmentId = R.id.questionListFragment
+        if (navController.currentDestination?.id == navigateFragmentId)
             return
 
-        navController.popBackStack(R.id.homeFragment, true)
-        navController.popBackStack(R.id.settingFragment, true)
-
+        clearBottomNavBackStack(navigateFragmentId)
         navController.navigate(R.id.questionListFragment)
-
-        binding.btnHome.setImageResource(R.drawable.ic_home_button)
-        binding.btnQuestionList.setImageResource(R.drawable.ic_chat_clicked)
-        binding.btnSetting.setImageResource(R.drawable.ic_users_couple)
+        correctClickedBottomButton(navigateFragmentId)
     }
 
     private fun navigateToSettingPage() {
-        if (navController.currentDestination?.id == R.id.settingFragment)
+        val navigateFragmentId = R.id.settingFragment
+        if (navController.currentDestination?.id == navigateFragmentId)
             return
 
-        navController.popBackStack(R.id.homeFragment, true)
-        navController.popBackStack(R.id.questionListFragment, true)
-
+        clearBottomNavBackStack(navigateFragmentId)
         navController.navigate(R.id.settingFragment)
-
-        binding.btnHome.setImageResource(R.drawable.ic_home_button)
-        binding.btnQuestionList.setImageResource(R.drawable.ic_chat)
-        binding.btnSetting.setImageResource(R.drawable.ic_users_couple_clicked)
+        correctClickedBottomButton(navigateFragmentId)
     }
 
+    private fun clearBottomNavBackStack(currentFragmentId: Int) {
+        mutableListOf(
+            R.id.homeFragment,
+            R.id.questionListFragment,
+            R.id.settingFragment
+        ).run {
+            remove(currentFragmentId)
+            forEach {
+                navController.popBackStack(
+                    destinationId = it,
+                    inclusive = true
+                )
+            }
+        }
+    }
+
+    private fun correctClickedBottomButton(correctFragmentId: Int) {
+        binding.apply {
+            val homeButtonDrawable = if (correctFragmentId == R.id.homeFragment)
+                R.drawable.ic_home_button_clicked
+            else
+                R.drawable.ic_home_button
+
+            val questionListButtonDrawable = if (correctFragmentId == R.id.questionListFragment)
+                R.drawable.ic_chat_clicked
+            else
+                R.drawable.ic_chat
+
+            val settingButtonDrawable = if (correctFragmentId == R.id.settingFragment)
+                R.drawable.ic_users_couple_clicked
+            else
+                R.drawable.ic_users_couple
+
+            btnHome.setImageResource(homeButtonDrawable)
+            btnQuestionList.setImageResource(questionListButtonDrawable)
+            btnSetting.setImageResource(settingButtonDrawable)
+        }
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+        navController.currentDestination?.id?.let {
+            correctClickedBottomButton(it)
+        }
+    }
 }
