@@ -72,12 +72,6 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun provideGoogleAuthService(@Named("GOOGLE_AUTH") retrofit: Retrofit): GoogleAuthService {
-        return retrofit.create(GoogleAuthService::class.java)
-    }
-
-    @Singleton
-    @Provides
     fun providesClonectService(@Named("CLONECT") retrofit: Retrofit): ClonectService {
         return retrofit.create(ClonectService::class.java)
     }

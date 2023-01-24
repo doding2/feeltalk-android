@@ -1,9 +1,8 @@
 package com.clonect.feeltalk.presentation.di
 
-import com.clonect.feeltalk.data.api.ClonectService
-import com.clonect.feeltalk.data.api.GoogleAuthService
 import com.clonect.feeltalk.data.repository.user.UserRepositoryImpl
 import com.clonect.feeltalk.data.repository.user.datasource.UserCacheDataSource
+import com.clonect.feeltalk.data.repository.user.datasource.UserLocalDataSource
 import com.clonect.feeltalk.data.repository.user.datasource.UserRemoteDataSource
 import com.clonect.feeltalk.domain.repository.UserRepository
 import dagger.Module
@@ -20,9 +19,10 @@ class RepositoryModule {
     @Provides
     fun providesUserRepository(
         remoteDataSource: UserRemoteDataSource,
+        localDataSource: UserLocalDataSource,
         cacheDataSource: UserCacheDataSource
     ): UserRepository {
-        return UserRepositoryImpl(remoteDataSource, cacheDataSource)
+        return UserRepositoryImpl(remoteDataSource, localDataSource, cacheDataSource)
     }
 
 }

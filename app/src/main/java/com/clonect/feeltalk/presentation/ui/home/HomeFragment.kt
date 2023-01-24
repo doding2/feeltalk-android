@@ -1,11 +1,13 @@
 package com.clonect.feeltalk.presentation.ui.home
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentHomeBinding
@@ -18,6 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
+    private lateinit var onBackCallback: OnBackPressedCallback
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,5 +67,21 @@ class HomeFragment : Fragment() {
             .requireParentFragment()
             .findNavController()
             .navigate(R.id.action_bottomNavigationFragment_to_todayQuestionFragment)
+    }
+
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        onBackCallback = object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                this@HomeFragment.requireActivity().finish()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, onBackCallback)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        onBackCallback.remove()
     }
 }

@@ -46,6 +46,6 @@
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:reverseLayout="true"
-        app:stackFromEnd="true"/>
+        app:stackFromEnd="true" />
 
 </LinearLayout>

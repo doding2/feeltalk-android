@@ -1,20 +1,27 @@
 package com.clonect.feeltalk.presentation.ui.setting
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentSettingBinding
 import com.clonect.feeltalk.presentation.util.addTextGradient
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SettingFragment : Fragment() {
 
     private lateinit var binding: FragmentSettingBinding
+    private lateinit var onBackCallback: OnBackPressedCallback
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,8 +33,6 @@ class SettingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        initSwitch()
 
         binding.apply {
 
@@ -42,6 +47,8 @@ class SettingFragment : Fragment() {
             flProfile.setOnClickListener { navigateToCoupleSettingPage() }
             llDDay.setOnClickListener { navigateToCoupleSettingPage() }
         }
+
+        initSwitch()
     }
 
     private fun navigateToCoupleSettingPage() {
@@ -79,4 +86,18 @@ class SettingFragment : Fragment() {
     }
 
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        onBackCallback = object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                this@SettingFragment.requireActivity().finish()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, onBackCallback)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        onBackCallback.remove()
+    }
 }

@@ -13,7 +13,6 @@ import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.databinding.FragmentSignUpBinding
-import com.clonect.feeltalk.domain.model.user.SignUpEmailRequest
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -45,41 +44,41 @@ class SignUpFragment : Fragment() {
     }
 
     private fun signUp() = lifecycleScope.launch {
-
-        val profileFile = withContext(Dispatchers.IO) {
-            File(requireContext().cacheDir, "default_profile_female.png").apply {
-                createNewFile()
-                outputStream().use {
-                    requireContext().assets.open("default_profile_female.png").copyTo(it)
-                }
-            }
-        }
-
-        val request = binding.run {
-            SignUpEmailRequest(
-                email = etEmail.text.toString(),
-                password = etPassword.text.toString(),
-                name = etName.text.toString(),
-                nickname = etNickname.text.toString(),
-                age = etAge.text.toString(),
-                phone = etPhoneNum.text.toString(),
-                profile = profileFile
-            )
-        }
-
-        val userInfo = viewModel.signUp(request)
-        if (userInfo is Resource.Success) {
-            Log.i("SignUpFragment", "sign up server response: ${userInfo.data}")
-            navigateToHomePage()
-            return@launch
-        }
-
-        if (userInfo is Resource.Error) {
-            val exception = userInfo.throwable
-            Log.i("SignUpFragment", "Fail to sign up with email: ${exception.message}")
-        }
-        Log.i("SignUpFragment", "Fail to sign up with email: $userInfo")
-        Toast.makeText(requireContext(), "회원가입에 실패했습니다", Toast.LENGTH_SHORT).show()
+//
+//        val profileFile = withContext(Dispatchers.IO) {
+//            File(requireContext().cacheDir, "default_profile_female.png").apply {
+//                createNewFile()
+//                outputStream().use {
+//                    requireContext().assets.open("default_profile_female.png").copyTo(it)
+//                }
+//            }
+//        }
+//
+//        val request = binding.run {
+//            SignUpEmailRequest(
+//                email = etEmail.text.toString(),
+//                password = etPassword.text.toString(),
+//                name = etName.text.toString(),
+//                nickname = etNickname.text.toString(),
+//                age = etAge.text.toString(),
+//                phone = etPhoneNum.text.toString(),
+//                profile = profileFile
+//            )
+//        }
+//
+//        val userInfo = viewModel.signUp()
+//        if (userInfo is Resource.Success) {
+//            Log.i("SignUpFragment", "sign up server response: ${userInfo.data}")
+//            navigateToHomePage()
+//            return@launch
+//        }
+//
+//        if (userInfo is Resource.Error) {
+//            val exception = userInfo.throwable
+//            Log.i("SignUpFragment", "Fail to sign up with email: ${exception.message}")
+//        }
+//        Log.i("SignUpFragment", "Fail to sign up with email: $userInfo")
+//        Toast.makeText(requireContext(), "회원가입에 실패했습니다", Toast.LENGTH_SHORT).show()
     }
 
 }

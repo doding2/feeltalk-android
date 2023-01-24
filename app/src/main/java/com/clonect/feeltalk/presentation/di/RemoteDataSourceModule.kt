@@ -17,10 +17,9 @@ class RemoteDataSourceModule {
     @Singleton
     @Provides
     fun providesUserRemoteDataSource(
-        clonectService: ClonectService,
-        googleAuthService: GoogleAuthService
+        clonectService: ClonectService
     ): UserRemoteDataSource {
-        return UserRemoteDataSourceImpl(clonectService, googleAuthService)
+        return UserRemoteDataSourceImpl(clonectService)
     }
 
 }

@@ -1,5 +1,5 @@
 package com.clonect.feeltalk.domain.model.user
 
 data class UserInfo(
-    val token: String = ""
+    val accessToken: String = ""
 )

@@ -1,6 +1,7 @@
 package com.clonect.feeltalk.presentation.ui.bottom_navigation
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -46,7 +47,7 @@ class BottomNavigationFragment : Fragment() {
         if (navController.currentDestination?.id == navigateFragmentId)
             return
 
-        clearBottomNavBackStack(navigateFragmentId)
+        popBottomNavBackStack(R.id.homeFragment)
         navController.navigate(R.id.homeFragment)
         correctClickedBottomButton(navigateFragmentId)
     }
@@ -56,7 +57,7 @@ class BottomNavigationFragment : Fragment() {
         if (navController.currentDestination?.id == navigateFragmentId)
             return
 
-        clearBottomNavBackStack(navigateFragmentId)
+        popBottomNavBackStack(R.id.questionListFragment)
         navController.navigate(R.id.questionListFragment)
         correctClickedBottomButton(navigateFragmentId)
     }
@@ -66,12 +67,12 @@ class BottomNavigationFragment : Fragment() {
         if (navController.currentDestination?.id == navigateFragmentId)
             return
 
-        clearBottomNavBackStack(navigateFragmentId)
+        popBottomNavBackStack(R.id.settingFragment)
         navController.navigate(R.id.settingFragment)
         correctClickedBottomButton(navigateFragmentId)
     }
 
-    private fun clearBottomNavBackStack(currentFragmentId: Int) {
+    private fun popBottomNavBackStack(currentFragmentId: Int) {
         mutableListOf(
             R.id.homeFragment,
             R.id.questionListFragment,
@@ -117,4 +118,5 @@ class BottomNavigationFragment : Fragment() {
             correctClickedBottomButton(it)
         }
     }
+
 }

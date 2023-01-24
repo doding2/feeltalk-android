@@ -2,15 +2,12 @@ package com.clonect.feeltalk.domain.repository
 
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.user.*
+import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
 
-    suspend fun getGoogleTokens(authCode: String): Resource<GoogleTokens>
+    suspend fun signInWithGoogle(idToken: String): Resource<String>
 
-    suspend fun signUpWithEmail(request: SignUpEmailRequest): Resource<UserInfo>
-
-    suspend fun logInWithEmail(request: LogInEmailRequest): Resource<UserInfo>
-
-    suspend fun getUserInfo(): Resource<UserInfo>
+    suspend fun getUserInfo(accessToken: String): Flow<Resource<UserInfo>>
 
 }
