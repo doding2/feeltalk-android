@@ -25,8 +25,6 @@ class CoupleSettingFragment : Fragment() {
     ): View {
         binding = FragmentCoupleSettingBinding.inflate(inflater, container, false)
 
-        binding.textLogo.addTextGradient()
-
         binding.btnBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
 
         return binding.root

@@ -35,11 +35,6 @@ class SettingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
-
-            textLogo.addTextGradient()
-
-            btnAnotherSetting.setOnClickListener { }
-
             textMyName.text = "jenny"
 
             textMyName.setOnClickListener { navigateToCoupleSettingPage() }

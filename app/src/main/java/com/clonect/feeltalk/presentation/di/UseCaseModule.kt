@@ -23,4 +23,16 @@ class UseCaseModule {
     fun providesGetNewsListUseCase(): GetNewsListUseCase {
         return GetNewsListUseCase()
     }
+
+    @Singleton
+    @Provides
+    fun providesGetMyEmotionUseCase(): GetMyEmotionUseCase {
+        return GetMyEmotionUseCase()
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetPartnerEmotionUseCase(): GetPartnerEmotionUseCase {
+        return GetPartnerEmotionUseCase()
+    }
 }

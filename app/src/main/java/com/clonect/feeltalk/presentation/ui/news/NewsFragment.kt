@@ -35,7 +35,6 @@ class NewsFragment : Fragment() {
         binding = FragmentNewsBinding.inflate(inflater, container, false)
 
         initRecyclerView()
-
         collectNews()
 
         binding.btnBack.setOnClickListener { onBackCallback.handleOnBackPressed() }

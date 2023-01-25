@@ -28,9 +28,7 @@ import javax.inject.Inject
 class QuestionListFragment : Fragment() {
 
     private lateinit var binding: FragmentQuestionListBinding
-    private val viewModel: QuestionListViewModel by viewModels(
-        ownerProducer = { requireActivity() }
-    )
+    private val viewModel: QuestionListViewModel by viewModels()
     @Inject
     lateinit var adapter: QuestionListAdapter
     private lateinit var onBackCallback: OnBackPressedCallback
@@ -46,13 +44,11 @@ class QuestionListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.textLogo.addTextGradient()
+        initRecyclerView()
 
-        binding.btnMoreSelection.setOnClickListener {
+        collectQuestionList()
+        collectScrollPosition()
 
-        }
-
-        binding.rvQuestionList.adapter = adapter
         adapter.differ.submitList(mutableListOf(
             Question(0, "", "질문 1","", "내 답변 1", "상대방 답변 1", "", ""),
             Question(1, "", "길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 2", "", "", "", "", ""),
@@ -72,11 +68,14 @@ class QuestionListFragment : Fragment() {
             Question(15, "", "질문 4","", "", "상대방 답변 4", "", ""),
             Question(-50505L, "", "", "", "", "", "", ""),
         ))
+
+    }
+
+    private fun initRecyclerView() {
+        binding.rvQuestionList.adapter = adapter
         adapter.setOnItemClickListener {
             clickQuestionItem(it)
         }
-
-        collectScrollPosition()
     }
 
     private fun collectScrollPosition() = lifecycleScope.launch {
@@ -87,6 +86,14 @@ class QuestionListFragment : Fragment() {
                         scrollBy(0, it)
                     }
                 }
+            }
+        }
+    }
+
+    private fun collectQuestionList() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.questionListState.collectLatest {
+//                adapter.differ.submitList(it)
             }
         }
     }

@@ -49,20 +49,15 @@ class TodayQuestionFragment : Fragment() {
         args.selectedQuestion?.let { viewModel.setQuestion(it) }
 
         initMyAnswerEditText()
-
         changeTitleTextByQuestion()
 
         binding.apply {
-
             btnBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
 
             etMyAnswer.addTextChangedListener {
-
                 viewModel.setMyAnswer(it.toString().trim())
-
                 val isEnterAnswerButtonReady = (viewModel.questionStateFlow.value is Resource.Success)
                         && !it.isNullOrBlank()
-
                 enableEnterAnswerButton(isEnterAnswerButtonReady)
             }
 

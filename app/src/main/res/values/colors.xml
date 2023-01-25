@@ -21,9 +21,11 @@
 
     <!--  fragment_home.xml  -->
     <color name="d_day_text_color">#545454</color>
-    <color name="profile_name_text_color">#1A1A1A</color>
-    <color name="profile_name_shadow_color">#0D000000</color>
+    <color name="home_name_text_color">#1A1A1A</color>
+    <color name="home_name_shadow_color">#0D000000</color>
     <color name="letter_title_color">#282830</color>
+    <color name="home_my_emotion_background">#FFDEDE</color>
+    <color name="home_partner_emotion_background">#DFDEFF</color>
 
     <!--  item_question_list_header.xml  -->
     <color name="question_mark_text_color">#C8C5DB</color>

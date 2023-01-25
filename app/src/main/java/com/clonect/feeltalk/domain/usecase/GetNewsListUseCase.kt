@@ -6,7 +6,7 @@ import com.clonect.feeltalk.domain.model.news.NewsType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class GetNewsListUseCase() {
+class GetNewsListUseCase {
 
     operator fun invoke(): Flow<Resource<List<News>>> = flow {
         val testList = mutableListOf(
