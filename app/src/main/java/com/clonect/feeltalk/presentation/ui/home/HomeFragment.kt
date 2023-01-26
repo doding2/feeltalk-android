@@ -2,26 +2,33 @@ package com.clonect.feeltalk.presentation.ui.home
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
 import com.clonect.feeltalk.R
+import com.clonect.feeltalk.common.Constants
+import com.clonect.feeltalk.data.repository.notification.NotificationRepository
 import com.clonect.feeltalk.databinding.FragmentHomeBinding
+import com.clonect.feeltalk.domain.model.notification.NotificationData
+import com.clonect.feeltalk.domain.model.notification.PushNotification
 import com.clonect.feeltalk.domain.model.user.Emotion
-import com.clonect.feeltalk.presentation.util.addTextGradient
+import com.clonect.feeltalk.presentation.utils.addTextGradient
+import com.clonect.feeltalk.presentation.utils.showMyEmotionChangerDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -61,6 +68,14 @@ class HomeFragment : Fragment() {
             btnNews.setOnClickListener {
                 navigateToNewsPage()
             }
+
+            cvMyEmotion.setOnClickListener {
+                showMyEmotionChanger()
+            }
+
+            cvPartnerEmotion.setOnClickListener {
+                viewModel.sendNotification()
+            }
         }
     }
 
@@ -70,12 +85,14 @@ class HomeFragment : Fragment() {
             launch {
                 viewModel.myEmotionState.collectLatest {
                     binding.ivMyEmotion.setEmotion(it)
+                    binding.cvMyEmotion.setEmotionBackground(it)
                 }
             }
 
             launch {
                 viewModel.partnerEmotionState.collectLatest {
                     binding.ivPartnerEmotion.setEmotion(it)
+                    binding.cvPartnerEmotion.setEmotionBackground(it)
                 }
             }
         }
@@ -88,12 +105,25 @@ class HomeFragment : Fragment() {
             is Emotion.Bad -> R.drawable.ic_emotion_bad
             is Emotion.Angry -> R.drawable.ic_emotion_angry
         }
-
-        Glide.with(requireContext())
-            .load(emotionId)
-            .into(this)
+        setImageResource(emotionId)
     }
 
+    private fun CardView.setEmotionBackground(emotion: Emotion) {
+        val backgroundColor = when (emotion) {
+            is Emotion.Happy -> R.color.emotion_happy_color
+            is Emotion.Puzzling -> R.color.emotion_puzzling_color
+            is Emotion.Bad -> R.color.emotion_bad_color
+            is Emotion.Angry -> R.color.emotion_angry_color
+        }
+        setCardBackgroundColor(ContextCompat.getColor(requireContext(), backgroundColor))
+    }
+
+    private fun showMyEmotionChanger() {
+        val currentEmotion = viewModel.myEmotionState.value
+        showMyEmotionChangerDialog(currentEmotion) {
+            viewModel.changeMyEmotion(it)
+        }
+    }
 
 
     private fun navigateToNewsPage() {
@@ -110,7 +140,6 @@ class HomeFragment : Fragment() {
             .navigate(R.id.action_bottomNavigationFragment_to_todayQuestionFragment)
     }
 
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         onBackCallback = object: OnBackPressedCallback(true) {
@@ -119,6 +148,7 @@ class HomeFragment : Fragment() {
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, onBackCallback)
+
     }
 
     override fun onDetach() {

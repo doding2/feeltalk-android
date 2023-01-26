@@ -8,9 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.findNavController
-import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentCoupleSettingBinding
-import com.clonect.feeltalk.presentation.util.addTextGradient
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

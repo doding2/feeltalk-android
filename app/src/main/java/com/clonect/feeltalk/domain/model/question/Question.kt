@@ -8,7 +8,7 @@ data class Question(
     val contentPrefix: String = "",
     val content: String = "",
     val contentSuffix: String = "",
-    val myAnswer: String = "",
+    var myAnswer: String = "",
     val partnerAnswer: String = "",
     val myAnswerDate: String = "",
     val partnerAnswerDate: String =""

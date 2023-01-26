@@ -14,11 +14,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentQuestionListBinding
 import com.clonect.feeltalk.domain.model.question.Question
-import com.clonect.feeltalk.presentation.util.addTextGradient
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -49,26 +47,6 @@ class QuestionListFragment : Fragment() {
         collectQuestionList()
         collectScrollPosition()
 
-        adapter.differ.submitList(mutableListOf(
-            Question(0, "", "질문 1","", "내 답변 1", "상대방 답변 1", "", ""),
-            Question(1, "", "길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 2", "", "", "", "", ""),
-            Question(2, "", "질문 3", "", "내 답변 3", "", "", ""),
-            Question(3, "", "질문 4","", "", "상대방 답변 4", "", ""),
-            Question(4, "", "질문 1","", "내 답변 1", "상대방 답변 1", "", ""),
-            Question(5, "", "길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 2", "", "", "", "", ""),
-            Question(6, "", "질문 3", "", "내 답변 3", "", "", ""),
-            Question(7, "", "질문 4","", "", "상대방 답변 4", "", ""),
-            Question(8, "", "질문 1","", "내 답변 1", "상대방 답변 1", "", ""),
-            Question(9, "", "길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 2", "", "", "", "", ""),
-            Question(10, "", "질문 3", "", "내 답변 3", "", "", ""),
-            Question(11, "", "질문 4","", "", "상대방 답변 4", "", ""),
-            Question(12, "", "질문 1","", "내 답변 1", "상대방 답변 1", "", ""),
-            Question(13, "", "길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 길쭉한 질문 2", "", "", "", "", ""),
-            Question(14, "", "질문 3", "", "내 답변 3", "", "", ""),
-            Question(15, "", "질문 4","", "", "상대방 답변 4", "", ""),
-            Question(-50505L, "", "", "", "", "", "", ""),
-        ))
-
     }
 
     private fun initRecyclerView() {
@@ -93,7 +71,7 @@ class QuestionListFragment : Fragment() {
     private fun collectQuestionList() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.questionListState.collectLatest {
-//                adapter.differ.submitList(it)
+                adapter.differ.submitList(it)
             }
         }
     }

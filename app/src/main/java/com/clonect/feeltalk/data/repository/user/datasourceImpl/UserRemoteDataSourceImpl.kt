@@ -1,15 +1,8 @@
 package com.clonect.feeltalk.data.repository.user.datasourceImpl
 
 import com.clonect.feeltalk.data.api.ClonectService
-import com.clonect.feeltalk.data.api.GoogleAuthService
 import com.clonect.feeltalk.data.repository.user.datasource.UserRemoteDataSource
 import com.clonect.feeltalk.domain.model.user.UserInfo
-import kotlinx.coroutines.CancellationException
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import retrofit2.HttpException
 import retrofit2.Response
 
 class UserRemoteDataSourceImpl(

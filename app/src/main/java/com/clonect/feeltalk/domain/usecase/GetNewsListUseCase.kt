@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class GetNewsListUseCase {
-
     operator fun invoke(): Flow<Resource<List<News>>> = flow {
         val testList = mutableListOf(
             News(0, "Daniel", "님과 커플이 되었습니다.", "1일 전", NewsType.Official),
@@ -19,5 +18,4 @@ class GetNewsListUseCase {
 
         emit(Resource.Success(testList))
     }
-
 }

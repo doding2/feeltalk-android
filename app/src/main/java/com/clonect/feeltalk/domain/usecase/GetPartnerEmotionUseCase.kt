@@ -7,10 +7,11 @@ import com.clonect.feeltalk.domain.model.user.Emotion
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlin.random.Random
+import kotlin.random.nextInt
 
 class GetPartnerEmotionUseCase {
     operator fun invoke(): Flow<Resource<Emotion>> = flow {
-        val testEmotion = when (Random.nextInt() % 4) {
+        val testEmotion = when (Random.nextInt(0..3)) {
             0 -> Emotion.Angry
             1 -> Emotion.Bad
             2 -> Emotion.Puzzling

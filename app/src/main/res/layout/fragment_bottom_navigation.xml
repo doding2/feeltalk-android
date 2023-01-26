@@ -24,6 +24,8 @@
         android:id="@+id/layout_bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:elevation="5dp"
+        android:background="@color/bottom_navigation_background_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -66,7 +68,6 @@
                 app:layout_constraintStart_toEndOf="@id/spacer_home"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:padding="14dp" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 
@@ -74,6 +75,8 @@
         android:id="@+id/btn_home"
         android:layout_width="116dp"
         android:layout_height="80dp"
+        android:translationZ="20dp"
+        android:elevation="0dp"
         android:src="@drawable/ic_home_button_clicked"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -1,10 +1,9 @@
-package com.clonect.feeltalk.presentation.util
+package com.clonect.feeltalk.presentation.utils
 
 import android.graphics.LinearGradient
 import android.graphics.Shader
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import com.clonect.feeltalk.R
 import kotlin.math.cos
 import kotlin.math.sin

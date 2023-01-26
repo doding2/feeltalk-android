@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.user.Emotion
+import com.clonect.feeltalk.domain.usecase.GetFcmTokenUseCase
 import com.clonect.feeltalk.domain.usecase.GetMyEmotionUseCase
 import com.clonect.feeltalk.domain.usecase.GetPartnerEmotionUseCase
+import com.clonect.feeltalk.domain.usecase.SendFcmUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +19,9 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getMyEmotionUseCase: GetMyEmotionUseCase,
-    private val getPartnerEmotionUseCase: GetPartnerEmotionUseCase
+    private val getPartnerEmotionUseCase: GetPartnerEmotionUseCase,
+    private val getFcmTokenUseCase: GetFcmTokenUseCase,
+    private val sendFcmUseCase: SendFcmUseCase
 ): ViewModel() {
 
     private val _myEmotionState = MutableStateFlow<Emotion>(Emotion.Happy)
@@ -30,6 +34,17 @@ class HomeViewModel @Inject constructor(
         getMyEmotion()
         getPartnerEmotion()
     }
+
+    fun sendNotification() = viewModelScope.launch(Dispatchers.IO) {
+        getFcmTokenUseCase()?.let {
+            sendFcmUseCase(it)
+        }
+    }
+
+    fun changeMyEmotion(emotion: Emotion) {
+        _myEmotionState.value = emotion
+    }
+
 
     private fun getMyEmotion() = viewModelScope.launch(Dispatchers.IO) {
         getMyEmotionUseCase().collect {

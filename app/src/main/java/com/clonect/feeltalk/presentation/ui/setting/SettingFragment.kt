@@ -8,11 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentSettingBinding
-import com.clonect.feeltalk.presentation.util.addTextGradient
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -21,6 +22,7 @@ import kotlinx.coroutines.launch
 class SettingFragment : Fragment() {
 
     private lateinit var binding: FragmentSettingBinding
+    private val viewModel: SettingViewModel by viewModels()
     private lateinit var onBackCallback: OnBackPressedCallback
 
     override fun onCreateView(
@@ -34,6 +36,9 @@ class SettingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        collectNotificationSettings()
+        initSwitch()
+
         binding.apply {
             textMyName.text = "jenny"
 
@@ -43,7 +48,22 @@ class SettingFragment : Fragment() {
             llDDay.setOnClickListener { navigateToCoupleSettingPage() }
         }
 
-        initSwitch()
+    }
+
+    private fun collectNotificationSettings() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch {
+                viewModel.isPushNotificationEnabled.collectLatest {
+                    binding.switchPushNotification.setCheckedImmediately(it)
+                }
+            }
+
+            launch {
+                viewModel.isUsageInfoNotificationEnabled.collectLatest {
+                    binding.switchUsageInfoNotification.setCheckedImmediately(it)
+                }
+            }
+        }
     }
 
     private fun navigateToCoupleSettingPage() {
@@ -63,19 +83,21 @@ class SettingFragment : Fragment() {
 
         switchPushNotification.apply {
             setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked)
-                    setThumbDrawableRes(R.drawable.ic_switch_thumb_on)
-                else
-                    setThumbDrawableRes(R.drawable.ic_switch_thumb_off)
+                val drawableRes =
+                    if (isChecked) R.drawable.ic_switch_thumb_on
+                    else R.drawable.ic_switch_thumb_off
+                setThumbDrawableRes(drawableRes)
+                viewModel.enablePushNotification(isChecked)
             }
         }
 
         switchUsageInfoNotification.apply {
             setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked)
-                    setThumbDrawableRes(R.drawable.ic_switch_thumb_on)
-                else
-                    setThumbDrawableRes(R.drawable.ic_switch_thumb_off)
+                val drawableRes =
+                    if (isChecked) R.drawable.ic_switch_thumb_on
+                    else R.drawable.ic_switch_thumb_off
+                setThumbDrawableRes(drawableRes)
+                viewModel.enableUsageInfoNotification(isChecked)
             }
         }
     }

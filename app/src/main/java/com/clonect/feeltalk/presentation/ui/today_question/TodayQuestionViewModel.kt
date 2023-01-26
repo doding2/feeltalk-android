@@ -16,18 +16,25 @@ class TodayQuestionViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
-    private val _questionStateFlow = MutableStateFlow<Resource<Question>>(Resource.Loading)
+    private val _questionStateFlow = MutableStateFlow(Question())
     val questionStateFlow = _questionStateFlow.asStateFlow()
 
     private val _myAnswerStateFlow = MutableStateFlow("")
     val myAnswerStateFlow: StateFlow<String> = _myAnswerStateFlow.asStateFlow()
 
+    init {
+        savedStateHandle.get<Question>("selectedQuestion")?.let {
+            setQuestion(it)
+        }
+    }
+
     fun setQuestion(question: Question) {
-        _questionStateFlow.value = Resource.Success(question)
+        _questionStateFlow.value = question
     }
 
     fun setMyAnswer(answer: String) {
         _myAnswerStateFlow.value = answer
+        _questionStateFlow.value.myAnswer = answer
     }
 
     suspend fun requestPartnerAnswer() {

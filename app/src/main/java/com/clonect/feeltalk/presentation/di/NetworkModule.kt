@@ -1,8 +1,9 @@
 package com.clonect.feeltalk.presentation.di
 
 import com.clonect.feeltalk.BuildConfig
+import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.data.api.ClonectService
-import com.clonect.feeltalk.data.api.GoogleAuthService
+import com.clonect.feeltalk.data.api.NotificationService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,8 +12,6 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
-import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -72,8 +71,27 @@ class NetworkModule {
 
     @Singleton
     @Provides
+    @Named("Notification")
+    fun providesNotificationRetrofit(
+        okHttpClient: OkHttpClient
+    ): Retrofit {
+        return Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(okHttpClient)
+            .baseUrl(Constants.FCM_BASE_URL)
+            .build()
+    }
+
+    @Singleton
+    @Provides
     fun providesClonectService(@Named("CLONECT") retrofit: Retrofit): ClonectService {
         return retrofit.create(ClonectService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providesNotificationService(@Named("Notification") retrofit: Retrofit): NotificationService {
+        return retrofit.create(NotificationService::class.java)
     }
 
 }

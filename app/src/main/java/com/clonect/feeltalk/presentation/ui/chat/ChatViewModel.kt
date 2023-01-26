@@ -81,21 +81,31 @@ class ChatViewModel @Inject constructor(
     }
 
     private fun updateChatList(chatList: List<Chat>) {
-        val myChat = Chat(
-            id = 0L,
-            ownerEmail = "mine", // TODO 제대로된 정보로 변경
-            content = _questionState.value.myAnswer,
-            date = _questionState.value.myAnswerDate,
-            isAnswer = true
-        )
-        val partnerChat = Chat(
-            id = 1L,
-            ownerEmail = "partner", // TODO 제대로된 정보로 변경
-            content = _questionState.value.partnerAnswer,
-            date = _questionState.value.partnerAnswerDate,
-            isAnswer = true
-        )
-        val newList = mutableListOf(myChat, partnerChat)
+        val currentQuestion = questionState.value
+        val newList = mutableListOf<Chat>()
+
+        if (currentQuestion.myAnswer.isNotBlank()) {
+            Chat(
+                id = 0L,
+                ownerEmail = "mine", // TODO 제대로된 정보로 변경
+                content = _questionState.value.myAnswer,
+                date = _questionState.value.myAnswerDate,
+                isAnswer = true
+            ).also {
+                newList.add(it)
+            }
+        }
+        if (currentQuestion.partnerAnswer.isNotBlank()) {
+            Chat(
+                id = 1L,
+                ownerEmail = "partner", // TODO 제대로된 정보로 변경
+                content = _questionState.value.partnerAnswer,
+                date = _questionState.value.partnerAnswerDate,
+                isAnswer = true
+            ).also {
+                newList.add(it)
+            }
+        }
 
         newList.addAll(chatList)
         newList.sortBy { it.date }

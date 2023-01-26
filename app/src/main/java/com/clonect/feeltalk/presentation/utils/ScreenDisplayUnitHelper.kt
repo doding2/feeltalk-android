@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.presentation.util
+package com.clonect.feeltalk.presentation.utils
 
 import android.content.res.Resources
 import android.util.DisplayMetrics

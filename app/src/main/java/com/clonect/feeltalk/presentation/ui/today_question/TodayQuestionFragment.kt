@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -26,8 +25,7 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.databinding.FragmentTodayQuestionBinding
 import com.clonect.feeltalk.domain.model.question.Question
-import com.clonect.feeltalk.presentation.util.addTextGradient
-import com.clonect.feeltalk.presentation.util.showAlertDialog
+import com.clonect.feeltalk.presentation.utils.showAlertDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -45,19 +43,18 @@ class TodayQuestionFragment : Fragment() {
     ): View {
         binding = FragmentTodayQuestionBinding.inflate(inflater, container, false)
 
-        val args: TodayQuestionFragmentArgs by navArgs()
-        args.selectedQuestion?.let { viewModel.setQuestion(it) }
+//        val args: TodayQuestionFragmentArgs by navArgs()
+//        args.selectedQuestion?.let { viewModel.setQuestion(it) }
 
         initMyAnswerEditText()
-        changeTitleTextByQuestion()
+        collectQuestion()
 
         binding.apply {
             btnBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
 
             etMyAnswer.addTextChangedListener {
                 viewModel.setMyAnswer(it.toString().trim())
-                val isEnterAnswerButtonReady = (viewModel.questionStateFlow.value is Resource.Success)
-                        && !it.isNullOrBlank()
+                val isEnterAnswerButtonReady = viewModel.questionStateFlow.value.content.isNotBlank() && !it.isNullOrBlank()
                 enableEnterAnswerButton(isEnterAnswerButtonReady)
             }
 
@@ -79,9 +76,7 @@ class TodayQuestionFragment : Fragment() {
     }
 
     private fun clickEnterAnswerButton() = lifecycleScope.launch {
-        val question = (viewModel.questionStateFlow.value as? Resource.Success
-            ?: return@launch)
-            .data
+        val question = viewModel.questionStateFlow.value
 
         var titleId = R.string.dialog_partner_state_not_done_title
         var messageId = R.string.dialog_partner_state_not_done_message
@@ -135,15 +130,11 @@ class TodayQuestionFragment : Fragment() {
         }
     }
 
-    private fun changeTitleTextByQuestion() = lifecycleScope.launch {
+    private fun collectQuestion() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.questionStateFlow.collectLatest {
-                val question = (it as? Resource.Success
-                    ?: return@collectLatest)
-                    .data
-
-                reassembleQuestionTitle(question)
-                changePartnerStateTextView(question)
+                reassembleQuestionTitle(it)
+                changePartnerStateTextView(it)
 
                 if (viewModel.myAnswerStateFlow.value != "")
                     enableEnterAnswerButton(true)
@@ -151,12 +142,8 @@ class TodayQuestionFragment : Fragment() {
         }
     }
 
-    private fun processQuestion() {
-
-    }
-
     private fun changePartnerStateTextView(question: Question) = binding.apply {
-        if (question.partnerAnswer.isNullOrEmpty()) {
+        if (question.partnerAnswer.isNotBlank()) {
             textPartnerStatePrefix.setText(R.string.today_question_partner_state_not_done_prefix)
             val stateText = getString(R.string.today_question_partner_state_not_done)
             val stateUnderLine = SpannableString(stateText).apply {

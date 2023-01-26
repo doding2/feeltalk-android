@@ -1,21 +1,32 @@
 package com.clonect.feeltalk.presentation.ui.bottom_navigation
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context.NOTIFICATION_SERVICE
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentBottomNavigationBinding
+import com.clonect.feeltalk.presentation.service.FirebaseCloudMessagingService
+import com.clonect.feeltalk.presentation.utils.delegates.PostNotificationsPermission
+import com.clonect.feeltalk.presentation.utils.delegates.PostNotificationsPermissionImpl
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class BottomNavigationFragment : Fragment() {
+class BottomNavigationFragment : Fragment(), PostNotificationsPermission by PostNotificationsPermissionImpl() {
 
     private lateinit var binding: FragmentBottomNavigationBinding
+    private val viewModel: BottomNavigationViewModel by viewModels()
     private lateinit var navController: NavController
 
     override fun onCreateView(
@@ -25,6 +36,9 @@ class BottomNavigationFragment : Fragment() {
         binding = FragmentBottomNavigationBinding.inflate(inflater, container, false)
         val navHostFragment = childFragmentManager.findFragmentById(R.id.container_bottom_navigation) as NavHostFragment
         navController = navHostFragment.navController
+
+        initFirebase()
+
         return binding.root
     }
 
@@ -40,7 +54,20 @@ class BottomNavigationFragment : Fragment() {
         binding.btnSetting.setOnClickListener {
             navigateToSettingPage()
         }
+
+
+        createNotificationChannel()
+        checkPostNotificationsPermission()
+
     }
+
+    private fun initFirebase() {
+        FirebaseMessaging.getInstance().token.addOnSuccessListener {
+            Log.i("BottomNavFragment", "FcmToken: $it")
+            FirebaseMessaging.getInstance().subscribeToTopic("Android")
+        }
+    }
+
 
     private fun navigateToHomePage() {
         val navigateFragmentId = R.id.homeFragment
@@ -111,12 +138,26 @@ class BottomNavigationFragment : Fragment() {
         }
     }
 
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationManager = requireActivity().getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            val channelName = "연인의 알림"
+            val channel = NotificationChannel(FirebaseCloudMessagingService.CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_HIGH).apply {
+                description = "띠링 띠링"
+            }
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun clearScreenCapture() {
+        requireActivity().window?.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+    }
 
     override fun onStart() {
         super.onStart()
+        clearScreenCapture()
         navController.currentDestination?.id?.let {
             correctClickedBottomButton(it)
         }
     }
-
 }

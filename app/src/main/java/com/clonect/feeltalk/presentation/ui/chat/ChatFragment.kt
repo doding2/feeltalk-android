@@ -2,13 +2,12 @@ package com.clonect.feeltalk.presentation.ui.chat
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.viewModels
@@ -16,11 +15,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentChatBinding
 import com.clonect.feeltalk.domain.model.question.Question
-import com.clonect.feeltalk.presentation.util.showAlertDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -34,7 +31,7 @@ class ChatFragment : Fragment() {
     private lateinit var binding: FragmentChatBinding
     private val viewModel: ChatViewModel by viewModels()
     @Inject
-    lateinit var  adapter: ChatAdapter
+    lateinit var adapter: ChatAdapter
     private lateinit var onBackCallback: OnBackPressedCallback
 
     private var scrollRemainHeight = 0
@@ -44,6 +41,12 @@ class ChatFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentChatBinding.inflate(inflater, container, false)
+        preventScreenCapture()
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         initRecyclerView()
 
@@ -54,12 +57,30 @@ class ChatFragment : Fragment() {
         binding.btnSendChat.setOnClickListener { sendChat() }
 
         binding.btnBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
+    }
 
-        return binding.root
+    private fun preventScreenCapture() {
+        requireActivity().window?.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+    }
+
+    private fun sendChat() {
+        val format = SimpleDateFormat("yyyy년 MM월 dd일 hh:mm:ss", Locale.getDefault())
+        val date = format.format(Date())
+
+        binding.etChat.text.toString()
+            .takeIf { it.isNotEmpty() }
+            ?.let {
+                binding.etChat.setText("")
+                viewModel.sendChat(
+                    content = it,
+                    date = date
+                )
+            }
     }
 
     private fun initRecyclerView() {
         binding.rvChat.adapter = adapter
+        // adjust scroll y when keboard up/down
         binding.rvChat.addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
             if (bottom == oldBottom) return@addOnLayoutChangeListener
 
@@ -77,27 +98,6 @@ class ChatFragment : Fragment() {
 
             binding.rvChat.scrollBy(0, rangeMoved)
         }
-    }
-
-    private fun computeRemainScrollHeight(): Int {
-        return binding.rvChat.run {
-            computeVerticalScrollRange() - computeVerticalScrollOffset() - computeVerticalScrollExtent()
-        }
-    }
-
-    private fun sendChat() {
-        val format = SimpleDateFormat("yyyy년 MM월 dd일 hh:mm:ss", Locale.getDefault())
-        val date = format.format(Date())
-
-        binding.etChat.text.toString()
-            .takeIf { it.isNotEmpty() }
-            ?.let {
-                binding.etChat.setText("")
-                viewModel.sendChat(
-                    content = it,
-                    date = date
-                )
-            }
     }
 
     private fun collectQuestion() = lifecycleScope.launch {
@@ -125,6 +125,13 @@ class ChatFragment : Fragment() {
             viewModel.scrollPositionState.collectLatest {
                 binding.rvChat.scrollToPosition(it)
             }
+        }
+    }
+
+
+    private fun computeRemainScrollHeight(): Int {
+        return binding.rvChat.run {
+            computeVerticalScrollRange() - computeVerticalScrollOffset() - computeVerticalScrollExtent()
         }
     }
 

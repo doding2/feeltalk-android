@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "422145577673",
+    "project_id": "feeltalk-1673337079164",
+    "storage_bucket": "feeltalk-1673337079164.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:422145577673:android:32cabdf0de72ab0bfb3318",
+        "android_client_info": {
+          "package_name": "com.clonect.feeltalk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "422145577673-dbgjm4emm14vqssd978sksti4sjas9e6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.clonect.feeltalk",
+            "certificate_hash": "0f92a3b338a8759f44a3c972c5e71eadd1905134"
+          }
+        },
+        {
+          "client_id": "422145577673-9pi0ubc9n5k1soetj6bn9uh4l0d76hm9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDG4Dw0RnXgjU0N7nbkWEQ6G5tXWAXnhY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "422145577673-9pi0ubc9n5k1soetj6bn9uh4l0d76hm9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

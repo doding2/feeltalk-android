@@ -52,7 +52,8 @@
         android:textSize="16sp"
         android:textColor="@color/dialog_message_color"
         android:fontFamily="@font/pretendard_light"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        android:gravity="center"/>
 
 
     <TextView
