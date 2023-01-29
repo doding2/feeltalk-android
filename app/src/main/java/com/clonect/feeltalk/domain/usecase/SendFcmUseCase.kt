@@ -15,8 +15,8 @@ class SendFcmUseCase(
         notificationRepository.postNotification(
             pushNotification = PushNotification(
                 data = NotificationData(
-                    title = "알림 제목",
-                    message = "알림 내용"
+                    title = "최종근",
+                    message = "야 승준아 너 놀고있지"
                 ),
                 to = fcmToken
             ),

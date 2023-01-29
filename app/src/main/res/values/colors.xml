@@ -13,7 +13,10 @@
     <color name="sub">#C8C5DB</color>
     <color name="gradient_start">#FF2BAA</color>
     <color name="gradient_end">#FF2B64</color>
-    
+
+    <!--  splash_theme.xml  -->
+    <color name="splash_background">#FF5A94</color>
+
     <!--  Dialog  -->
     <color name="dialog_title_color">@color/black</color>
     <color name="dialog_message_color">#545454</color>
@@ -85,4 +88,7 @@
 
     <!--  fragment_couple_setting.xml  -->
     <color name="couple_setting_start_date_subtitle_color">#1A1A1A</color>
+
+
+
 </resources>

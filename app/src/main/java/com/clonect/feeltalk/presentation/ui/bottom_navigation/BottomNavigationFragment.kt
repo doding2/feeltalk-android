@@ -142,7 +142,7 @@ class BottomNavigationFragment : Fragment(), PostNotificationsPermission by Post
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationManager = requireActivity().getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             val channelName = "연인의 알림"
-            val channel = NotificationChannel(FirebaseCloudMessagingService.CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_HIGH).apply {
+            val channel = NotificationChannel(FirebaseCloudMessagingService.TODAY_QUESTION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_HIGH).apply {
                 description = "띠링 띠링"
             }
             notificationManager.createNotificationChannel(channel)

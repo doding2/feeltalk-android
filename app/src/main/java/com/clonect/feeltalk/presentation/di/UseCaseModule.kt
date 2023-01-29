@@ -2,6 +2,7 @@ package com.clonect.feeltalk.presentation.di
 
 import android.content.SharedPreferences
 import com.clonect.feeltalk.data.repository.notification.NotificationRepository
+import com.clonect.feeltalk.domain.repository.ChatRepository
 import com.clonect.feeltalk.domain.usecase.*
 import dagger.Module
 import dagger.Provides
@@ -62,4 +63,15 @@ class UseCaseModule {
         return SendFcmUseCase(notificationRepository)
     }
 
+    @Singleton
+    @Provides
+    fun providesSaveChatUseCase(chatRepository: ChatRepository): SaveChatUseCase {
+        return SaveChatUseCase(chatRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetQuestionByIdUseCase(): GetQuestionByIdUseCase {
+        return GetQuestionByIdUseCase()
+    }
 }

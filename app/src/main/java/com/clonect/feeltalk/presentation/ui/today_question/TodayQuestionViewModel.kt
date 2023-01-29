@@ -9,6 +9,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -33,8 +35,12 @@ class TodayQuestionViewModel @Inject constructor(
     }
 
     fun setMyAnswer(answer: String) {
+        val format = SimpleDateFormat("yyyy년 MM월 dd일 hh:mm:ss", Locale.getDefault())
+        val date = format.format(Date())
+
         _myAnswerStateFlow.value = answer
         _questionStateFlow.value.myAnswer = answer
+        _questionStateFlow.value.myAnswerDate = date
     }
 
     suspend fun requestPartnerAnswer() {

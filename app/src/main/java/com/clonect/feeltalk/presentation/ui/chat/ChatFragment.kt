@@ -64,17 +64,11 @@ class ChatFragment : Fragment() {
     }
 
     private fun sendChat() {
-        val format = SimpleDateFormat("yyyy년 MM월 dd일 hh:mm:ss", Locale.getDefault())
-        val date = format.format(Date())
-
         binding.etChat.text.toString()
             .takeIf { it.isNotEmpty() }
             ?.let {
                 binding.etChat.setText("")
-                viewModel.sendChat(
-                    content = it,
-                    date = date
-                )
+                viewModel.sendChat(it)
             }
     }
 

@@ -2,9 +2,9 @@ package com.clonect.feeltalk.presentation.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatDelegate
+import android.util.Log
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.clonect.feeltalk.databinding.ActivityMainBinding
-import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -14,13 +14,20 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        disableNightMode()
     }
 
-    private fun disableNightMode() {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+    override fun onResume() {
+        super.onResume()
+        FeeltalkApp.onAppResumed()
     }
+
+    override fun onPause() {
+        super.onPause()
+        FeeltalkApp.onAppPaused()
+    }
+
+
 }

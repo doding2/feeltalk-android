@@ -20,6 +20,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "CLONECT_BASE_URL", CLONECT_BASE_URL)
+        buildConfigField("String", "KAKAO_NATIVE_APP_KEY", KAKAO_NATIVE_APP_KEY)
         buildConfigField("String", "GOOGLE_AUTH_BASE_URL", GOOGLE_AUTH_BASE_URL)
         buildConfigField("String", "GOOGLE_AUTH_CLIENT_ID", GOOGLE_AUTH_CLIENT_ID)
         buildConfigField("String", "GOOGLE_AUTH_CLIENT_SECRET", GOOGLE_AUTH_CLIENT_SECRET)
@@ -54,6 +55,8 @@ dependencies {
     implementation 'com.kyleduo.switchbutton:library:2.1.0'
     // flexbox layout
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
+    // splash screen
+    implementation "androidx.core:core-splashscreen:1.0.0"
 
     // coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1'
@@ -74,6 +77,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.14.2'
     kapt 'com.github.bumptech.glide:compiler:4.14.2'
     // room database
+    implementation "androidx.room:room-ktx:2.5.0"
     implementation "androidx.room:room-runtime:2.5.0"
     kapt "androidx.room:room-compiler:2.5.0"
     // optional - Kotlin Extensions and Coroutines support for Room
@@ -87,10 +91,16 @@ dependencies {
     // Firebase cloud messaging
     implementation 'com.google.firebase:firebase-messaging-ktx'
     // Firebase analytics
-    implementation 'com.google.firebase:firebase-analytics-ktx'
+//    implementation 'com.google.firebase:firebase-analytics-ktx'
 
-    // Google auth
+    // Google oauth
     implementation 'com.google.android.gms:play-services-auth:20.4.1'
+    // Kakao oauth
+    implementation "com.kakao.sdk:v2-user:2.12.1"   // 카카오 로그인
+    implementation "com.kakao.sdk:v2-share:2.12.1"  // 메시지(카카오톡 공유)
+
+
+
 
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.6.0'

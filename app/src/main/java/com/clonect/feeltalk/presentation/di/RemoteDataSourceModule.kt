@@ -1,6 +1,8 @@
 package com.clonect.feeltalk.presentation.di
 
 import com.clonect.feeltalk.data.api.ClonectService
+import com.clonect.feeltalk.data.repository.chat.datasource.ChatRemoteDataSource
+import com.clonect.feeltalk.data.repository.chat.datasourceImpl.ChatRemoteDataSourceImpl
 import com.clonect.feeltalk.data.repository.user.datasource.UserRemoteDataSource
 import com.clonect.feeltalk.data.repository.user.datasourceImpl.UserRemoteDataSourceImpl
 import dagger.Module
@@ -19,6 +21,14 @@ class RemoteDataSourceModule {
         clonectService: ClonectService
     ): UserRemoteDataSource {
         return UserRemoteDataSourceImpl(clonectService)
+    }
+
+    @Singleton
+    @Provides
+    fun providesChatRemoteDataSource(
+        clonectService: ClonectService
+    ): ChatRemoteDataSource {
+        return ChatRemoteDataSourceImpl(clonectService)
     }
 
 }

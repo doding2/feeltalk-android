@@ -10,7 +10,7 @@ data class Question(
     val contentSuffix: String = "",
     var myAnswer: String = "",
     val partnerAnswer: String = "",
-    val myAnswerDate: String = "",
+    var myAnswerDate: String = "",
     val partnerAnswerDate: String =""
 ): Parcelable {
     constructor(parcel: Parcel) : this(

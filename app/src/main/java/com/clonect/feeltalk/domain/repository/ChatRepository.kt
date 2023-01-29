@@ -1,0 +1,16 @@
+package com.clonect.feeltalk.domain.repository
+
+import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.domain.model.chat.Chat
+import kotlinx.coroutines.flow.Flow
+
+interface ChatRepository {
+
+    fun getChatListByQuestionId(questionId: Long): Flow<Resource<List<Chat>>>
+
+    suspend fun sendChat(chat: Chat): Resource<String>
+
+    /* Only For FCM Service */
+    suspend fun saveChat(chat: Chat): Resource<Long>
+
+}

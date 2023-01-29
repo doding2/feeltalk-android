@@ -8,10 +8,14 @@ import com.clonect.feeltalk.domain.model.chat.Chat
 import com.clonect.feeltalk.domain.model.question.Question
 import com.clonect.feeltalk.domain.model.user.UserInfo
 import com.clonect.feeltalk.domain.usecase.GetChatListUseCase
+import com.clonect.feeltalk.presentation.service.FirebaseCloudMessagingService
+import com.clonect.feeltalk.presentation.ui.FeeltalkApp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,7 +30,7 @@ class ChatViewModel @Inject constructor(
     private val _questionState = MutableStateFlow(Question())
     val questionState = _questionState.asStateFlow()
 
-    private val _chatListState = MutableStateFlow<List<Chat>>(emptyList())
+    private val _chatListState = MutableStateFlow<MutableList<Chat>>(mutableListOf())
     val chatListState = _chatListState.asStateFlow()
 
     private val _dialogEvent = MutableSharedFlow<String>()
@@ -38,15 +42,21 @@ class ChatViewModel @Inject constructor(
     init {
         savedStateHandle.get<Question>("selectedQuestion")?.let {
             _questionState.value = it
+            FeeltalkApp.setQuestionIdOfShowingChatFragment(it.id)
         }
+        collectNewFcmChat()
 //        getUserInfo()
         getChatList()
     }
 
     // TODO 나중에는 서버로 보내게 수정
-    fun sendChat(content: String, date: String) = viewModelScope.launch(Dispatchers.IO) {
+    fun sendChat(content: String) = viewModelScope.launch(Dispatchers.IO) {
+        val format = SimpleDateFormat("yyyy년 MM월 dd일 hh:mm:ss", Locale.getDefault())
+        val date = format.format(Date())
+
         Chat(
             id = _chatListState.value.size.toLong(),
+            questionId = _questionState.value.id,
             ownerEmail = "mine",
             content = content,
             date = date
@@ -69,6 +79,14 @@ class ChatViewModel @Inject constructor(
 //        }
 //    }
 
+    private fun collectNewFcmChat() = viewModelScope.launch(Dispatchers.IO) {
+        FirebaseCloudMessagingService.FcmNewChatObserver.Instance.newChat.collect {
+            if (it is Resource.Success) {
+                _chatListState.value.add(it.data)
+            }
+        }
+    }
+
     private fun getChatList() = viewModelScope.launch(Dispatchers.IO) {
         getChatListUseCase().collect { result ->
             when (result) {
@@ -87,6 +105,7 @@ class ChatViewModel @Inject constructor(
         if (currentQuestion.myAnswer.isNotBlank()) {
             Chat(
                 id = 0L,
+                questionId = _questionState.value.id,
                 ownerEmail = "mine", // TODO 제대로된 정보로 변경
                 content = _questionState.value.myAnswer,
                 date = _questionState.value.myAnswerDate,
@@ -98,6 +117,7 @@ class ChatViewModel @Inject constructor(
         if (currentQuestion.partnerAnswer.isNotBlank()) {
             Chat(
                 id = 1L,
+                questionId = _questionState.value.id,
                 ownerEmail = "partner", // TODO 제대로된 정보로 변경
                 content = _questionState.value.partnerAnswer,
                 date = _questionState.value.partnerAnswerDate,
@@ -113,10 +133,12 @@ class ChatViewModel @Inject constructor(
     }
 
     private fun addNewChat(chat: Chat) {
-        val newList = mutableListOf<Chat>().apply {
-            addAll(_chatListState.value)
-            add(chat)
-        }
-        _chatListState.value = newList
+        _chatListState.value.add(chat)
+    }
+
+
+    override fun onCleared() {
+        super.onCleared()
+        FeeltalkApp.setQuestionIdOfShowingChatFragment(null)
     }
 }

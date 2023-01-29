@@ -7,11 +7,11 @@ class UserCacheDataSourceImpl: UserCacheDataSource {
 
     private var userInfo: UserInfo? = null
 
-    override suspend fun getUserInfo(): UserInfo? {
+    override fun getUserInfo(): UserInfo? {
         return userInfo
     }
 
-    override suspend fun saveUserInfoToCache(userInfo: UserInfo) {
+    override fun saveUserInfoToCache(userInfo: UserInfo) {
         this.userInfo = userInfo
     }
 

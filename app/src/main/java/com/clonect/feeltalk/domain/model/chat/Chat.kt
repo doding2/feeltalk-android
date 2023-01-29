@@ -1,7 +1,13 @@
 package com.clonect.feeltalk.domain.model.chat
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "ChatTable")
 data class Chat(
-    val id: Long,
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0L,
+    val questionId: Long,
     val ownerEmail: String,
     val content: String,
     val date: String,

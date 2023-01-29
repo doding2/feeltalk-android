@@ -52,7 +52,7 @@ class UserRepositoryImpl(
         }
     }
 
-    private suspend fun getUserInfoFromCache(): Resource<UserInfo> {
+    private fun getUserInfoFromCache(): Resource<UserInfo> {
         return try {
             val userInfo = cacheDataSource.getUserInfo()
                 ?: throw NullPointerException("User info is not saved at cache yet.")
