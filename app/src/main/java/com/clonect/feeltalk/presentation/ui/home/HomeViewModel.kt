@@ -4,15 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.user.Emotion
-import com.clonect.feeltalk.domain.usecase.GetFcmTokenUseCase
-import com.clonect.feeltalk.domain.usecase.GetMyEmotionUseCase
-import com.clonect.feeltalk.domain.usecase.GetPartnerEmotionUseCase
-import com.clonect.feeltalk.domain.usecase.SendFcmUseCase
+import com.clonect.feeltalk.domain.usecase.fcm.GetFcmTokenUseCase
+import com.clonect.feeltalk.domain.usecase.emotion.GetMyEmotionUseCase
+import com.clonect.feeltalk.domain.usecase.emotion.GetPartnerEmotionUseCase
+import com.clonect.feeltalk.domain.usecase.fcm.SendFcmUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

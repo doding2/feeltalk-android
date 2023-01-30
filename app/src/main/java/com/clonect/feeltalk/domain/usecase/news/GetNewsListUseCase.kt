@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.domain.usecase
+package com.clonect.feeltalk.domain.usecase.news
 
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.news.News

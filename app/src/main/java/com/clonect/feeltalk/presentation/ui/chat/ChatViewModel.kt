@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.presentation.ui.chat
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,7 +8,8 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.chat.Chat
 import com.clonect.feeltalk.domain.model.question.Question
 import com.clonect.feeltalk.domain.model.user.UserInfo
-import com.clonect.feeltalk.domain.usecase.GetChatListUseCase
+import com.clonect.feeltalk.domain.usecase.chat.GetChatListUseCase
+import com.clonect.feeltalk.domain.usecase.chat.SendChatUseCase
 import com.clonect.feeltalk.presentation.service.FirebaseCloudMessagingService
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val getChatListUseCase: GetChatListUseCase,
+    private val sendChatUseCase: SendChatUseCase,
     savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
@@ -30,7 +33,7 @@ class ChatViewModel @Inject constructor(
     private val _questionState = MutableStateFlow(Question())
     val questionState = _questionState.asStateFlow()
 
-    private val _chatListState = MutableStateFlow<MutableList<Chat>>(mutableListOf())
+    private val _chatListState = MutableStateFlow<List<Chat>>(emptyList())
     val chatListState = _chatListState.asStateFlow()
 
     private val _dialogEvent = MutableSharedFlow<String>()
@@ -44,12 +47,11 @@ class ChatViewModel @Inject constructor(
             _questionState.value = it
             FeeltalkApp.setQuestionIdOfShowingChatFragment(it.id)
         }
-        collectNewFcmChat()
+        collectFcmNewChat()
 //        getUserInfo()
         getChatList()
     }
 
-    // TODO 나중에는 서버로 보내게 수정
     fun sendChat(content: String) = viewModelScope.launch(Dispatchers.IO) {
         val format = SimpleDateFormat("yyyy년 MM월 dd일 hh:mm:ss", Locale.getDefault())
         val date = format.format(Date())
@@ -61,7 +63,7 @@ class ChatViewModel @Inject constructor(
             content = content,
             date = date
         ).also {
-            addNewChat(it)
+            sendChatUseCase(it)
         }
     }
 
@@ -79,21 +81,29 @@ class ChatViewModel @Inject constructor(
 //        }
 //    }
 
-    private fun collectNewFcmChat() = viewModelScope.launch(Dispatchers.IO) {
-        FirebaseCloudMessagingService.FcmNewChatObserver.Instance.newChat.collect {
+    private fun collectFcmNewChat() = viewModelScope.launch(Dispatchers.IO) {
+        FirebaseCloudMessagingService.FcmNewChatObserver.getInstance().newChat.collect {
             if (it is Resource.Success) {
-                _chatListState.value.add(it.data)
+                val newList = mutableListOf<Chat>().apply {
+                    addAll(_chatListState.value)
+                    add(it.data)
+                }
+                _chatListState.value = newList
             }
         }
     }
 
     private fun getChatList() = viewModelScope.launch(Dispatchers.IO) {
-        getChatListUseCase().collect { result ->
+        val questionId = _questionState.value.id
+        getChatListUseCase(questionId).collect { result ->
             when (result) {
                 is Resource.Success -> updateChatList(result.data)
-                is Resource.Error -> _dialogEvent.emit(result.throwable.localizedMessage ?: "Unexpected error occurred.")
-                is Resource.Loading -> {}
-                else -> {}
+                is Resource.Error -> {
+                    Log.i("ChatFragment", "getChatList() error: ${result.throwable.localizedMessage}")
+                    _dialogEvent.emit(result.throwable.localizedMessage
+                        ?: "Unexpected error occurred.")
+                }
+                is Resource.Loading -> {  }
             }
         }
     }
@@ -132,13 +142,9 @@ class ChatViewModel @Inject constructor(
         _chatListState.value = newList
     }
 
-    private fun addNewChat(chat: Chat) {
-        _chatListState.value.add(chat)
-    }
-
-
     override fun onCleared() {
         super.onCleared()
         FeeltalkApp.setQuestionIdOfShowingChatFragment(null)
+        FirebaseCloudMessagingService.FcmNewChatObserver.onCleared()
     }
 }

@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.domain.usecase
+package com.clonect.feeltalk.domain.usecase.fcm
 
 import android.widget.Toast
 import androidx.core.content.ContentProviderCompat.requireContext

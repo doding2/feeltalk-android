@@ -14,9 +14,9 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.chat.Chat
 import com.clonect.feeltalk.domain.model.question.Question
-import com.clonect.feeltalk.domain.usecase.GetQuestionByIdUseCase
-import com.clonect.feeltalk.domain.usecase.SaveChatUseCase
-import com.clonect.feeltalk.domain.usecase.SaveFcmTokenUseCase
+import com.clonect.feeltalk.domain.usecase.question.GetQuestionByIdUseCase
+import com.clonect.feeltalk.domain.usecase.chat.SaveChatUseCase
+import com.clonect.feeltalk.domain.usecase.fcm.SaveFcmTokenUseCase
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.presentation.ui.MainActivity
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -131,7 +131,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         val showingQuestionId = FeeltalkApp.getQuestionIdOfShowingChatFragment()
         if (showingQuestionId == questionId) {
             FcmNewChatObserver
-                .Instance
+                .getInstance()
                 .setNewChat(chat)
         }
 
@@ -227,10 +227,22 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
     class FcmNewChatObserver {
         companion object {
-            val Instance = FcmNewChatObserver()
+            private var Instance: FcmNewChatObserver? = null
+
+            fun getInstance(): FcmNewChatObserver {
+                if (Instance == null) {
+                    Instance = FcmNewChatObserver()
+                    return Instance!!
+                }
+                return Instance!!
+            }
+
+            fun onCleared() {
+                Instance = null
+            }
         }
 
-        private val _newChat = MutableStateFlow<Resource<Chat>>(Resource.Loading)
+        private val _newChat = MutableStateFlow<Resource<Chat>>(Resource.Loading(true))
         val newChat = _newChat.asStateFlow()
 
         fun setNewChat(chat: Chat) {

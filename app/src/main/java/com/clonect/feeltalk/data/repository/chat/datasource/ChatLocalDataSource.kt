@@ -5,8 +5,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface ChatLocalDataSource {
 
-    fun getChatListByQuestionId(questionId: Long): List<Chat>
+    fun getChatListFlowByQuestionId(questionId: Long): Flow<List<Chat>>
 
     suspend fun saveOneChatToDatabase(chat: Chat): Long
+
+    suspend fun getChatListByQuestionId(questionId: Long): List<Chat>
 
 }

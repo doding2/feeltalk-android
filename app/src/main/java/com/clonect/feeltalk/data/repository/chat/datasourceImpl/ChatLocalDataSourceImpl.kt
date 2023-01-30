@@ -9,8 +9,10 @@ class ChatLocalDataSourceImpl(
     private val chatDao: ChatDao
 ): ChatLocalDataSource {
 
-    override fun getChatListByQuestionId(questionId: Long): List<Chat> = chatDao.getChatListByQuestionId(questionId)
+    override fun getChatListFlowByQuestionId(questionId: Long): Flow<List<Chat>> = chatDao.getChatListFlowByQuestionId(questionId)
 
     override suspend fun saveOneChatToDatabase(chat: Chat): Long = chatDao.insertChat(chat)
+
+    override suspend fun getChatListByQuestionId(questionId: Long): List<Chat> = chatDao.getChatListByQuestionId(questionId)
 
 }

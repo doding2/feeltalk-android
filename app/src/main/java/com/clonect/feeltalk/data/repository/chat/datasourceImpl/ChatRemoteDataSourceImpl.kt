@@ -9,12 +9,13 @@ class ChatRemoteDataSourceImpl(
     private val clonectService: ClonectService
 ): ChatRemoteDataSource {
 
-    override suspend fun getChatListByQuestionId(chat: Chat): Response<List<Chat>> {
-        TODO("Not yet implemented")
+    // TODO 서버랑 연결하기
+    override suspend fun getChatListByQuestionId(questionId: Long): Response<List<Chat>> {
+        throw Exception("아직 서버 기능을 안 만들었음")
     }
 
     override suspend fun sendChat(chat: Chat): Response<String> {
-        TODO("Not yet implemented")
+        throw Exception("아직 서버 기능을 안 만들었음")
     }
 
 }

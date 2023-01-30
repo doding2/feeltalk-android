@@ -1,8 +1,6 @@
 package com.clonect.feeltalk.data.db
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import com.clonect.feeltalk.domain.model.chat.Chat
 import kotlinx.coroutines.flow.Flow
 
@@ -13,6 +11,9 @@ interface ChatDao {
     suspend fun insertChat(chat: Chat): Long
 
     @Query("SELECT * FROM ChatTable WHERE questionId == :questionId")
-    fun getChatListByQuestionId(questionId: Long): List<Chat>
+    fun getChatListFlowByQuestionId(questionId: Long): Flow<List<Chat>>
+
+    @Query("SELECT * FROM ChatTable WHERE questionId == :questionId")
+    suspend fun getChatListByQuestionId(questionId: Long): List<Chat>
 
 }

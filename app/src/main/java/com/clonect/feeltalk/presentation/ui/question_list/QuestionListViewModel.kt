@@ -1,11 +1,10 @@
 package com.clonect.feeltalk.presentation.ui.question_list
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.question.Question
-import com.clonect.feeltalk.domain.usecase.GetQuestionListUseCase
+import com.clonect.feeltalk.domain.usecase.question.GetQuestionListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*

@@ -1,6 +1,5 @@
-package com.clonect.feeltalk.domain.usecase
+package com.clonect.feeltalk.domain.usecase.emotion
 
-import android.util.Log
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.news.News
 import com.clonect.feeltalk.domain.model.news.NewsType
@@ -9,15 +8,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlin.random.Random
 import kotlin.random.nextInt
-import kotlin.random.nextUInt
 
-class GetMyEmotionUseCase {
+class GetPartnerEmotionUseCase {
     operator fun invoke(): Flow<Resource<Emotion>> = flow {
-        val testEmotion = when (Random.nextInt(0..3) ) {
-            0 -> Emotion.Happy
-            1 -> Emotion.Puzzling
-            2 -> Emotion.Bad
-            3 -> Emotion.Angry
+        val testEmotion = when (Random.nextInt(0..3)) {
+            0 -> Emotion.Angry
+            1 -> Emotion.Bad
+            2 -> Emotion.Puzzling
+            3 -> Emotion.Happy
             else -> Emotion.Happy
         }
 
