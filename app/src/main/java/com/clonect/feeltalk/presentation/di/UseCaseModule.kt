@@ -1,20 +1,23 @@
 package com.clonect.feeltalk.presentation.di
 
-import com.clonect.feeltalk.domain.usecase.news.GetNewsListUseCase
 import android.content.SharedPreferences
 import com.clonect.feeltalk.data.repository.notification.NotificationRepository
 import com.clonect.feeltalk.domain.repository.ChatRepository
+import com.clonect.feeltalk.domain.repository.UserRepository
 import com.clonect.feeltalk.domain.usecase.*
 import com.clonect.feeltalk.domain.usecase.chat.GetChatListUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SaveChatUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SendChatUseCase
 import com.clonect.feeltalk.domain.usecase.emotion.GetMyEmotionUseCase
 import com.clonect.feeltalk.domain.usecase.emotion.GetPartnerEmotionUseCase
-import com.clonect.feeltalk.domain.usecase.fcm.GetFcmTokenUseCase
-import com.clonect.feeltalk.domain.usecase.fcm.SaveFcmTokenUseCase
-import com.clonect.feeltalk.domain.usecase.fcm.SendFcmUseCase
+import com.clonect.feeltalk.domain.usecase.notification.GetFcmTokenUseCase
+import com.clonect.feeltalk.domain.usecase.notification.SaveFcmTokenUseCase
+import com.clonect.feeltalk.domain.usecase.notification.SendFcmUseCase
+import com.clonect.feeltalk.domain.usecase.news.GetNewsListUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetQuestionByIdUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetQuestionListUseCase
+import com.clonect.feeltalk.domain.usecase.user.AutoLogInWithGoogleUseCase
+import com.clonect.feeltalk.domain.usecase.user.SignUpWithGoogleUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -90,5 +93,17 @@ class UseCaseModule {
     @Provides
     fun providesGetQuestionByIdUseCase(): GetQuestionByIdUseCase {
         return GetQuestionByIdUseCase()
+    }
+
+    @Singleton
+    @Provides
+    fun providesAutoLogInWithGoogleUseCase(userRepository: UserRepository): AutoLogInWithGoogleUseCase {
+        return AutoLogInWithGoogleUseCase(userRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesSignUpWithGoogleUseCase(userRepository: UserRepository): SignUpWithGoogleUseCase {
+        return SignUpWithGoogleUseCase(userRepository)
     }
 }

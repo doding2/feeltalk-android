@@ -3,6 +3,7 @@ package com.clonect.feeltalk.presentation.ui.setting
 import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.domain.model.notification.Topics
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -18,39 +19,52 @@ class SettingViewModel @Inject constructor(
     private val pref: SharedPreferences
 ): ViewModel() {
 
-    private val _isPushNotificationEnabled = MutableStateFlow(false)
+    private var _isPushNotificationEnabled: MutableStateFlow<Boolean> =
+        MutableStateFlow(pref.getBoolean("isPushNotificationEnabled", false))
     val isPushNotificationEnabled = _isPushNotificationEnabled.asStateFlow()
 
-    private val _isUsageInfoNotificationEnabled = MutableStateFlow(false)
+    private var _isUsageInfoNotificationEnabled: MutableStateFlow<Boolean> =
+        MutableStateFlow(pref.getBoolean("isUsageInfoNotificationEnabled", false))
     val isUsageInfoNotificationEnabled = _isUsageInfoNotificationEnabled.asStateFlow()
 
+
     init {
-        getAppSettings()
-    }
 
-    // TODO 토픽 구독 해제도 추가
-    fun enablePushNotification(enabled: Boolean) {
-        if (_isPushNotificationEnabled.value == enabled)
-            return
-        pref.edit()
-            .putBoolean("isPushNotificationEnabled", enabled)
-            .apply()
-    }
-
-    // TODO 토픽 구독 해제도 추가
-    fun enableUsageInfoNotification(enabled: Boolean) {
-        if (_isUsageInfoNotificationEnabled.value == enabled)
-            return
-        pref.edit()
-            .putBoolean("isUsageInfoNotificationEnabled", enabled)
-            .apply()
     }
 
 
-    private fun getAppSettings() = viewModelScope.launch(Dispatchers.IO) {
-        pref.apply {
-            _isPushNotificationEnabled.value = getBoolean("isPushNotificationEnabled", false)
-            _isUsageInfoNotificationEnabled.value = getBoolean("isUsageInfoNotificationEnabled", false)
+    fun enablePushNotification(enabled: Boolean) = viewModelScope.launch(Dispatchers.IO) {
+        FirebaseMessaging.getInstance().apply {
+            token.addOnSuccessListener {
+                if (enabled) {
+                    subscribeToTopic(Topics.Push.text)
+                } else {
+                    unsubscribeFromTopic(Topics.Push.text)
+                }
+                pref.edit()
+                    .putBoolean("isPushNotificationEnabled", enabled)
+                    .apply()
+                _isPushNotificationEnabled.value = enabled
+            }
+        }
+
+    }
+
+    fun enableUsageInfoNotification(enabled: Boolean) = viewModelScope.launch(Dispatchers.IO) {
+        FirebaseMessaging.getInstance().apply {
+            token.addOnSuccessListener {
+                if (enabled) {
+                    subscribeToTopic(Topics.UsageInfo.text)
+                } else {
+                    unsubscribeFromTopic(Topics.UsageInfo.text)
+                }
+                pref.edit()
+                    .putBoolean("isUsageInfoNotificationEnabled", enabled)
+                    .apply()
+                _isUsageInfoNotificationEnabled.value = enabled
+            }
         }
     }
+
+
 }

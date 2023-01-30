@@ -1,9 +1,5 @@
-package com.clonect.feeltalk.domain.usecase.fcm
+package com.clonect.feeltalk.domain.usecase.notification
 
-import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
-import com.clonect.feeltalk.common.Constants
-import com.clonect.feeltalk.data.api.NotificationService
 import com.clonect.feeltalk.data.repository.notification.NotificationRepository
 import com.clonect.feeltalk.domain.model.notification.NotificationData
 import com.clonect.feeltalk.domain.model.notification.PushNotification
@@ -18,7 +14,7 @@ class SendFcmUseCase(
                     title = "최종근",
                     message = "야 승준아 너 놀고있지"
                 ),
-                to = fcmToken
+                to = "/topics/Push"
             ),
             onSuccess = {  },
             onFailure = {  }

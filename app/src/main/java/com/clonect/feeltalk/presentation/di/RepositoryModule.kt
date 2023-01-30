@@ -8,7 +8,6 @@ import com.clonect.feeltalk.data.repository.chat.datasource.ChatRemoteDataSource
 import com.clonect.feeltalk.data.repository.notification.NotificationRepository
 import com.clonect.feeltalk.data.repository.user.UserRepositoryImpl
 import com.clonect.feeltalk.data.repository.user.datasource.UserCacheDataSource
-import com.clonect.feeltalk.data.repository.user.datasource.UserLocalDataSource
 import com.clonect.feeltalk.data.repository.user.datasource.UserRemoteDataSource
 import com.clonect.feeltalk.domain.repository.ChatRepository
 import com.clonect.feeltalk.domain.repository.UserRepository
@@ -26,10 +25,9 @@ class RepositoryModule {
     @Provides
     fun providesUserRepository(
         remoteDataSource: UserRemoteDataSource,
-        localDataSource: UserLocalDataSource,
         cacheDataSource: UserCacheDataSource
     ): UserRepository {
-        return UserRepositoryImpl(remoteDataSource, localDataSource, cacheDataSource)
+        return UserRepositoryImpl(remoteDataSource, cacheDataSource)
     }
 
     @Singleton

@@ -27,6 +27,9 @@ class ChatViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
     private val _userInfoState = MutableStateFlow(UserInfo())
     val userInfoState = _userInfoState.asStateFlow()
 
@@ -42,15 +45,16 @@ class ChatViewModel @Inject constructor(
     private val _scrollPositionState = MutableStateFlow(0)
     val scrollPositionState = _scrollPositionState.asStateFlow()
 
+
     init {
         savedStateHandle.get<Question>("selectedQuestion")?.let {
             _questionState.value = it
             FeeltalkApp.setQuestionIdOfShowingChatFragment(it.id)
         }
         collectFcmNewChat()
-//        getUserInfo()
         getChatList()
     }
+
 
     fun sendChat(content: String) = viewModelScope.launch(Dispatchers.IO) {
         val format = SimpleDateFormat("yyyy년 MM월 dd일 hh:mm:ss", Locale.getDefault())
@@ -71,16 +75,6 @@ class ChatViewModel @Inject constructor(
         _scrollPositionState.value = position
     }
 
-//    private fun getUserInfo() = viewModelScope.launch(Dispatchers.IO) {
-//        getUserInfoUseCase().collect { result ->
-//            when (result) {
-//                is Resource.Success -> _userInfoState.value = result.data
-//                is Resource.Error -> _dialogEvent.emit(result.throwable.localizedMessage ?: "Unexpected error occurred.")
-//                else -> {}
-//            }
-//        }
-//    }
-
     private fun collectFcmNewChat() = viewModelScope.launch(Dispatchers.IO) {
         FirebaseCloudMessagingService.FcmNewChatObserver.getInstance().newChat.collect {
             if (it is Resource.Success) {
@@ -99,11 +93,10 @@ class ChatViewModel @Inject constructor(
             when (result) {
                 is Resource.Success -> updateChatList(result.data)
                 is Resource.Error -> {
-                    Log.i("ChatFragment", "getChatList() error: ${result.throwable.localizedMessage}")
                     _dialogEvent.emit(result.throwable.localizedMessage
-                        ?: "Unexpected error occurred.")
+                                    ?: "Unexpected error occurred.")
                 }
-                is Resource.Loading -> {  }
+                is Resource.Loading -> { _isLoading.value = result.isLoading }
             }
         }
     }

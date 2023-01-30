@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.domain.usecase.fcm
+package com.clonect.feeltalk.domain.usecase.notification
 
 import android.content.SharedPreferences
 

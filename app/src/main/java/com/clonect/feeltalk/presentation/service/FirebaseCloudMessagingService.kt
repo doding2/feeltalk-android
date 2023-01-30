@@ -16,7 +16,7 @@ import com.clonect.feeltalk.domain.model.chat.Chat
 import com.clonect.feeltalk.domain.model.question.Question
 import com.clonect.feeltalk.domain.usecase.question.GetQuestionByIdUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SaveChatUseCase
-import com.clonect.feeltalk.domain.usecase.fcm.SaveFcmTokenUseCase
+import com.clonect.feeltalk.domain.usecase.notification.SaveFcmTokenUseCase
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.presentation.ui.MainActivity
 import com.google.firebase.messaging.FirebaseMessagingService

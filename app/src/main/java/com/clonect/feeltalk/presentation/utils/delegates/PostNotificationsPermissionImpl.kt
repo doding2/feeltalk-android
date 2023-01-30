@@ -19,7 +19,10 @@ class PostNotificationsPermissionImpl: PostNotificationsPermission {
     override var onPostNotificationGranted: (Boolean) -> Unit = {}
 
     override fun Fragment.checkPostNotificationsPermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            onPostNotificationGranted(true)
+            return
+        }
 
         val permission = Manifest.permission.POST_NOTIFICATIONS
 

@@ -36,9 +36,6 @@ class BottomNavigationFragment : Fragment(), PostNotificationsPermission by Post
         binding = FragmentBottomNavigationBinding.inflate(inflater, container, false)
         val navHostFragment = childFragmentManager.findFragmentById(R.id.container_bottom_navigation) as NavHostFragment
         navController = navHostFragment.navController
-
-        initFirebase()
-
         return binding.root
     }
 
@@ -55,17 +52,11 @@ class BottomNavigationFragment : Fragment(), PostNotificationsPermission by Post
             navigateToSettingPage()
         }
 
-
-        createNotificationChannel()
-        checkPostNotificationsPermission()
-
-    }
-
-    private fun initFirebase() {
-        FirebaseMessaging.getInstance().token.addOnSuccessListener {
-            Log.i("BottomNavFragment", "FcmToken: $it")
-            FirebaseMessaging.getInstance().subscribeToTopic("Android")
+        onPostNotificationGranted = { isGranted ->
+            viewModel.enablePushNotificationEnabled(isGranted)
+            viewModel.enableUsageInfoNotification(isGranted)
         }
+        checkPostNotificationsPermission()
     }
 
 
@@ -135,17 +126,6 @@ class BottomNavigationFragment : Fragment(), PostNotificationsPermission by Post
             btnHome.setImageResource(homeButtonDrawable)
             btnQuestionList.setImageResource(questionListButtonDrawable)
             btnSetting.setImageResource(settingButtonDrawable)
-        }
-    }
-
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationManager = requireActivity().getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            val channelName = "연인의 알림"
-            val channel = NotificationChannel(FirebaseCloudMessagingService.TODAY_QUESTION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_HIGH).apply {
-                description = "띠링 띠링"
-            }
-            notificationManager.createNotificationChannel(channel)
         }
     }
 

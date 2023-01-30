@@ -1,6 +1,8 @@
 package com.clonect.feeltalk.data.api
 
+import com.clonect.feeltalk.domain.model.user.AccessToken
 import com.clonect.feeltalk.domain.model.user.UserInfo
+import com.google.gson.JsonObject
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -14,19 +16,24 @@ import retrofit2.http.Path
 
 interface ClonectService {
 
+    @POST("api/member2")
+    suspend fun signUpWithGoogle(
+        @Body body: JsonObject
+    ): Response<AccessToken>
+
+    @POST("api/login")
+    suspend fun autoLogInWithGoogle(
+        @Body body: JsonObject
+    ): Response<AccessToken>
+
+
     @JvmSuppressWildcards
     @Multipart
-    @POST("api/member")
+    @POST("api/member2")
     suspend fun signUpWithEmail(
         @Part profileImage: MultipartBody.Part,
         @PartMap body: Map<String, RequestBody>
     ): Response<UserInfo>
-
-    @POST("api/login")
-    suspend fun logInWithGoogle(
-        @Body request: String
-    ): Response<UserInfo>
-
 
     @GET("api/memberInfo/{accessToken}")
     suspend fun getUserInfo(

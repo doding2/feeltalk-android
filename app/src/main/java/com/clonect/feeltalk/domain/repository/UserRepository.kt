@@ -6,7 +6,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
 
-    suspend fun signInWithGoogle(idToken: String): Resource<String>
+    suspend fun autoLogInWithGoogle(idToken: String): Resource<AccessToken>
+
+    suspend fun signUpWithGoogle(idToken: String, serverAuthCode: String): Resource<AccessToken>
+
+    suspend fun getAccessToken(): Resource<AccessToken>
 
     suspend fun getUserInfo(accessToken: String): Flow<Resource<UserInfo>>
 

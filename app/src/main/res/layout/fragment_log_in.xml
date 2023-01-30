@@ -19,4 +19,5 @@
         android:layout_height="wrap_content"
         android:text="로그인 스킵하기"
         android:layout_gravity="center"/>
+
 </LinearLayout>
