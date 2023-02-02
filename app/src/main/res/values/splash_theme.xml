@@ -10,6 +10,6 @@
         <!-- Status bar and Nav bar configs -->
         <item name="android:statusBarColor" >@color/splash_background</item>
         <item name="android:navigationBarColor">@color/splash_background</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="android:windowLightStatusBar" >true</item>
     </style>
 </resources>

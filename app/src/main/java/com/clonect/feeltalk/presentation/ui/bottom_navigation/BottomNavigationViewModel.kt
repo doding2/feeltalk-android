@@ -1,6 +1,7 @@
 package com.clonect.feeltalk.presentation.ui.bottom_navigation
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.domain.model.notification.Topics
@@ -45,6 +46,7 @@ class BottomNavigationViewModel @Inject constructor(
     fun enablePushNotificationEnabled(enabled: Boolean) {
         FirebaseMessaging.getInstance().apply {
             token.addOnSuccessListener {
+                Log.i("BottomNavFragment", "fcmToken: $it")
                 if (enabled) {
                     subscribeToTopic(Topics.Push.text)
                 }

@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,22 +11,15 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentSettingBinding
-import com.clonect.feeltalk.presentation.utils.delegates.PostNotificationsPermission
-import com.clonect.feeltalk.presentation.utils.delegates.PostNotificationsPermissionImpl
 import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
 import com.kyleduo.switchbutton.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SettingFragment : Fragment(), PostNotificationsPermission by PostNotificationsPermissionImpl() {
+class SettingFragment : Fragment() {
 
     private lateinit var binding: FragmentSettingBinding
     private val viewModel: SettingViewModel by viewModels()

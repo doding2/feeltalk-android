@@ -1,29 +1,25 @@
 package com.clonect.feeltalk.presentation.ui.bottom_navigation
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context.NOTIFICATION_SERVICE
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentBottomNavigationBinding
-import com.clonect.feeltalk.presentation.service.FirebaseCloudMessagingService
-import com.clonect.feeltalk.presentation.utils.delegates.PostNotificationsPermission
-import com.clonect.feeltalk.presentation.utils.delegates.PostNotificationsPermissionImpl
-import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class BottomNavigationFragment : Fragment(), PostNotificationsPermission by PostNotificationsPermissionImpl() {
+class BottomNavigationFragment : Fragment() {
 
     private lateinit var binding: FragmentBottomNavigationBinding
     private val viewModel: BottomNavigationViewModel by viewModels()
@@ -52,13 +48,40 @@ class BottomNavigationFragment : Fragment(), PostNotificationsPermission by Post
             navigateToSettingPage()
         }
 
-        onPostNotificationGranted = { isGranted ->
+
+        checkPostNotificationsPermission { isGranted ->
             viewModel.enablePushNotificationEnabled(isGranted)
             viewModel.enableUsageInfoNotification(isGranted)
         }
-        checkPostNotificationsPermission()
     }
 
+    private val permissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        viewModel.enablePushNotificationEnabled(isGranted)
+        viewModel.enableUsageInfoNotification(isGranted)
+    }
+
+    private fun checkPostNotificationsPermission(onCompleted: (Boolean) -> Unit) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            onCompleted(true)
+            return
+        }
+
+        val permission = Manifest.permission.POST_NOTIFICATIONS
+
+        val isAlreadyGranted = ContextCompat.checkSelfPermission(
+            requireContext(),
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (isAlreadyGranted) {
+            onCompleted(true)
+            return
+        }
+
+        permissionLauncher.launch(permission)
+    }
 
     private fun navigateToHomePage() {
         val navigateFragmentId = R.id.homeFragment

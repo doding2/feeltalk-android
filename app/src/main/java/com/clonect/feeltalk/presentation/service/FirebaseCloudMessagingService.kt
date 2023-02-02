@@ -62,8 +62,8 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         super.onMessageReceived(message)
 
         val isAppRunning = FeeltalkApp.getAppRunning()
-        Log.i("FCMService", "isAppRunning: ${isAppRunning}")
-        
+        Log.i("FCMService", "isAppRunning: $isAppRunning")
+
         when (message.data["type"]) {
             "today_question" -> handleTodayQuestionData(message.data)
             "chat" -> handleChatData(message.data)

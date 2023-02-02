@@ -16,8 +16,7 @@ import com.clonect.feeltalk.domain.usecase.notification.SendFcmUseCase
 import com.clonect.feeltalk.domain.usecase.news.GetNewsListUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetQuestionByIdUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetQuestionListUseCase
-import com.clonect.feeltalk.domain.usecase.user.AutoLogInWithGoogleUseCase
-import com.clonect.feeltalk.domain.usecase.user.SignUpWithGoogleUseCase
+import com.clonect.feeltalk.domain.usecase.user.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -106,4 +105,40 @@ class UseCaseModule {
     fun providesSignUpWithGoogleUseCase(userRepository: UserRepository): SignUpWithGoogleUseCase {
         return SignUpWithGoogleUseCase(userRepository)
     }
+
+    @Singleton
+    @Provides
+    fun providesGetCoupleRegistrationCode(userRepository: UserRepository): GetCoupleRegistrationCodeUseCase {
+        return GetCoupleRegistrationCodeUseCase(userRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesSendPartnerCoupleRegistrationCodeUseCase(userRepository: UserRepository): SendPartnerCoupleRegistrationCodeUseCase {
+        return SendPartnerCoupleRegistrationCodeUseCase(userRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesRemoveCoupleRegistrationCodeUseCase(userRepository: UserRepository): RemoveCoupleRegistrationCodeUseCase {
+        return RemoveCoupleRegistrationCodeUseCase(userRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetUserInfoUseCase(userRepository: UserRepository): GetUserInfoUseCase {
+        return GetUserInfoUseCase(userRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesCheckUserIsCoupleUseCase(userRepository: UserRepository): CheckUserIsCoupleUseCase {
+        return CheckUserIsCoupleUseCase(userRepository)
+    }
+
+
+
+
+
+
 }

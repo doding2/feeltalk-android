@@ -6,8 +6,8 @@ import com.clonect.feeltalk.domain.repository.UserRepository
 
 class SignUpWithGoogleUseCase(private val userRepository: UserRepository) {
 
-    suspend operator fun invoke(idToken: String, serverAuthCode: String): Resource<AccessToken> {
-        return userRepository.signUpWithGoogle(idToken, serverAuthCode)
+    suspend operator fun invoke(idToken: String, serverAuthCode: String, fcmToken: String): Resource<AccessToken> {
+        return userRepository.signUpWithGoogle(idToken, serverAuthCode, fcmToken)
     }
 
 }

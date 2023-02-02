@@ -9,21 +9,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.BuildConfig
 import com.clonect.feeltalk.R
+import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.databinding.FragmentLogInBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -51,18 +54,27 @@ class LogInFragment : Fragment() {
             }
         }
 
+        initFcm()
+
+    }
+
+    private fun initFcm() {
+        FirebaseMessaging.getInstance().token.addOnSuccessListener { }
     }
 
     private fun navigateToHomePage() {
         findNavController().navigate(R.id.action_logInFragment_to_bottomNavigationFragment)
     }
 
+    private fun navigateToCoupleRegistrationPage() {
+        findNavController().navigate(R.id.action_logInFragment_to_coupleRegistrationFragment)
+    }
 
     // Check already logged in with Google Auth or not
     override fun onStart() {
         super.onStart()
 //        googleLogOut()
-//        googleAutoLogIn()
+        googleAutoLogIn()
     }
 
     private fun googleLogOut() {
@@ -79,11 +91,18 @@ class LogInFragment : Fragment() {
         googleAccount?.let {
             val idToken = it.idToken.toString()
             val isLogInSuccessful = viewModel.autoLogInWithGoogle(idToken)
-            if (isLogInSuccessful) {
-                navigateToHomePage()
-            } else {
+            if (!isLogInSuccessful) {
                 Toast.makeText(requireContext(), "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                return@launch
             }
+
+            val isUserCouple = viewModel.checkUserIsCouple()
+            if (isUserCouple) {
+                navigateToHomePage()
+                return@launch
+            }
+
+            navigateToCoupleRegistrationPage()
         }
     }
 
@@ -137,9 +156,9 @@ class LogInFragment : Fragment() {
             Log.i("LogInFragment", "아이디 토큰: $idToken")
             Log.i("LogInFragment", "서버오스코드: $serverAuthCode")
 
-            val isSignUpSuccessful = viewModel.signInWithGoogle(idToken, serverAuthCode)
+            val isSignUpSuccessful = viewModel.signUpWithGoogle(idToken, serverAuthCode)
             if (isSignUpSuccessful) {
-                navigateToHomePage()
+                navigateToCoupleRegistrationPage()
             } else {
                 Toast.makeText(requireContext(), "회원가입에 실패했습니다.", Toast.LENGTH_SHORT).show()
             }

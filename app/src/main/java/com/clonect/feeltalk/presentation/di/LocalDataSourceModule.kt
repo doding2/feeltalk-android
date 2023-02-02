@@ -1,11 +1,15 @@
 package com.clonect.feeltalk.presentation.di
 
+import android.content.Context
 import com.clonect.feeltalk.data.db.ChatDao
 import com.clonect.feeltalk.data.repository.chat.datasource.ChatLocalDataSource
 import com.clonect.feeltalk.data.repository.chat.datasourceImpl.ChatLocalDataSourceImpl
+import com.clonect.feeltalk.data.repository.user.datasource.UserLocalDataSource
+import com.clonect.feeltalk.data.repository.user.datasourceImpl.UserLocalDataSourceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -19,4 +23,9 @@ class LocalDataSourceModule {
         return ChatLocalDataSourceImpl(chatDao)
     }
 
+    @Singleton
+    @Provides
+    fun providesUserLocalDataSource(@ApplicationContext context: Context): UserLocalDataSource {
+        return UserLocalDataSourceImpl(context)
+    }
 }

@@ -27,6 +27,16 @@
     <color name="emotion_bad_color">#DFDEFF</color>
     <color name="emotion_angry_color">#FFB6B3</color>
 
+    <!--  fragment_couple_registration.xml  -->
+    <color name="couple_registration_message_color">#1A1A1A</color>
+    <color name="couple_registration_code_description_color">#999999</color>
+    <color name="couple_registration_code_copy_border_color">#F1F1F1</color>
+    <color name="couple_registration_code_copy_background">@color/white</color>
+    <color name="couple_registration_code_copy_text_color">@color/black</color>
+    <color name="couple_registration_code_partner_code_input_hint_color">#999999</color>
+    <color name="couple_registration_code_partner_code_input_text_color">#1A1A1A</color>
+
+
     <!--  fragment_bottom_navigation  -->
     <color name="bottom_navigation_background_color">@color/white</color>
 

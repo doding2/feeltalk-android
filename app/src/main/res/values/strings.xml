@@ -3,6 +3,16 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="white_space">&#160;</string>
 
+    <!--  fragment_couple_registration.xml  -->
+    <string name="couple_registration_title">회원가입</string>
+    <string name="couple_registration_message_prefix">이제&#160;</string>
+    <string name="couple_registration_message_highlight">그와의 연결</string>
+    <string name="couple_registration_message_suffix">을 시작해봐요</string>
+    <string name="couple_registration_code_description">나의 초대코드</string>
+    <string name="couple_registration_code_copy">코드복사</string>
+    <string name="couple_registration_partner_code_input_hint">상대방 코드 입력</string>
+    <string name="couple_registration_next_button">다 음</string>
+
     <!--  fragment_home.xml  -->
     <string name="home_d_day_prefix">서로를&#160;</string>
     <string name="home_d_day_unit">일</string>
