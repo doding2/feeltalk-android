@@ -73,7 +73,10 @@ class CoupleRegistrationFragment : Fragment() {
             val isSuccessful = viewModel.sendPartnerCode()
             if (isSuccessful) {
                 navigateHomePage()
+                return@repeatOnLifecycle
             }
+
+            Toast.makeText(requireContext(), "올바르지 않은 코드입니다", Toast.LENGTH_SHORT).show()
         }
     }
 
