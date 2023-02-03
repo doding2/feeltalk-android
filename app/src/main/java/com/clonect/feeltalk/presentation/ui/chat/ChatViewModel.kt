@@ -11,6 +11,7 @@ import com.clonect.feeltalk.domain.model.user.UserInfo
 import com.clonect.feeltalk.domain.usecase.chat.GetChatListUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SendChatUseCase
 import com.clonect.feeltalk.presentation.service.FirebaseCloudMessagingService
+import com.clonect.feeltalk.presentation.service.notification_observer.FcmNewChatObserver
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -76,7 +77,7 @@ class ChatViewModel @Inject constructor(
     }
 
     private fun collectFcmNewChat() = viewModelScope.launch(Dispatchers.IO) {
-        FirebaseCloudMessagingService.FcmNewChatObserver.getInstance().newChat.collect {
+        FcmNewChatObserver.getInstance().newChat.collect {
             if (it is Resource.Success) {
                 val newList = mutableListOf<Chat>().apply {
                     addAll(_chatListState.value)
@@ -138,6 +139,6 @@ class ChatViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         FeeltalkApp.setQuestionIdOfShowingChatFragment(null)
-        FirebaseCloudMessagingService.FcmNewChatObserver.onCleared()
+        FcmNewChatObserver.onCleared()
     }
 }

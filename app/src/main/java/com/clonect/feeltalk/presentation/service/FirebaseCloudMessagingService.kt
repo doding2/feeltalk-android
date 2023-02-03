@@ -17,6 +17,8 @@ import com.clonect.feeltalk.domain.model.question.Question
 import com.clonect.feeltalk.domain.usecase.question.GetQuestionByIdUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SaveChatUseCase
 import com.clonect.feeltalk.domain.usecase.notification.SaveFcmTokenUseCase
+import com.clonect.feeltalk.presentation.service.notification_observer.CoupleRegistrationObserver
+import com.clonect.feeltalk.presentation.service.notification_observer.FcmNewChatObserver
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.presentation.ui.MainActivity
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -51,6 +53,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         const val EMOTION_CHANGE_CHANNEL_ID ="feeltalk_emotion_change_notification"
         const val CHAT_CHANNEL_ID ="feeltalk_chat_notification"
         const val ADVERTISING_CHANNEL_ID ="feeltalk_advertising_notification"
+        const val COUPLE_REGISTRATION_COMPLETED_CHANNEL_ID ="feeltalk_couple_registration_completed_notification"
     }
 
     override fun onNewToken(newToken: String) {
@@ -63,12 +66,42 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
         val isAppRunning = FeeltalkApp.getAppRunning()
         Log.i("FCMService", "isAppRunning: $isAppRunning")
+        Log.i("FCMService", "message: ${message.data}")
 
         when (message.data["type"]) {
             "today_question" -> handleTodayQuestionData(message.data)
             "chat" -> handleChatData(message.data)
+            "커플매칭성공" -> handleCoupleRegistrationData(message.data)
             else -> handleOtherCases(message.data)
         }
+    }
+
+    private fun handleCoupleRegistrationData(data: Map<String, String>) {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val pendingIntent: PendingIntent? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE)
+        } else {
+            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+        }
+
+        val isAppRunning = FeeltalkApp.getAppRunning()
+        if (isAppRunning) {
+            CoupleRegistrationObserver
+                .getInstance()
+                .setCoupleRegistrationCompleted(true)
+            return
+        }
+
+        val title = data["title"] ?: "제목 읽기 실패"
+        val message = data["message"] ?: "내용 읽기 실패"
+
+        showNotification(
+            title = title,
+            message = message,
+            channelID = COUPLE_REGISTRATION_COMPLETED_CHANNEL_ID,
+            pendingIntent = pendingIntent
+        )
     }
 
     private fun handleOtherCases(data: Map<String, String>) {
@@ -80,8 +113,8 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
         }
 
-        val title = data["title"] ?: "오늘의 질문 도착"
-        val message = data["message"] ?: "새로운 질문이 도착했어요"
+        val title = data["title"] ?: "제목 읽기 실패"
+        val message = data["message"] ?: "내용 읽기 실패"
 
         showNotification(
             title = title,
@@ -213,6 +246,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         EMOTION_CHANGE_CHANNEL_ID -> "연인의 감정"
         CHAT_CHANNEL_ID -> "채팅"
         ADVERTISING_CHANNEL_ID -> "광고"
+        COUPLE_REGISTRATION_COMPLETED_CHANNEL_ID -> "커플 등록 완료"
         else -> ""
     }
 
@@ -222,31 +256,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         EMOTION_CHANGE_CHANNEL_ID -> "연인의 감정"
         CHAT_CHANNEL_ID -> "채팅"
         ADVERTISING_CHANNEL_ID -> "광고"
+        COUPLE_REGISTRATION_COMPLETED_CHANNEL_ID -> "커플 등록 완료"
         else -> ""
-    }
-
-    class FcmNewChatObserver {
-        companion object {
-            private var Instance: FcmNewChatObserver? = null
-
-            fun getInstance(): FcmNewChatObserver {
-                if (Instance == null) {
-                    Instance = FcmNewChatObserver()
-                    return Instance!!
-                }
-                return Instance!!
-            }
-
-            fun onCleared() {
-                Instance = null
-            }
-        }
-
-        private val _newChat = MutableStateFlow<Resource<Chat>>(Resource.Loading(true))
-        val newChat = _newChat.asStateFlow()
-
-        fun setNewChat(chat: Chat) {
-            _newChat.value = Resource.Success(chat)
-        }
     }
 }

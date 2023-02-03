@@ -44,6 +44,7 @@ class CoupleRegistrationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         collectMyCoupleCode()
+        collectIsCoupleRegistrationCompleted()
         initPartnerCoupleCodeValue()
 
         binding.apply {
@@ -70,13 +71,7 @@ class CoupleRegistrationFragment : Fragment() {
 
     private fun sendPartnerCode() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-            val isSuccessful = viewModel.sendPartnerCode()
-            if (isSuccessful) {
-                navigateHomePage()
-                return@repeatOnLifecycle
-            }
-
-            Toast.makeText(requireContext(), "올바르지 않은 코드입니다", Toast.LENGTH_SHORT).show()
+            viewModel.sendPartnerCode()
         }
     }
 
@@ -97,6 +92,16 @@ class CoupleRegistrationFragment : Fragment() {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.myCoupleCode.collectLatest {
                 binding.textMyCoupleCode.text = it
+            }
+        }
+    }
+
+    private fun collectIsCoupleRegistrationCompleted() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.isCoupleRegistrationCompleted.collectLatest { isCompleted ->
+                if (isCompleted) {
+                    navigateHomePage()
+                }
             }
         }
     }

@@ -74,7 +74,7 @@ class LogInFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 //        googleLogOut()
-        googleAutoLogIn()
+//        googleAutoLogIn()
     }
 
     private fun googleLogOut() {
@@ -133,6 +133,8 @@ class LogInFragment : Fragment() {
             val data = result.data
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             handleGoogleSignUpResult(task)
+        } else {
+            Toast.makeText(requireContext(), "구글 로그인에 실패했습니다.", Toast.LENGTH_SHORT).show()
         }
     }
 
