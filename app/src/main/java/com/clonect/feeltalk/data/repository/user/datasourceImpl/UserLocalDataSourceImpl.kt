@@ -9,7 +9,9 @@ import java.io.File
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class UserLocalDataSourceImpl(private val context: Context): UserLocalDataSource {
+class UserLocalDataSourceImpl(
+    private val context: Context
+): UserLocalDataSource {
 
     override suspend fun getCoupleRegistrationCode(): String? = suspendCoroutine { continuation ->
         val dir = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

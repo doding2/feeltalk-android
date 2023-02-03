@@ -11,8 +11,9 @@ class SendFcmUseCase(
         notificationRepository.postNotification(
             pushNotification = PushNotification(
                 data = NotificationData(
-                    title = "최종근",
-                    message = "야 승준아 너 놀고있지"
+                    title = "커플 등록 완료",
+                    message = "커플 등록이 완료되었습니다.",
+                    type = ""
                 ),
                 to = "/topics/Push"
             ),

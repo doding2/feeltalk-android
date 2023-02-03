@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.icu.lang.UCharacter.GraphemeClusterBreak.L
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -23,6 +24,7 @@ import com.clonect.feeltalk.presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.presentation.ui.MainActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -37,10 +39,11 @@ import kotlin.random.nextUInt
 @AndroidEntryPoint
 class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
+    // Fcm
     @Inject
     lateinit var saveFcmTokenUseCase: SaveFcmTokenUseCase
 
-
+    // Chat
     @Inject
     lateinit var saveChatUseCase: SaveChatUseCase
     @Inject
@@ -68,11 +71,20 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         Log.i("FCMService", "isAppRunning: $isAppRunning")
         Log.i("FCMService", "message: ${message.data}")
 
-        when (message.data["type"]) {
-            "today_question" -> handleTodayQuestionData(message.data)
-            "chat" -> handleChatData(message.data)
-            "커플매칭성공" -> handleCoupleRegistrationData(message.data)
-            else -> handleOtherCases(message.data)
+        val data = if (message.data["data"] == null) {
+            message.data
+        } else {
+            Gson().fromJson(message.data["data"], Map::class.java) as? Map<String, String>
+                ?: message.data
+        }
+
+        Log.i("FCMService", "parsed message: $data")
+
+        when (data["type"]) {
+            "today_question" -> handleTodayQuestionData(data)
+            "chat" -> handleChatData(data)
+            "커플매칭성공" -> handleCoupleRegistrationData(data)
+            else -> handleOtherCases(data)
         }
     }
 
