@@ -109,7 +109,7 @@ class CoupleRegistrationFragment : Fragment() {
     private fun collectToast() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.toastMessage.collect {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
             }
         }
     }

@@ -2,6 +2,8 @@ package com.clonect.feeltalk.data.repository.encryption
 
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
+import android.util.Base64
+import android.util.Log
 import com.clonect.feeltalk.BuildConfig
 import com.clonect.feeltalk.common.FeelTalkException.*
 import com.clonect.feeltalk.common.Resource
@@ -12,11 +14,10 @@ import com.clonect.feeltalk.domain.repository.EncryptionRepository
 import com.google.android.gms.common.util.Base64Utils
 import kotlinx.coroutines.CancellationException
 import retrofit2.HttpException
-import java.security.KeyPair
-import java.security.KeyPairGenerator
-import java.security.PrivateKey
-import java.security.PublicKey
+import java.security.*
 import java.security.spec.RSAKeyGenParameterSpec
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.crypto.Cipher
 
 class EncryptionRepositoryImpl(
@@ -24,6 +25,23 @@ class EncryptionRepositoryImpl(
     private val localDataSource: EncryptionLocalDataSource,
     private val cacheDataSource: EncryptionCacheDataSource,
 ): EncryptionRepository {
+
+    override suspend fun test() {
+        val myKeyPair = generateUserLevelKeyPair()
+
+        val myPublicKey = localDataSource.getMyPublicKey()
+        val myPrivateKey = localDataSource.getMyPrivateKey()
+
+
+        val publicBytes = Base64.encode(myPublicKey?.encoded, Base64.DEFAULT)
+        val publicString = String(publicBytes)
+
+        val privateBytes = Base64.encode(myPrivateKey?.encoded, Base64.DEFAULT)
+        val privateString = String(privateBytes)
+
+        Log.i("Fragment", "local public key: ${publicString}")
+        Log.i("Fragment", "local private key: ${privateString}")
+    }
 
     override suspend fun checkKeyPairsExist(): Boolean {
         return try {
@@ -176,20 +194,15 @@ class EncryptionRepositoryImpl(
     }
 
     private fun initUserLevelKeyStore(): KeyPair {
-        val keyGen = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, BuildConfig.USER_LEVEL_KEY_PROVIDER)
-        keyGen.initialize(
-            KeyGenParameterSpec
-                .Builder(
-                    BuildConfig.USER_LEVEL_KEY_ALIAS,
-                    KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
-                ).setBlockModes(KeyProperties.BLOCK_MODE_CBC)
-                .setAlgorithmParameterSpec(RSAKeyGenParameterSpec(2048, RSAKeyGenParameterSpec.F4))
-                .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
-                .build()
-        )
+        val format = SimpleDateFormat("yyyy년 MM월 dd일 hh:mm:ss", Locale.getDefault())
+        val date = format.format(Date())
+
+        val keyGen = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA)
+        keyGen.initialize(2048, SecureRandom(date.toByteArray()))
         return keyGen.genKeyPair()
     }
+
+
 
 
 }

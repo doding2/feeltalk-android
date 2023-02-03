@@ -1,49 +1,52 @@
 package com.clonect.feeltalk.data.repository.user.datasourceImpl
 
 import android.content.Context
-import android.os.Build
 import com.clonect.feeltalk.data.repository.user.datasource.UserLocalDataSource
-import dagger.hilt.android.qualifiers.ApplicationContext
+import com.clonect.feeltalk.domain.model.user.AccessToken
 import okio.use
 import java.io.File
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 class UserLocalDataSourceImpl(
     private val context: Context
 ): UserLocalDataSource {
 
-    override suspend fun getCoupleRegistrationCode(): String? = suspendCoroutine { continuation ->
-        val dir = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            context.dataDir
-        } else {
-            context.cacheDir
+    override suspend fun getAccessToken(): AccessToken? {
+        val file = File(context.filesDir, "access_token.txt")
+        if (!file.exists() || !file.canRead())
+            return null
+        val accessTokenString = file.bufferedReader().use {
+            it.readLine()
         }
-        val file = File(dir, "couple_registration_code.txt")
-        file.bufferedReader().use {
-            continuation.resume(it.readLine())
+        return AccessToken(accessTokenString)
+    }
+
+    override suspend fun saveAccessToken(accessToken: AccessToken) {
+        val file = File(context.filesDir, "access_token.txt")
+        file.bufferedWriter().use {
+            it.write(accessToken.value)
         }
     }
 
-    override suspend fun saveCoupleRegistrationCode(code: String) {
-        val dir = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            context.dataDir
-        } else {
-            context.cacheDir
+
+    override suspend fun getCoupleRegistrationCode(): String? {
+        val file = File(context.filesDir, "couple_registration_code.txt")
+        if (!file.exists() || !file.canRead())
+            return null
+        val code = file.bufferedReader().use {
+            it.readLine()
         }
-        val file = File(dir, "couple_registration_code.txt")
+        return code
+    }
+
+    override suspend fun saveCoupleRegistrationCode(code: String) {
+        val file = File(context.filesDir, "couple_registration_code.txt")
         file.bufferedWriter().use {
             it.write(code)
         }
     }
 
     override suspend fun removeCoupleRegistrationCode() {
-        val dir = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            context.dataDir
-        } else {
-            context.cacheDir
-        }
-        val file = File(dir, "couple_registration_code.txt")
+        val file = File(context.filesDir, "couple_registration_code.txt")
         file.delete()
     }
 

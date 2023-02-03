@@ -3,6 +3,7 @@ package com.clonect.feeltalk.presentation.di
 import android.content.SharedPreferences
 import com.clonect.feeltalk.data.repository.notification.NotificationRepository
 import com.clonect.feeltalk.domain.repository.ChatRepository
+import com.clonect.feeltalk.domain.repository.EncryptionRepository
 import com.clonect.feeltalk.domain.repository.UserRepository
 import com.clonect.feeltalk.domain.usecase.*
 import com.clonect.feeltalk.domain.usecase.chat.GetChatListUseCase
@@ -10,6 +11,7 @@ import com.clonect.feeltalk.domain.usecase.chat.SaveChatUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SendChatUseCase
 import com.clonect.feeltalk.domain.usecase.emotion.GetMyEmotionUseCase
 import com.clonect.feeltalk.domain.usecase.emotion.GetPartnerEmotionUseCase
+import com.clonect.feeltalk.domain.usecase.encryption.TestUseCase
 import com.clonect.feeltalk.domain.usecase.notification.GetFcmTokenUseCase
 import com.clonect.feeltalk.domain.usecase.notification.SaveFcmTokenUseCase
 import com.clonect.feeltalk.domain.usecase.notification.SendFcmUseCase
@@ -136,7 +138,11 @@ class UseCaseModule {
         return CheckUserIsCoupleUseCase(userRepository)
     }
 
-
+    @Singleton
+    @Provides
+    fun providesTestUseCase(encryptionRepository: EncryptionRepository): TestUseCase {
+        return TestUseCase(encryptionRepository)
+    }
 
 
 

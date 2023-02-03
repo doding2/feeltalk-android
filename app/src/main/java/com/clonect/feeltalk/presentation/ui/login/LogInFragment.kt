@@ -74,7 +74,7 @@ class LogInFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 //        googleLogOut()
-//        googleAutoLogIn()
+        googleAutoLogIn()
     }
 
     private fun googleLogOut() {

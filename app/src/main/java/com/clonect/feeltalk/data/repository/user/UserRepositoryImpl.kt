@@ -27,6 +27,7 @@ class UserRepositoryImpl(
 
     override suspend fun getUserInfo(): Resource<UserInfo> {
         val accessToken = cacheDataSource.getAccessToken()
+            ?: localDataSource.getAccessToken()
             ?: throw NullPointerException("User is Not logged in.")
 
         val cache = getUserInfoFromCache()
@@ -51,6 +52,7 @@ class UserRepositoryImpl(
     override suspend fun checkUserInCouple(): Resource<CoupleCheckDto> {
         return try {
             val accessToken = cacheDataSource.getAccessToken()
+                ?: localDataSource.getAccessToken()
                 ?: throw NullPointerException("User is Not logged in.")
 
             val response = remoteDataSource.checkUserIsCouple(accessToken)
@@ -93,6 +95,7 @@ class UserRepositoryImpl(
     override suspend fun sendPartnerCoupleRegistrationCode(partnerCode: String): Resource<SendPartnerCoupleRegistrationCodeDto> {
         return try {
             val accessToken = cacheDataSource.getAccessToken()
+                ?: localDataSource.getAccessToken()
                 ?: throw NullPointerException("User is Not logged in.")
 
             val response = remoteDataSource.sendPartnerCoupleRegistrationCode(accessToken, partnerCode)
@@ -119,6 +122,7 @@ class UserRepositoryImpl(
                 throw NullPointerException("Response body from server is null.")
 
             val accessToken = response.body()!!
+            localDataSource.saveAccessToken(accessToken)
             cacheDataSource.saveAccessTokenToCache(accessToken)
             Resource.Success(accessToken)
         } catch (e: CancellationException) {
@@ -146,6 +150,7 @@ class UserRepositoryImpl(
             cacheDataSource.saveCoupleRegistrationCode(coupleRegistrationCode)
 
             val accessToken = AccessToken(response.body()!!.token)
+            localDataSource.saveAccessToken(accessToken)
             cacheDataSource.saveAccessTokenToCache(accessToken)
             Resource.Success(accessToken)
         } catch (e: CancellationException) {

@@ -3,6 +3,7 @@ package com.clonect.feeltalk.domain.repository
 import com.clonect.feeltalk.common.Resource
 
 interface EncryptionRepository {
+    suspend fun test()
     suspend fun checkKeyPairsExist(): Boolean
     suspend fun uploadMyPublicKey(): Resource<String>
     suspend fun loadPartnerPublicKey(): Resource<String>

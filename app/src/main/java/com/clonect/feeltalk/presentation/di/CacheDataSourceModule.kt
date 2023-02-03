@@ -2,8 +2,12 @@ package com.clonect.feeltalk.presentation.di
 
 import com.clonect.feeltalk.data.repository.chat.datasource.ChatCacheDataSource
 import com.clonect.feeltalk.data.repository.chat.datasourceImpl.ChatCacheDataSourceImpl
+import com.clonect.feeltalk.data.repository.encryption.EncryptionRepositoryImpl
+import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionCacheDataSource
+import com.clonect.feeltalk.data.repository.encryption.datasourceImpl.EncryptionCacheDataSourceImpl
 import com.clonect.feeltalk.data.repository.user.datasource.UserCacheDataSource
 import com.clonect.feeltalk.data.repository.user.datasourceImpl.UserCacheDataSourceImpl
+import com.clonect.feeltalk.domain.repository.EncryptionRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,4 +30,9 @@ class CacheDataSourceModule {
         return ChatCacheDataSourceImpl()
     }
 
+    @Singleton
+    @Provides
+    fun providesEncryptionCacheDataSource(): EncryptionCacheDataSource {
+        return EncryptionCacheDataSourceImpl()
+    }
 }

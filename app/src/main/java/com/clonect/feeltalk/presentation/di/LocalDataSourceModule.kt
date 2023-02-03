@@ -4,6 +4,10 @@ import android.content.Context
 import com.clonect.feeltalk.data.db.ChatDao
 import com.clonect.feeltalk.data.repository.chat.datasource.ChatLocalDataSource
 import com.clonect.feeltalk.data.repository.chat.datasourceImpl.ChatLocalDataSourceImpl
+import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionCacheDataSource
+import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionLocalDataSource
+import com.clonect.feeltalk.data.repository.encryption.datasourceImpl.EncryptionCacheDataSourceImpl
+import com.clonect.feeltalk.data.repository.encryption.datasourceImpl.EncryptionLocalDataSourceImpl
 import com.clonect.feeltalk.data.repository.user.datasource.UserLocalDataSource
 import com.clonect.feeltalk.data.repository.user.datasourceImpl.UserLocalDataSourceImpl
 import dagger.Module
@@ -28,4 +32,11 @@ class LocalDataSourceModule {
     fun providesUserLocalDataSource(@ApplicationContext context: Context): UserLocalDataSource {
         return UserLocalDataSourceImpl(context)
     }
+
+    @Singleton
+    @Provides
+    fun providesEncryptionLocalDataSource(@ApplicationContext context: Context): EncryptionLocalDataSource {
+        return EncryptionLocalDataSourceImpl(context)
+    }
+
 }

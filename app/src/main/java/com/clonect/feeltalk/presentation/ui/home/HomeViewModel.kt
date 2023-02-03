@@ -7,8 +7,10 @@ import com.clonect.feeltalk.domain.model.user.Emotion
 import com.clonect.feeltalk.domain.usecase.notification.GetFcmTokenUseCase
 import com.clonect.feeltalk.domain.usecase.emotion.GetMyEmotionUseCase
 import com.clonect.feeltalk.domain.usecase.emotion.GetPartnerEmotionUseCase
+import com.clonect.feeltalk.domain.usecase.encryption.TestUseCase
 import com.clonect.feeltalk.domain.usecase.notification.SendFcmUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,7 +22,7 @@ class HomeViewModel @Inject constructor(
     private val getMyEmotionUseCase: GetMyEmotionUseCase,
     private val getPartnerEmotionUseCase: GetPartnerEmotionUseCase,
     private val getFcmTokenUseCase: GetFcmTokenUseCase,
-    private val sendFcmUseCase: SendFcmUseCase
+    private val sendFcmUseCase: SendFcmUseCase,
 ): ViewModel() {
 
     private val _myEmotionState = MutableStateFlow<Emotion>(Emotion.Happy)
