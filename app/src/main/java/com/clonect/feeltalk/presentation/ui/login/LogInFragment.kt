@@ -132,8 +132,6 @@ class LogInFragment : Fragment() {
             val data = result.data
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             handleGoogleSignUpResult(task)
-        } else {
-            Toast.makeText(requireContext(), "구글 로그인에 실패했습니다.", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -161,6 +159,7 @@ class LogInFragment : Fragment() {
             if (isSignUpSuccessful) {
                 navigateToCoupleRegistrationPage()
             } else {
+                googleLogOut()
                 Toast.makeText(requireContext(), "회원가입에 실패했습니다.", Toast.LENGTH_SHORT).show()
             }
         } catch (e: ApiException) {

@@ -21,9 +21,9 @@ android {
 
         buildConfigField("String", "APP_LEVEL_KEY_PROVIDER", APP_LEVEL_KEY_PROVIDER)
         buildConfigField("String", "APP_LEVEL_KEY_ALIAS", APP_LEVEL_KEY_ALIAS)
-        buildConfigField("String", "USER_LEVEL_KEY_PROVIDER", USER_LEVEL_KEY_PROVIDER)
-        buildConfigField("String", "USER_LEVEL_KEY_ALIAS", USER_LEVEL_KEY_ALIAS)
-        buildConfigField("String", "CIPHER_ALGORITHM", CIPHER_ALGORITHM)
+        buildConfigField("String", "APP_LEVEL_CIPHER_ALGORITHM", APP_LEVEL_CIPHER_ALGORITHM)
+        buildConfigField("String", "USER_LEVEL_CIPHER_ALGORITHM", USER_LEVEL_CIPHER_ALGORITHM)
+        buildConfigField("String", "ROOM_DATABASE_PASS_PHRASE", ROOM_DATABASE_PASS_PHRASE)
 
         buildConfigField("String", "CLONECT_BASE_URL", CLONECT_BASE_URL)
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", KAKAO_NATIVE_APP_KEY)
@@ -88,6 +88,9 @@ dependencies {
     kapt "androidx.room:room-compiler:2.5.0"
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation "androidx.room:room-ktx:2.5.0"
+    // Encryption for room database
+    implementation "net.zetetic:android-database-sqlcipher:4.5.3"
+    implementation "androidx.sqlite:sqlite:2.3.0"
     // dagger hilt
     implementation "com.google.dagger:hilt-android:2.44"
     kapt "com.google.dagger:hilt-compiler:2.44"
@@ -96,8 +99,6 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:31.2.0')
     // Firebase cloud messaging
     implementation 'com.google.firebase:firebase-messaging-ktx'
-    // Firebase analytics
-//    implementation 'com.google.firebase:firebase-analytics-ktx'
 
     // Google oauth
     implementation 'com.google.android.gms:play-services-auth:20.4.1'

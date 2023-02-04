@@ -2,6 +2,7 @@ package com.clonect.feeltalk.data.repository.chat.datasourceImpl
 
 import com.clonect.feeltalk.data.db.ChatDao
 import com.clonect.feeltalk.data.repository.chat.datasource.ChatLocalDataSource
+import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
 import com.clonect.feeltalk.domain.model.chat.Chat
 import kotlinx.coroutines.flow.Flow
 

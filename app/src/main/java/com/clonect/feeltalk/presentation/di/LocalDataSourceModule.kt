@@ -10,6 +10,7 @@ import com.clonect.feeltalk.data.repository.encryption.datasourceImpl.Encryption
 import com.clonect.feeltalk.data.repository.encryption.datasourceImpl.EncryptionLocalDataSourceImpl
 import com.clonect.feeltalk.data.repository.user.datasource.UserLocalDataSource
 import com.clonect.feeltalk.data.repository.user.datasourceImpl.UserLocalDataSourceImpl
+import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,20 +24,28 @@ class LocalDataSourceModule {
 
     @Singleton
     @Provides
-    fun providesChatLocalDataSource(chatDao: ChatDao): ChatLocalDataSource {
+    fun providesChatLocalDataSource(
+        chatDao: ChatDao
+    ): ChatLocalDataSource {
         return ChatLocalDataSourceImpl(chatDao)
     }
 
     @Singleton
     @Provides
-    fun providesUserLocalDataSource(@ApplicationContext context: Context): UserLocalDataSource {
-        return UserLocalDataSourceImpl(context)
+    fun providesUserLocalDataSource(
+        @ApplicationContext context: Context,
+        appLevelEncryptHelper: AppLevelEncryptHelper,
+    ): UserLocalDataSource {
+        return UserLocalDataSourceImpl(context, appLevelEncryptHelper)
     }
 
     @Singleton
     @Provides
-    fun providesEncryptionLocalDataSource(@ApplicationContext context: Context): EncryptionLocalDataSource {
-        return EncryptionLocalDataSourceImpl(context)
+    fun providesEncryptionLocalDataSource(
+        @ApplicationContext context: Context,
+        appLevelEncryptHelper: AppLevelEncryptHelper,
+    ): EncryptionLocalDataSource {
+        return EncryptionLocalDataSourceImpl(context, appLevelEncryptHelper)
     }
 
 }

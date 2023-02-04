@@ -29,4 +29,11 @@ class SharedPreferencesModule {
         return context.getSharedPreferences("AppSettingsSharedPreferences", AppCompatActivity.MODE_PRIVATE)
     }
 
+    @Singleton
+    @Provides
+    @Named("AppLevelEncryption")
+    fun providesAppLevelEncryptionPref(@ApplicationContext context: Context): SharedPreferences {
+        return context.getSharedPreferences("AppLevelEncryptionSharedPreferences", AppCompatActivity.MODE_PRIVATE)
+    }
+
 }

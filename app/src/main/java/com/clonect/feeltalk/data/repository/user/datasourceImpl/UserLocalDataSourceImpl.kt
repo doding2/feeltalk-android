@@ -2,12 +2,14 @@ package com.clonect.feeltalk.data.repository.user.datasourceImpl
 
 import android.content.Context
 import com.clonect.feeltalk.data.repository.user.datasource.UserLocalDataSource
+import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
 import com.clonect.feeltalk.domain.model.user.AccessToken
 import okio.use
 import java.io.File
 
 class UserLocalDataSourceImpl(
-    private val context: Context
+    private val context: Context,
+    private val appLevelEncryptHelper: AppLevelEncryptHelper
 ): UserLocalDataSource {
 
     override suspend fun getAccessToken(): AccessToken? {
@@ -15,7 +17,8 @@ class UserLocalDataSourceImpl(
         if (!file.exists() || !file.canRead())
             return null
         val accessTokenString = file.bufferedReader().use {
-            it.readLine()
+            val encrypted = it.readLine()
+            appLevelEncryptHelper.decrypt(encrypted)
         }
         return AccessToken(accessTokenString)
     }
@@ -23,7 +26,8 @@ class UserLocalDataSourceImpl(
     override suspend fun saveAccessToken(accessToken: AccessToken) {
         val file = File(context.filesDir, "access_token.txt")
         file.bufferedWriter().use {
-            it.write(accessToken.value)
+            val encrypted = appLevelEncryptHelper.encrypt(accessToken.value)
+            it.write(encrypted)
         }
     }
 
@@ -33,7 +37,8 @@ class UserLocalDataSourceImpl(
         if (!file.exists() || !file.canRead())
             return null
         val code = file.bufferedReader().use {
-            it.readLine()
+            val encrypted = it.readLine()
+            appLevelEncryptHelper.decrypt(encrypted)
         }
         return code
     }
@@ -41,7 +46,8 @@ class UserLocalDataSourceImpl(
     override suspend fun saveCoupleRegistrationCode(code: String) {
         val file = File(context.filesDir, "couple_registration_code.txt")
         file.bufferedWriter().use {
-            it.write(code)
+            val encrypted = appLevelEncryptHelper.encrypt(code)
+            it.write(encrypted)
         }
     }
 
@@ -56,7 +62,8 @@ class UserLocalDataSourceImpl(
         if (!file.exists())
             return null
         val idToken = file.bufferedReader().use {
-            it.readLine()
+            val encrypted = it.readLine()
+            appLevelEncryptHelper.decrypt(encrypted)
         }
         return idToken
     }
@@ -64,7 +71,8 @@ class UserLocalDataSourceImpl(
     override suspend fun saveGoogleIdToken(idToken: String) {
         val file = File(context.filesDir, "google_id_token.txt")
         file.bufferedWriter().use {
-            it.write(idToken)
+            val encrypted = appLevelEncryptHelper.encrypt(idToken)
+            it.write(encrypted)
         }
     }
 }

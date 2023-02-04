@@ -6,6 +6,7 @@ import android.security.keystore.KeyProperties
 import android.util.Base64
 import com.clonect.feeltalk.BuildConfig
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionLocalDataSource
+import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
 import java.io.File
 import java.security.KeyFactory
 import java.security.PrivateKey
@@ -15,7 +16,8 @@ import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
 
 class EncryptionLocalDataSourceImpl(
-    private val context: Context
+    private val context: Context,
+    private val appLevelEncryptHelper: AppLevelEncryptHelper
 ): EncryptionLocalDataSource {
 
     override suspend fun checkKeyPairsExist(): Boolean {
@@ -33,7 +35,8 @@ class EncryptionLocalDataSourceImpl(
     override suspend fun getMyPublicKey(): PublicKey? {
         val myPublicKeyFile = File(context.filesDir, "my_public_key.txt")
         val myPublicKey = myPublicKeyFile.bufferedReader().use {
-            val key = it.readLine()
+            val encrypted = it.readLine()
+            val key = appLevelEncryptHelper.decrypt(encrypted)
             val keyBytes = Base64.decode(key, Base64.NO_WRAP)
             val keySpec = X509EncodedKeySpec(keyBytes)
             val keyFactory = KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_RSA)
@@ -45,7 +48,8 @@ class EncryptionLocalDataSourceImpl(
     override suspend fun getMyPrivateKey(): PrivateKey? {
         val myPrivateKeyFile = File(context.filesDir, "my_private_key.txt")
         val myPrivateKey = myPrivateKeyFile.bufferedReader().use {
-            val key = it.readLine()
+            val encrypted = it.readLine()
+            val key = appLevelEncryptHelper.decrypt(encrypted)
             val keyBytes = Base64.decode(key, Base64.NO_WRAP)
             val keySpec = PKCS8EncodedKeySpec(keyBytes)
             val keyFactory = KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_RSA)
@@ -59,7 +63,8 @@ class EncryptionLocalDataSourceImpl(
         myPublicKeyFile.bufferedWriter().use {
             val keyBytes = Base64.encode(publicKey.encoded, Base64.NO_WRAP)
             val keyString = String(keyBytes)
-            it.write(keyString)
+            val encrypted = appLevelEncryptHelper.encrypt(keyString)
+            it.write(encrypted)
         }
     }
 
@@ -68,7 +73,8 @@ class EncryptionLocalDataSourceImpl(
         myPrivateKeyFile.bufferedWriter().use {
             val keyBytes = Base64.encode(privateKey.encoded, Base64.NO_WRAP)
             val keyString = String(keyBytes)
-            it.write(keyString)
+            val encrypted = appLevelEncryptHelper.encrypt(keyString)
+            it.write(encrypted)
         }
     }
 
@@ -77,7 +83,8 @@ class EncryptionLocalDataSourceImpl(
     override suspend fun getPartnerPublicKey(): PublicKey? {
         val partnerPublicKeyFile = File(context.filesDir, "partner_public_key.txt")
         val partnerPublicKey = partnerPublicKeyFile.bufferedReader().use {
-            val key = it.readLine()
+            val encrypted = it.readLine()
+            val key = appLevelEncryptHelper.decrypt(encrypted)
             val keyBytes = Base64.decode(key, Base64.NO_WRAP)
             val keySpec = X509EncodedKeySpec(keyBytes)
             val keyFactory = KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_RSA)
@@ -89,7 +96,8 @@ class EncryptionLocalDataSourceImpl(
     override suspend fun getPartnerPrivateKey(): PrivateKey? {
         val partnerPrivateKeyFile = File(context.filesDir, "partner_private_key.txt")
         val partnerPrivateKey = partnerPrivateKeyFile.bufferedReader().use {
-            val key = it.readLine()
+            val encrypted = it.readLine()
+            val key = appLevelEncryptHelper.decrypt(encrypted)
             val keyBytes = Base64.decode(key, Base64.NO_WRAP)
             val keySpec = PKCS8EncodedKeySpec(keyBytes)
             val keyFactory = KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_RSA)
@@ -103,7 +111,8 @@ class EncryptionLocalDataSourceImpl(
         partnerPublicKeyFile.bufferedWriter().use {
             val keyBytes = Base64.encode(publicKey.encoded, Base64.NO_WRAP)
             val keyString = String(keyBytes)
-            it.write(keyString)
+            val encrypted = appLevelEncryptHelper.encrypt(keyString)
+            it.write(encrypted)
         }
     }
 
@@ -112,7 +121,8 @@ class EncryptionLocalDataSourceImpl(
         partnerPrivateKeyFile.bufferedWriter().use {
             val keyBytes = Base64.encode(privateKey.encoded, Base64.NO_WRAP)
             val keyString = String(keyBytes)
-            it.write(keyString)
+            val encrypted = appLevelEncryptHelper.encrypt(keyString)
+            it.write(encrypted)
         }
     }
 
