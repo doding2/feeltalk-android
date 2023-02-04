@@ -112,8 +112,11 @@ class UserRepositoryImpl(
         }
     }
 
-    override suspend fun autoLogInWithGoogle(idToken: String): Resource<AccessToken> {
+    override suspend fun autoLogInWithGoogle(): Resource<AccessToken> {
         return try {
+            val idToken = localDataSource.getGoogleIdToken()
+                ?: throw Exception("User is not auto logged in. Please re-log in.")
+
             val response = remoteDataSource.autoLogInWithGoogle(idToken)
 
             if (!response.isSuccessful)
@@ -151,6 +154,7 @@ class UserRepositoryImpl(
 
             val accessToken = AccessToken(response.body()!!.token)
             localDataSource.saveAccessToken(accessToken)
+            localDataSource.saveGoogleIdToken(idToken)
             cacheDataSource.saveAccessTokenToCache(accessToken)
             Resource.Success(accessToken)
         } catch (e: CancellationException) {

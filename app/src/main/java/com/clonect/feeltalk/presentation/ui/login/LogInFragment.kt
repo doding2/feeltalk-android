@@ -89,8 +89,7 @@ class LogInFragment : Fragment() {
     private fun googleAutoLogIn() = lifecycleScope.launch {
         val googleAccount = GoogleSignIn.getLastSignedInAccount(requireContext())
         googleAccount?.let {
-            val idToken = it.idToken.toString()
-            val isLogInSuccessful = viewModel.autoLogInWithGoogle(idToken)
+            val isLogInSuccessful = viewModel.autoLogInWithGoogle()
             if (!isLogInSuccessful) {
                 Toast.makeText(requireContext(), "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show()
                 return@launch

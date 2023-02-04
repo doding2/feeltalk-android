@@ -15,7 +15,7 @@ interface UserRepository {
     suspend fun removeCoupleRegistrationCode()
     suspend fun sendPartnerCoupleRegistrationCode(partnerCode: String): Resource<SendPartnerCoupleRegistrationCodeDto>
 
-    suspend fun autoLogInWithGoogle(idToken: String): Resource<AccessToken>
+    suspend fun autoLogInWithGoogle(): Resource<AccessToken>
     suspend fun signUpWithGoogle(idToken: String, serverAuthCode: String, fcmToken: String): Resource<AccessToken>
 
 }

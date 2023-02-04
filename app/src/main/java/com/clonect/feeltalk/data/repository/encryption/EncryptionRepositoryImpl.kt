@@ -1,6 +1,5 @@
 package com.clonect.feeltalk.data.repository.encryption
 
-import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
 import android.util.Log
@@ -15,7 +14,6 @@ import com.google.android.gms.common.util.Base64Utils
 import kotlinx.coroutines.CancellationException
 import retrofit2.HttpException
 import java.security.*
-import java.security.spec.RSAKeyGenParameterSpec
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.crypto.Cipher
@@ -128,10 +126,10 @@ class EncryptionRepositoryImpl(
     }
 
 
-    private fun encrypt(publicKey: PublicKey, digest: String): String {
+    private fun encrypt(publicKey: PublicKey, message: String): String {
         val cipher = Cipher.getInstance(BuildConfig.CIPHER_ALGORITHM)
         cipher.init(Cipher.ENCRYPT_MODE, publicKey)
-        val encryptedByteArray = cipher.doFinal(digest.toByteArray())
+        val encryptedByteArray = cipher.doFinal(message.toByteArray())
         return Base64Utils.encode(encryptedByteArray)
     }
 
@@ -148,7 +146,10 @@ class EncryptionRepositoryImpl(
         if (cache != null) return cache
 
         val local = localDataSource.getMyPublicKey()
-        if (local != null) return local
+        if (local != null) {
+            cacheDataSource.saveMyPublicKeyToCache(local)
+            return local
+        }
 
         throw NoMyKeyException("My public Key does not exist in this device.")
     }
@@ -158,7 +159,10 @@ class EncryptionRepositoryImpl(
         if (cache != null) return cache
 
         val local = localDataSource.getMyPrivateKey()
-        if (local != null) return local
+        if (local != null) {
+            cacheDataSource.saveMyPrivateKeyToCache(local)
+            return local
+        }
 
         throw NoMyKeyException("My private Key does not exist in this device.")
     }
@@ -168,7 +172,10 @@ class EncryptionRepositoryImpl(
         if (cache != null) return cache
 
         val local = localDataSource.getPartnerPublicKey()
-        if (local != null) return local
+        if (local != null) {
+            cacheDataSource.savePartnerPublicKeyToCache(local)
+            return local
+        }
 
         throw NoPartnerKeyException("Partner public Key does not exist in this device.")
     }
@@ -178,7 +185,10 @@ class EncryptionRepositoryImpl(
         if (cache != null) return cache
 
         val local = localDataSource.getPartnerPrivateKey()
-        if (local != null) return local
+        if (local != null) {
+            localDataSource.savePartnerPrivateKeyToCache(local)
+            return local
+        }
 
         throw NoPartnerKeyException("Partner private Key does not exist in this device.")
     }

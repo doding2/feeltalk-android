@@ -50,4 +50,21 @@ class UserLocalDataSourceImpl(
         file.delete()
     }
 
+
+    override suspend fun getGoogleIdToken(): String? {
+        val file = File(context.filesDir, "google_id_token.txt")
+        if (!file.exists())
+            return null
+        val idToken = file.bufferedReader().use {
+            it.readLine()
+        }
+        return idToken
+    }
+
+    override suspend fun saveGoogleIdToken(idToken: String) {
+        val file = File(context.filesDir, "google_id_token.txt")
+        file.bufferedWriter().use {
+            it.write(idToken)
+        }
+    }
 }

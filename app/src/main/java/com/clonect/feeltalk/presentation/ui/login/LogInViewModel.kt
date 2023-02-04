@@ -56,8 +56,8 @@ class LogInViewModel @Inject constructor(
         }
     }
 
-    suspend fun autoLogInWithGoogle(idToken: String) = withContext(Dispatchers.IO) {
-        val result = autoLogInWithGoogleUseCase(idToken)
+    suspend fun autoLogInWithGoogle() = withContext(Dispatchers.IO) {
+        val result = autoLogInWithGoogleUseCase()
         return@withContext when (result) {
             is Resource.Success -> true
             is Resource.Error -> {
