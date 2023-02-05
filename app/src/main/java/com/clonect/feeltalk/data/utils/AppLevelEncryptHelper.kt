@@ -3,6 +3,7 @@ package com.clonect.feeltalk.data.utils
 import android.content.SharedPreferences
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
+import android.util.Base64
 import com.clonect.feeltalk.BuildConfig
 import com.google.android.gms.common.util.Base64Utils
 import okio.ByteString.Companion.encodeUtf8
@@ -21,7 +22,7 @@ class AppLevelEncryptHelper(
         val cipher = Cipher.getInstance(BuildConfig.APP_LEVEL_CIPHER_ALGORITHM)
         cipher.init(Cipher.ENCRYPT_MODE, appLevelKey)
         val iv = cipher.iv
-        pref.edit().putString("iv", String(iv)).apply()
+        pref.edit().putString("iv", Base64.encodeToString(iv, Base64.DEFAULT)).apply()
         val encryptedByteArray = cipher.doFinal(message.encodeToByteArray())
         return Base64Utils.encode(encryptedByteArray)
     }
