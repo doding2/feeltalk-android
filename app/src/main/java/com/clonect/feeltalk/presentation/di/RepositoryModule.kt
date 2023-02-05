@@ -14,7 +14,7 @@ import com.clonect.feeltalk.data.repository.user.UserRepositoryImpl
 import com.clonect.feeltalk.data.repository.user.datasource.UserCacheDataSource
 import com.clonect.feeltalk.data.repository.user.datasource.UserLocalDataSource
 import com.clonect.feeltalk.data.repository.user.datasource.UserRemoteDataSource
-import com.clonect.feeltalk.data.utils.ShortenEncryptHelper
+import com.clonect.feeltalk.data.utils.MessageEncryptHelper
 import com.clonect.feeltalk.domain.repository.ChatRepository
 import com.clonect.feeltalk.domain.repository.EncryptionRepository
 import com.clonect.feeltalk.domain.repository.UserRepository
@@ -62,8 +62,8 @@ class RepositoryModule {
         remoteDataSource: EncryptionRemoteDataSource,
         localDataSource: EncryptionLocalDataSource,
         cacheDataSource: EncryptionCacheDataSource,
-        shortenEncryptHelper: ShortenEncryptHelper
+        messageEncryptHelper: MessageEncryptHelper
     ): EncryptionRepository {
-        return EncryptionRepositoryImpl(remoteDataSource, localDataSource, cacheDataSource, shortenEncryptHelper)
+        return EncryptionRepositoryImpl(remoteDataSource, localDataSource, cacheDataSource, messageEncryptHelper)
     }
 }

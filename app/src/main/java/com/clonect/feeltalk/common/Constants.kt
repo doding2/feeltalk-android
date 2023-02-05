@@ -8,5 +8,6 @@ class Constants {
         const val FCM_TOKEN = "e1wRei1aQdmkmaENvmTcHZ:APA91bFEsA1mPp5sAfI5Ddzm1og7IQrbaRTnHMkwPkpQHSG1MuijTFL-vtpTP65eB6-syB3b3U69qMa_x7TY0_Ez3NVbJHlVuttURuLxIOsxmeHQo_s4OhC-zPpma_oCwkqfXIqVwmb_"
 
         const val EXCHANGE_KEY_WAIT_DELAY = 1000L
+        const val RSA_ENCRYPTED_AES_KEY_SIZE = 64
     }
 }

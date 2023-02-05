@@ -4,14 +4,12 @@ import android.content.Context
 import com.clonect.feeltalk.data.db.ChatDao
 import com.clonect.feeltalk.data.repository.chat.datasource.ChatLocalDataSource
 import com.clonect.feeltalk.data.repository.chat.datasourceImpl.ChatLocalDataSourceImpl
-import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionCacheDataSource
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionLocalDataSource
-import com.clonect.feeltalk.data.repository.encryption.datasourceImpl.EncryptionCacheDataSourceImpl
 import com.clonect.feeltalk.data.repository.encryption.datasourceImpl.EncryptionLocalDataSourceImpl
 import com.clonect.feeltalk.data.repository.user.datasource.UserLocalDataSource
 import com.clonect.feeltalk.data.repository.user.datasourceImpl.UserLocalDataSourceImpl
 import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
-import com.clonect.feeltalk.data.utils.ShortenEncryptHelper
+import com.clonect.feeltalk.data.utils.MessageEncryptHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -45,9 +43,9 @@ class LocalDataSourceModule {
     fun providesEncryptionLocalDataSource(
         @ApplicationContext context: Context,
         appLevelEncryptHelper: AppLevelEncryptHelper,
-        shortenEncryptHelper: ShortenEncryptHelper,
+        messageEncryptHelper: MessageEncryptHelper,
     ): EncryptionLocalDataSource {
-        return EncryptionLocalDataSourceImpl(context, appLevelEncryptHelper, shortenEncryptHelper)
+        return EncryptionLocalDataSourceImpl(context, appLevelEncryptHelper, messageEncryptHelper)
     }
 
 }

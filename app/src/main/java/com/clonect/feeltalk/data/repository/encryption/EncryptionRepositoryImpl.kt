@@ -10,7 +10,7 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionCacheDataSource
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionLocalDataSource
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionRemoteDataSource
-import com.clonect.feeltalk.data.utils.ShortenEncryptHelper
+import com.clonect.feeltalk.data.utils.MessageEncryptHelper
 import com.clonect.feeltalk.domain.model.user.AccessToken
 import com.clonect.feeltalk.domain.repository.EncryptionRepository
 import kotlinx.coroutines.CancellationException
@@ -27,7 +27,7 @@ class EncryptionRepositoryImpl(
     private val remoteSource: EncryptionRemoteDataSource,
     private val localDataSource: EncryptionLocalDataSource,
     private val cacheDataSource: EncryptionCacheDataSource,
-    private val shortenEncryptHelper: ShortenEncryptHelper
+    private val messageEncryptHelper: MessageEncryptHelper
 ): EncryptionRepository {
 
     private var tryCount = 0
@@ -35,20 +35,15 @@ class EncryptionRepositoryImpl(
     override suspend fun test() {
         generateUserLevelKeyPair()
 
-        val myPublicKey = localDataSource.getMyPublicKey()
-        val myPrivateKey = localDataSource.getMyPrivateKey()
+        val message = "안녕하세요 구텐탁 하이 할로 할로 할로 아아아미ㅏㅣㅇ gutentak!"
+        val encrypted = encrypt(getMyPublicKey(), message)
+        Log.i("Fragment", "message: $message")
 
-        val publicBytes = Base64.encode(myPublicKey?.encoded, Base64.DEFAULT)
-        val publicString = String(publicBytes)
-
-        val privateBytes = Base64.encode(myPrivateKey?.encoded, Base64.DEFAULT)
-        val privateString = String(privateBytes)
-
-
-        Log.i("Fragment", "local public key: ${publicString.length}")
-        Log.i("Fragment", "local private key: ${privateString.length}")
+        val decrypted = decrypt(getMyPrivateKey(), encrypted)
+        Log.i("Fragment", "decrypted message: $decrypted")
     }
 
+    
     override suspend fun checkKeyPairsExist(): Boolean {
         return try {
             val isExist = localDataSource.checkKeyPairsExist()
@@ -179,6 +174,8 @@ class EncryptionRepositoryImpl(
         }
     }
 
+    
+    
     override suspend fun encryptMyText(message: String): Resource<String> {
         return try {
             val publicKey = getMyPublicKey()
@@ -231,21 +228,60 @@ class EncryptionRepositoryImpl(
         }
     }
 
+    
 
+    /** RSA, AES 모두 이용한 암호화
+     *
+     * - 암호화
+     * 1. 128 비트짜리 데이터를 랜덤하게 생성 -> 결과값은 K라고 부름
+     * 2. K를 RSA 공유키로 암호화 -> 결과값은 E라고 부름
+     * 3. Message를 k를 키로 하는 AES를 이용해 암호화, 일회용 키이므로 IV는 0으로 꽉 채움 -> 결과값은 F라고 부름
+     * 4. E와 F를 합쳐서 암호화된 메시지 완성
+     *
+     *
+     * - 복호화 (기본적을는 암호화의 역순)
+     * 1. RSA의 비밀키로 E로부터 K를 복호화
+     * 2. K를 가지고 F를 복호화해서 Original Message를 얻어냄
+     * 3. K는 이제 필요 없으니 삭제
+     * */
     private fun encrypt(publicKey: PublicKey, message: String): String {
-        val cipher = Cipher.getInstance(BuildConfig.USER_LEVEL_CIPHER_ALGORITHM)
-        cipher.init(Cipher.ENCRYPT_MODE, publicKey)
-        val encryptedByteArray = cipher.doFinal(message.toByteArray())
-        return Base64.encodeToString(encryptedByteArray, Base64.NO_WRAP)
+        val aesKey = getRandomAESKey()
+        val encryptedAesKey = encryptAESKey(publicKey, aesKey)
+        val encryptedMessage = messageEncryptHelper.encryptAES(aesKey, message)
+        val encrypted = encryptedAesKey + encryptedMessage
+        return Base64.encodeToString(encrypted, Base64.NO_WRAP)
     }
 
     private fun decrypt(privateKey: PrivateKey, digest: String): String {
-        val cipher = Cipher.getInstance(BuildConfig.USER_LEVEL_CIPHER_ALGORITHM)
-        cipher.init(Cipher.DECRYPT_MODE, privateKey)
-        val decryptedByteArray = cipher.doFinal(Base64.decode(digest, Base64.NO_WRAP))
-        return String(decryptedByteArray)
+        val data = Base64.decode(digest, Base64.NO_WRAP)
+        val encryptedAesKey = data.take(64).toByteArray()
+        val aesKey = decryptAESKey(privateKey, encryptedAesKey)
+        val encryptedMessage = data.takeLast(data.size - 64).toByteArray()
+        val message = messageEncryptHelper.decryptAES(aesKey, encryptedMessage)
+        return message
     }
 
+    private fun encryptAESKey(publicKey: PublicKey, aesKey: ByteArray): ByteArray {
+        val cipher = Cipher.getInstance(BuildConfig.USER_LEVEL_CIPHER_ALGORITHM)
+        cipher.init(Cipher.ENCRYPT_MODE, publicKey)
+        return cipher.doFinal(aesKey)
+    }
+
+    private fun decryptAESKey(privateKey: PrivateKey, digest: ByteArray): ByteArray {
+        val cipher = Cipher.getInstance(BuildConfig.USER_LEVEL_CIPHER_ALGORITHM)
+        cipher.init(Cipher.DECRYPT_MODE, privateKey)
+        return cipher.doFinal(digest)
+    }
+
+    private fun getRandomAESKey(): ByteArray {
+        val format = SimpleDateFormat("MMddhhmmss", Locale.getDefault())
+        val date = format.format(Date())
+        val key = ByteArray(16)
+        Random(date.toLong()).nextBytes(key)
+        return key
+    }
+
+    
 
     private suspend fun getMyPublicKey(): PublicKey {
         val cache = cacheDataSource.getMyPublicKey()
@@ -314,7 +350,7 @@ class EncryptionRepositoryImpl(
         val date = format.format(Date())
 
         val keyGen = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA)
-        keyGen.initialize(1024, SecureRandom(date.toByteArray()))
+        keyGen.initialize(512, SecureRandom(date.toByteArray()))
         return keyGen.genKeyPair()
     }
 
