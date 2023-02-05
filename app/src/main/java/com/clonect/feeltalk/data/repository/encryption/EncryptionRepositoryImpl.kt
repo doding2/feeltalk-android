@@ -68,6 +68,7 @@ class EncryptionRepositoryImpl(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
+            e.printStackTrace()
             Resource.Error(e)
         }
     }
@@ -90,6 +91,7 @@ class EncryptionRepositoryImpl(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
+            e.printStackTrace()
             Resource.Error(e)
         }
     }
@@ -116,6 +118,7 @@ class EncryptionRepositoryImpl(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
+            e.printStackTrace()
             Resource.Error(e)
         }
     }
@@ -145,6 +148,7 @@ class EncryptionRepositoryImpl(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
+            e.printStackTrace()
             Resource.Error(e)
         }
     }
@@ -157,6 +161,7 @@ class EncryptionRepositoryImpl(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
+            e.printStackTrace()
             Resource.Error(e)
         }
     }
@@ -169,6 +174,7 @@ class EncryptionRepositoryImpl(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
+            e.printStackTrace()
             Resource.Error(e)
         }
     }
@@ -181,6 +187,7 @@ class EncryptionRepositoryImpl(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
+            e.printStackTrace()
             Resource.Error(e)
         }
     }
@@ -193,6 +200,7 @@ class EncryptionRepositoryImpl(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
+            e.printStackTrace()
             Resource.Error(e)
         }
     }
@@ -280,7 +288,7 @@ class EncryptionRepositoryImpl(
         val date = format.format(Date())
 
         val keyGen = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA)
-        keyGen.initialize(2048, SecureRandom(date.toByteArray()))
+        keyGen.initialize(4096, SecureRandom(date.toByteArray()))
         return keyGen.genKeyPair()
     }
 
