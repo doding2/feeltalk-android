@@ -1,6 +1,5 @@
 package com.clonect.feeltalk.data.repository.encryption
 
-import android.os.Build.VERSION_CODES.N
 import android.security.keystore.KeyProperties
 import android.util.Base64
 import android.util.Log
@@ -14,7 +13,6 @@ import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionRemo
 import com.clonect.feeltalk.data.utils.ShortenEncryptHelper
 import com.clonect.feeltalk.domain.model.user.AccessToken
 import com.clonect.feeltalk.domain.repository.EncryptionRepository
-import com.google.android.gms.common.util.Base64Utils
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import retrofit2.HttpException
@@ -46,8 +44,9 @@ class EncryptionRepositoryImpl(
         val privateBytes = Base64.encode(myPrivateKey?.encoded, Base64.DEFAULT)
         val privateString = String(privateBytes)
 
-        Log.i("Fragment", "local public key: $publicString")
-        Log.i("Fragment", "local private key: $privateString")
+
+        Log.i("Fragment", "local public key: ${publicString.length}")
+        Log.i("Fragment", "local private key: ${privateString.length}")
     }
 
     override suspend fun checkKeyPairsExist(): Boolean {
@@ -236,18 +235,14 @@ class EncryptionRepositoryImpl(
     private fun encrypt(publicKey: PublicKey, message: String): String {
         val cipher = Cipher.getInstance(BuildConfig.USER_LEVEL_CIPHER_ALGORITHM)
         cipher.init(Cipher.ENCRYPT_MODE, publicKey)
-
-        val shorten = shortenEncryptHelper.encrypt(message)
-        val encryptedByteArray = cipher.doFinal(shorten.toByteArray())
+        val encryptedByteArray = cipher.doFinal(message.toByteArray())
         return Base64.encodeToString(encryptedByteArray, Base64.NO_WRAP)
     }
 
     private fun decrypt(privateKey: PrivateKey, digest: String): String {
         val cipher = Cipher.getInstance(BuildConfig.USER_LEVEL_CIPHER_ALGORITHM)
         cipher.init(Cipher.DECRYPT_MODE, privateKey)
-
-        val lengthened = shortenEncryptHelper.decrypt(digest)
-        val decryptedByteArray = cipher.doFinal(Base64.decode(lengthened, Base64.NO_WRAP))
+        val decryptedByteArray = cipher.doFinal(Base64.decode(digest, Base64.NO_WRAP))
         return String(decryptedByteArray)
     }
 
@@ -319,7 +314,7 @@ class EncryptionRepositoryImpl(
         val date = format.format(Date())
 
         val keyGen = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA)
-        keyGen.initialize(4096, SecureRandom(date.toByteArray()))
+        keyGen.initialize(1024, SecureRandom(date.toByteArray()))
         return keyGen.genKeyPair()
     }
 
