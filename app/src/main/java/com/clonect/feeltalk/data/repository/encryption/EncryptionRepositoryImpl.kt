@@ -9,11 +9,14 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionCacheDataSource
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionLocalDataSource
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionRemoteDataSource
+import com.clonect.feeltalk.domain.model.user.AccessToken
 import com.clonect.feeltalk.domain.repository.EncryptionRepository
 import com.google.android.gms.common.util.Base64Utils
 import kotlinx.coroutines.CancellationException
 import retrofit2.HttpException
 import java.security.*
+import java.security.spec.PKCS8EncodedKeySpec
+import java.security.spec.X509EncodedKeySpec
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.crypto.Cipher
@@ -52,11 +55,11 @@ class EncryptionRepositoryImpl(
         }
     }
 
-    override suspend fun uploadMyPublicKey(): Resource<String> {
+    override suspend fun uploadMyPublicKey(accessToken: AccessToken): Resource<String> {
         return try {
             val myKeyPair = generateUserLevelKeyPair()
 
-            val response = remoteSource.uploadMyPublicKey(myKeyPair.public)
+            val response = remoteSource.uploadMyPublicKey(accessToken, myKeyPair.public)
             if (!response.isSuccessful) throw HttpException(response)
             if (response.body() == null) throw NullPointerException("Response body from server is null.")
 
@@ -68,14 +71,82 @@ class EncryptionRepositoryImpl(
         }
     }
 
-    override suspend fun loadPartnerPublicKey(): Resource<String> {
-        TODO("Not yet implemented")
+    override suspend fun loadPartnerPublicKey(accessToken: AccessToken): Resource<String> {
+        return try {
+            val response = remoteSource.loadPartnerPublicKey(accessToken)
+            if (!response.isSuccessful) throw HttpException(response)
+            if (response.body() == null) throw NullPointerException("Response body from server is null.")
+
+            val publicKeyString = response.body()!!.publicKey
+            val keyBytes = Base64.decode(publicKeyString, Base64.NO_WRAP)
+            val keySpec = X509EncodedKeySpec(keyBytes)
+            val keyFactory = KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_RSA)
+            val partnerPublicKey = keyFactory.generatePublic(keySpec)
+
+            localDataSource.savePartnerPublicKeyToCache(partnerPublicKey)
+            cacheDataSource.savePartnerPublicKeyToCache(partnerPublicKey)
+            Resource.Success(publicKeyString)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
     }
 
-    override suspend fun loadPartnerPrivateKey(): Resource<String> {
-        TODO("Not yet implemented")
+    override suspend fun uploadMyPrivateKey(accessToken: AccessToken): Resource<String> {
+        return try {
+            val myPrivateKey = getMyPrivateKey()
+            val myPrivateKeyBytes = Base64.encode(myPrivateKey.encoded, Base64.NO_WRAP)
+            val myPrivateKeyString = String(myPrivateKeyBytes)
+
+            val encryptedResource = encryptPartnerText(myPrivateKeyString)
+            val encryptedPrivateKey = when (encryptedResource) {
+                is Resource.Success -> encryptedResource.data
+                is Resource.Error -> throw encryptedResource.throwable
+                is Resource.Loading -> return Resource.Loading(encryptedResource.isLoading)
+            }
+
+            val response = remoteSource.uploadMyPrivateKey(accessToken, encryptedPrivateKey)
+            if (!response.isSuccessful) throw HttpException(response)
+            if (response.body() == null) throw NullPointerException("Response body from server is null.")
+
+            val partnerPrivateKey = response.body()!!
+            Resource.Success(partnerPrivateKey)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
     }
 
+    override suspend fun loadPartnerPrivateKey(accessToken: AccessToken): Resource<String> {
+        return try {
+            val response = remoteSource.loadPartnerPrivateKey(accessToken)
+            if (!response.isSuccessful) throw HttpException(response)
+            if (response.body() == null) throw NullPointerException("Response body from server is null.")
+
+            val privateKeyString = response.body()!!.privateKey
+            val decryptedResource = decryptMyText(privateKeyString)
+            val decryptedPrivateKey = when (decryptedResource) {
+                is Resource.Success -> decryptedResource.data
+                is Resource.Error -> throw decryptedResource.throwable
+                is Resource.Loading -> return Resource.Loading(decryptedResource.isLoading)
+            }
+
+            val keyBytes = Base64.decode(decryptedPrivateKey, Base64.NO_WRAP)
+            val keySpec = PKCS8EncodedKeySpec(keyBytes)
+            val keyFactory = KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_RSA)
+            val partnerPrivateKey = keyFactory.generatePrivate(keySpec)
+
+            localDataSource.savePartnerPrivateKeyToCache(partnerPrivateKey)
+            cacheDataSource.savePartnerPrivateKeyToCache(partnerPrivateKey)
+            Resource.Success(privateKeyString)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
 
     override suspend fun encryptMyText(message: String): Resource<String> {
         return try {

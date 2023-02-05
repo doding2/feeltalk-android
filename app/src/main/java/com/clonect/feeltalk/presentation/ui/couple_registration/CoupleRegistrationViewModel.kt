@@ -4,11 +4,16 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.domain.usecase.encryption.LoadPartnerPrivateKeyUseCase
+import com.clonect.feeltalk.domain.usecase.encryption.LoadPartnerPublicKeyUseCase
+import com.clonect.feeltalk.domain.usecase.encryption.UploadMyPrivateKeyUseCase
+import com.clonect.feeltalk.domain.usecase.encryption.UploadMyPublicKeyUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetCoupleRegistrationCodeUseCase
 import com.clonect.feeltalk.domain.usecase.user.RemoveCoupleRegistrationCodeUseCase
 import com.clonect.feeltalk.domain.usecase.user.SendPartnerCoupleRegistrationCodeUseCase
 import com.clonect.feeltalk.presentation.service.notification_observer.CoupleRegistrationObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -18,7 +23,11 @@ import javax.inject.Inject
 class CoupleRegistrationViewModel @Inject constructor(
     private val getCoupleRegistrationCodeUseCase: GetCoupleRegistrationCodeUseCase,
     private val sendPartnerCoupleRegistrationCodeUseCase: SendPartnerCoupleRegistrationCodeUseCase,
-    private val removeCoupleRegistrationCodeUseCase: RemoveCoupleRegistrationCodeUseCase
+    private val removeCoupleRegistrationCodeUseCase: RemoveCoupleRegistrationCodeUseCase,
+    private val uploadMyPublicKeyUseCase: UploadMyPublicKeyUseCase,
+    private val loadPartnerPublicKeyUseCase: LoadPartnerPublicKeyUseCase,
+    private val uploadMyPrivateKeyUseCase: UploadMyPrivateKeyUseCase,
+    private val loadPartnerPrivateKeyUseCase: LoadPartnerPrivateKeyUseCase
 ) : ViewModel() {
 
     private val _toastMessage = MutableSharedFlow<String>()
@@ -33,6 +42,8 @@ class CoupleRegistrationViewModel @Inject constructor(
     private val _isCoupleRegistrationCompleted = MutableStateFlow(false)
     val isCoupleRegistrationCompleted = _isCoupleRegistrationCompleted.asStateFlow()
 
+    private val _isKeyPairExchangingCompleted = MutableStateFlow(false)
+    val isKeyPairExchangingCompleted = _isKeyPairExchangingCompleted.asStateFlow()
 
     init {
         getCoupleRegistrationCode()
@@ -85,6 +96,38 @@ class CoupleRegistrationViewModel @Inject constructor(
                 _isCoupleRegistrationCompleted.value = false
             }
         }
+    }
+
+    fun exchangeKeyPair() = viewModelScope.launch(Dispatchers.IO) {
+        val myPublicKeyResult = uploadMyPublicKeyUseCase()
+        if (myPublicKeyResult is Resource.Error) {
+            sendToast("Fail to upload MyPublicKey : ${myPublicKeyResult.throwable.localizedMessage}")
+            Log.i("CoupleRegFragment", "Fail to upload MyPublicKey : ${myPublicKeyResult.throwable.localizedMessage}")
+            return@launch
+        }
+
+        val partnerPublicKeyResult = loadPartnerPublicKeyUseCase()
+        if (partnerPublicKeyResult is Resource.Error) {
+            sendToast("Fail to load PartnerPublicKey : ${partnerPublicKeyResult.throwable.localizedMessage}")
+            Log.i("CoupleRegFragment", "Fail to load PartnerPublicKey : ${partnerPublicKeyResult.throwable.localizedMessage}")
+            return@launch
+        }
+
+        val myPrivateKeyResult = uploadMyPrivateKeyUseCase()
+        if (myPrivateKeyResult is Resource.Error) {
+            sendToast("Fail to upload MyPrivateKey : ${myPrivateKeyResult.throwable.localizedMessage}")
+            Log.i("CoupleRegFragment", "Fail to upload MyPrivateKey : ${myPrivateKeyResult.throwable.localizedMessage}")
+            return@launch
+        }
+
+        val partnerPrivateKeyResult = loadPartnerPrivateKeyUseCase()
+        if (partnerPrivateKeyResult is Resource.Error) {
+            sendToast("Fail to load PartnerPrivateKey : ${partnerPrivateKeyResult.throwable.localizedMessage}")
+            Log.i("CoupleRegFragment", "Fail to load PartnerPrivateKey : ${partnerPrivateKeyResult.throwable.localizedMessage}")
+            return@launch
+        }
+
+        _isKeyPairExchangingCompleted.value = true
     }
 
     fun setPartnerCodeInput(input: String) {

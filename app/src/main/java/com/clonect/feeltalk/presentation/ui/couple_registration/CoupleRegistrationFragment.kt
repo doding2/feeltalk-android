@@ -47,6 +47,8 @@ class CoupleRegistrationFragment : Fragment() {
         collectIsCoupleRegistrationCompleted()
         initPartnerCoupleCodeValue()
 
+        collectIsKeyPairExchangingCompleted()
+
         binding.apply {
             textMessageHighlight.addTextGradient()
             textMyCoupleCode.addTextGradient()
@@ -99,6 +101,16 @@ class CoupleRegistrationFragment : Fragment() {
     private fun collectIsCoupleRegistrationCompleted() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.isCoupleRegistrationCompleted.collectLatest { isCompleted ->
+                if (isCompleted) {
+                    viewModel.exchangeKeyPair()
+                }
+            }
+        }
+    }
+
+    private fun collectIsKeyPairExchangingCompleted() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.isKeyPairExchangingCompleted.collectLatest { isCompleted ->
                 if (isCompleted) {
                     navigateHomePage()
                 }

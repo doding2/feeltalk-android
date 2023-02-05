@@ -11,7 +11,7 @@ import com.clonect.feeltalk.domain.usecase.chat.SaveChatUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SendChatUseCase
 import com.clonect.feeltalk.domain.usecase.emotion.GetMyEmotionUseCase
 import com.clonect.feeltalk.domain.usecase.emotion.GetPartnerEmotionUseCase
-import com.clonect.feeltalk.domain.usecase.encryption.TestUseCase
+import com.clonect.feeltalk.domain.usecase.encryption.*
 import com.clonect.feeltalk.domain.usecase.notification.GetFcmTokenUseCase
 import com.clonect.feeltalk.domain.usecase.notification.SaveFcmTokenUseCase
 import com.clonect.feeltalk.domain.usecase.notification.SendFcmUseCase
@@ -144,7 +144,28 @@ class UseCaseModule {
         return TestUseCase(encryptionRepository)
     }
 
+    @Singleton
+    @Provides
+    fun providesUploadMyPublicKeyUseCase(userRepository: UserRepository, encryptionRepository: EncryptionRepository): UploadMyPublicKeyUseCase {
+        return UploadMyPublicKeyUseCase(userRepository, encryptionRepository)
+    }
 
+    @Singleton
+    @Provides
+    fun providesLoadPartnerPublicKeyUseCase(userRepository: UserRepository, encryptionRepository: EncryptionRepository): LoadPartnerPublicKeyUseCase {
+        return LoadPartnerPublicKeyUseCase(userRepository, encryptionRepository)
+    }
 
+    @Singleton
+    @Provides
+    fun providesUploadMyPrivateKeyUseCase(userRepository: UserRepository, encryptionRepository: EncryptionRepository): UploadMyPrivateKeyUseCase {
+        return UploadMyPrivateKeyUseCase(userRepository, encryptionRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesLoadPartnerPrivateKeyUseCase(userRepository: UserRepository, encryptionRepository: EncryptionRepository): LoadPartnerPrivateKeyUseCase {
+        return LoadPartnerPrivateKeyUseCase(userRepository, encryptionRepository)
+    }
 
 }
