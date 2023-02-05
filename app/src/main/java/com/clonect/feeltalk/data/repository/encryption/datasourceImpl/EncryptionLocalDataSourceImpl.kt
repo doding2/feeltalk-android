@@ -7,6 +7,7 @@ import android.util.Base64
 import com.clonect.feeltalk.BuildConfig
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionLocalDataSource
 import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
+import com.clonect.feeltalk.data.utils.ShortenEncryptHelper
 import java.io.File
 import java.security.KeyFactory
 import java.security.PrivateKey
@@ -17,7 +18,8 @@ import java.security.spec.X509EncodedKeySpec
 
 class EncryptionLocalDataSourceImpl(
     private val context: Context,
-    private val appLevelEncryptHelper: AppLevelEncryptHelper
+    private val appLevelEncryptHelper: AppLevelEncryptHelper,
+    private val shortenEncryptHelper: ShortenEncryptHelper
 ): EncryptionLocalDataSource {
 
     override suspend fun checkKeyPairsExist(): Boolean {

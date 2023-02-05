@@ -3,6 +3,7 @@ package com.clonect.feeltalk.presentation.di
 import android.content.Context
 import android.content.SharedPreferences
 import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
+import com.clonect.feeltalk.data.utils.ShortenEncryptHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,8 +18,14 @@ class UtilsModule {
 
     @Provides
     @Singleton
-    fun providesAppLevelEncryptionHelper(@ApplicationContext context: Context, @Named("AppLevelEncryption") pref: SharedPreferences): AppLevelEncryptHelper {
-        return AppLevelEncryptHelper(context, pref)
+    fun providesAppLevelEncryptionHelper(@Named("AppLevelEncryption") pref: SharedPreferences): AppLevelEncryptHelper {
+        return AppLevelEncryptHelper(pref)
+    }
+
+    @Provides
+    @Singleton
+    fun providesShortenEncryptHelper(): ShortenEncryptHelper {
+        return ShortenEncryptHelper()
     }
 
 }

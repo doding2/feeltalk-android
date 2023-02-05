@@ -23,7 +23,11 @@ android {
         buildConfigField("String", "APP_LEVEL_KEY_ALIAS", APP_LEVEL_KEY_ALIAS)
         buildConfigField("String", "APP_LEVEL_CIPHER_ALGORITHM", APP_LEVEL_CIPHER_ALGORITHM)
         buildConfigField("String", "USER_LEVEL_CIPHER_ALGORITHM", USER_LEVEL_CIPHER_ALGORITHM)
+
         buildConfigField("String", "ROOM_DATABASE_PASS_PHRASE", ROOM_DATABASE_PASS_PHRASE)
+        buildConfigField("String", "SHORTEN_ENCRYPT_HELPER_KEY", SHORTEN_ENCRYPT_HELPER_KEY)
+        buildConfigField("String", "SHORTEN_ENCRYPT_HELPER_IV", SHORTEN_ENCRYPT_HELPER_IV)
+        buildConfigField("String", "SHORTEN_ENCRYPT_HELPER_CIPHER_ALGORITHM", SHORTEN_ENCRYPT_HELPER_CIPHER_ALGORITHM)
 
         buildConfigField("String", "CLONECT_BASE_URL", CLONECT_BASE_URL)
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", KAKAO_NATIVE_APP_KEY)

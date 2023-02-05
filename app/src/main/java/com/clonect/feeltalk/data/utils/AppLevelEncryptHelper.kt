@@ -18,7 +18,6 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
 class AppLevelEncryptHelper(
-    private val context: Context,
     private val pref: SharedPreferences
 ) {
     private var appLevelKey = getAppLevelKey()
@@ -72,4 +71,5 @@ class AppLevelEncryptHelper(
         )
         return keyGen.generateKey()
     }
+
 }

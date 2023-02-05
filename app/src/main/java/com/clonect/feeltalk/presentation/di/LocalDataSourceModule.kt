@@ -11,6 +11,7 @@ import com.clonect.feeltalk.data.repository.encryption.datasourceImpl.Encryption
 import com.clonect.feeltalk.data.repository.user.datasource.UserLocalDataSource
 import com.clonect.feeltalk.data.repository.user.datasourceImpl.UserLocalDataSourceImpl
 import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
+import com.clonect.feeltalk.data.utils.ShortenEncryptHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,8 +45,9 @@ class LocalDataSourceModule {
     fun providesEncryptionLocalDataSource(
         @ApplicationContext context: Context,
         appLevelEncryptHelper: AppLevelEncryptHelper,
+        shortenEncryptHelper: ShortenEncryptHelper,
     ): EncryptionLocalDataSource {
-        return EncryptionLocalDataSourceImpl(context, appLevelEncryptHelper)
+        return EncryptionLocalDataSourceImpl(context, appLevelEncryptHelper, shortenEncryptHelper)
     }
 
 }

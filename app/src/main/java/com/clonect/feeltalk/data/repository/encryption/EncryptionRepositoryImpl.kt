@@ -11,6 +11,7 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionCacheDataSource
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionLocalDataSource
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionRemoteDataSource
+import com.clonect.feeltalk.data.utils.ShortenEncryptHelper
 import com.clonect.feeltalk.domain.model.user.AccessToken
 import com.clonect.feeltalk.domain.repository.EncryptionRepository
 import com.google.android.gms.common.util.Base64Utils
@@ -28,6 +29,7 @@ class EncryptionRepositoryImpl(
     private val remoteSource: EncryptionRemoteDataSource,
     private val localDataSource: EncryptionLocalDataSource,
     private val cacheDataSource: EncryptionCacheDataSource,
+    private val shortenEncryptHelper: ShortenEncryptHelper
 ): EncryptionRepository {
 
     private var tryCount = 0
@@ -234,14 +236,18 @@ class EncryptionRepositoryImpl(
     private fun encrypt(publicKey: PublicKey, message: String): String {
         val cipher = Cipher.getInstance(BuildConfig.USER_LEVEL_CIPHER_ALGORITHM)
         cipher.init(Cipher.ENCRYPT_MODE, publicKey)
-        val encryptedByteArray = cipher.doFinal(message.toByteArray())
+
+        val shorten = shortenEncryptHelper.encrypt(message)
+        val encryptedByteArray = cipher.doFinal(shorten.toByteArray())
         return Base64.encodeToString(encryptedByteArray, Base64.NO_WRAP)
     }
 
     private fun decrypt(privateKey: PrivateKey, digest: String): String {
         val cipher = Cipher.getInstance(BuildConfig.USER_LEVEL_CIPHER_ALGORITHM)
         cipher.init(Cipher.DECRYPT_MODE, privateKey)
-        val decryptedByteArray = cipher.doFinal(Base64.decode(digest, Base64.NO_WRAP))
+
+        val lengthened = shortenEncryptHelper.decrypt(digest)
+        val decryptedByteArray = cipher.doFinal(Base64.decode(lengthened, Base64.NO_WRAP))
         return String(decryptedByteArray)
     }
 
