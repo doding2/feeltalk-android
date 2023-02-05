@@ -2,6 +2,7 @@ package com.clonect.feeltalk.data.api
 
 import com.clonect.feeltalk.domain.model.encryption.LoadPartnerPrivateKeyDto
 import com.clonect.feeltalk.domain.model.encryption.LoadPartnerPublicKeyDto
+import com.clonect.feeltalk.domain.model.encryption.StatusResponse
 import com.clonect.feeltalk.domain.model.user.*
 import com.clonect.feeltalk.domain.model.user.dto.CoupleCheckDto
 import com.clonect.feeltalk.domain.model.user.dto.SendPartnerCoupleRegistrationCodeDto
@@ -44,7 +45,7 @@ interface ClonectService {
     @POST("api/member/publicKey")
     suspend fun uploadMyPublicKey(
         @Body body: JsonObject
-    ): Response<String>
+    ): Response<StatusResponse>
 
     @GET("api/member/partnerPublicKey/{accessToken}")
     suspend fun loadPartnerPublicKey(
@@ -54,7 +55,7 @@ interface ClonectService {
     @POST("api/member/privateKey")
     suspend fun uploadMyPrivateKey(
         @Body body: JsonObject
-    ): Response<String>
+    ): Response<StatusResponse>
 
     @GET("api/member/partnerPrivateKey/{accessToken}")
     suspend fun loadPartnerPrivateKey(

@@ -5,6 +5,7 @@ import com.clonect.feeltalk.data.api.ClonectService
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionRemoteDataSource
 import com.clonect.feeltalk.domain.model.encryption.LoadPartnerPrivateKeyDto
 import com.clonect.feeltalk.domain.model.encryption.LoadPartnerPublicKeyDto
+import com.clonect.feeltalk.domain.model.encryption.StatusResponse
 import com.clonect.feeltalk.domain.model.user.AccessToken
 import com.google.gson.JsonObject
 import retrofit2.Response
@@ -15,7 +16,7 @@ class EncryptionRemoteDataSourceImpl(
     private val clonectService: ClonectService,
 ) : EncryptionRemoteDataSource {
 
-    override suspend fun uploadMyPublicKey(accessToken: AccessToken, publicKey: PublicKey): Response<String> {
+    override suspend fun uploadMyPublicKey(accessToken: AccessToken, publicKey: PublicKey): Response<StatusResponse> {
         val publicBytes = Base64.encode(publicKey.encoded, Base64.DEFAULT)
         val publicString = String(publicBytes)
         val obj = JsonObject().apply {
@@ -29,7 +30,7 @@ class EncryptionRemoteDataSourceImpl(
         return clonectService.loadPartnerPublicKey(accessToken.value)
     }
 
-    override suspend fun uploadMyPrivateKey(accessToken: AccessToken, encryptedPrivateKey: String): Response<String> {
+    override suspend fun uploadMyPrivateKey(accessToken: AccessToken, encryptedPrivateKey: String): Response<StatusResponse> {
         val obj = JsonObject().apply {
             addProperty("accessToken", accessToken.value)
             addProperty("privateKey", encryptedPrivateKey)

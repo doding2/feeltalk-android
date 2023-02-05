@@ -29,7 +29,8 @@ class AppLevelEncryptHelper(
 
     fun decrypt(digest: String): String {
         val iv = pref.getString("iv", null)?.encodeToByteArray()
-        val spec = GCMParameterSpec(128, iv)
+        val ivDecoded = Base64.decode(iv, Base64.DEFAULT)
+        val spec = GCMParameterSpec(128, ivDecoded)
         val cipher = Cipher.getInstance(BuildConfig.APP_LEVEL_CIPHER_ALGORITHM)
         cipher.init(Cipher.DECRYPT_MODE, appLevelKey, spec)
         val decryptedByteArray = cipher.doFinal(digest.encodeToByteArray())

@@ -63,7 +63,8 @@ class EncryptionRepositoryImpl(
             if (!response.isSuccessful) throw HttpException(response)
             if (response.body() == null) throw NullPointerException("Response body from server is null.")
 
-            Resource.Success(response.body()!!)
+            val status = response.body()!!.status
+            Resource.Success(status)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -110,8 +111,8 @@ class EncryptionRepositoryImpl(
             if (!response.isSuccessful) throw HttpException(response)
             if (response.body() == null) throw NullPointerException("Response body from server is null.")
 
-            val partnerPrivateKey = response.body()!!
-            Resource.Success(partnerPrivateKey)
+            val status = response.body()!!.status
+            Resource.Success(status)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
