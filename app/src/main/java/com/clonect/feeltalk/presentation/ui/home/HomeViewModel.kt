@@ -23,7 +23,6 @@ class HomeViewModel @Inject constructor(
     private val getPartnerEmotionUseCase: GetPartnerEmotionUseCase,
     private val getFcmTokenUseCase: GetFcmTokenUseCase,
     private val sendFcmUseCase: SendFcmUseCase,
-    private val testUseCase: TestUseCase
 ): ViewModel() {
 
     private val _myEmotionState = MutableStateFlow<Emotion>(Emotion.Happy)
@@ -33,9 +32,6 @@ class HomeViewModel @Inject constructor(
     val partnerEmotionState = _partnerEmotionState.asStateFlow()
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
-            testUseCase()
-        }
         getMyEmotion()
         getPartnerEmotion()
     }

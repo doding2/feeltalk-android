@@ -234,15 +234,15 @@ class EncryptionRepositoryImpl(
     private fun encrypt(publicKey: PublicKey, message: String): String {
         val cipher = Cipher.getInstance(BuildConfig.USER_LEVEL_CIPHER_ALGORITHM)
         cipher.init(Cipher.ENCRYPT_MODE, publicKey)
-        val encryptedByteArray = cipher.doFinal(message.encodeToByteArray())
-        return Base64Utils.encode(encryptedByteArray)
+        val encryptedByteArray = cipher.doFinal(message.toByteArray())
+        return Base64.encodeToString(encryptedByteArray, Base64.NO_WRAP)
     }
 
     private fun decrypt(privateKey: PrivateKey, digest: String): String {
         val cipher = Cipher.getInstance(BuildConfig.USER_LEVEL_CIPHER_ALGORITHM)
         cipher.init(Cipher.DECRYPT_MODE, privateKey)
-        val decryptedByteArray = cipher.doFinal(digest.encodeToByteArray())
-        return Base64Utils.encode(decryptedByteArray)
+        val decryptedByteArray = cipher.doFinal(Base64.decode(digest, Base64.NO_WRAP))
+        return String(decryptedByteArray)
     }
 
 
