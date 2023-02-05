@@ -1,9 +1,11 @@
 package com.clonect.feeltalk.data.repository.encryption
 
+import android.os.Build.VERSION_CODES.N
 import android.security.keystore.KeyProperties
 import android.util.Base64
 import android.util.Log
 import com.clonect.feeltalk.BuildConfig
+import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.common.FeelTalkException.*
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionCacheDataSource
@@ -13,6 +15,7 @@ import com.clonect.feeltalk.domain.model.user.AccessToken
 import com.clonect.feeltalk.domain.repository.EncryptionRepository
 import com.google.android.gms.common.util.Base64Utils
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.delay
 import retrofit2.HttpException
 import java.security.*
 import java.security.spec.PKCS8EncodedKeySpec
@@ -27,12 +30,13 @@ class EncryptionRepositoryImpl(
     private val cacheDataSource: EncryptionCacheDataSource,
 ): EncryptionRepository {
 
+    private var tryCount = 0
+
     override suspend fun test() {
-        val myKeyPair = generateUserLevelKeyPair()
+        generateUserLevelKeyPair()
 
         val myPublicKey = localDataSource.getMyPublicKey()
         val myPrivateKey = localDataSource.getMyPrivateKey()
-
 
         val publicBytes = Base64.encode(myPublicKey?.encoded, Base64.DEFAULT)
         val publicString = String(publicBytes)
@@ -40,8 +44,8 @@ class EncryptionRepositoryImpl(
         val privateBytes = Base64.encode(myPrivateKey?.encoded, Base64.DEFAULT)
         val privateString = String(privateBytes)
 
-        Log.i("Fragment", "local public key: ${publicString}")
-        Log.i("Fragment", "local private key: ${privateString}")
+        Log.i("Fragment", "local public key: $publicString")
+        Log.i("Fragment", "local private key: $privateString")
     }
 
     override suspend fun checkKeyPairsExist(): Boolean {
@@ -80,13 +84,24 @@ class EncryptionRepositoryImpl(
             if (response.body() == null) throw NullPointerException("Response body from server is null.")
 
             val publicKeyString = response.body()!!.publicKey
-            val keyBytes = Base64.decode(publicKeyString, Base64.NO_WRAP)
+            if (tryCount >= 5) {
+                tryCount = 0
+                throw NullPointerException("Response body from server is null.")
+            }
+            if (publicKeyString == null) {
+                tryCount++
+                delay(Constants.EXCHANGE_KEY_WAIT_DELAY)
+                return loadPartnerPublicKey(accessToken)
+            }
+
+            val keyBytes = Base64.decode(publicKeyString as String, Base64.NO_WRAP)
             val keySpec = X509EncodedKeySpec(keyBytes)
             val keyFactory = KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_RSA)
             val partnerPublicKey = keyFactory.generatePublic(keySpec)
 
             localDataSource.savePartnerPublicKeyToCache(partnerPublicKey)
             cacheDataSource.savePartnerPublicKeyToCache(partnerPublicKey)
+            tryCount = 0
             Resource.Success(publicKeyString)
         } catch (e: CancellationException) {
             throw e
@@ -130,6 +145,16 @@ class EncryptionRepositoryImpl(
             if (response.body() == null) throw NullPointerException("Response body from server is null.")
 
             val privateKeyString = response.body()!!.privateKey
+            if (tryCount >= 5) {
+                tryCount = 0
+                throw NullPointerException("Response body from server is null.")
+            }
+            if (privateKeyString == null) {
+                tryCount++
+                delay(Constants.EXCHANGE_KEY_WAIT_DELAY)
+                return loadPartnerPrivateKey(accessToken)
+            }
+
             val decryptedResource = decryptMyText(privateKeyString)
             val decryptedPrivateKey = when (decryptedResource) {
                 is Resource.Success -> decryptedResource.data

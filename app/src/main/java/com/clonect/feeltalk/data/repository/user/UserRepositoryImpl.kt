@@ -131,6 +131,7 @@ class UserRepositoryImpl(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
+            e.printStackTrace()
             Resource.Error(e)
         }
     }

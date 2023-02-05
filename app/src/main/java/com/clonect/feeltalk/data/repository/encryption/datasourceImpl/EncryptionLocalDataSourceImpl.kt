@@ -36,7 +36,7 @@ class EncryptionLocalDataSourceImpl(
         val myPublicKeyFile = File(context.filesDir, "my_public_key.txt")
         val myPublicKey = myPublicKeyFile.bufferedReader().use {
             val encrypted = it.readLine()
-            val key = appLevelEncryptHelper.decrypt(encrypted)
+            val key = appLevelEncryptHelper.decrypt("myPublicKey", encrypted)
             val keyBytes = Base64.decode(key, Base64.NO_WRAP)
             val keySpec = X509EncodedKeySpec(keyBytes)
             val keyFactory = KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_RSA)
@@ -49,7 +49,7 @@ class EncryptionLocalDataSourceImpl(
         val myPrivateKeyFile = File(context.filesDir, "my_private_key.txt")
         val myPrivateKey = myPrivateKeyFile.bufferedReader().use {
             val encrypted = it.readLine()
-            val key = appLevelEncryptHelper.decrypt(encrypted)
+            val key = appLevelEncryptHelper.decrypt("myPrivateKey", encrypted)
             val keyBytes = Base64.decode(key, Base64.NO_WRAP)
             val keySpec = PKCS8EncodedKeySpec(keyBytes)
             val keyFactory = KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_RSA)
@@ -63,7 +63,7 @@ class EncryptionLocalDataSourceImpl(
         myPublicKeyFile.bufferedWriter().use {
             val keyBytes = Base64.encode(publicKey.encoded, Base64.NO_WRAP)
             val keyString = String(keyBytes)
-            val encrypted = appLevelEncryptHelper.encrypt(keyString)
+            val encrypted = appLevelEncryptHelper.encrypt("myPublicKey", keyString)
             it.write(encrypted)
         }
     }
@@ -73,7 +73,7 @@ class EncryptionLocalDataSourceImpl(
         myPrivateKeyFile.bufferedWriter().use {
             val keyBytes = Base64.encode(privateKey.encoded, Base64.NO_WRAP)
             val keyString = String(keyBytes)
-            val encrypted = appLevelEncryptHelper.encrypt(keyString)
+            val encrypted = appLevelEncryptHelper.encrypt("myPrivateKey", keyString)
             it.write(encrypted)
         }
     }
@@ -84,7 +84,7 @@ class EncryptionLocalDataSourceImpl(
         val partnerPublicKeyFile = File(context.filesDir, "partner_public_key.txt")
         val partnerPublicKey = partnerPublicKeyFile.bufferedReader().use {
             val encrypted = it.readLine()
-            val key = appLevelEncryptHelper.decrypt(encrypted)
+            val key = appLevelEncryptHelper.decrypt("partnerPublicKey", encrypted)
             val keyBytes = Base64.decode(key, Base64.NO_WRAP)
             val keySpec = X509EncodedKeySpec(keyBytes)
             val keyFactory = KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_RSA)
@@ -97,7 +97,7 @@ class EncryptionLocalDataSourceImpl(
         val partnerPrivateKeyFile = File(context.filesDir, "partner_private_key.txt")
         val partnerPrivateKey = partnerPrivateKeyFile.bufferedReader().use {
             val encrypted = it.readLine()
-            val key = appLevelEncryptHelper.decrypt(encrypted)
+            val key = appLevelEncryptHelper.decrypt("partnerPrivateKey", encrypted)
             val keyBytes = Base64.decode(key, Base64.NO_WRAP)
             val keySpec = PKCS8EncodedKeySpec(keyBytes)
             val keyFactory = KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_RSA)
@@ -111,7 +111,7 @@ class EncryptionLocalDataSourceImpl(
         partnerPublicKeyFile.bufferedWriter().use {
             val keyBytes = Base64.encode(publicKey.encoded, Base64.NO_WRAP)
             val keyString = String(keyBytes)
-            val encrypted = appLevelEncryptHelper.encrypt(keyString)
+            val encrypted = appLevelEncryptHelper.encrypt("partnerPublicKey", keyString)
             it.write(encrypted)
         }
     }
@@ -121,7 +121,7 @@ class EncryptionLocalDataSourceImpl(
         partnerPrivateKeyFile.bufferedWriter().use {
             val keyBytes = Base64.encode(privateKey.encoded, Base64.NO_WRAP)
             val keyString = String(keyBytes)
-            val encrypted = appLevelEncryptHelper.encrypt(keyString)
+            val encrypted = appLevelEncryptHelper.encrypt("partnerPrivateKey", keyString)
             it.write(encrypted)
         }
     }

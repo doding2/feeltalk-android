@@ -6,5 +6,7 @@ class Constants {
         const val FCM_SERVER_KEY = "AAAAYknWUsk:APA91bGbnNM0UoHF04F69nbIvTd2LSvZN3H0dvm3fNRxbKPN2QBK6pkmQdWmjbZun7ctAIyeaxcsGZJu0ECtyGpRkPao3vmnEYU_jFz3HA7squf0BdLo84skWjDfMgahTuJ0RTeMcCko"
         const val FCM_CONTENT_TYPE = "application/json"
         const val FCM_TOKEN = "e1wRei1aQdmkmaENvmTcHZ:APA91bFEsA1mPp5sAfI5Ddzm1og7IQrbaRTnHMkwPkpQHSG1MuijTFL-vtpTP65eB6-syB3b3U69qMa_x7TY0_Ez3NVbJHlVuttURuLxIOsxmeHQo_s4OhC-zPpma_oCwkqfXIqVwmb_"
+
+        const val EXCHANGE_KEY_WAIT_DELAY = 1000L
     }
 }

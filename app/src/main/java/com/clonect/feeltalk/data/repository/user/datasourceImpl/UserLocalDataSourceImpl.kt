@@ -18,7 +18,7 @@ class UserLocalDataSourceImpl(
             return null
         val accessTokenString = file.bufferedReader().use {
             val encrypted = it.readLine()
-            appLevelEncryptHelper.decrypt(encrypted)
+            appLevelEncryptHelper.decrypt("accessToken", encrypted)
         }
         return AccessToken(accessTokenString)
     }
@@ -26,7 +26,7 @@ class UserLocalDataSourceImpl(
     override suspend fun saveAccessToken(accessToken: AccessToken) {
         val file = File(context.filesDir, "access_token.txt")
         file.bufferedWriter().use {
-            val encrypted = appLevelEncryptHelper.encrypt(accessToken.value)
+            val encrypted = appLevelEncryptHelper.encrypt("accessToken", accessToken.value)
             it.write(encrypted)
         }
     }
@@ -38,7 +38,7 @@ class UserLocalDataSourceImpl(
             return null
         val code = file.bufferedReader().use {
             val encrypted = it.readLine()
-            appLevelEncryptHelper.decrypt(encrypted)
+            appLevelEncryptHelper.decrypt("coupleRegistrationCode", encrypted)
         }
         return code
     }
@@ -46,7 +46,7 @@ class UserLocalDataSourceImpl(
     override suspend fun saveCoupleRegistrationCode(code: String) {
         val file = File(context.filesDir, "couple_registration_code.txt")
         file.bufferedWriter().use {
-            val encrypted = appLevelEncryptHelper.encrypt(code)
+            val encrypted = appLevelEncryptHelper.encrypt("coupleRegistrationCode", code)
             it.write(encrypted)
         }
     }
@@ -63,7 +63,7 @@ class UserLocalDataSourceImpl(
             return null
         val idToken = file.bufferedReader().use {
             val encrypted = it.readLine()
-            appLevelEncryptHelper.decrypt(encrypted)
+            appLevelEncryptHelper.decrypt("googleIdToken", encrypted)
         }
         return idToken
     }
@@ -71,7 +71,7 @@ class UserLocalDataSourceImpl(
     override suspend fun saveGoogleIdToken(idToken: String) {
         val file = File(context.filesDir, "google_id_token.txt")
         file.bufferedWriter().use {
-            val encrypted = appLevelEncryptHelper.encrypt(idToken)
+            val encrypted = appLevelEncryptHelper.encrypt("googleIdToken", idToken)
             it.write(encrypted)
         }
     }
