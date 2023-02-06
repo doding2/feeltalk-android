@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.presentation.ui.login
+package com.clonect.feeltalk.presentation.ui.signup
 
 import android.app.Activity.RESULT_OK
 import android.os.Bundle
@@ -10,14 +10,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.BuildConfig
 import com.clonect.feeltalk.R
-import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.databinding.FragmentLogInBinding
+import com.clonect.feeltalk.databinding.FragmentSignUpBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -26,20 +23,19 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class LogInFragment : Fragment() {
+class SignUpFragment : Fragment() {
 
-    private lateinit var binding: FragmentLogInBinding
-    private val viewModel: LogInViewModel by viewModels()
+    private lateinit var binding: FragmentSignUpBinding
+    private val viewModel: SignUpViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentLogInBinding.inflate(inflater, container, false)
+        binding = FragmentSignUpBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -54,12 +50,8 @@ class LogInFragment : Fragment() {
             }
         }
 
-        initFcm()
+        googleLogOut()
 
-    }
-
-    private fun initFcm() {
-        FirebaseMessaging.getInstance().token.addOnSuccessListener { }
     }
 
     private fun navigateToHomePage() {
@@ -70,40 +62,6 @@ class LogInFragment : Fragment() {
         findNavController().navigate(R.id.action_logInFragment_to_coupleRegistrationFragment)
     }
 
-    // Check already logged in with Google Auth or not
-    override fun onStart() {
-        super.onStart()
-//        googleLogOut()
-        googleAutoLogIn()
-    }
-
-    private fun googleLogOut() {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .build()
-        val mGoogleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
-        mGoogleSignInClient.signOut().addOnSuccessListener {
-            Log.i("LogInFragment", "구글 로그 아웃")
-        }
-    }
-
-    private fun googleAutoLogIn() = lifecycleScope.launch {
-        val googleAccount = GoogleSignIn.getLastSignedInAccount(requireContext())
-        googleAccount?.let {
-            val isLogInSuccessful = viewModel.autoLogInWithGoogle()
-            if (!isLogInSuccessful) {
-                Toast.makeText(requireContext(), "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show()
-                return@launch
-            }
-
-            val isUserCouple = viewModel.checkUserIsCouple()
-            if (isUserCouple) {
-                navigateToHomePage()
-                return@launch
-            }
-
-            navigateToCoupleRegistrationPage()
-        }
-    }
 
 
     private fun signInWithKakao() {
@@ -121,6 +79,16 @@ class LogInFragment : Fragment() {
                     return@loginWithKakaoTalk
                 }
             }
+        }
+    }
+
+
+    private fun googleLogOut() {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .build()
+        val mGoogleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
+        mGoogleSignInClient.signOut().addOnSuccessListener {
+            Log.i("LogInFragment", "구글 로그 아웃")
         }
     }
 
@@ -164,6 +132,8 @@ class LogInFragment : Fragment() {
             }
         } catch (e: ApiException) {
             Log.e("LogInFragment", "Fail to Google Sign In: ${e.message}")
+            googleLogOut()
+            Toast.makeText(requireContext(), "회원가입에 실패했습니다.", Toast.LENGTH_SHORT).show()
         }
     }
 

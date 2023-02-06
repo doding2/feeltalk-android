@@ -57,7 +57,7 @@ class EncryptionLocalDataSourceImpl(
         return myPrivateKey
     }
 
-    override suspend fun saveMyPublicKeyToCache(publicKey: PublicKey) {
+    override suspend fun saveMyPublicKeyToDatabase(publicKey: PublicKey) {
         val myPublicKeyFile = File(context.filesDir, "my_public_key.txt")
         myPublicKeyFile.bufferedWriter().use {
             val keyBytes = Base64.encode(publicKey.encoded, Base64.NO_WRAP)
@@ -67,7 +67,7 @@ class EncryptionLocalDataSourceImpl(
         }
     }
 
-    override suspend fun saveMyPrivateKeyToCache(privateKey: PrivateKey) {
+    override suspend fun saveMyPrivateKeyToDatabase(privateKey: PrivateKey) {
         val myPrivateKeyFile = File(context.filesDir, "my_private_key.txt")
         myPrivateKeyFile.bufferedWriter().use {
             val keyBytes = Base64.encode(privateKey.encoded, Base64.NO_WRAP)
@@ -105,7 +105,7 @@ class EncryptionLocalDataSourceImpl(
         return partnerPrivateKey
     }
 
-    override suspend fun savePartnerPublicKeyToCache(publicKey: PublicKey) {
+    override suspend fun savePartnerPublicKeyToDatabase(publicKey: PublicKey) {
         val partnerPublicKeyFile = File(context.filesDir, "partner_public_key.txt")
         partnerPublicKeyFile.bufferedWriter().use {
             val keyBytes = Base64.encode(publicKey.encoded, Base64.NO_WRAP)
@@ -115,7 +115,7 @@ class EncryptionLocalDataSourceImpl(
         }
     }
 
-    override suspend fun savePartnerPrivateKeyToCache(privateKey: PrivateKey) {
+    override suspend fun savePartnerPrivateKeyToDatabase(privateKey: PrivateKey) {
         val partnerPrivateKeyFile = File(context.filesDir, "partner_private_key.txt")
         partnerPrivateKeyFile.bufferedWriter().use {
             val keyBytes = Base64.encode(privateKey.encoded, Base64.NO_WRAP)

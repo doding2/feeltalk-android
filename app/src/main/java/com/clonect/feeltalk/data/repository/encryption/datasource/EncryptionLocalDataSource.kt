@@ -8,11 +8,11 @@ interface EncryptionLocalDataSource {
 
     suspend fun getMyPublicKey(): PublicKey?
     suspend fun getMyPrivateKey(): PrivateKey?
-    suspend fun saveMyPublicKeyToCache(publicKey: PublicKey)
-    suspend fun saveMyPrivateKeyToCache(privateKey: PrivateKey)
+    suspend fun saveMyPublicKeyToDatabase(publicKey: PublicKey)
+    suspend fun saveMyPrivateKeyToDatabase(privateKey: PrivateKey)
 
     suspend fun getPartnerPublicKey(): PublicKey?
     suspend fun getPartnerPrivateKey(): PrivateKey?
-    suspend fun savePartnerPublicKeyToCache(publicKey: PublicKey)
-    suspend fun savePartnerPrivateKeyToCache(privateKey: PrivateKey)
+    suspend fun savePartnerPublicKeyToDatabase(publicKey: PublicKey)
+    suspend fun savePartnerPrivateKeyToDatabase(privateKey: PrivateKey)
 }

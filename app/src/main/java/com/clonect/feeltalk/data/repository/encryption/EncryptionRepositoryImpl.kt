@@ -36,10 +36,10 @@ class EncryptionRepositoryImpl(
         generateUserLevelKeyPair()
 
         val message = "안녕하세요 구텐탁 하이 할로 할로 할로 아아아미ㅏㅣㅇ gutentak!"
-        val encrypted = encrypt(getMyPublicKey(), message)
+        val encrypted = encrypt(getPartnerPublicKey(), message)
         Log.i("Fragment", "message: $message")
 
-        val decrypted = decrypt(getMyPrivateKey(), encrypted)
+        val decrypted = decrypt(getPartnerPrivateKey(), encrypted)
         Log.i("Fragment", "decrypted message: $decrypted")
     }
 
@@ -90,14 +90,14 @@ class EncryptionRepositoryImpl(
                 return loadPartnerPublicKey(accessToken)
             }
 
-            val keyBytes = Base64.decode(publicKeyString as String, Base64.NO_WRAP)
+            val keyBytes = Base64.decode(publicKeyString, Base64.NO_WRAP)
             val keySpec = X509EncodedKeySpec(keyBytes)
             val keyFactory = KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_RSA)
             val partnerPublicKey = keyFactory.generatePublic(keySpec)
 
-            localDataSource.savePartnerPublicKeyToCache(partnerPublicKey)
-            cacheDataSource.savePartnerPublicKeyToCache(partnerPublicKey)
             tryCount = 0
+            localDataSource.savePartnerPublicKeyToDatabase(partnerPublicKey)
+            cacheDataSource.savePartnerPublicKeyToCache(partnerPublicKey)
             Resource.Success(publicKeyString)
         } catch (e: CancellationException) {
             throw e
@@ -163,7 +163,8 @@ class EncryptionRepositoryImpl(
             val keyFactory = KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_RSA)
             val partnerPrivateKey = keyFactory.generatePrivate(keySpec)
 
-            localDataSource.savePartnerPrivateKeyToCache(partnerPrivateKey)
+            tryCount = 0
+            localDataSource.savePartnerPrivateKeyToDatabase(partnerPrivateKey)
             cacheDataSource.savePartnerPrivateKeyToCache(partnerPrivateKey)
             Resource.Success(privateKeyString)
         } catch (e: CancellationException) {
@@ -328,7 +329,7 @@ class EncryptionRepositoryImpl(
 
         val local = localDataSource.getPartnerPrivateKey()
         if (local != null) {
-            localDataSource.savePartnerPrivateKeyToCache(local)
+            localDataSource.savePartnerPrivateKeyToDatabase(local)
             return local
         }
 
@@ -338,8 +339,8 @@ class EncryptionRepositoryImpl(
 
     private suspend fun generateUserLevelKeyPair(): KeyPair {
         val keyPair = initUserLevelKeyStore()
-        localDataSource.saveMyPublicKeyToCache(keyPair.public)
-        localDataSource.saveMyPrivateKeyToCache(keyPair.private)
+        localDataSource.saveMyPublicKeyToDatabase(keyPair.public)
+        localDataSource.saveMyPrivateKeyToDatabase(keyPair.private)
         cacheDataSource.saveMyPublicKeyToCache(keyPair.public)
         cacheDataSource.saveMyPrivateKeyToCache(keyPair.private)
         return keyPair

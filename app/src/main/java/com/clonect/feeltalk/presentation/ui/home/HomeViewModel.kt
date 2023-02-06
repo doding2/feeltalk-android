@@ -33,9 +33,9 @@ class HomeViewModel @Inject constructor(
     val partnerEmotionState = _partnerEmotionState.asStateFlow()
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
-            testUseCase()
-        }
+//        viewModelScope.launch(Dispatchers.IO) {
+//            testUseCase()
+//        }
         getMyEmotion()
         getPartnerEmotion()
     }

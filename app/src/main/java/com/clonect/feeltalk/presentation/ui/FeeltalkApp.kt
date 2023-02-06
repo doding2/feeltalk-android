@@ -3,6 +3,7 @@ package com.clonect.feeltalk.presentation.ui
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.clonect.feeltalk.BuildConfig
+import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.common.KakaoSdk
 import dagger.hilt.android.HiltAndroidApp
 
@@ -11,8 +12,13 @@ class FeeltalkApp: Application() {
     override fun onCreate() {
         super.onCreate()
 
-        initializeKakaoSdk()
         disableNightMode()
+        initializeKakaoSdk()
+        initFcm()
+    }
+
+    private fun initFcm() {
+        FirebaseMessaging.getInstance().token.addOnSuccessListener {  }
     }
 
     private fun initializeKakaoSdk() {
@@ -22,7 +28,6 @@ class FeeltalkApp: Application() {
     private fun disableNightMode() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
-
 
 
     companion object {
