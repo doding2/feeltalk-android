@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.presentation.ui.signup
+package com.clonect.feeltalk.presentation.ui.sign_up
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

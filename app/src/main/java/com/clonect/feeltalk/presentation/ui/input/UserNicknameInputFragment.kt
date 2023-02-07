@@ -1,22 +1,16 @@
-package com.clonect.feeltalk.presentation.ui.user_nickname_input
+package com.clonect.feeltalk.presentation.ui.input
 
 import android.content.Context
-import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
-import android.text.InputFilter
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.core.app.ActivityCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -30,7 +24,7 @@ import kotlinx.coroutines.launch
 class UserNicknameInputFragment : Fragment() {
 
     private lateinit var binding: FragmentUserNicknameInputBinding
-    private val viewModel: UserNicknameInputViewModel by viewModels()
+    private val viewModel: UserInputViewModel by activityViewModels()
     private lateinit var onBackCallback: OnBackPressedCallback
 
     override fun onCreateView(
@@ -60,8 +54,7 @@ class UserNicknameInputFragment : Fragment() {
 
 
     private fun navigateToUserBirthPage() {
-        // TODO
-        Toast.makeText(requireContext(), "성공", Toast.LENGTH_SHORT).show()
+        findNavController().navigate(R.id.action_userNicknameInputFragment_to_userBirthInputFragment)
     }
 
 
@@ -69,27 +62,20 @@ class UserNicknameInputFragment : Fragment() {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.nickname.collectLatest { nickname ->
                 if (nickname.isNullOrBlank()) {
-                    viewModel.setInvalidWarning(null)
+                    viewModel.setInvalidNicknameWarning(null)
                     binding.ivUserNicknameClear.visibility = View.GONE
                     enableNextButton(false)
                     return@collectLatest
                 }
 
-                if (nickname.length >= 20) {
-                    viewModel.setInvalidWarning("닉네임은 최대 20글자까지 가능합니다.")
-                    binding.ivUserNicknameClear.visibility = View.VISIBLE
-                    enableNextButton(false)
-                    return@collectLatest
-                }
-
                 if (!viewModel.checkValidNickname(nickname)) {
-                    viewModel.setInvalidWarning("닉네임에는 공백과 특수문자를 쓸 수 없습니다.")
+                    viewModel.setInvalidNicknameWarning("닉네임에는 공백과 특수문자를 쓸 수 없습니다.")
                     binding.ivUserNicknameClear.visibility = View.VISIBLE
                     enableNextButton(false)
                     return@collectLatest
                 }
 
-                viewModel.setInvalidWarning(null)
+                viewModel.setInvalidNicknameWarning(null)
                 binding.ivUserNicknameClear.visibility = View.VISIBLE
                 enableNextButton(true)
 
@@ -99,7 +85,7 @@ class UserNicknameInputFragment : Fragment() {
 
     private fun collectInvalidWarning() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.invalidWarning.collectLatest {
+            viewModel.invalidNicknameWarning.collectLatest {
                 binding.tvInvalidWarning.text = it
             }
         }

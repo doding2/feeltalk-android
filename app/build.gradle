@@ -67,6 +67,9 @@ dependencies {
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
     // splash screen
     implementation "androidx.core:core-splashscreen:1.0.0"
+    // masked edit text
+    implementation 'com.github.santalu:maskara:1.0.0'
+
 
     // coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1'

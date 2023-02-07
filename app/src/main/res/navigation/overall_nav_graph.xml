@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="com.clonect.feeltalk.presentation.ui.signup.SignUpFragment"
+        android:name="com.clonect.feeltalk.presentation.ui.sign_up.SignUpFragment"
         android:label="fragment_sign_up"
         tools:layout="@layout/fragment_sign_up" >
         <action
@@ -92,7 +92,16 @@
     </fragment>
     <fragment
         android:id="@+id/userNicknameInputFragment"
-        android:name="com.clonect.feeltalk.presentation.ui.user_nickname_input.UserNicknameInputFragment"
+        android:name="com.clonect.feeltalk.presentation.ui.input.UserNicknameInputFragment"
         android:label="fragment_user_nickname_input"
-        tools:layout="@layout/fragment_user_nickname_input" />
+        tools:layout="@layout/fragment_user_nickname_input" >
+        <action
+            android:id="@+id/action_userNicknameInputFragment_to_userBirthInputFragment"
+            app:destination="@id/userBirthInputFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/userBirthInputFragment"
+        android:name="com.clonect.feeltalk.presentation.ui.input.UserBirthInputFragment"
+        android:label="fragment_user_birth_input"
+        tools:layout="@layout/fragment_user_birth_input" />
 </navigation>

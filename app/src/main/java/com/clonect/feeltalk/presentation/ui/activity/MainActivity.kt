@@ -51,14 +51,14 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         val navGraph = navController.navInflater.inflate(R.navigation.overall_nav_graph)
-        val startDestination =
-            if (!viewModel.isLoggedIn.value) {
-                R.id.signUpFragment
-            } else if (!viewModel.isUserCouple.value) {
-                R.id.coupleRegistrationFragment
-            } else {
-                R.id.bottomNavigationFragment
-            }
+        val startDestination = R.id.userNicknameInputFragment
+//            if (!viewModel.isLoggedIn.value) {
+//                R.id.signUpFragment
+//            } else if (!viewModel.isUserCouple.value) {
+//                R.id.coupleRegistrationFragment
+//            } else {
+//                R.id.bottomNavigationFragment
+//            }
         navGraph.setStartDestination(startDestination)
 
         navController.graph = navGraph

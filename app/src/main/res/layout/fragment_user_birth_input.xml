@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".presentation.ui.input.UserNicknameInputFragment">
+    tools:context=".presentation.ui.input.UserBirthInputFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -62,16 +62,16 @@
                     android:id="@+id/text_message_highlight"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/user_nickname_input_message_highlight"
+                    android:text="@string/user_birth_input_message_highlight"
                     android:textSize="22sp"
                     android:fontFamily="@font/pretendard_medium"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/user_nickname_input_message_suffix"
+                    android:text="@string/user_birth_input_message_suffix"
                     android:textSize="22sp"
-                    android:textColor="@color/user_nickname_input_message_color"
+                    android:textColor="@color/user_birth_input_message_color"
                     android:fontFamily="@font/pretendard_medium"/>
             </LinearLayout>
 
@@ -85,9 +85,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/user_nickname_input_hint"
+                    android:text="@string/user_birth_input_hint"
                     android:textSize="11sp"
-                    android:textColor="@color/user_nickname_input_hint_color"
+                    android:textColor="@color/user_birth_input_hint_color"
                     android:fontFamily="@font/pretendard_regular"/>
 
                 <TextView
@@ -96,7 +96,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
                     android:textSize="11sp"
-                    android:textColor="@color/user_nickname_input_invalid_warning_color"
+                    android:textColor="@color/user_birth_input_invalid_warning_color"
                     android:fontFamily="@font/pretendard_regular"
                     android:lines="1"
                     android:ellipsize="end"/>
@@ -107,20 +107,23 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="21dp">
 
-                <EditText
-                    android:id="@+id/et_user_nickname"
+                <com.santalu.maskara.widget.MaskEditText
+                    android:id="@+id/met_user_birth"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/user_nickname_input_edit_text_color"
+                    android:textColor="@color/user_birth_input_edit_text_color"
                     android:textSize="16sp"
                     android:fontFamily="@font/pretendard_regular"
                     android:lines="1"
-                    android:inputType="textPersonName"
-                    android:maxLength="20"
-                    android:imeOptions="actionDone" />
+                    android:inputType="date"
+                    android:ems="8"
+                    android:imeOptions="actionDone"
+                    app:mask="____/__/__"
+                    app:maskCharacter="_"
+                    app:maskStyle="normal" />
 
                 <ImageView
-                    android:id="@+id/iv_user_nickname_clear"
+                    android:id="@+id/iv_user_birth_clear"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
@@ -150,7 +153,7 @@
                     android:layout_marginTop="14dp"
                     android:layout_marginBottom="14dp"
                     android:layout_gravity="center"
-                    android:text="@string/user_nickname_input_next_button"
+                    android:text="@string/user_birth_input_next_button"
                     android:textColor="@color/today_question_enter_answer_button_text_color"
                     android:fontFamily="@font/pretendard_bold"/>
             </com.google.android.material.card.MaterialCardView>
