@@ -59,7 +59,7 @@ class CoupleRegistrationFragment : Fragment() {
                 sendPartnerCode()
             }
             ivPartnerCodeClear.setOnClickListener {
-                etPartnerCode.setText("")
+                etPartnerCode.text.clear()
             }
             cvCopyCode.setOnClickListener {
                 copyCodeToClipBoard()

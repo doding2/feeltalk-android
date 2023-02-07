@@ -14,9 +14,6 @@
     <color name="gradient_start">#FF2BAA</color>
     <color name="gradient_end">#FF2B64</color>
 
-    <!--  splash_theme.xml  -->
-    <color name="splash_background">#FF5A94</color>
-
     <!--  Dialog  -->
     <color name="dialog_title_color">@color/black</color>
     <color name="dialog_message_color">#545454</color>
@@ -26,6 +23,35 @@
     <color name="emotion_puzzling_color">#fff9ba</color>
     <color name="emotion_bad_color">#DFDEFF</color>
     <color name="emotion_angry_color">#FFB6B3</color>
+
+    <!--  fragment_sign_up.xml  -->
+    <color name="sign_up_kakao_background">#F5E14C</color>
+    <color name="sign_up_kakao_text_color">#381F1F</color>
+    <color name="sign_up_naver_background">#5BB134</color>
+    <color name="sign_up_naver_text_color">@color/white</color>
+    <color name="sign_up_google_background">#BC4439</color>
+    <color name="sign_up_google_text_color">@color/white</color>
+    <color name="sign_up_apple_background">@color/black</color>
+    <color name="sign_up_apple_text_color">@color/white</color>
+    <color name="sign_up_customer_service_text_color">#787D83</color>
+
+    <!--  fragment_user_nickname_input.xml  -->
+    <color name="user_nickname_input_message_color">#1A1A1A</color>
+    <color name="user_nickname_input_edit_text_color">#1A1A1A</color>
+    <color name="user_nickname_input_hint_color">#999999</color>
+    <color name="user_nickname_input_invalid_warning_color">#FF2B2B</color>
+
+    <!--  fragment_user_birth_input.xml  -->
+    <color name="user_birth_input_message_color">#1A1A1A</color>
+    <color name="user_birth_input_edit_text_color">#1A1A1A</color>
+    <color name="user_birth_input_hint_color">#999999</color>
+    <color name="user_birth_input_invalid_warning_color">#FF2B2B</color>
+
+    <!--  fragment_couple_anniversary_input.xml  -->
+    <color name="couple_anniversary_message_color">#1A1A1A</color>
+    <color name="couple_anniversary_edit_text_color">#1A1A1A</color>
+    <color name="couple_anniversary_hint_color">#999999</color>
+    <color name="couple_anniversary_invalid_warning_color">#FF2B2B</color>
 
     <!--  fragment_couple_registration.xml  -->
     <color name="couple_registration_message_color">#1A1A1A</color>
@@ -37,7 +63,7 @@
     <color name="couple_registration_code_partner_code_input_text_color">#1A1A1A</color>
 
 
-    <!--  fragment_bottom_navigation  -->
+    <!--  fragment_bottom_navigation.xml  -->
     <color name="bottom_navigation_background_color">@color/white</color>
 
     <!--  fragment_home.xml  -->

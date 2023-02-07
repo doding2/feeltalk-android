@@ -16,16 +16,68 @@ import retrofit2.http.Path
 
 interface ClonectService {
 
+    /** User **/
     @GET("api/memberInfo/{accessToken}")
     suspend fun getUserInfo(
         @Path("accessToken") accessToken: String
     ): Response<UserInfo>
 
+    @GET("api/isMemberAdditional/{accessToken}")
+    suspend fun checkUserEnterInfo(
+        @Path("accessToken") accessToken: String
+    ): Response<String>
+
     @GET("api/couple/matched/{accessToken}")
     suspend fun checkUserIsCouple(
         @Path("accessToken") accessToken: String
     ): Response<CoupleCheckDto>
-    
+
+    @GET("api/DDay/{accessToken}")
+    suspend fun getDDay(
+        @Path("accessToken") accessToken: String
+    ): Response<String>
+
+
+    /** Question **/
+    // {"accessToken": ""}
+    @POST("/api/todayQuestion")
+    suspend fun getTodayQuestion(
+        @Body body: JsonObject
+    ): Response<String>
+
+    // "accessToken": String, "question": String, "answer": String
+    @POST("/api/chattingRoom")
+    suspend fun sendQuestionAnswer(
+        @Body body: JsonObject
+    ): Response<String>
+
+    // fcm
+    @POST("/api/fcm/answerRequest")
+    suspend fun requestQuestionAnswerToPartner(
+        @Body body: JsonObject
+    ): Response<String>
+
+
+    /** Chat **/
+    // "accessToken": String, "question": String, "message": String
+    @POST("/api/fcm/chattingMessage")
+    suspend fun sendChat(
+        @Body body: JsonObject
+    ): Response<String>
+
+    @GET("/api/chattingRoom/{accessToken}")
+    suspend fun getChattingRoomList(
+        @Path("accessToken") accessToken: String
+    ): Response<String>
+
+    // "accessToken": String, "question": String
+    @GET("/api/chattingMessageList")
+    suspend fun getChatList(
+        @Body body: JsonObject
+    ): Response<String>
+
+
+    /** Sign Up **/
     @POST("api/member")
     suspend fun signUpWithGoogle(
         @Body body: JsonObject
@@ -42,6 +94,7 @@ interface ClonectService {
     ): Response<SendPartnerCoupleRegistrationCodeDto>
 
 
+    /** Encryption **/
     @POST("api/member/publicKey")
     suspend fun uploadMyPublicKey(
         @Body body: JsonObject
@@ -61,5 +114,6 @@ interface ClonectService {
     suspend fun loadPartnerPrivateKey(
         @Path("accessToken") accessToken: String
     ): Response<LoadPartnerPrivateKeyDto>
+
 
 }

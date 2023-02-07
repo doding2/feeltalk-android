@@ -1,6 +1,7 @@
 package com.clonect.feeltalk.presentation.ui.signup
 
 import android.app.Activity.RESULT_OK
+import android.graphics.Paint
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -40,13 +41,22 @@ class SignUpFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        initCustomerServiceText()
+
         binding.apply {
-            btnGoogleLogIn.setOnClickListener {
+            mcvSignUpGoogle.setOnClickListener {
                 launchGoogleSignUp()
             }
-            btnSkip.setOnClickListener {
-                navigateToHomePage()
-            }
+        }
+    }
+
+    private fun initCustomerServiceText() = binding.tvCustomerService.apply {
+        paintFlags = Paint.UNDERLINE_TEXT_FLAG
+        setOnClickListener { 
+            // TODO 문의하기로 넘어가기
+            // 지금은 임시로 스킵 역할을 하는중
+            navigateToHomePage()
         }
     }
 
@@ -79,23 +89,13 @@ class SignUpFragment : Fragment() {
     }
 
 
+
     private fun googleLogOut() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .build()
         val mGoogleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
         mGoogleSignInClient.signOut().addOnSuccessListener {
             Log.i("LogInFragment", "구글 로그 아웃")
-        }
-    }
-
-
-    private var googleSignUpLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == RESULT_OK) {
-            val data = result.data
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            handleGoogleSignUpResult(task)
         }
     }
 
@@ -111,13 +111,21 @@ class SignUpFragment : Fragment() {
         googleSignUpLauncher.launch(intent)
     }
 
+    private var googleSignUpLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val data = result.data
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            handleGoogleSignUpResult(task)
+        }
+    }
+
     private fun handleGoogleSignUpResult(completedTask: Task<GoogleSignInAccount>) = lifecycleScope.launch {
         try {
             val account = completedTask.getResult(ApiException::class.java)
             val idToken = account?.idToken.toString()
             val serverAuthCode = account?.serverAuthCode.toString()
-            Log.i("LogInFragment", "아이디 토큰: $idToken")
-            Log.i("LogInFragment", "서버오스코드: $serverAuthCode")
 
             val isSignUpSuccessful = viewModel.signUpWithGoogle(idToken, serverAuthCode)
             if (isSignUpSuccessful) {
@@ -127,7 +135,6 @@ class SignUpFragment : Fragment() {
                 Toast.makeText(requireContext(), "회원가입에 실패했습니다.", Toast.LENGTH_SHORT).show()
             }
         } catch (e: ApiException) {
-            Log.e("LogInFragment", "Fail to Google Sign In: ${e.message}")
             googleLogOut()
             Toast.makeText(requireContext(), "회원가입에 실패했습니다.", Toast.LENGTH_SHORT).show()
         }

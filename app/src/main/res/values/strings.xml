@@ -3,6 +3,31 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="white_space">&#160;</string>
 
+    <!--  fragment_sign_up.xml  -->
+    <string name="sign_up_kakao">카카오톡으로 계속하기</string>
+    <string name="sign_up_naver">네이버로 계속하기</string>
+    <string name="sign_up_google">구글로 계속하기</string>
+    <string name="sign_up_apple">Apple로 계속하기</string>
+    <string name="sign_up_customer_service">문의하기</string>
+    
+    <!--  fragment_user_nickname_input.xml  -->
+    <string name="user_nickname_input_message_highlight">닉네임</string>
+    <string name="user_nickname_input_message_suffix">을 입력해주세요</string>
+    <string name="user_nickname_input_hint">닉네임</string>
+    <string name="user_nickname_input_next_button">다 음</string>
+
+    <!--  fragment_user_birth_input.xml  -->
+    <string name="user_birth_input_message_highlight">생년월일</string>
+    <string name="user_birth_input_message_suffix">을 입력해주세요</string>
+    <string name="user_birth_input_hint">생년월일</string>
+    <string name="user_birth_input_next_button">다 음</string>
+
+    <!--  fragment_couple_anniversary_input.xml  -->
+    <string name="couple_anniversary_message_highlight">그와의 시작일</string>
+    <string name="couple_anniversary_message_suffix">을 입력해주세요</string>
+    <string name="couple_anniversary_hint">그와의 시작일</string>
+    <string name="couple_anniversary_next_button">다 음</string>
+
     <!--  fragment_couple_registration.xml  -->
     <string name="couple_registration_title">회원가입</string>
     <string name="couple_registration_message_prefix">이제&#160;</string>

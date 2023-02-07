@@ -2,7 +2,8 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/total_nav_graph">
+    android:id="@+id/total_nav_graph"
+    app:startDestination="@id/userNicknameInputFragment">
 
     <fragment
         android:id="@+id/signUpFragment"
@@ -17,6 +18,11 @@
         <action
             android:id="@+id/action_signUpFragment_to_coupleRegistrationFragment"
             app:destination="@id/coupleRegistrationFragment" />
+        <action
+            android:id="@+id/action_signUpFragment_to_userNicknameInputFragment"
+            app:destination="@id/userNicknameInputFragment"
+            app:popUpTo="@id/signUpFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/bottomNavigationFragment"
@@ -84,4 +90,9 @@
             app:popUpTo="@id/signUpFragment"
             app:popUpToInclusive="true" />
     </fragment>
+    <fragment
+        android:id="@+id/userNicknameInputFragment"
+        android:name="com.clonect.feeltalk.presentation.ui.user_nickname_input.UserNicknameInputFragment"
+        android:label="fragment_user_nickname_input"
+        tools:layout="@layout/fragment_user_nickname_input" />
 </navigation>
