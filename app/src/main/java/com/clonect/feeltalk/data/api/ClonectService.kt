@@ -23,7 +23,7 @@ interface ClonectService {
     ): Response<UserInfo>
 
     @GET("api/isMemberAdditional/{accessToken}")
-    suspend fun checkUserEnterInfo(
+    suspend fun checkUserInfoIsEntered(
         @Path("accessToken") accessToken: String
     ): Response<String>
 

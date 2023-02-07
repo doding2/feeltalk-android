@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.addTextChangedListener
@@ -17,14 +16,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
-import com.clonect.feeltalk.databinding.FragmentUserBirthInputBinding
+import com.clonect.feeltalk.databinding.FragmentCoupleAnniversaryInputBinding
 import com.clonect.feeltalk.presentation.utils.addTextGradient
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class UserBirthInputFragment : Fragment() {
+class CoupleAnniversaryInputFragment : Fragment() {
 
-    private lateinit var binding: FragmentUserBirthInputBinding
+    private lateinit var binding: FragmentCoupleAnniversaryInputBinding
     private val viewModel: UserInputViewModel by activityViewModels()
     private lateinit var onBackCallback: OnBackPressedCallback
 
@@ -32,59 +31,81 @@ class UserBirthInputFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentUserBirthInputBinding.inflate(inflater, container, false)
+        binding = FragmentCoupleAnniversaryInputBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        collectBirth()
+        collectCoupleAnniversary()
         collectInvalidWarning()
+        collectIsUserInfoUpdateSuccessful()
 
         enableNextButton(false)
-        initBirthEditText()
+        initCoupleAnniversaryEditText()
 
         binding.apply {
             textMessageHighlight.addTextGradient()
-            btnBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
-            ivUserBirthClear.setOnClickListener { metUserBirth.text?.clear() }
-            mcvNext.setOnClickListener { navigateToCoupleAnniversaryPage() }
+            btnBack.setOnClickListener {
+                onBackCallback.handleOnBackPressed()
+            }
+            ivCoupleAnniversaryClear.setOnClickListener {
+                metCoupleAnniversary.text?.clear()
+            }
+            mcvNext.setOnClickListener {
+                updateUserInfo()
+            }
+        }
+    }
+
+    private fun updateUserInfo() {
+        binding.mcvNext.isEnabled = false
+        viewModel.updateUserInfo()
+    }
+
+    private fun navigateToCoupleRegistrationPage() {
+        findNavController().navigate(R.id.action_coupleAnniversaryInputFragment_to_coupleRegistrationFragment)
+    }
+
+    private fun collectIsUserInfoUpdateSuccessful() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.isUserInfoUpdateSuccessful.collectLatest {
+                if (it) {
+                    navigateToCoupleRegistrationPage()
+                }
+                binding.mcvNext.isEnabled = true
+            }
         }
     }
 
 
-    private fun navigateToCoupleAnniversaryPage() {
-        findNavController().navigate(R.id.action_userBirthInputFragment_to_coupleAnniversaryInputFragment)
-    }
-
-
-    private fun collectBirth() = lifecycleScope.launch {
+    private fun collectCoupleAnniversary() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.birth.collectLatest { birthDate ->
-                if (birthDate.isNullOrBlank()) {
-                    viewModel.setInvalidBirthWarning(null)
-                    binding.ivUserBirthClear.visibility = View.GONE
+            viewModel.coupleAnniversary.collectLatest { anniversaryDate ->
+                if (anniversaryDate.isNullOrBlank()) {
+                    viewModel.setInvalidCoupleAnniversaryWarning(null)
+                    binding.ivCoupleAnniversaryClear.visibility = View.GONE
                     enableNextButton(false)
                     return@collectLatest
                 }
 
-                if (!binding.metUserBirth.isDone) {
-                    viewModel.setInvalidBirthWarning("yyyy/MM/dd")
-                    binding.ivUserBirthClear.visibility = View.VISIBLE
+                if (!binding.metCoupleAnniversary.isDone) {
+                    viewModel.setInvalidCoupleAnniversaryWarning("yyyy/MM/dd")
+                    binding.ivCoupleAnniversaryClear.visibility = View.VISIBLE
                     enableNextButton(false)
                     return@collectLatest
                 }
 
-                if (!viewModel.checkValidDate(birthDate)) {
-                    viewModel.setInvalidBirthWarning("존재하지 않는 날짜입니다.")
-                    binding.ivUserBirthClear.visibility = View.VISIBLE
+                if (!viewModel.checkValidDate(anniversaryDate)) {
+                    viewModel.setInvalidCoupleAnniversaryWarning("존재하지 않는 날짜입니다.")
+                    binding.ivCoupleAnniversaryClear.visibility = View.VISIBLE
                     enableNextButton(false)
                     return@collectLatest
                 }
 
-                viewModel.setInvalidBirthWarning(null)
-                binding.ivUserBirthClear.visibility = View.VISIBLE
+                viewModel.setInvalidCoupleAnniversaryWarning(null)
+                binding.ivCoupleAnniversaryClear.visibility = View.VISIBLE
                 enableNextButton(true)
 
             }
@@ -93,24 +114,24 @@ class UserBirthInputFragment : Fragment() {
 
     private fun collectInvalidWarning() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.invalidBirthWarning.collectLatest {
+            viewModel.invalidCoupleAnniversaryWarning.collectLatest {
                 binding.tvInvalidWarning.text = it
             }
         }
     }
 
 
-    private fun initBirthEditText() = binding.metUserBirth.apply {
-        setText(viewModel.birth.value)
+    private fun initCoupleAnniversaryEditText() = binding.metCoupleAnniversary.apply {
+        setText(viewModel.coupleAnniversary.value)
         addTextChangedListener {
             val input = it?.toString()
-            viewModel.setBirth(input)
+            viewModel.setCoupleAnniversary(input)
         }
         setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE
                 && getNextButtonEnabled()
             ) {
-                navigateToCoupleAnniversaryPage()
+                updateUserInfo()
                 return@setOnEditorActionListener true
             }
             false

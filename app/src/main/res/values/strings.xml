@@ -23,10 +23,10 @@
     <string name="user_birth_input_next_button">다 음</string>
 
     <!--  fragment_couple_anniversary_input.xml  -->
-    <string name="couple_anniversary_message_highlight">그와의 시작일</string>
-    <string name="couple_anniversary_message_suffix">을 입력해주세요</string>
-    <string name="couple_anniversary_hint">그와의 시작일</string>
-    <string name="couple_anniversary_next_button">다 음</string>
+    <string name="couple_anniversary_input_message_highlight">그와의 시작일</string>
+    <string name="couple_anniversary_input_message_suffix">을 입력해주세요</string>
+    <string name="couple_anniversary_input_hint">그와의 시작일</string>
+    <string name="couple_anniversary_input_next_button">다 음</string>
 
     <!--  fragment_couple_registration.xml  -->
     <string name="couple_registration_title">회원가입</string>

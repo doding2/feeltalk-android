@@ -103,5 +103,18 @@
         android:id="@+id/userBirthInputFragment"
         android:name="com.clonect.feeltalk.presentation.ui.input.UserBirthInputFragment"
         android:label="fragment_user_birth_input"
-        tools:layout="@layout/fragment_user_birth_input" />
+        tools:layout="@layout/fragment_user_birth_input" >
+        <action
+            android:id="@+id/action_userBirthInputFragment_to_coupleAnniversaryInputFragment"
+            app:destination="@id/coupleAnniversaryInputFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/coupleAnniversaryInputFragment"
+        android:name="com.clonect.feeltalk.presentation.ui.input.CoupleAnniversaryInputFragment"
+        android:label="fragment_couple_anniversary_input"
+        tools:layout="@layout/fragment_couple_anniversary_input" >
+        <action
+            android:id="@+id/action_coupleAnniversaryInputFragment_to_coupleRegistrationFragment"
+            app:destination="@id/coupleRegistrationFragment" />
+    </fragment>
 </navigation>

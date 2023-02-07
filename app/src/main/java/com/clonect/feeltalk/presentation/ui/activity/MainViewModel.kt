@@ -24,6 +24,9 @@ class MainViewModel @Inject constructor(
     private val _isLoggedIn = MutableStateFlow(false)
     val isLoggedIn = _isLoggedIn.asStateFlow()
 
+    private val _isUserInfoEntered = MutableStateFlow(false)
+    val isUserInfoEntered = _isUserInfoEntered.asStateFlow()
+
     private val _isUserCouple = MutableStateFlow(false)
     val isUserCouple = _isUserCouple.asStateFlow()
 

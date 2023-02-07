@@ -1,9 +1,12 @@
 package com.clonect.feeltalk.presentation.ui.input
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
@@ -69,19 +72,24 @@ class UserInputViewModel @Inject constructor(
 
     /** Couple Anniversary **/
 
-    private val _anniversary = MutableStateFlow<String?>(null)
-    val anniversary = _anniversary.asStateFlow()
+    private val _coupleAnniversary = MutableStateFlow<String?>(null)
+    val coupleAnniversary = _coupleAnniversary.asStateFlow()
 
-    private val _invalidAnniversaryWarning = MutableStateFlow<String?>(null)
-    val invalidAnniversaryWarning = _invalidAnniversaryWarning.asStateFlow()
+    private val _invalidCoupleAnniversaryWarning = MutableStateFlow<String?>(null)
+    val invalidCoupleAnniversaryWarning = _invalidCoupleAnniversaryWarning.asStateFlow()
 
-    fun setAnniversary(anniversary: String?) {
-        _anniversary.value = anniversary
+    private val _isUserInfoUpdateSuccessful = MutableStateFlow<Boolean>(false)
+    val isUserInfoUpdateSuccessful = _isUserInfoUpdateSuccessful.asStateFlow()
+
+    fun setCoupleAnniversary(anniversary: String?) {
+        _coupleAnniversary.value = anniversary
     }
 
-    fun setInvalidAnniversaryWarning(text: String?) {
-        _invalidAnniversaryWarning.value = text
+    fun setInvalidCoupleAnniversaryWarning(text: String?) {
+        _invalidCoupleAnniversaryWarning.value = text
     }
 
-
+    fun updateUserInfo() = viewModelScope.launch(Dispatchers.IO) {
+        _isUserInfoUpdateSuccessful.value = false
+    }
 }

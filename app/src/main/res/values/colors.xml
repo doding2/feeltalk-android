@@ -48,10 +48,10 @@
     <color name="user_birth_input_invalid_warning_color">#FF2B2B</color>
 
     <!--  fragment_couple_anniversary_input.xml  -->
-    <color name="couple_anniversary_message_color">#1A1A1A</color>
-    <color name="couple_anniversary_edit_text_color">#1A1A1A</color>
-    <color name="couple_anniversary_hint_color">#999999</color>
-    <color name="couple_anniversary_invalid_warning_color">#FF2B2B</color>
+    <color name="couple_anniversary_input_message_color">#1A1A1A</color>
+    <color name="couple_anniversary_input_edit_text_color">#1A1A1A</color>
+    <color name="couple_anniversary_input_hint_color">#999999</color>
+    <color name="couple_anniversary_input_invalid_warning_color">#FF2B2B</color>
 
     <!--  fragment_couple_registration.xml  -->
     <color name="couple_registration_message_color">#1A1A1A</color>
