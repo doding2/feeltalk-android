@@ -17,7 +17,7 @@
         android:name=".presentation.ui.FeeltalkApp"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppSplash"
+        android:theme="@style/Theme.Feeltalk"
         tools:targetApi="31">
         <activity
             android:name=".presentation.ui.activity.MainActivity"

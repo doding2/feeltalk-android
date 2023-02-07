@@ -5,17 +5,17 @@
     android:id="@+id/total_nav_graph">
 
     <fragment
-        android:id="@+id/logInFragment"
+        android:id="@+id/signUpFragment"
         android:name="com.clonect.feeltalk.presentation.ui.signup.SignUpFragment"
-        android:label="fragment_log_in"
+        android:label="fragment_sign_up"
         tools:layout="@layout/fragment_sign_up" >
         <action
-            android:id="@+id/action_logInFragment_to_bottomNavigationFragment"
+            android:id="@+id/action_signUpFragment_to_bottomNavigationFragment"
             app:destination="@id/bottomNavigationFragment"
-            app:popUpTo="@id/logInFragment"
+            app:popUpTo="@id/signUpFragment"
             app:popUpToInclusive="true"/>
         <action
-            android:id="@+id/action_logInFragment_to_coupleRegistrationFragment"
+            android:id="@+id/action_signUpFragment_to_coupleRegistrationFragment"
             app:destination="@id/coupleRegistrationFragment" />
     </fragment>
     <fragment
@@ -81,7 +81,7 @@
         <action
             android:id="@+id/action_coupleRegistrationFragment_to_bottomNavigationFragment"
             app:destination="@id/bottomNavigationFragment"
-            app:popUpTo="@id/logInFragment"
+            app:popUpTo="@id/signUpFragment"
             app:popUpToInclusive="true" />
     </fragment>
 </navigation>

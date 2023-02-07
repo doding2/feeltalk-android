@@ -20,7 +20,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
-import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -49,17 +48,14 @@ class SignUpFragment : Fragment() {
                 navigateToHomePage()
             }
         }
-
-        googleLogOut()
-
     }
 
     private fun navigateToHomePage() {
-        findNavController().navigate(R.id.action_logInFragment_to_bottomNavigationFragment)
+        findNavController().navigate(R.id.action_signUpFragment_to_bottomNavigationFragment)
     }
 
     private fun navigateToCoupleRegistrationPage() {
-        findNavController().navigate(R.id.action_logInFragment_to_coupleRegistrationFragment)
+        findNavController().navigate(R.id.action_signUpFragment_to_coupleRegistrationFragment)
     }
 
 

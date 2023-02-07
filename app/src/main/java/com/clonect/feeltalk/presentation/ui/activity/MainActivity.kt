@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         val navGraph = navController.navInflater.inflate(R.navigation.overall_nav_graph)
         val startDestination =
             if (!viewModel.isLoggedIn.value) {
-                R.id.logInFragment
+                R.id.signUpFragment
             } else if (!viewModel.isUserCouple.value) {
                 R.id.coupleRegistrationFragment
             } else {
