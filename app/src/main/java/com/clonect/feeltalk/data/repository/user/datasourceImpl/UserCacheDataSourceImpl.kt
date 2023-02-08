@@ -23,6 +23,7 @@ class UserCacheDataSourceImpl: UserCacheDataSource {
         this.userInfo = userInfo
     }
 
+
     override fun getCoupleRegistrationCode(): String? = coupleRegistrationCode
 
     override fun saveCoupleRegistrationCode(code: String) {

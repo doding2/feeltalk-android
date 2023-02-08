@@ -168,4 +168,17 @@ class UseCaseModule {
         return LoadPartnerPrivateKeyUseCase(userRepository, encryptionRepository)
     }
 
+    @Singleton
+    @Provides
+    fun providesCheckUserInfoIsEnteredUseCase(userRepository: UserRepository): CheckUserInfoIsEnteredUseCase {
+        return CheckUserInfoIsEnteredUseCase(userRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesUpdateUserInfoUseCase(userRepository: UserRepository): UpdateUserInfoUseCase {
+        return UpdateUserInfoUseCase(userRepository)
+    }
+
+
 }

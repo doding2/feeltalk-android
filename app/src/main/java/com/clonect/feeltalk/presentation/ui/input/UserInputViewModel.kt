@@ -2,6 +2,8 @@ package com.clonect.feeltalk.presentation.ui.input
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.domain.usecase.user.UpdateUserInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserInputViewModel @Inject constructor(
-
+    private val updateUserInfoUseCase: UpdateUserInfoUseCase,
 ): ViewModel() {
 
     /** Nickname **/
@@ -78,8 +80,8 @@ class UserInputViewModel @Inject constructor(
     private val _invalidCoupleAnniversaryWarning = MutableStateFlow<String?>(null)
     val invalidCoupleAnniversaryWarning = _invalidCoupleAnniversaryWarning.asStateFlow()
 
-    private val _isUserInfoUpdateSuccessful = MutableStateFlow<Boolean>(false)
-    val isUserInfoUpdateSuccessful = _isUserInfoUpdateSuccessful.asStateFlow()
+    private val _isUserInfoUpdateCompleted = MutableStateFlow<Boolean>(false)
+    val isUserInfoUpdateCompleted = _isUserInfoUpdateCompleted.asStateFlow()
 
     fun setCoupleAnniversary(anniversary: String?) {
         _coupleAnniversary.value = anniversary
@@ -90,6 +92,15 @@ class UserInputViewModel @Inject constructor(
     }
 
     fun updateUserInfo() = viewModelScope.launch(Dispatchers.IO) {
-        _isUserInfoUpdateSuccessful.value = false
+        val result = updateUserInfoUseCase(
+            nickname = _nickname.value ?: "",
+            birthDate = _birth.value ?: "",
+            anniversary = _coupleAnniversary.value ?: ""
+        )
+        val isSuccessful = when (result) {
+            is Resource.Success -> true
+            else -> false
+        }
+        _isUserInfoUpdateCompleted.value = isSuccessful
     }
 }

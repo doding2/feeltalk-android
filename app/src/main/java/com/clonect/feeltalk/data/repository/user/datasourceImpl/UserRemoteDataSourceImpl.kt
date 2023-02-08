@@ -8,6 +8,7 @@ import com.clonect.feeltalk.domain.model.user.dto.SignUpDto
 import com.clonect.feeltalk.domain.model.user.UserInfo
 import com.clonect.feeltalk.domain.model.user.dto.CoupleCheckDto
 import com.google.gson.JsonObject
+import retrofit2.HttpException
 import retrofit2.Response
 
 class UserRemoteDataSourceImpl(
@@ -15,29 +16,70 @@ class UserRemoteDataSourceImpl(
 ): UserRemoteDataSource {
 
     override suspend fun getUserInfo(accessToken: AccessToken): Response<UserInfo> {
-        return clonectService.getUserInfo(accessToken.value)
+        val response = clonectService.getUserInfo(accessToken.value)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
     }
 
     override suspend fun checkUserIsCouple(accessToken: AccessToken): Response<CoupleCheckDto> {
-        return clonectService.checkUserIsCouple(accessToken.value)
+        val response =  clonectService.checkUserIsCouple(accessToken.value)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
     }
+
+    override suspend fun checkUserInfoIsEntered(accessToken: String): Response<JsonObject> {
+        val response = clonectService.checkUserInfoIsEntered(accessToken)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
+
+    // TODO 프로퍼티들 절대 저 이름들이 아님
+    override suspend fun updateUserInfo(
+        accessToken: String,
+        nickname: String,
+        birthDate: String,
+        anniversary: String
+    ): Response<String> {
+        val body = JsonObject().apply {
+            addProperty("accessToken", accessToken)
+            addProperty("nickname", nickname)
+            addProperty("birthDate", birthDate)
+            addProperty("anniversary", anniversary)
+        }
+        val response = clonectService.updateUserInfo(body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
+
 
     override suspend fun sendPartnerCoupleRegistrationCode(
         accessToken: AccessToken,
         partnerCode: String,
     ): Response<SendPartnerCoupleRegistrationCodeDto> {
-        val obj = JsonObject().apply {
+        val body = JsonObject().apply {
             addProperty("accessToken", accessToken.value)
             addProperty("coupleCode", partnerCode)
         }
-        return clonectService.sendPartnerCoupleRegistrationCode(obj)
+        val response = clonectService.sendPartnerCoupleRegistrationCode(body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
     }
 
+
+
     override suspend fun autoLogInWithGoogle(idToken: String): Response<AccessToken> {
-        val obj = JsonObject().apply {
+        val body = JsonObject().apply {
             addProperty("idToken", idToken)
         }
-        return clonectService.autoLogInWithGoogle(obj)
+        val response = clonectService.autoLogInWithGoogle(body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
     }
 
     override suspend fun signUpWithGoogle(
@@ -45,12 +87,15 @@ class UserRemoteDataSourceImpl(
         serverAuthCode: String,
         fcmToken: String
     ): Response<SignUpDto> {
-        val obj = JsonObject().apply {
+        val body = JsonObject().apply {
             addProperty("idToken", idToken)
             addProperty("authCode", serverAuthCode)
             addProperty("fcmToken", fcmToken)
         }
-        return clonectService.signUpWithGoogle(obj)
+        val response = clonectService.signUpWithGoogle(body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
     }
 
 }

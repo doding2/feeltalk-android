@@ -49,6 +49,49 @@ class UserRepositoryImpl(
         return remote
     }
 
+    override suspend fun checkUserInfoIsEntered(): Resource<Boolean> {
+        return try {
+            val accessToken = cacheDataSource.getAccessToken()
+                ?: localDataSource.getAccessToken()
+                ?: throw NullPointerException("User is Not logged in.")
+
+            val response = remoteDataSource.checkUserInfoIsEntered(accessToken = accessToken.value)
+
+            Resource.Success(response.body()!!.get("userInfoEntered").asBoolean)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            return Resource.Error(e)
+        }
+    }
+
+    // TODO 리턴 타입 String 아님
+    override suspend fun updateUserInfo(
+        nickname: String,
+        birthDate: String,
+        anniversary: String
+    ): Resource<String> {
+        return try {
+            val accessToken = cacheDataSource.getAccessToken()
+                ?: localDataSource.getAccessToken()
+                ?: throw NullPointerException("User is Not logged in.")
+
+            val response = remoteDataSource.updateUserInfo(
+                accessToken = accessToken.value,
+                nickname = nickname,
+                birthDate = birthDate,
+                anniversary = anniversary
+            )
+
+            Resource.Success(response.body()!!)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            return Resource.Error(e)
+        }
+    }
+
+
     override suspend fun checkUserInCouple(): Resource<CoupleCheckDto> {
         return try {
             val accessToken = cacheDataSource.getAccessToken()
@@ -56,10 +99,6 @@ class UserRepositoryImpl(
                 ?: throw NullPointerException("User is Not logged in.")
 
             val response = remoteDataSource.checkUserIsCouple(accessToken)
-            if (!response.isSuccessful)
-                throw HttpException(response)
-            if (response.body() == null)
-                throw NullPointerException("Response body from server is null.")
 
             Resource.Success(response.body()!!)
         } catch (e: CancellationException) {
@@ -98,12 +137,10 @@ class UserRepositoryImpl(
                 ?: localDataSource.getAccessToken()
                 ?: throw NullPointerException("User is Not logged in.")
 
-            val response = remoteDataSource.sendPartnerCoupleRegistrationCode(accessToken, partnerCode)
-            if (!response.isSuccessful)
-                throw HttpException(response)
-            if (response.body() == null)
-                throw NullPointerException("Response body from server is null.")
-
+            val response = remoteDataSource.sendPartnerCoupleRegistrationCode(
+                accessToken = accessToken,
+                partnerCode = partnerCode
+            )
             Resource.Success(response.body()!!)
         } catch (e: CancellationException) {
             throw e
@@ -112,17 +149,14 @@ class UserRepositoryImpl(
         }
     }
 
+
+
     override suspend fun autoLogInWithGoogle(): Resource<AccessToken> {
         return try {
             val idToken = localDataSource.getGoogleIdToken()
                 ?: throw Exception("User is not auto logged in. Please re-log in.")
 
             val response = remoteDataSource.autoLogInWithGoogle(idToken)
-
-            if (!response.isSuccessful)
-                throw HttpException(response)
-            if (response.body() == null)
-                throw NullPointerException("Response body from server is null.")
 
             val accessToken = response.body()!!
             localDataSource.saveAccessToken(accessToken)
@@ -143,11 +177,6 @@ class UserRepositoryImpl(
     ): Resource<AccessToken> {
         return try {
             val response = remoteDataSource.signUpWithGoogle(idToken, serverAuthCode, fcmToken)
-
-            if (!response.isSuccessful)
-                throw HttpException(response)
-            if (response.body() == null)
-                throw NullPointerException("Response body from server is null.")
 
             val coupleRegistrationCode = response.body()!!.validCode
             localDataSource.saveCoupleRegistrationCode(coupleRegistrationCode)
@@ -197,12 +226,6 @@ class UserRepositoryImpl(
     private suspend fun getUserInfoFromServer(accessToken: AccessToken): Resource<UserInfo> {
         return try {
             val response = remoteDataSource.getUserInfo(accessToken)
-
-            if (!response.isSuccessful)
-                throw HttpException(response)
-            if (response.body() == null)
-                throw NullPointerException("Response body from server is null.")
-
             Resource.Success(response.body()!!)
         } catch (e: CancellationException) {
             throw e
@@ -210,4 +233,6 @@ class UserRepositoryImpl(
             Resource.Error(e)
         }
     }
+
+
 }

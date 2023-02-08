@@ -1,9 +1,11 @@
 package com.clonect.feeltalk.presentation.ui.activity
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.usecase.user.AutoLogInWithGoogleUseCase
+import com.clonect.feeltalk.domain.usecase.user.CheckUserInfoIsEnteredUseCase
 import com.clonect.feeltalk.domain.usecase.user.CheckUserIsCoupleUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val autoLogInWithGoogleUseCase: AutoLogInWithGoogleUseCase,
+    private val checkUserInfoIsEnteredUseCase: CheckUserInfoIsEnteredUseCase,
     private val checkUserIsCoupleUseCase: CheckUserIsCoupleUseCase,
 ) : ViewModel() {
 
@@ -40,12 +43,29 @@ class MainViewModel @Inject constructor(
         when (autoLogInWithGoogleUseCase()) {
             is Resource.Success -> {
                 _isLoggedIn.value = true
-                checkUserIsCouple()
+                checkUserInfoIsEntered()
             }
             else -> {
                 _isLoggedIn.value = false
                 setReady()
             }
+        }
+    }
+
+
+
+    private fun checkUserInfoIsEntered()= viewModelScope.launch(Dispatchers.IO) {
+        val result = checkUserInfoIsEnteredUseCase()
+        val isEntered = when (result) {
+            is Resource.Success -> result.data
+            else -> false
+        }
+        _isUserInfoEntered.value = isEntered
+
+        if (isEntered) {
+            checkUserIsCouple()
+        } else {
+            setReady()
         }
     }
 

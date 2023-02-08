@@ -1,9 +1,11 @@
 package com.clonect.feeltalk.presentation.ui.input
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
@@ -48,7 +50,6 @@ class UserBirthInputFragment : Fragment() {
         binding.apply {
             textMessageHighlight.addTextGradient()
             btnBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
-            ivUserBirthClear.setOnClickListener { metUserBirth.text?.clear() }
             mcvNext.setOnClickListener { navigateToCoupleAnniversaryPage() }
         }
     }
@@ -64,27 +65,27 @@ class UserBirthInputFragment : Fragment() {
             viewModel.birth.collectLatest { birthDate ->
                 if (birthDate.isNullOrBlank()) {
                     viewModel.setInvalidBirthWarning(null)
-                    binding.ivUserBirthClear.visibility = View.GONE
+                    binding.metUserBirth.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                     enableNextButton(false)
                     return@collectLatest
                 }
 
                 if (!binding.metUserBirth.isDone) {
                     viewModel.setInvalidBirthWarning("yyyy/MM/dd")
-                    binding.ivUserBirthClear.visibility = View.VISIBLE
+                    binding.metUserBirth.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0)
                     enableNextButton(false)
                     return@collectLatest
                 }
 
                 if (!viewModel.checkValidDate(birthDate)) {
                     viewModel.setInvalidBirthWarning("존재하지 않는 날짜입니다.")
-                    binding.ivUserBirthClear.visibility = View.VISIBLE
+                    binding.metUserBirth.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0)
                     enableNextButton(false)
                     return@collectLatest
                 }
 
                 viewModel.setInvalidBirthWarning(null)
-                binding.ivUserBirthClear.visibility = View.VISIBLE
+                binding.metUserBirth.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0)
                 enableNextButton(true)
 
             }
@@ -100,11 +101,21 @@ class UserBirthInputFragment : Fragment() {
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initBirthEditText() = binding.metUserBirth.apply {
         setText(viewModel.birth.value)
         addTextChangedListener {
             val input = it?.toString()
             viewModel.setBirth(input)
+        }
+        setOnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                if (event.rawX >= (this.right - this.compoundPaddingRight)) {
+                    binding.metUserBirth.text?.clear()
+                    return@setOnTouchListener true
+                }
+            }
+            return@setOnTouchListener false
         }
         setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE

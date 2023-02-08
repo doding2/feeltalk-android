@@ -1,9 +1,11 @@
 package com.clonect.feeltalk.presentation.ui.input
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
@@ -40,7 +42,7 @@ class CoupleAnniversaryInputFragment : Fragment() {
 
         collectCoupleAnniversary()
         collectInvalidWarning()
-        collectIsUserInfoUpdateSuccessful()
+        collectIsUserInfoUpdateCompleted()
 
         enableNextButton(false)
         initCoupleAnniversaryEditText()
@@ -49,9 +51,6 @@ class CoupleAnniversaryInputFragment : Fragment() {
             textMessageHighlight.addTextGradient()
             btnBack.setOnClickListener {
                 onBackCallback.handleOnBackPressed()
-            }
-            ivCoupleAnniversaryClear.setOnClickListener {
-                metCoupleAnniversary.text?.clear()
             }
             mcvNext.setOnClickListener {
                 updateUserInfo()
@@ -68,10 +67,10 @@ class CoupleAnniversaryInputFragment : Fragment() {
         findNavController().navigate(R.id.action_coupleAnniversaryInputFragment_to_coupleRegistrationFragment)
     }
 
-    private fun collectIsUserInfoUpdateSuccessful() = lifecycleScope.launch {
+    private fun collectIsUserInfoUpdateCompleted() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.isUserInfoUpdateSuccessful.collectLatest {
-                if (it) {
+            viewModel.isUserInfoUpdateCompleted.collectLatest { isCompleted ->
+                if (isCompleted) {
                     navigateToCoupleRegistrationPage()
                 }
                 binding.mcvNext.isEnabled = true
@@ -85,27 +84,27 @@ class CoupleAnniversaryInputFragment : Fragment() {
             viewModel.coupleAnniversary.collectLatest { anniversaryDate ->
                 if (anniversaryDate.isNullOrBlank()) {
                     viewModel.setInvalidCoupleAnniversaryWarning(null)
-                    binding.ivCoupleAnniversaryClear.visibility = View.GONE
+                    binding.metCoupleAnniversary.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                     enableNextButton(false)
                     return@collectLatest
                 }
 
                 if (!binding.metCoupleAnniversary.isDone) {
                     viewModel.setInvalidCoupleAnniversaryWarning("yyyy/MM/dd")
-                    binding.ivCoupleAnniversaryClear.visibility = View.VISIBLE
+                    binding.metCoupleAnniversary.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0)
                     enableNextButton(false)
                     return@collectLatest
                 }
 
                 if (!viewModel.checkValidDate(anniversaryDate)) {
                     viewModel.setInvalidCoupleAnniversaryWarning("존재하지 않는 날짜입니다.")
-                    binding.ivCoupleAnniversaryClear.visibility = View.VISIBLE
+                    binding.metCoupleAnniversary.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0)
                     enableNextButton(false)
                     return@collectLatest
                 }
 
                 viewModel.setInvalidCoupleAnniversaryWarning(null)
-                binding.ivCoupleAnniversaryClear.visibility = View.VISIBLE
+                binding.metCoupleAnniversary.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0)
                 enableNextButton(true)
 
             }
@@ -121,11 +120,21 @@ class CoupleAnniversaryInputFragment : Fragment() {
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initCoupleAnniversaryEditText() = binding.metCoupleAnniversary.apply {
         setText(viewModel.coupleAnniversary.value)
         addTextChangedListener {
             val input = it?.toString()
             viewModel.setCoupleAnniversary(input)
+        }
+        setOnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                if (event.rawX >= (this.right - this.compoundPaddingRight)) {
+                    binding.metCoupleAnniversary.text?.clear()
+                    return@setOnTouchListener true
+                }
+            }
+            return@setOnTouchListener false
         }
         setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE

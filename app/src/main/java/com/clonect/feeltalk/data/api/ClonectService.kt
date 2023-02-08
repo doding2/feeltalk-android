@@ -22,10 +22,11 @@ interface ClonectService {
         @Path("accessToken") accessToken: String
     ): Response<UserInfo>
 
+    // ya29.a0AVvZVsq8sTtx8-SCq2kozrHR2ORGDrTOO5GEpBJqM7GOsNA-Lq6bzpgAFu0mE5tHWv02ZzfMsjfF6F1QONJgE_EdEtOphm9rt5LRG85hW-GURj7lJzCLXv6qP_MoC7-cHf9no16rL0spE8Zl9QG-vfDUMp92aCgYKATISARASFQGbdwaI5925x9H4Vj4bFgfHeetkBQ0163
     @GET("api/isMemberAdditional/{accessToken}")
     suspend fun checkUserInfoIsEntered(
         @Path("accessToken") accessToken: String
-    ): Response<String>
+    ): Response<JsonObject>
 
     @GET("api/couple/matched/{accessToken}")
     suspend fun checkUserIsCouple(
@@ -35,6 +36,12 @@ interface ClonectService {
     @GET("api/DDay/{accessToken}")
     suspend fun getDDay(
         @Path("accessToken") accessToken: String
+    ): Response<String>
+
+    // TODO
+    @POST("api/")
+    suspend fun updateUserInfo(
+        @Body body: JsonObject
     ): Response<String>
 
 

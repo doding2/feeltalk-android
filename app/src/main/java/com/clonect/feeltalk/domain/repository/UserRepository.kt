@@ -9,8 +9,11 @@ interface UserRepository {
 
     suspend fun getAccessToken(): Resource<AccessToken>
     suspend fun getUserInfo(): Resource<UserInfo>
-    suspend fun checkUserInCouple(): Resource<CoupleCheckDto>
 
+    suspend fun checkUserInfoIsEntered(): Resource<Boolean>
+    suspend fun updateUserInfo(nickname: String, birthDate: String, anniversary: String): Resource<String>
+
+    suspend fun checkUserInCouple(): Resource<CoupleCheckDto>
     suspend fun getCoupleRegistrationCode(): Resource<String>
     suspend fun removeCoupleRegistrationCode()
     suspend fun sendPartnerCoupleRegistrationCode(partnerCode: String): Resource<SendPartnerCoupleRegistrationCodeDto>

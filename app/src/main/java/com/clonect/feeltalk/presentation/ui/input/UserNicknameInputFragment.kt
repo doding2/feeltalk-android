@@ -1,9 +1,11 @@
 package com.clonect.feeltalk.presentation.ui.input
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
@@ -47,7 +49,6 @@ class UserNicknameInputFragment : Fragment() {
         binding.apply {
             textMessageHighlight.addTextGradient()
             btnBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
-            ivUserNicknameClear.setOnClickListener { etUserNickname.text.clear() }
             mcvNext.setOnClickListener { navigateToUserBirthPage() }
         }
     }
@@ -63,20 +64,20 @@ class UserNicknameInputFragment : Fragment() {
             viewModel.nickname.collectLatest { nickname ->
                 if (nickname.isNullOrBlank()) {
                     viewModel.setInvalidNicknameWarning(null)
-                    binding.ivUserNicknameClear.visibility = View.GONE
+                    binding.etUserNickname.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                     enableNextButton(false)
                     return@collectLatest
                 }
 
                 if (!viewModel.checkValidNickname(nickname)) {
                     viewModel.setInvalidNicknameWarning("닉네임에는 공백과 특수문자를 쓸 수 없습니다.")
-                    binding.ivUserNicknameClear.visibility = View.VISIBLE
+                    binding.etUserNickname.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0)
                     enableNextButton(false)
                     return@collectLatest
                 }
 
                 viewModel.setInvalidNicknameWarning(null)
-                binding.ivUserNicknameClear.visibility = View.VISIBLE
+                binding.etUserNickname.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0)
                 enableNextButton(true)
 
             }
@@ -92,11 +93,21 @@ class UserNicknameInputFragment : Fragment() {
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initNicknameEditText() = binding.etUserNickname.apply {
         setText(viewModel.nickname.value)
         addTextChangedListener {
             val input = it?.toString()
             viewModel.setNickname(input)
+        }
+        setOnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                if (event.rawX >= (this.right - this.compoundPaddingRight)) {
+                    binding.etUserNickname.text.clear()
+                    return@setOnTouchListener true
+                }
+            }
+            return@setOnTouchListener false
         }
         setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE

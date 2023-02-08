@@ -117,15 +117,9 @@
                     android:lines="1"
                     android:inputType="textPersonName"
                     android:maxLength="20"
-                    android:imeOptions="actionDone" />
-
-                <ImageView
-                    android:id="@+id/iv_user_nickname_clear"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|center_vertical"
-                    android:src="@drawable/ic_clear"
-                    android:visibility="gone" />
+                    android:imeOptions="actionDone"
+                    android:drawablePadding="4dp"
+                    android:paddingEnd="4dp" />
             </FrameLayout>
 
             <View
