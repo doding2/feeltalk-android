@@ -75,8 +75,8 @@ class CoupleRegistrationFragment : Fragment() {
         }
     }
 
-    private fun navigateHomePage() {
-        findNavController().navigate(R.id.action_coupleRegistrationFragment_to_bottomNavigationFragment)
+    private fun navigateCoupleRegistrationDonePage() {
+        findNavController().navigate(R.id.action_coupleRegistrationFragment_to_coupleRegistrationDoneFragment)
     }
 
     private fun copyCodeToClipBoard() {
@@ -111,7 +111,7 @@ class CoupleRegistrationFragment : Fragment() {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.isKeyPairExchangingCompleted.collectLatest { isCompleted ->
                 if (isCompleted) {
-                    navigateHomePage()
+                    navigateCoupleRegistrationDonePage()
                 }
             }
         }

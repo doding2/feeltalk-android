@@ -12,6 +12,7 @@ import com.clonect.feeltalk.domain.usecase.user.GetCoupleRegistrationCodeUseCase
 import com.clonect.feeltalk.domain.usecase.user.RemoveCoupleRegistrationCodeUseCase
 import com.clonect.feeltalk.domain.usecase.user.SendPartnerCoupleRegistrationCodeUseCase
 import com.clonect.feeltalk.presentation.service.notification_observer.CoupleRegistrationObserver
+import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,6 +46,10 @@ class CoupleRegistrationViewModel @Inject constructor(
     private val _isKeyPairExchangingCompleted = MutableStateFlow(false)
     val isKeyPairExchangingCompleted = _isKeyPairExchangingCompleted.asStateFlow()
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
+
     init {
         getCoupleRegistrationCode()
         collectIsCoupleRegistrationCompleted()
@@ -63,9 +68,7 @@ class CoupleRegistrationViewModel @Inject constructor(
         when (result) {
             is Resource.Success -> _myCoupleCode.value = result.data
             is Resource.Error -> {
-                Log.i("CoupleRegFragment",
-                    "Fail to get couple registration code: ${result.throwable.localizedMessage}")
-
+                infoLog("Fail to get couple registration code: ${result.throwable.localizedMessage}")
                 sendToast("내 초대코드를 불러오는데 실패했습니다.")
             } else -> { }
         }
@@ -76,6 +79,8 @@ class CoupleRegistrationViewModel @Inject constructor(
         val partnerCode = _partnerCoupleCodeInput.value.trim()
         if (_myCoupleCode.value == partnerCode) return@launch
 
+        _isLoading.value = true
+
         val result = sendPartnerCoupleRegistrationCodeUseCase(partnerCode)
         when (result) {
             is Resource.Success -> {
@@ -84,50 +89,60 @@ class CoupleRegistrationViewModel @Inject constructor(
                     removeCoupleRegistrationCodeUseCase()
                 } else {
                     sendToast("올바르지 않은 초대코드입니다.")
+                    _isLoading.value = false
                 }
                 _isCoupleRegistrationCompleted.value = isValid
             }
             is Resource.Error -> {
                 sendToast("초대코드 확인에 에러가 발생했습니다.")
-                Log.i("CoupleRegFragment", "send partner code error: ${result.throwable.localizedMessage ?: "Unexpected error is occurred."}")
+                infoLog("send partner code error: ${result.throwable.localizedMessage ?: "Unexpected error is occurred."}")
                 _isCoupleRegistrationCompleted.value = false
+                _isLoading.value = false
             }
             else -> {
                 _isCoupleRegistrationCompleted.value = false
+                _isLoading.value = false
             }
         }
     }
 
     fun exchangeKeyPair() = viewModelScope.launch(Dispatchers.IO) {
+        _isLoading.value = true
+
         val myPublicKeyResult = uploadMyPublicKeyUseCase()
         if (myPublicKeyResult is Resource.Error) {
             sendToast("Fail to upload MyPublicKey : ${myPublicKeyResult.throwable.localizedMessage}")
-            Log.i("CoupleRegFragment", "Fail to upload MyPublicKey : ${myPublicKeyResult.throwable.localizedMessage}")
+            infoLog("Fail to upload MyPublicKey : ${myPublicKeyResult.throwable.localizedMessage}")
+            _isLoading.value = false
             return@launch
         }
 
         val partnerPublicKeyResult = loadPartnerPublicKeyUseCase()
         if (partnerPublicKeyResult is Resource.Error) {
             sendToast("Fail to load PartnerPublicKey : ${partnerPublicKeyResult.throwable.localizedMessage}")
-            Log.i("CoupleRegFragment", "Fail to load PartnerPublicKey : ${partnerPublicKeyResult.throwable.localizedMessage}")
+            infoLog("Fail to load PartnerPublicKey : ${partnerPublicKeyResult.throwable.localizedMessage}")
+            _isLoading.value = false
             return@launch
         }
 
         val myPrivateKeyResult = uploadMyPrivateKeyUseCase()
         if (myPrivateKeyResult is Resource.Error) {
             sendToast("Fail to upload MyPrivateKey : ${myPrivateKeyResult.throwable.localizedMessage}")
-            Log.i("CoupleRegFragment", "Fail to upload MyPrivateKey : ${myPrivateKeyResult.throwable.localizedMessage}")
+            infoLog("Fail to upload MyPrivateKey : ${myPrivateKeyResult.throwable.localizedMessage}")
+            _isLoading.value = false
             return@launch
         }
 
         val partnerPrivateKeyResult = loadPartnerPrivateKeyUseCase()
         if (partnerPrivateKeyResult is Resource.Error) {
             sendToast("Fail to load PartnerPrivateKey : ${partnerPrivateKeyResult.throwable.localizedMessage}")
-            Log.i("CoupleRegFragment", "Fail to load PartnerPrivateKey : ${partnerPrivateKeyResult.throwable.localizedMessage}")
+            infoLog("Fail to load PartnerPrivateKey : ${partnerPrivateKeyResult.throwable.localizedMessage}")
+            _isLoading.value = false
             return@launch
         }
 
         _isKeyPairExchangingCompleted.value = true
+        _isLoading.value = false
     }
 
     fun setPartnerCodeInput(input: String) {
