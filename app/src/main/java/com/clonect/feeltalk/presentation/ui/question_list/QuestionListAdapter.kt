@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.databinding.ItemQuestionListBinding
 import com.clonect.feeltalk.databinding.ItemQuestionListHeaderBinding
-import com.clonect.feeltalk.domain.model.question.Question
+import com.clonect.feeltalk.domain.model.data.question.Question
 
 class QuestionListAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 

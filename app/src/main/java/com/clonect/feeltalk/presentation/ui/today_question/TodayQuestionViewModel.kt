@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.domain.model.question.Question
+import com.clonect.feeltalk.domain.model.data.question.Question
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

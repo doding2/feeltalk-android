@@ -24,7 +24,7 @@ import androidx.navigation.fragment.navArgs
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.databinding.FragmentTodayQuestionBinding
-import com.clonect.feeltalk.domain.model.question.Question
+import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.presentation.utils.showAlertDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest

@@ -16,7 +16,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentQuestionListBinding
-import com.clonect.feeltalk.domain.model.question.Question
+import com.clonect.feeltalk.domain.model.data.question.Question
+import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -113,7 +114,7 @@ class QuestionListFragment : Fragment() {
         binding.rvQuestionList.apply {
             val position = computeVerticalScrollOffset()
             viewModel.saveScrollPosition(position)
-            Log.i("QuestinListFragment", "scrollPosition: $position")
+            infoLog("scrollPosition: $position")
         }
     }
 
