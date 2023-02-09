@@ -2,14 +2,13 @@ package com.clonect.feeltalk.presentation.ui.question_list
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -17,7 +16,6 @@ import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentQuestionListBinding
 import com.clonect.feeltalk.domain.model.data.question.Question
-import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -27,7 +25,7 @@ import javax.inject.Inject
 class QuestionListFragment : Fragment() {
 
     private lateinit var binding: FragmentQuestionListBinding
-    private val viewModel: QuestionListViewModel by viewModels()
+    private val viewModel: QuestionListViewModel by activityViewModels()
     @Inject
     lateinit var adapter: QuestionListAdapter
     private lateinit var onBackCallback: OnBackPressedCallback
@@ -43,31 +41,21 @@ class QuestionListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initRecyclerView()
-
         collectQuestionList()
-        collectScrollPosition()
-
+        initRecyclerView()
     }
 
     private fun initRecyclerView() {
+        viewModel.listState.value?.let {
+            binding.rvQuestionList.layoutManager?.onRestoreInstanceState(it)
+            viewModel.setListState(null)
+        }
         binding.rvQuestionList.adapter = adapter
         adapter.setOnItemClickListener {
             clickQuestionItem(it)
         }
     }
 
-    private fun collectScrollPosition() = lifecycleScope.launch {
-        repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.scrollPositionState.collectLatest {
-                binding.rvQuestionList.apply {
-                    post {
-                        scrollBy(0, it)
-                    }
-                }
-            }
-        }
-    }
 
     private fun collectQuestionList() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -109,20 +97,6 @@ class QuestionListFragment : Fragment() {
             )
     }
 
-
-    private fun saveScrollPositionState() {
-        binding.rvQuestionList.apply {
-            val position = computeVerticalScrollOffset()
-            viewModel.saveScrollPosition(position)
-            infoLog("scrollPosition: $position")
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        saveScrollPositionState()
-    }
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         onBackCallback = object: OnBackPressedCallback(true) {
@@ -136,5 +110,9 @@ class QuestionListFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         onBackCallback.remove()
+        val listState = binding.rvQuestionList.layoutManager?.onSaveInstanceState()
+        listState?.let {
+            viewModel.setListState(it)
+        }
     }
 }

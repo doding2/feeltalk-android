@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.presentation.ui.question_list
 
+import android.os.Parcelable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
@@ -19,8 +20,8 @@ class QuestionListViewModel @Inject constructor(
     private val _questionListState = MutableStateFlow(listOf(Question(id = -50505L)))
     val questionListState: StateFlow<List<Question>> = _questionListState.asStateFlow()
 
-    private val _scrollPositionState = MutableStateFlow(0)
-    val scrollPositionState: StateFlow<Int> = _scrollPositionState.asStateFlow()
+    private val _listState = MutableStateFlow<Parcelable?>(null)
+    val listState = _listState.asStateFlow()
 
     init {
         getQuestionList()
@@ -40,7 +41,9 @@ class QuestionListViewModel @Inject constructor(
         }
     }
 
-    fun saveScrollPosition(scrollPosition: Int) {
-        _scrollPositionState.value = scrollPosition
+
+    fun setListState(listState: Parcelable?) {
+        _listState.value = listState
     }
+
 }

@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.domain.model.data.notification.Topics
 import com.clonect.feeltalk.domain.usecase.notification.GetFcmTokenUseCase
 import com.clonect.feeltalk.domain.usecase.notification.SaveFcmTokenUseCase
@@ -23,19 +24,9 @@ class BottomNavigationViewModel @Inject constructor(
     private val pref: SharedPreferences,
 ): ViewModel() {
 
-    private var _isPushNotificationEnabled: MutableStateFlow<Boolean> =
-        MutableStateFlow(pref.getBoolean("isPushNotificationEnabled", false))
-    val isPushNotificationEnabled = _isPushNotificationEnabled.asStateFlow()
-
-    private var _isUsageInfoNotificationEnabled: MutableStateFlow<Boolean> =
-        MutableStateFlow(pref.getBoolean("isUsageInfoNotificationEnabled", false))
-    val isUsageInfoNotificationEnabled = _isUsageInfoNotificationEnabled.asStateFlow()
-
-
     init {
         initFirebase()
     }
-
 
     private fun initFirebase() {
         val isPushNotificationEnabled = pref.getBoolean("isPushNotificationEnabled", false)
@@ -57,7 +48,6 @@ class BottomNavigationViewModel @Inject constructor(
                 pref.edit()
                     .putBoolean("isPushNotificationEnabled", enabled)
                     .apply()
-                _isPushNotificationEnabled.value = enabled
             }
         }
     }
@@ -74,10 +64,8 @@ class BottomNavigationViewModel @Inject constructor(
                 pref.edit()
                     .putBoolean("isUsageInfoNotificationEnabled", enabled)
                     .apply()
-                _isUsageInfoNotificationEnabled.value = enabled
             }
         }
     }
-
 
 }
