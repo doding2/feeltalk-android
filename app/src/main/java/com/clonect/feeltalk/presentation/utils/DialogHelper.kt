@@ -96,7 +96,7 @@ fun Fragment.showMyEmotionChangerDialog(
         onClickItem(Emotion.Happy)
         dialog.dismiss()
     }
-    if (currentEmotion == Emotion.Happy)
+    if (currentEmotion is Emotion.Happy)
         itemHappy.visibility = View.GONE
 
     val itemPuzzling= dialog.findViewById<CardView>(R.id.cv_puzzling)
@@ -104,7 +104,7 @@ fun Fragment.showMyEmotionChangerDialog(
         onClickItem(Emotion.Puzzling)
         dialog.dismiss()
     }
-    if (currentEmotion == Emotion.Puzzling)
+    if (currentEmotion is Emotion.Puzzling)
         itemPuzzling.visibility = View.GONE
 
     val itemBad = dialog.findViewById<CardView>(R.id.cv_bad)
@@ -112,7 +112,7 @@ fun Fragment.showMyEmotionChangerDialog(
         onClickItem(Emotion.Bad)
         dialog.dismiss()
     }
-    if (currentEmotion == Emotion.Bad)
+    if (currentEmotion is Emotion.Bad)
         itemBad.visibility = View.GONE
 
     val itemAngry = dialog.findViewById<CardView>(R.id.cv_angry)
@@ -120,7 +120,7 @@ fun Fragment.showMyEmotionChangerDialog(
         onClickItem(Emotion.Angry)
         dialog.dismiss()
     }
-    if (currentEmotion == Emotion.Angry)
+    if (currentEmotion is Emotion.Angry)
         itemAngry.visibility = View.GONE
 
     dialog.show()

@@ -1,5 +1,7 @@
 package com.clonect.feeltalk.domain.model.data.user
 
+import java.io.Serializable
+
 data class UserInfo(
     var name: String? = null,
     var nickname: String = "",
@@ -7,4 +9,20 @@ data class UserInfo(
     var age: Long = 0,
     var birth: String = "",
     var emotion: Emotion = Emotion.Happy
-): java.io.Serializable
+): Serializable {
+
+    override fun equals(other: Any?): Boolean {
+        return false
+    }
+
+    override fun hashCode(): Int {
+        var result = name?.hashCode() ?: 0
+        result = 31 * result + nickname.hashCode()
+        result = 31 * result + (email?.hashCode() ?: 0)
+        result = 31 * result + age.hashCode()
+        result = 31 * result + birth.hashCode()
+        result = 31 * result + emotion.hashCode()
+        return result
+    }
+
+}

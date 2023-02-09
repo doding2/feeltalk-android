@@ -17,7 +17,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -43,7 +46,7 @@ class HomeViewModel @Inject constructor(
 
     fun sendNotification() = viewModelScope.launch(Dispatchers.IO) {
         getFcmTokenUseCase()?.let {
-            sendFcmUseCase(it)
+//            sendFcmUseCase(it)
         }
     }
 
@@ -51,7 +54,7 @@ class HomeViewModel @Inject constructor(
         when (updateMyEmotionUseCase(emotion)) {
             is Resource.Success -> {
                 _userInfo.value = _userInfo.value.copy(emotion = emotion)
-                infoLog("changed")
+                infoLog("update")
             }
             else -> infoLog("Fail to update my emotion")
         }
@@ -74,5 +77,6 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
 
 }

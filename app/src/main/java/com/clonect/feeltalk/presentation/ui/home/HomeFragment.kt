@@ -18,6 +18,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
+import com.clonect.feeltalk.data.mapper.toStringLowercase
 import com.clonect.feeltalk.data.repository.notification.NotificationRepository
 import com.clonect.feeltalk.databinding.FragmentHomeBinding
 import com.clonect.feeltalk.domain.model.data.notification.NotificationData
@@ -49,7 +50,8 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        collectState()
+        collectUserInfo()
+        collectPartnerEmotion()
 
         binding.apply {
 
@@ -80,21 +82,21 @@ class HomeFragment : Fragment() {
     }
 
 
-    private fun collectState() = lifecycleScope.launch {
+    private fun collectUserInfo() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-            launch {
-                viewModel.userInfo.collectLatest {
-                    binding.textMyName.text = it.nickname
-                    binding.ivMyEmotion.setEmotion(it.emotion)
-                    binding.cvMyEmotion.setEmotionBackground(it.emotion)
-                }
+            viewModel.userInfo.collectLatest {
+                binding.textMyName.text = it.nickname
+                binding.ivMyEmotion.setEmotion(it.emotion)
+                binding.cvMyEmotion.setEmotionBackground(it.emotion)
             }
+        }
+    }
 
-            launch {
-                viewModel.partnerEmotionState.collectLatest {
-                    binding.ivPartnerEmotion.setEmotion(it)
-                    binding.cvPartnerEmotion.setEmotionBackground(it)
-                }
+    private fun collectPartnerEmotion() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.partnerEmotionState.collectLatest {
+                binding.ivPartnerEmotion.setEmotion(it)
+                binding.cvPartnerEmotion.setEmotionBackground(it)
             }
         }
     }
