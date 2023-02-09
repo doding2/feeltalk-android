@@ -12,8 +12,8 @@ import androidx.core.os.bundleOf
 import androidx.navigation.NavDeepLinkBuilder
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.domain.model.chat.Chat
-import com.clonect.feeltalk.domain.model.question.Question
+import com.clonect.feeltalk.domain.model.data.chat.Chat
+import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.usecase.question.GetQuestionByIdUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SaveChatUseCase
 import com.clonect.feeltalk.domain.usecase.notification.SaveFcmTokenUseCase
@@ -21,6 +21,7 @@ import com.clonect.feeltalk.presentation.service.notification_observer.CoupleReg
 import com.clonect.feeltalk.presentation.service.notification_observer.FcmNewChatObserver
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.presentation.ui.activity.MainActivity
+import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
@@ -65,8 +66,8 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         super.onMessageReceived(message)
 
         val isAppRunning = FeeltalkApp.getAppRunning()
-        Log.i("FCMService", "isAppRunning: $isAppRunning")
-        Log.i("FCMService", "message: ${message.data}")
+        infoLog("isAppRunning: $isAppRunning")
+        infoLog("message: ${message.data}")
 
         val data = if (message.data["data"] == null) {
             message.data
@@ -75,7 +76,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 ?: message.data
         }
 
-        Log.i("FCMService", "parsed message: $data")
+        infoLog("parsed message: $data")
 
         when (data["type"]) {
             "today_question" -> handleTodayQuestionData(data)

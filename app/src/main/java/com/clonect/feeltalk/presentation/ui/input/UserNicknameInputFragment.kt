@@ -20,9 +20,11 @@ import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentUserNicknameInputBinding
 import com.clonect.feeltalk.presentation.utils.addTextGradient
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class UserNicknameInputFragment : Fragment() {
 
     private lateinit var binding: FragmentUserNicknameInputBinding
@@ -69,8 +71,15 @@ class UserNicknameInputFragment : Fragment() {
                     return@collectLatest
                 }
 
+                if (nickname.length >= 20) {
+                    viewModel.setInvalidNicknameWarning("닉네임은 최대 20글자까지입니다.")
+                    binding.etUserNickname.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0)
+                    enableNextButton(false)
+                    return@collectLatest
+                }
+
                 if (!viewModel.checkValidNickname(nickname)) {
-                    viewModel.setInvalidNicknameWarning("닉네임에는 공백과 특수문자를 쓸 수 없습니다.")
+                    viewModel.setInvalidNicknameWarning("닉네임에 특수문자는 쓸 수 없습니다.")
                     binding.etUserNickname.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0)
                     enableNextButton(false)
                     return@collectLatest
@@ -97,7 +106,7 @@ class UserNicknameInputFragment : Fragment() {
     private fun initNicknameEditText() = binding.etUserNickname.apply {
         setText(viewModel.nickname.value)
         addTextChangedListener {
-            val input = it?.toString()
+            val input = it?.toString()?.trim()
             viewModel.setNickname(input)
         }
         setOnTouchListener { v, event ->

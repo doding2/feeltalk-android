@@ -1,9 +1,9 @@
 package com.clonect.feeltalk.domain.usecase.emotion
 
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.domain.model.news.News
-import com.clonect.feeltalk.domain.model.news.NewsType
-import com.clonect.feeltalk.domain.model.user.Emotion
+import com.clonect.feeltalk.domain.model.data.news.News
+import com.clonect.feeltalk.domain.model.data.news.NewsType
+import com.clonect.feeltalk.domain.model.data.user.Emotion
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlin.random.Random

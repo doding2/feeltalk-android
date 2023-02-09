@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.ItemNewsBinding
-import com.clonect.feeltalk.domain.model.news.News
-import com.clonect.feeltalk.domain.model.news.NewsType
+import com.clonect.feeltalk.domain.model.data.news.News
+import com.clonect.feeltalk.domain.model.data.news.NewsType
 import kotlin.random.Random
 
 class NewsAdapter: RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {

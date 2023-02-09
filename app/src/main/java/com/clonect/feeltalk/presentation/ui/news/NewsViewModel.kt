@@ -3,7 +3,7 @@ package com.clonect.feeltalk.presentation.ui.news
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.domain.model.news.News
+import com.clonect.feeltalk.domain.model.data.news.News
 import com.clonect.feeltalk.domain.usecase.news.GetNewsListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

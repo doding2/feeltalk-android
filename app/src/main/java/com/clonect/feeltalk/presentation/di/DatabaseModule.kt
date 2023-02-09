@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.clonect.feeltalk.BuildConfig
 import com.clonect.feeltalk.data.db.ChatDao
 import com.clonect.feeltalk.data.db.FeeltalkDatabase
+import com.clonect.feeltalk.data.db.QuestionDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,5 +39,10 @@ class DatabaseModule {
         return feeltalkDatabase.chatDao()
     }
 
+    @Provides
+    @Singleton
+    fun providesQuestionDao(feeltalkDatabase: FeeltalkDatabase): QuestionDao {
+        return feeltalkDatabase.questionDao()
+    }
 
 }

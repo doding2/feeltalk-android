@@ -1,8 +1,8 @@
 package com.clonect.feeltalk.domain.usecase.news
 
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.domain.model.news.News
-import com.clonect.feeltalk.domain.model.news.NewsType
+import com.clonect.feeltalk.domain.model.data.news.News
+import com.clonect.feeltalk.domain.model.data.news.NewsType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

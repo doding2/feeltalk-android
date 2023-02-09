@@ -1,7 +1,7 @@
 package com.clonect.feeltalk.domain.usecase.user
 
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.domain.model.user.dto.CoupleCheckDto
+import com.clonect.feeltalk.domain.model.dto.user.CoupleCheckDto
 import com.clonect.feeltalk.domain.repository.UserRepository
 
 class CheckUserIsCoupleUseCase(private val userRepository: UserRepository) {

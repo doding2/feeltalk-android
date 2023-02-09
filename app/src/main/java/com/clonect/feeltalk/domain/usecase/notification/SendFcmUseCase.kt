@@ -1,8 +1,8 @@
 package com.clonect.feeltalk.domain.usecase.notification
 
 import com.clonect.feeltalk.data.repository.notification.NotificationRepository
-import com.clonect.feeltalk.domain.model.notification.NotificationData
-import com.clonect.feeltalk.domain.model.notification.PushNotification
+import com.clonect.feeltalk.domain.model.data.notification.NotificationData
+import com.clonect.feeltalk.domain.model.data.notification.PushNotification
 
 class SendFcmUseCase(
     private val notificationRepository: NotificationRepository

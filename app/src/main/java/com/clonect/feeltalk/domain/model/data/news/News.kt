@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.domain.model.news
+package com.clonect.feeltalk.domain.model.data.news
 
 data class News(
     val id: Long,

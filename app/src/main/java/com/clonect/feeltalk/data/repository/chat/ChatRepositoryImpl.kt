@@ -4,7 +4,7 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.data.repository.chat.datasource.ChatCacheDataSource
 import com.clonect.feeltalk.data.repository.chat.datasource.ChatLocalDataSource
 import com.clonect.feeltalk.data.repository.chat.datasource.ChatRemoteDataSource
-import com.clonect.feeltalk.domain.model.chat.Chat
+import com.clonect.feeltalk.domain.model.data.chat.Chat
 import com.clonect.feeltalk.domain.repository.ChatRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers

@@ -1,13 +1,13 @@
 package com.clonect.feeltalk.data.db
 
 import androidx.room.*
-import com.clonect.feeltalk.domain.model.chat.Chat
+import com.clonect.feeltalk.domain.model.data.chat.Chat
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ChatDao {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertChat(chat: Chat): Long
 
     @Query("SELECT * FROM ChatTable WHERE questionId == :questionId")

@@ -1,12 +1,14 @@
 package com.clonect.feeltalk.data.api
 
-import com.clonect.feeltalk.domain.model.encryption.LoadPartnerPrivateKeyDto
-import com.clonect.feeltalk.domain.model.encryption.LoadPartnerPublicKeyDto
-import com.clonect.feeltalk.domain.model.encryption.StatusResponse
-import com.clonect.feeltalk.domain.model.user.*
-import com.clonect.feeltalk.domain.model.user.dto.CoupleCheckDto
-import com.clonect.feeltalk.domain.model.user.dto.SendPartnerCoupleRegistrationCodeDto
-import com.clonect.feeltalk.domain.model.user.dto.SignUpDto
+import com.clonect.feeltalk.domain.model.dto.common.StatusDto
+import com.clonect.feeltalk.domain.model.data.encryption.LoadPartnerPrivateKeyDto
+import com.clonect.feeltalk.domain.model.data.encryption.LoadPartnerPublicKeyDto
+import com.clonect.feeltalk.domain.model.dto.question.QuestionDto
+import com.clonect.feeltalk.domain.model.dto.user.AccessTokenDto
+import com.clonect.feeltalk.domain.model.dto.user.CoupleCheckDto
+import com.clonect.feeltalk.domain.model.dto.user.PartnerCodeCheckDto
+import com.clonect.feeltalk.domain.model.dto.user.SignUpDto
+import com.clonect.feeltalk.domain.model.dto.user.UserInfoDto
 import com.google.gson.JsonObject
 import retrofit2.Response
 import retrofit2.http.Body
@@ -20,9 +22,8 @@ interface ClonectService {
     @GET("api/memberInfo/{accessToken}")
     suspend fun getUserInfo(
         @Path("accessToken") accessToken: String
-    ): Response<UserInfo>
+    ): Response<UserInfoDto>
 
-    // ya29.a0AVvZVsq8sTtx8-SCq2kozrHR2ORGDrTOO5GEpBJqM7GOsNA-Lq6bzpgAFu0mE5tHWv02ZzfMsjfF6F1QONJgE_EdEtOphm9rt5LRG85hW-GURj7lJzCLXv6qP_MoC7-cHf9no16rL0spE8Zl9QG-vfDUMp92aCgYKATISARASFQGbdwaI5925x9H4Vj4bFgfHeetkBQ0163
     @GET("api/isMemberAdditional/{accessToken}")
     suspend fun checkUserInfoIsEntered(
         @Path("accessToken") accessToken: String
@@ -38,19 +39,22 @@ interface ClonectService {
         @Path("accessToken") accessToken: String
     ): Response<String>
 
-    // TODO
-    @POST("api/")
+    @POST("api/member/additional")
     suspend fun updateUserInfo(
         @Body body: JsonObject
-    ): Response<String>
+    ): Response<StatusDto>
+
+    @POST("api/member/emotion")
+    suspend fun updateMyEmotion(
+        @Body body: JsonObject
+    ): Response<StatusDto>
 
 
     /** Question **/
-    // {"accessToken": ""}
     @POST("/api/todayQuestion")
     suspend fun getTodayQuestion(
         @Body body: JsonObject
-    ): Response<String>
+    ): Response<QuestionDto>
 
     // "accessToken": String, "question": String, "answer": String
     @POST("/api/chattingRoom")
@@ -93,19 +97,19 @@ interface ClonectService {
     @POST("api/login")
     suspend fun autoLogInWithGoogle(
         @Body body: JsonObject
-    ): Response<AccessToken>
+    ): Response<AccessTokenDto>
 
     @POST("api/couple/match")
     suspend fun sendPartnerCoupleRegistrationCode(
         @Body body: JsonObject
-    ): Response<SendPartnerCoupleRegistrationCodeDto>
+    ): Response<PartnerCodeCheckDto>
 
 
     /** Encryption **/
     @POST("api/member/publicKey")
     suspend fun uploadMyPublicKey(
         @Body body: JsonObject
-    ): Response<StatusResponse>
+    ): Response<StatusDto>
 
     @GET("api/member/partnerPublicKey/{accessToken}")
     suspend fun loadPartnerPublicKey(
@@ -115,7 +119,7 @@ interface ClonectService {
     @POST("api/member/privateKey")
     suspend fun uploadMyPrivateKey(
         @Body body: JsonObject
-    ): Response<StatusResponse>
+    ): Response<StatusDto>
 
     @GET("api/member/partnerPrivateKey/{accessToken}")
     suspend fun loadPartnerPrivateKey(

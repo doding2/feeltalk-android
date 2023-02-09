@@ -1,6 +1,7 @@
 package com.clonect.feeltalk.presentation.ui.input
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -20,20 +21,25 @@ import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentCoupleAnniversaryInputBinding
 import com.clonect.feeltalk.presentation.utils.addTextGradient
+import com.clonect.feeltalk.presentation.utils.makeLoadingDialog
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class CoupleAnniversaryInputFragment : Fragment() {
 
     private lateinit var binding: FragmentCoupleAnniversaryInputBinding
     private val viewModel: UserInputViewModel by activityViewModels()
     private lateinit var onBackCallback: OnBackPressedCallback
+    private lateinit var loadingDialog: Dialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentCoupleAnniversaryInputBinding.inflate(inflater, container, false)
+        loadingDialog = makeLoadingDialog()
         return binding.root
     }
 
@@ -43,6 +49,7 @@ class CoupleAnniversaryInputFragment : Fragment() {
         collectCoupleAnniversary()
         collectInvalidWarning()
         collectIsUserInfoUpdateCompleted()
+        collectIsLoading()
 
         enableNextButton(false)
         initCoupleAnniversaryEditText()
@@ -59,7 +66,6 @@ class CoupleAnniversaryInputFragment : Fragment() {
     }
 
     private fun updateUserInfo() {
-        binding.mcvNext.isEnabled = false
         viewModel.updateUserInfo()
     }
 
@@ -67,17 +73,29 @@ class CoupleAnniversaryInputFragment : Fragment() {
         findNavController().navigate(R.id.action_coupleAnniversaryInputFragment_to_coupleRegistrationFragment)
     }
 
+
+    private fun collectIsLoading() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.isLoading.collectLatest { isLoading ->
+                if (isLoading) {
+                    loadingDialog.show()
+                } else {
+                    loadingDialog.dismiss()
+                }
+            }
+        }
+    }
+
     private fun collectIsUserInfoUpdateCompleted() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.isUserInfoUpdateCompleted.collectLatest { isCompleted ->
                 if (isCompleted) {
                     navigateToCoupleRegistrationPage()
+                    viewModel.clear()
                 }
-                binding.mcvNext.isEnabled = true
             }
         }
     }
-
 
     private fun collectCoupleAnniversary() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {

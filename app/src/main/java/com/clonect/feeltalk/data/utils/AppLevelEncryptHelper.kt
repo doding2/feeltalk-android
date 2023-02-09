@@ -73,7 +73,6 @@ class AppLevelEncryptHelper(
         val keyStore = KeyStore.getInstance(BuildConfig.APP_LEVEL_KEY_PROVIDER)
         keyStore.load(null)
 
-        infoLog("load key")
         val secretKeyEntry: KeyStore.SecretKeyEntry? = keyStore.getEntry(BuildConfig.APP_LEVEL_KEY_ALIAS, null) as? KeyStore.SecretKeyEntry
         val secretKey = secretKeyEntry?.secretKey
 
@@ -82,7 +81,6 @@ class AppLevelEncryptHelper(
     }
 
     private fun generateAppLevelKey(): SecretKey {
-        infoLog("generate key")
         val keyGen = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, BuildConfig.APP_LEVEL_KEY_PROVIDER)
         keyGen.init(
             KeyGenParameterSpec

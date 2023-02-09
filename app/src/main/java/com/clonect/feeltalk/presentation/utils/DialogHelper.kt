@@ -9,32 +9,25 @@ import android.net.Uri
 import android.provider.Settings
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import com.clonect.feeltalk.R
-import com.clonect.feeltalk.domain.model.user.Emotion
+import com.clonect.feeltalk.domain.model.data.user.Emotion
 
-fun Fragment.showPermissionRequestDialog(
-    title: String = "권한 설정",
-    message: String = "이 기능을 사용하기 위해서는 권한을 설정해주셔야 합니다.",
-    confirmButtonText: String = "설정하러 가기"
-) {
-    showAlertDialog(
-        title = title,
-        message = message,
-        confirmButtonText = confirmButtonText,
-        onConfirmClick = {
-            val intent = Intent().apply {
-                val uri = Uri.fromParts("package", requireActivity().packageName, null)
-                data = uri
-                action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-            }
-            startActivity(intent)
-        }
-    )
+fun Fragment.makeLoadingDialog(onDismiss: () -> Unit = {}): Dialog {
+    val dialog = Dialog(requireContext()).apply {
+        setContentView(R.layout.dialog_loading)
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    }
+
+    dialog.setCancelable(false)
+    dialog.setOnDismissListener { onDismiss() }
+
+    return dialog
 }
 
 
@@ -82,6 +75,7 @@ fun Fragment.showAlertDialog(
 
     dialog.show()
 }
+
 
 fun Fragment.showMyEmotionChangerDialog(
     currentEmotion: Emotion,
@@ -132,4 +126,25 @@ fun Fragment.showMyEmotionChangerDialog(
     dialog.show()
 }
 
+
+
+fun Fragment.showPermissionRequestDialog(
+    title: String = "권한 설정",
+    message: String = "이 기능을 사용하기 위해서는 권한을 설정해주셔야 합니다.",
+    confirmButtonText: String = "설정하러 가기"
+) {
+    showAlertDialog(
+        title = title,
+        message = message,
+        confirmButtonText = confirmButtonText,
+        onConfirmClick = {
+            val intent = Intent().apply {
+                val uri = Uri.fromParts("package", requireActivity().packageName, null)
+                data = uri
+                action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+            }
+            startActivity(intent)
+        }
+    )
+}
 

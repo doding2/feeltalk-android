@@ -5,9 +5,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.domain.model.chat.Chat
-import com.clonect.feeltalk.domain.model.question.Question
-import com.clonect.feeltalk.domain.model.user.UserInfo
+import com.clonect.feeltalk.domain.model.data.chat.Chat
+import com.clonect.feeltalk.domain.model.data.question.Question
+import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.usecase.chat.GetChatListUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SendChatUseCase
 import com.clonect.feeltalk.presentation.service.FirebaseCloudMessagingService
@@ -31,7 +31,7 @@ class ChatViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
 
-    private val _userInfoState = MutableStateFlow(UserInfo())
+    private val _userInfoState = MutableStateFlow(UserInfo(null, "", null, 0, ""))
     val userInfoState = _userInfoState.asStateFlow()
 
     private val _questionState = MutableStateFlow(Question())

@@ -4,12 +4,12 @@ import android.content.SharedPreferences
 import com.clonect.feeltalk.data.repository.notification.NotificationRepository
 import com.clonect.feeltalk.domain.repository.ChatRepository
 import com.clonect.feeltalk.domain.repository.EncryptionRepository
+import com.clonect.feeltalk.domain.repository.QuestionRepository
 import com.clonect.feeltalk.domain.repository.UserRepository
 import com.clonect.feeltalk.domain.usecase.*
 import com.clonect.feeltalk.domain.usecase.chat.GetChatListUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SaveChatUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SendChatUseCase
-import com.clonect.feeltalk.domain.usecase.emotion.GetMyEmotionUseCase
 import com.clonect.feeltalk.domain.usecase.emotion.GetPartnerEmotionUseCase
 import com.clonect.feeltalk.domain.usecase.encryption.*
 import com.clonect.feeltalk.domain.usecase.notification.GetFcmTokenUseCase
@@ -18,6 +18,7 @@ import com.clonect.feeltalk.domain.usecase.notification.SendFcmUseCase
 import com.clonect.feeltalk.domain.usecase.news.GetNewsListUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetQuestionByIdUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetQuestionListUseCase
+import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionUseCase
 import com.clonect.feeltalk.domain.usecase.user.*
 import dagger.Module
 import dagger.Provides
@@ -46,12 +47,6 @@ class UseCaseModule {
     @Provides
     fun providesGetNewsListUseCase(): GetNewsListUseCase {
         return GetNewsListUseCase()
-    }
-
-    @Singleton
-    @Provides
-    fun providesGetMyEmotionUseCase(): GetMyEmotionUseCase {
-        return GetMyEmotionUseCase()
     }
 
     @Singleton
@@ -180,5 +175,15 @@ class UseCaseModule {
         return UpdateUserInfoUseCase(userRepository)
     }
 
+    @Singleton
+    @Provides
+    fun providesGetTodayQuestionUseCase(questionRepository: QuestionRepository, userRepository: UserRepository): GetTodayQuestionUseCase {
+        return GetTodayQuestionUseCase(questionRepository, userRepository)
+    }
 
+    @Singleton
+    @Provides
+    fun providesUpdateMyEmotionUseCase(userRepository: UserRepository): UpdateMyEmotionUseCase {
+        return UpdateMyEmotionUseCase(userRepository)
+    }
 }

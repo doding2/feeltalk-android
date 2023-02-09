@@ -27,7 +27,7 @@ class UserInputViewModel @Inject constructor(
     private val _invalidNicknameWarning = MutableStateFlow<String?>(null)
     val invalidNicknameWarning = _invalidNicknameWarning.asStateFlow()
 
-    private val nicknamePattern = Pattern.compile("^[ㄱ-ㅣ가-힣a-zA-Z0-9]*$")
+    private val nicknamePattern = Pattern.compile("^[ㄱ-ㅣ가-힣a-zA-Z0-9\\s]*$")
 
     fun checkValidNickname(nickname: String?): Boolean {
         return nickname?.let {
@@ -80,8 +80,12 @@ class UserInputViewModel @Inject constructor(
     private val _invalidCoupleAnniversaryWarning = MutableStateFlow<String?>(null)
     val invalidCoupleAnniversaryWarning = _invalidCoupleAnniversaryWarning.asStateFlow()
 
-    private val _isUserInfoUpdateCompleted = MutableStateFlow<Boolean>(false)
+    private val _isUserInfoUpdateCompleted = MutableStateFlow(false)
     val isUserInfoUpdateCompleted = _isUserInfoUpdateCompleted.asStateFlow()
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
 
     fun setCoupleAnniversary(anniversary: String?) {
         _coupleAnniversary.value = anniversary
@@ -92,15 +96,27 @@ class UserInputViewModel @Inject constructor(
     }
 
     fun updateUserInfo() = viewModelScope.launch(Dispatchers.IO) {
+        _isLoading.value = true
         val result = updateUserInfoUseCase(
             nickname = _nickname.value ?: "",
-            birthDate = _birth.value ?: "",
-            anniversary = _coupleAnniversary.value ?: ""
+            birthDate = _birth.value ?: "0001/01/01",
+            anniversary = _coupleAnniversary.value ?: "0001/01/01"
         )
         val isSuccessful = when (result) {
-            is Resource.Success -> true
+            is Resource.Success -> result.data.status == "ok"
             else -> false
         }
         _isUserInfoUpdateCompleted.value = isSuccessful
+        _isLoading.value = false
     }
+
+    fun clear() {
+        _nickname.value = null
+        _invalidNicknameWarning.value = null
+        _birth.value = null
+        _invalidBirthWarning.value = null
+        _coupleAnniversary.value = null
+        _invalidCoupleAnniversaryWarning.value = null
+    }
+
 }

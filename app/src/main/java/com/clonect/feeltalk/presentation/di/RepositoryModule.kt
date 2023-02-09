@@ -10,6 +10,10 @@ import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionCach
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionLocalDataSource
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionRemoteDataSource
 import com.clonect.feeltalk.data.repository.notification.NotificationRepository
+import com.clonect.feeltalk.data.repository.question.QuestionRepositoryImpl
+import com.clonect.feeltalk.data.repository.question.datasource.QuestionCacheDataSource
+import com.clonect.feeltalk.data.repository.question.datasource.QuestionLocalDataSource
+import com.clonect.feeltalk.data.repository.question.datasource.QuestionRemoteDataSource
 import com.clonect.feeltalk.data.repository.user.UserRepositoryImpl
 import com.clonect.feeltalk.data.repository.user.datasource.UserCacheDataSource
 import com.clonect.feeltalk.data.repository.user.datasource.UserLocalDataSource
@@ -17,6 +21,7 @@ import com.clonect.feeltalk.data.repository.user.datasource.UserRemoteDataSource
 import com.clonect.feeltalk.data.utils.MessageEncryptHelper
 import com.clonect.feeltalk.domain.repository.ChatRepository
 import com.clonect.feeltalk.domain.repository.EncryptionRepository
+import com.clonect.feeltalk.domain.repository.QuestionRepository
 import com.clonect.feeltalk.domain.repository.UserRepository
 import dagger.Module
 import dagger.Provides
@@ -46,6 +51,16 @@ class RepositoryModule {
         cacheDataSource: ChatCacheDataSource
     ): ChatRepository {
         return ChatRepositoryImpl(remoteDataSource, localDataSource, cacheDataSource)
+    }
+
+    @Singleton
+    @Provides
+    fun providesQuestionRepository(
+        remoteDataSource: QuestionRemoteDataSource,
+        localDataSource: QuestionLocalDataSource,
+        cacheDataSource: QuestionCacheDataSource
+    ): QuestionRepository {
+        return QuestionRepositoryImpl(remoteDataSource, localDataSource, cacheDataSource)
     }
 
     @Singleton

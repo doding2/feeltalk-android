@@ -3,7 +3,8 @@ package com.clonect.feeltalk.data.repository.user.datasourceImpl
 import android.content.Context
 import com.clonect.feeltalk.data.repository.user.datasource.UserLocalDataSource
 import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
-import com.clonect.feeltalk.domain.model.user.AccessToken
+import com.clonect.feeltalk.domain.model.data.user.UserInfo
+import com.clonect.feeltalk.presentation.utils.infoLog
 import okio.use
 import java.io.File
 
@@ -12,23 +13,38 @@ class UserLocalDataSourceImpl(
     private val appLevelEncryptHelper: AppLevelEncryptHelper
 ): UserLocalDataSource {
 
-    override suspend fun getAccessToken(): AccessToken? {
+    override suspend fun getAccessToken(): String? {
         val file = File(context.filesDir, "access_token.txt")
         if (!file.exists() || !file.canRead())
             return null
-        val accessTokenString = file.bufferedReader().use {
+        val accessToken = file.bufferedReader().use {
             val encrypted = it.readLine()
             appLevelEncryptHelper.decrypt("accessToken", encrypted)
         }
-        return AccessToken(accessTokenString)
+        return accessToken
     }
 
-    override suspend fun saveAccessToken(accessToken: AccessToken) {
+    override suspend fun saveAccessToken(accessToken: String) {
         val file = File(context.filesDir, "access_token.txt")
         file.bufferedWriter().use {
-            val encrypted = appLevelEncryptHelper.encrypt("accessToken", accessToken.value)
+            val encrypted = appLevelEncryptHelper.encrypt("accessToken", accessToken)
             it.write(encrypted)
         }
+    }
+
+
+    override suspend fun getUserInfo(): UserInfo? {
+        val file = File(context.filesDir, "user_info.dat")
+        if (!file.exists()) return null
+        val dataBytes = file.readBytes()
+        val decrypted = appLevelEncryptHelper.decryptObject<UserInfo>("userInfo", dataBytes)
+        return decrypted as? UserInfo
+    }
+
+    override suspend fun saveUserInfo(userInfo: UserInfo) {
+        val file = File(context.filesDir, "user_info.dat")
+        val encrypted = appLevelEncryptHelper.encryptObject("userInfo", userInfo)
+        file.writeBytes(encrypted)
     }
 
 

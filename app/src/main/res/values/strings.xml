@@ -9,7 +9,7 @@
     <string name="sign_up_google">구글로 계속하기</string>
     <string name="sign_up_apple">Apple로 계속하기</string>
     <string name="sign_up_customer_service">문의하기</string>
-    
+
     <!--  fragment_user_nickname_input.xml  -->
     <string name="user_nickname_input_message_highlight">닉네임</string>
     <string name="user_nickname_input_message_suffix">을 입력해주세요</string>
@@ -37,6 +37,13 @@
     <string name="couple_registration_code_copy">코드복사</string>
     <string name="couple_registration_partner_code_input_hint">상대방 코드 입력</string>
     <string name="couple_registration_next_button">다 음</string>
+
+    <!--  fragment_couple_registration_done.xml  -->
+    <string name="couple_registration_done_partner_name_respect">님</string>
+    <string name="couple_registration_done_partner_title_suffix">과 연결되었어요 !</string>
+    <string name="couple_registration_done_partner_title_second_line">이제 서로를 알아가볼까요 ?</string>
+    <string name="couple_registration_done_partner_start_button">시작하기</string>
+
 
     <!--  fragment_home.xml  -->
     <string name="home_d_day_prefix">서로를&#160;</string>

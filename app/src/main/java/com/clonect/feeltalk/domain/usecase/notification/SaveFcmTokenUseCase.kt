@@ -2,6 +2,7 @@ package com.clonect.feeltalk.domain.usecase.notification
 
 import android.content.SharedPreferences
 import android.util.Log
+import com.clonect.feeltalk.presentation.utils.infoLog
 
 class SaveFcmTokenUseCase(
     private val fcmPref: SharedPreferences
@@ -11,6 +12,6 @@ class SaveFcmTokenUseCase(
             .putString("FcmToken", fcmToken)
             .apply()
 
-        Log.i("SaveFcmTokenUseCase", "fcmToken: $fcmToken")
+        infoLog("fcmToken: $fcmToken")
     }
 }

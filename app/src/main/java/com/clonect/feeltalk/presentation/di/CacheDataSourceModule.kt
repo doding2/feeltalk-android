@@ -5,6 +5,8 @@ import com.clonect.feeltalk.data.repository.chat.datasourceImpl.ChatCacheDataSou
 import com.clonect.feeltalk.data.repository.encryption.EncryptionRepositoryImpl
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionCacheDataSource
 import com.clonect.feeltalk.data.repository.encryption.datasourceImpl.EncryptionCacheDataSourceImpl
+import com.clonect.feeltalk.data.repository.question.datasource.QuestionCacheDataSource
+import com.clonect.feeltalk.data.repository.question.datasourceImpl.QuestionCacheDataSourceImpl
 import com.clonect.feeltalk.data.repository.user.datasource.UserCacheDataSource
 import com.clonect.feeltalk.data.repository.user.datasourceImpl.UserCacheDataSourceImpl
 import com.clonect.feeltalk.domain.repository.EncryptionRepository
@@ -34,5 +36,11 @@ class CacheDataSourceModule {
     @Provides
     fun providesEncryptionCacheDataSource(): EncryptionCacheDataSource {
         return EncryptionCacheDataSourceImpl()
+    }
+
+    @Singleton
+    @Provides
+    fun providesQuestionCacheDataSource(): QuestionCacheDataSource {
+        return QuestionCacheDataSourceImpl()
     }
 }

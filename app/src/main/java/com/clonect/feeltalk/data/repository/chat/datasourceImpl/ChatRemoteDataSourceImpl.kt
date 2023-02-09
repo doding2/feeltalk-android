@@ -2,7 +2,7 @@ package com.clonect.feeltalk.data.repository.chat.datasourceImpl
 
 import com.clonect.feeltalk.data.api.ClonectService
 import com.clonect.feeltalk.data.repository.chat.datasource.ChatRemoteDataSource
-import com.clonect.feeltalk.domain.model.chat.Chat
+import com.clonect.feeltalk.domain.model.data.chat.Chat
 import retrofit2.Response
 
 class ChatRemoteDataSourceImpl(

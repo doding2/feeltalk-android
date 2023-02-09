@@ -1,7 +1,7 @@
 package com.clonect.feeltalk.data.repository.notification
 
 import com.clonect.feeltalk.data.api.NotificationService
-import com.clonect.feeltalk.domain.model.notification.PushNotification
+import com.clonect.feeltalk.domain.model.data.notification.PushNotification
 import okhttp3.ResponseBody
 import retrofit2.Response
 

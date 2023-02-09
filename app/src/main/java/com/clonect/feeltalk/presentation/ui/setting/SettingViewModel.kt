@@ -3,7 +3,7 @@ package com.clonect.feeltalk.presentation.ui.setting
 import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.clonect.feeltalk.domain.model.notification.Topics
+import com.clonect.feeltalk.domain.model.data.notification.Topics
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

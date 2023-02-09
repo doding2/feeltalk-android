@@ -11,11 +11,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.BuildConfig
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentSignUpBinding
+import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -23,6 +26,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -42,6 +46,7 @@ class SignUpFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        collectState()
         initCustomerServiceText()
 
         binding.apply {
@@ -53,9 +58,8 @@ class SignUpFragment : Fragment() {
 
     private fun initCustomerServiceText() = binding.tvCustomerService.apply {
         paintFlags = Paint.UNDERLINE_TEXT_FLAG
-        setOnClickListener { 
+        setOnClickListener {
             // TODO 문의하기로 넘어가기
-            // 지금은 임시로 스킵 역할을 하는중
             navigateToHomePage()
         }
     }
@@ -64,8 +68,46 @@ class SignUpFragment : Fragment() {
         findNavController().navigate(R.id.action_signUpFragment_to_bottomNavigationFragment)
     }
 
+    private fun navigateToUserNicknameInputPage() {
+        findNavController().navigate(R.id.action_signUpFragment_to_userNicknameInputFragment)
+    }
+
     private fun navigateToCoupleRegistrationPage() {
         findNavController().navigate(R.id.action_signUpFragment_to_coupleRegistrationFragment)
+    }
+
+
+    private fun collectState() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch {
+                viewModel.isSignUpSuccessful.collectLatest {
+                    if (it) {
+                        navigateToUserNicknameInputPage()
+                        return@collectLatest
+                    }
+                }
+            }
+
+            launch {
+                viewModel.run {
+                    isLogInSuccessful.collectLatest {
+                        if (!it) { return@collectLatest }
+
+                        if (!isUserInfoEntered.value) {
+                            navigateToUserNicknameInputPage()
+                            return@collectLatest
+                        }
+
+                        if (!isUserCouple.value) {
+                            navigateToCoupleRegistrationPage()
+                            return@collectLatest
+                        }
+
+                        navigateToHomePage()
+                    }
+                }
+            }
+        }
     }
 
 
@@ -76,12 +118,12 @@ class SignUpFragment : Fragment() {
 
             loginWithKakaoTalk(requireContext()) { token, error ->
                 error?.let {
-                    Log.i("LogInFragment", "카카오 로그인 실패: ${error}")
+                    infoLog("카카오 로그인 실패: ${error}")
                     return@loginWithKakaoTalk
                 }
 
                 token?.let {
-                    Log.i("LogInFragment", "카카오 로그인 성공: ${token.accessToken}")
+                    infoLog( "카카오 로그인 성공: ${token.accessToken}")
                     return@loginWithKakaoTalk
                 }
             }
@@ -95,7 +137,7 @@ class SignUpFragment : Fragment() {
             .build()
         val mGoogleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
         mGoogleSignInClient.signOut().addOnSuccessListener {
-            Log.i("LogInFragment", "구글 로그 아웃")
+            infoLog("구글 로그 아웃")
         }
     }
 
@@ -127,13 +169,7 @@ class SignUpFragment : Fragment() {
             val idToken = account?.idToken.toString()
             val serverAuthCode = account?.serverAuthCode.toString()
 
-            val isSignUpSuccessful = viewModel.signUpWithGoogle(idToken, serverAuthCode)
-            if (isSignUpSuccessful) {
-                navigateToCoupleRegistrationPage()
-            } else {
-                googleLogOut()
-                Toast.makeText(requireContext(), "회원가입에 실패했습니다.", Toast.LENGTH_SHORT).show()
-            }
+            viewModel.signUpWithGoogle(idToken, serverAuthCode)
         } catch (e: ApiException) {
             googleLogOut()
             Toast.makeText(requireContext(), "회원가입에 실패했습니다.", Toast.LENGTH_SHORT).show()

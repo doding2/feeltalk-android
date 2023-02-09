@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.databinding.ItemChatMineBinding
 import com.clonect.feeltalk.databinding.ItemChatPartnerBinding
-import com.clonect.feeltalk.domain.model.chat.Chat
-import com.clonect.feeltalk.domain.model.question.Question
+import com.clonect.feeltalk.domain.model.data.chat.Chat
+import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.presentation.ui.question_list.QuestionListAdapter
 
 class ChatAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {

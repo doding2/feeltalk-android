@@ -22,7 +22,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/mcv_sign_up_kakao"
-            app:layout_constraintVertical_bias="0.649">
+            app:layout_constraintVertical_bias="0.624">
 
             <ImageView
                 android:layout_width="209dp"

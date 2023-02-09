@@ -1,21 +1,21 @@
 package com.clonect.feeltalk.data.repository.user.datasourceImpl
 
 import com.clonect.feeltalk.data.repository.user.datasource.UserCacheDataSource
-import com.clonect.feeltalk.domain.model.user.AccessToken
-import com.clonect.feeltalk.domain.model.user.UserInfo
+import com.clonect.feeltalk.domain.model.data.user.UserInfo
 
 class UserCacheDataSourceImpl: UserCacheDataSource {
 
-    private var accessToken: AccessToken? = null
+    private var accessToken: String? = null
     private var userInfo: UserInfo? = null
     private var coupleRegistrationCode: String? = null
 
 
     override fun getAccessToken() = accessToken
 
-    override fun saveAccessTokenToCache(accessToken: AccessToken) {
+    override fun saveAccessTokenToCache(accessToken: String) {
         this.accessToken = accessToken
     }
+
 
     override fun getUserInfo() = userInfo
 

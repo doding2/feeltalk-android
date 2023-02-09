@@ -20,10 +20,11 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.data.repository.notification.NotificationRepository
 import com.clonect.feeltalk.databinding.FragmentHomeBinding
-import com.clonect.feeltalk.domain.model.notification.NotificationData
-import com.clonect.feeltalk.domain.model.notification.PushNotification
-import com.clonect.feeltalk.domain.model.user.Emotion
+import com.clonect.feeltalk.domain.model.data.notification.NotificationData
+import com.clonect.feeltalk.domain.model.data.notification.PushNotification
+import com.clonect.feeltalk.domain.model.data.user.Emotion
 import com.clonect.feeltalk.presentation.utils.addTextGradient
+import com.clonect.feeltalk.presentation.utils.infoLog
 import com.clonect.feeltalk.presentation.utils.showMyEmotionChangerDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -56,7 +57,6 @@ class HomeFragment : Fragment() {
             textDDayValue.addTextGradient()
             textDDayUnit.addTextGradient()
 
-            textMyName.text = "jenny"
             textPartnerName.text = "Daniel"
 
             btnTodayQuestion.setOnClickListener {
@@ -83,9 +83,10 @@ class HomeFragment : Fragment() {
     private fun collectState() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch {
-                viewModel.myEmotionState.collectLatest {
-                    binding.ivMyEmotion.setEmotion(it)
-                    binding.cvMyEmotion.setEmotionBackground(it)
+                viewModel.userInfo.collectLatest {
+                    binding.textMyName.text = it.nickname
+                    binding.ivMyEmotion.setEmotion(it.emotion)
+                    binding.cvMyEmotion.setEmotionBackground(it.emotion)
                 }
             }
 
@@ -119,7 +120,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun showMyEmotionChanger() {
-        val currentEmotion = viewModel.myEmotionState.value
+        val currentEmotion = viewModel.userInfo.value.emotion
         showMyEmotionChangerDialog(currentEmotion) {
             viewModel.changeMyEmotion(it)
         }

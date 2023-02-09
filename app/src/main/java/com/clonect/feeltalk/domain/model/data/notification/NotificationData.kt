@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.domain.model.notification
+package com.clonect.feeltalk.domain.model.data.notification
 
 data class NotificationData(
     val title: String,

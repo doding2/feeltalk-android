@@ -1,16 +1,19 @@
 package com.clonect.feeltalk.data.repository.user
 
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.data.mapper.toEmotion
+import com.clonect.feeltalk.data.mapper.toUserInfo
 import com.clonect.feeltalk.data.repository.user.datasource.UserCacheDataSource
 import com.clonect.feeltalk.data.repository.user.datasource.UserLocalDataSource
 import com.clonect.feeltalk.data.repository.user.datasource.UserRemoteDataSource
-import com.clonect.feeltalk.domain.model.user.AccessToken
-import com.clonect.feeltalk.domain.model.user.dto.CoupleCheckDto
-import com.clonect.feeltalk.domain.model.user.dto.SendPartnerCoupleRegistrationCodeDto
-import com.clonect.feeltalk.domain.model.user.UserInfo
+import com.clonect.feeltalk.domain.model.dto.user.AccessTokenDto
+import com.clonect.feeltalk.domain.model.dto.user.CoupleCheckDto
+import com.clonect.feeltalk.domain.model.dto.user.PartnerCodeCheckDto
+import com.clonect.feeltalk.domain.model.data.user.UserInfo
+import com.clonect.feeltalk.domain.model.dto.common.StatusDto
+import com.clonect.feeltalk.domain.model.dto.user.SignUpDto
 import com.clonect.feeltalk.domain.repository.UserRepository
 import kotlinx.coroutines.CancellationException
-import retrofit2.HttpException
 
 class UserRepositoryImpl(
     private val remoteDataSource: UserRemoteDataSource,
@@ -18,7 +21,7 @@ class UserRepositoryImpl(
     private val cacheDataSource: UserCacheDataSource
 ): UserRepository {
 
-    override suspend fun getAccessToken(): Resource<AccessToken> {
+    override suspend fun getAccessToken(): Resource<String> {
         return cacheDataSource.getAccessToken()
             ?.let {
                 Resource.Success(it)
@@ -28,7 +31,7 @@ class UserRepositoryImpl(
     override suspend fun getUserInfo(): Resource<UserInfo> {
         val accessToken = cacheDataSource.getAccessToken()
             ?: localDataSource.getAccessToken()
-            ?: throw NullPointerException("User is Not logged in.")
+            ?: return Resource.Error(NullPointerException("User is Not logged in."))
 
         val cache = getUserInfoFromCache()
         if (cache is Resource.Success) {
@@ -43,7 +46,7 @@ class UserRepositoryImpl(
 
         val remote = getUserInfoFromServer(accessToken)
         if (remote is Resource.Success) {
-//            localDataSource.saveUserInfoToDatabase(remote.data)
+            localDataSource.saveUserInfo(remote.data)
             cacheDataSource.saveUserInfoToCache(remote.data)
         }
         return remote
@@ -55,7 +58,7 @@ class UserRepositoryImpl(
                 ?: localDataSource.getAccessToken()
                 ?: throw NullPointerException("User is Not logged in.")
 
-            val response = remoteDataSource.checkUserInfoIsEntered(accessToken = accessToken.value)
+            val response = remoteDataSource.checkUserInfoIsEntered(accessToken = accessToken)
 
             Resource.Success(response.body()!!.get("userInfoEntered").asBoolean)
         } catch (e: CancellationException) {
@@ -65,29 +68,71 @@ class UserRepositoryImpl(
         }
     }
 
-    // TODO 리턴 타입 String 아님
     override suspend fun updateUserInfo(
         nickname: String,
+        age: Long,
         birthDate: String,
         anniversary: String
-    ): Resource<String> {
+    ): Resource<StatusDto> {
         return try {
             val accessToken = cacheDataSource.getAccessToken()
                 ?: localDataSource.getAccessToken()
                 ?: throw NullPointerException("User is Not logged in.")
 
             val response = remoteDataSource.updateUserInfo(
-                accessToken = accessToken.value,
+                accessToken = accessToken,
                 nickname = nickname,
+                age = age,
                 birthDate = birthDate,
                 anniversary = anniversary
             )
+
+            val userInfo = when (val data = getUserInfo()) {
+                is Resource.Success -> data.data.apply {
+                    this.nickname = nickname
+                    this.age = age
+                    this.birth = birthDate
+                }
+                else -> UserInfo(
+                    name = null,
+                    nickname = nickname,
+                    email = null,
+                    age = age,
+                    birth = birthDate,
+                )
+            }
+            cacheDataSource.saveUserInfoToCache(userInfo)
+            localDataSource.saveUserInfo(userInfo)
 
             Resource.Success(response.body()!!)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
             return Resource.Error(e)
+        }
+    }
+
+    override suspend fun updateMyEmotion(emotion: String): Resource<StatusDto> {
+        return try {
+            val accessToken = cacheDataSource.getAccessToken()
+                ?: localDataSource.getAccessToken()
+                ?: throw NullPointerException("User is Not logged in.")
+
+            val remote = remoteDataSource.updateMyEmotion(accessToken, emotion)
+
+            val userInfoResource = getUserInfo()
+            if (userInfoResource is Resource.Success) {
+                val userInfo = userInfoResource.data
+                userInfo.emotion = emotion.toEmotion()
+                cacheDataSource.saveUserInfoToCache(userInfo)
+                localDataSource.saveUserInfo(userInfo)
+            }
+
+            Resource.Success(remote.body()!!)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
         }
     }
 
@@ -131,7 +176,7 @@ class UserRepositoryImpl(
         cacheDataSource.clearCoupleRegistrationCode()
     }
 
-    override suspend fun sendPartnerCoupleRegistrationCode(partnerCode: String): Resource<SendPartnerCoupleRegistrationCodeDto> {
+    override suspend fun sendPartnerCoupleRegistrationCode(partnerCode: String): Resource<PartnerCodeCheckDto> {
         return try {
             val accessToken = cacheDataSource.getAccessToken()
                 ?: localDataSource.getAccessToken()
@@ -151,17 +196,17 @@ class UserRepositoryImpl(
 
 
 
-    override suspend fun autoLogInWithGoogle(): Resource<AccessToken> {
+    override suspend fun autoLogInWithGoogle(): Resource<AccessTokenDto> {
         return try {
             val idToken = localDataSource.getGoogleIdToken()
                 ?: throw Exception("User is not auto logged in. Please re-log in.")
 
             val response = remoteDataSource.autoLogInWithGoogle(idToken)
 
-            val accessToken = response.body()!!
-            localDataSource.saveAccessToken(accessToken)
-            cacheDataSource.saveAccessTokenToCache(accessToken)
-            Resource.Success(accessToken)
+            val accessTokenDto = response.body()!!
+            localDataSource.saveAccessToken(accessTokenDto.accessToken)
+            cacheDataSource.saveAccessTokenToCache(accessTokenDto.accessToken)
+            Resource.Success(accessTokenDto)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -174,28 +219,27 @@ class UserRepositoryImpl(
         idToken: String,
         serverAuthCode: String,
         fcmToken: String
-    ): Resource<AccessToken> {
+    ): Resource<SignUpDto> {
         return try {
             val response = remoteDataSource.signUpWithGoogle(idToken, serverAuthCode, fcmToken)
 
             val coupleRegistrationCode = response.body()!!.validCode
-            localDataSource.saveCoupleRegistrationCode(coupleRegistrationCode)
-            cacheDataSource.saveCoupleRegistrationCode(coupleRegistrationCode)
+            coupleRegistrationCode?.let {
+                localDataSource.saveCoupleRegistrationCode(it)
+                cacheDataSource.saveCoupleRegistrationCode(it)
+            }
 
-            val accessToken = AccessToken(response.body()!!.token)
-            localDataSource.saveAccessToken(accessToken)
+            val accessToken = AccessTokenDto(response.body()!!.token)
+            localDataSource.saveAccessToken(accessToken.accessToken)
             localDataSource.saveGoogleIdToken(idToken)
-            cacheDataSource.saveAccessTokenToCache(accessToken)
-            Resource.Success(accessToken)
+            cacheDataSource.saveAccessTokenToCache(accessToken.accessToken)
+            Resource.Success(response.body()!!)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
             Resource.Error(e)
         }
     }
-
-
-
 
 
     private fun getUserInfoFromCache(): Resource<UserInfo> {
@@ -212,10 +256,9 @@ class UserRepositoryImpl(
 
     private suspend fun getUserInfoFromDB(): Resource<UserInfo> {
         return try {
-//            val userInfo = localDataSource.getUserInfo()
-//                ?: throw NullPointerException("User info is not saved at database yet.")
-//            Resource.Success(userInfo)
-            Resource.Error(Exception("UserInfoLocalDataSource is not implemented"))
+            val userInfo = localDataSource.getUserInfo()
+                ?: throw NullPointerException("User info is not saved at database yet.")
+            Resource.Success(userInfo)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -223,10 +266,10 @@ class UserRepositoryImpl(
         }
     }
 
-    private suspend fun getUserInfoFromServer(accessToken: AccessToken): Resource<UserInfo> {
+    private suspend fun getUserInfoFromServer(accessToken: String): Resource<UserInfo> {
         return try {
             val response = remoteDataSource.getUserInfo(accessToken)
-            Resource.Success(response.body()!!)
+            Resource.Success(response.body()!!.toUserInfo())
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {

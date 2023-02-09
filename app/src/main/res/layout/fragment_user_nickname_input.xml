@@ -79,7 +79,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="30dp"
                 android:layout_marginHorizontal="21dp">
 
                 <TextView
@@ -116,7 +115,6 @@
                     android:fontFamily="@font/pretendard_regular"
                     android:lines="1"
                     android:inputType="textPersonName"
-                    android:maxLength="20"
                     android:imeOptions="actionDone"
                     android:drawablePadding="4dp"
                     android:paddingEnd="4dp" />
@@ -135,8 +133,7 @@
                 android:layout_marginVertical="10dp"
                 app:cardBackgroundColor="@color/today_question_enter_answer_button_enabled_color"
                 app:cardCornerRadius="500dp"
-                app:cardElevation="0dp"
-                app:rippleColor="@android:color/transparent">
+                app:cardElevation="0dp">
 
                 <TextView
                     android:layout_width="wrap_content"

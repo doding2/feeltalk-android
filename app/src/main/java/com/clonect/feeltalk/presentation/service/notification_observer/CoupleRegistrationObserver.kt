@@ -1,7 +1,7 @@
 package com.clonect.feeltalk.presentation.service.notification_observer
 
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.domain.model.chat.Chat
+import com.clonect.feeltalk.domain.model.data.chat.Chat
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 

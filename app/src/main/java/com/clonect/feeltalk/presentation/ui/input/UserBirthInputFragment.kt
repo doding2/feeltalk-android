@@ -21,9 +21,11 @@ import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentUserBirthInputBinding
 import com.clonect.feeltalk.presentation.utils.addTextGradient
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class UserBirthInputFragment : Fragment() {
 
     private lateinit var binding: FragmentUserBirthInputBinding

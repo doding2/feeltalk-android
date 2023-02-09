@@ -1,21 +1,24 @@
 package com.clonect.feeltalk.data.repository.user.datasource
 
-import com.clonect.feeltalk.domain.model.user.*
-import com.clonect.feeltalk.domain.model.user.dto.CoupleCheckDto
-import com.clonect.feeltalk.domain.model.user.dto.SendPartnerCoupleRegistrationCodeDto
-import com.clonect.feeltalk.domain.model.user.dto.SignUpDto
+import com.clonect.feeltalk.domain.model.dto.user.AccessTokenDto
+import com.clonect.feeltalk.domain.model.dto.common.StatusDto
+import com.clonect.feeltalk.domain.model.dto.user.CoupleCheckDto
+import com.clonect.feeltalk.domain.model.dto.user.PartnerCodeCheckDto
+import com.clonect.feeltalk.domain.model.dto.user.SignUpDto
+import com.clonect.feeltalk.domain.model.dto.user.UserInfoDto
 import com.google.gson.JsonObject
 import retrofit2.Response
 
 interface UserRemoteDataSource {
-    suspend fun getUserInfo(accessToken: AccessToken): Response<UserInfo>
-    suspend fun checkUserIsCouple(accessToken: AccessToken): Response<CoupleCheckDto>
+    suspend fun getUserInfo(accessToken: String): Response<UserInfoDto>
+    suspend fun checkUserIsCouple(accessToken: String): Response<CoupleCheckDto>
     suspend fun checkUserInfoIsEntered(accessToken: String): Response<JsonObject>
 
-    suspend fun updateUserInfo(accessToken: String, nickname: String, birthDate: String, anniversary: String): Response<String>
+    suspend fun updateUserInfo(accessToken: String, nickname: String, age: Long, birthDate: String, anniversary: String): Response<StatusDto>
+    suspend fun updateMyEmotion(accessToken: String, emotion: String): Response<StatusDto>
 
-    suspend fun sendPartnerCoupleRegistrationCode(accessToken: AccessToken, partnerCode: String): Response<SendPartnerCoupleRegistrationCodeDto>
+    suspend fun sendPartnerCoupleRegistrationCode(accessToken: String, partnerCode: String): Response<PartnerCodeCheckDto>
 
-    suspend fun autoLogInWithGoogle(idToken: String): Response<AccessToken>
+    suspend fun autoLogInWithGoogle(idToken: String): Response<AccessTokenDto>
     suspend fun signUpWithGoogle(idToken: String, serverAuthCode: String, fcmToken: String): Response<SignUpDto>
 }

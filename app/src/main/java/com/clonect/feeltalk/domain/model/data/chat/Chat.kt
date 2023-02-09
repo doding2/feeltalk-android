@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.domain.model.chat
+package com.clonect.feeltalk.domain.model.data.chat
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
