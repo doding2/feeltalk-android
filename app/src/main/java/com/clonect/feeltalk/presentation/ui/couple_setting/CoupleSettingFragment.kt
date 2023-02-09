@@ -7,27 +7,47 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.databinding.FragmentCoupleSettingBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class CoupleSettingFragment : Fragment() {
 
     private lateinit var binding: FragmentCoupleSettingBinding
     private lateinit var onBackCallback: OnBackPressedCallback
+    private val viewModel: CoupleSettingViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentCoupleSettingBinding.inflate(inflater, container, false)
-
-        binding.btnBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
-
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        collectUserInfo()
+        binding.apply {
+            btnBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
+        }
+    }
+
+    private fun collectUserInfo() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.userInfo.collectLatest {
+                binding.textMyName.text = it.nickname
+                binding.textMyBirthDate.text = it.birth
+            }
+        }
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

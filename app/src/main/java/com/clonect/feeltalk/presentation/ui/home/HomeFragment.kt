@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
@@ -17,15 +16,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
-import com.clonect.feeltalk.common.Constants
-import com.clonect.feeltalk.data.mapper.toStringLowercase
-import com.clonect.feeltalk.data.repository.notification.NotificationRepository
 import com.clonect.feeltalk.databinding.FragmentHomeBinding
-import com.clonect.feeltalk.domain.model.data.notification.NotificationData
-import com.clonect.feeltalk.domain.model.data.notification.PushNotification
 import com.clonect.feeltalk.domain.model.data.user.Emotion
 import com.clonect.feeltalk.presentation.utils.addTextGradient
-import com.clonect.feeltalk.presentation.utils.infoLog
 import com.clonect.feeltalk.presentation.utils.showMyEmotionChangerDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest

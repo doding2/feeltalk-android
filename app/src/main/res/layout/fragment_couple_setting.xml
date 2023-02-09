@@ -138,7 +138,7 @@
                     app:layout_constraintBottom_toBottomOf="parent">
 
                     <ImageView
-                        android:id="@+id/iv_my_emotion"
+                        android:id="@+id/iv_my_profile"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:src="@drawable/image_my_default_profile"/>
@@ -200,7 +200,7 @@
                 android:gravity="center_vertical">
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/cv_partner_emotion"
+                    android:id="@+id/cv_partner_profile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="20dp"
@@ -213,7 +213,7 @@
                     app:layout_constraintBottom_toBottomOf="parent">
 
                     <ImageView
-                        android:id="@+id/iv_partner_emotion"
+                        android:id="@+id/iv_partner_profile"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:src="@drawable/image_partner_default_profile"/>
@@ -233,8 +233,8 @@
                     android:textSize="20sp"
                     android:fontFamily="@font/pretendard_bold"
                     android:lineSpacingExtra="2sp"
-                    app:layout_constraintStart_toEndOf="@id/cv_partner_emotion"
-                    app:layout_constraintTop_toTopOf="@id/cv_partner_emotion"
+                    app:layout_constraintStart_toEndOf="@id/cv_partner_profile"
+                    app:layout_constraintTop_toTopOf="@id/cv_partner_profile"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constrainedWidth="true"/>

@@ -68,7 +68,7 @@
                     app:cardBackgroundColor="@android:color/transparent">
 
                     <ImageView
-                        android:id="@+id/iv_my_emotion"
+                        android:id="@+id/iv_my_profile"
                         android:layout_width="150dp"
                         android:layout_height="150dp"
                         android:src="@drawable/image_my_default_profile"/>
@@ -78,7 +78,7 @@
                     android:id="@+id/iv_emotion_heart"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:src="@drawable/ic_profile_heart"
+                    android:src="@drawable/ic_emotion_heart"
                     android:layout_gravity="bottom|center_horizontal"/>
             </FrameLayout>
 

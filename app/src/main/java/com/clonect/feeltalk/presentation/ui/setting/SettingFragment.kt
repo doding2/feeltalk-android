@@ -11,12 +11,17 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentSettingBinding
 import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
 import com.kyleduo.switchbutton.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SettingFragment : Fragment() {
@@ -36,6 +41,7 @@ class SettingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        collectUserInfo()
         initSwitch()
 
         binding.apply {
@@ -54,6 +60,16 @@ class SettingFragment : Fragment() {
             .findNavController()
             .navigate(R.id.action_bottomNavigationFragment_to_coupleSettingFragment)
     }
+
+
+    private fun collectUserInfo() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.userInfo.collectLatest {
+                binding.textMyName.text = it.nickname
+            }
+        }
+    }
+
 
 
     private val pushNotificationPermissionLauncher = registerForActivityResult(

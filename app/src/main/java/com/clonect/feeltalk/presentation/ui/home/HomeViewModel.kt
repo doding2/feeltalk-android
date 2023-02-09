@@ -65,7 +65,7 @@ class HomeViewModel @Inject constructor(
         when (result) {
             is Resource.Success -> _userInfo.value = result.data
             is Resource.Error -> infoLog("Fail to get user info: ${result.throwable.localizedMessage}")
-            else -> infoLog("Still Loading User Info")
+            else -> infoLog("Fail to get user info")
         }
     }
 

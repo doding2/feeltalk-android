@@ -27,7 +27,7 @@
             app:cardBackgroundColor="@android:color/transparent">
 
             <ImageView
-                android:id="@+id/iv_my_emotion"
+                android:id="@+id/iv_my_profile"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/image_my_default_profile"/>

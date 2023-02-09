@@ -47,7 +47,7 @@
                 app:cardBackgroundColor="@android:color/transparent">
 
                 <ImageView
-                    android:id="@+id/iv_partner_emotion"
+                    android:id="@+id/iv_partner_profile"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:src="@drawable/image_partner_default_profile"/>

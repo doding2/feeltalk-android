@@ -3,7 +3,11 @@ package com.clonect.feeltalk.presentation.ui.setting
 import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.notification.Topics
+import com.clonect.feeltalk.domain.model.data.user.UserInfo
+import com.clonect.feeltalk.domain.usecase.user.GetUserInfoUseCase
+import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -15,9 +19,12 @@ import javax.inject.Named
 
 @HiltViewModel
 class SettingViewModel @Inject constructor(
-    @Named("AppSettings")
-    private val pref: SharedPreferences
+    @Named("AppSettings") private val pref: SharedPreferences,
+    private val getUserInfoUseCase: GetUserInfoUseCase,
 ): ViewModel() {
+
+    private val _userInfo = MutableStateFlow(UserInfo())
+    val userInfo = _userInfo.asStateFlow()
 
     private var _isPushNotificationEnabled: MutableStateFlow<Boolean> =
         MutableStateFlow(pref.getBoolean("isPushNotificationEnabled", false))
@@ -29,7 +36,15 @@ class SettingViewModel @Inject constructor(
 
 
     init {
+        getUserInfo()
+    }
 
+    private fun getUserInfo() = viewModelScope.launch(Dispatchers.IO) {
+        when (val result = getUserInfoUseCase()) {
+            is Resource.Success -> _userInfo.value = result.data
+            is Resource.Error -> infoLog("Fail to get user info: ${result.throwable.localizedMessage}")
+            else -> infoLog("Fail to get user info")
+        }
     }
 
 
