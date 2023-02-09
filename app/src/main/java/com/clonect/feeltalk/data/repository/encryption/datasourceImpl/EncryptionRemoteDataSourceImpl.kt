@@ -3,48 +3,59 @@ package com.clonect.feeltalk.data.repository.encryption.datasourceImpl
 import android.util.Base64
 import com.clonect.feeltalk.data.api.ClonectService
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionRemoteDataSource
-import com.clonect.feeltalk.domain.model.encryption.LoadPartnerPrivateKeyDto
-import com.clonect.feeltalk.domain.model.encryption.LoadPartnerPublicKeyDto
-import com.clonect.feeltalk.domain.model.encryption.StatusResponse
-import com.clonect.feeltalk.domain.model.user.AccessToken
+import com.clonect.feeltalk.domain.model.dto.common.StatusDto
+import com.clonect.feeltalk.domain.model.data.encryption.LoadPartnerPrivateKeyDto
+import com.clonect.feeltalk.domain.model.data.encryption.LoadPartnerPublicKeyDto
+import com.clonect.feeltalk.domain.model.dto.user.AccessTokenDto
 import com.google.gson.JsonObject
+import retrofit2.HttpException
 import retrofit2.Response
-import java.security.PrivateKey
 import java.security.PublicKey
 
 class EncryptionRemoteDataSourceImpl(
     private val clonectService: ClonectService,
 ) : EncryptionRemoteDataSource {
 
-    override suspend fun uploadMyPublicKey(accessToken: AccessToken, publicKey: PublicKey): Response<StatusResponse> {
-        val publicBytes = Base64.encode(publicKey.encoded, Base64.DEFAULT)
-        val publicString = String(publicBytes)
+    override suspend fun uploadMyPublicKey(accessToken: String, publicKey: String): Response<StatusDto> {
         val obj = JsonObject().apply {
-            addProperty("publicKey", publicString)
-            addProperty("accessToken", accessToken.value)
+            addProperty("publicKey", publicKey)
+            addProperty("accessToken", accessToken)
         }
-        return clonectService.uploadMyPublicKey(obj)
+
+        val response = clonectService.uploadMyPublicKey(obj)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
     }
 
-    override suspend fun loadPartnerPublicKey(accessToken: AccessToken): Response<LoadPartnerPublicKeyDto> {
-        return clonectService.loadPartnerPublicKey(accessToken.value)
+    override suspend fun loadPartnerPublicKey(accessToken: String): Response<LoadPartnerPublicKeyDto> {
+        val response = clonectService.loadPartnerPublicKey(accessToken)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
     }
 
-    override suspend fun uploadMyPrivateKey(accessToken: AccessToken, encryptedPrivateKey: String): Response<StatusResponse> {
+    override suspend fun uploadMyPrivateKey(accessToken: String, encryptedPrivateKey: String): Response<StatusDto> {
         val obj = JsonObject().apply {
-            addProperty("accessToken", accessToken.value)
+            addProperty("accessToken", accessToken)
             addProperty("privateKey", encryptedPrivateKey)
         }
-        return clonectService.uploadMyPrivateKey(obj)
+        val response = clonectService.uploadMyPrivateKey(obj)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
     }
 
-    override suspend fun loadPartnerPrivateKey(accessToken: AccessToken): Response<LoadPartnerPrivateKeyDto> {
-        return clonectService.loadPartnerPrivateKey(accessToken.value)
+    override suspend fun loadPartnerPrivateKey(accessToken: String): Response<LoadPartnerPrivateKeyDto> {
+        val response = clonectService.loadPartnerPrivateKey(accessToken)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
     }
 
 
 
-    override suspend fun sendMyPrivateKeyRecoveryRequest(accessToken: AccessToken): Response<String> {
+    override suspend fun sendMyPrivateKeyRecoveryRequest(accessToken: String): Response<String> {
         throw Exception("Not yet implemented.")
     }
 

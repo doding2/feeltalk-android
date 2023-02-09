@@ -1,16 +1,12 @@
 package com.clonect.feeltalk.data.utils
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
 import com.clonect.feeltalk.BuildConfig
-import com.google.android.gms.common.util.Base64Utils
-import com.google.android.gms.common.util.Hex
-import okio.ByteString.Companion.encodeUtf8
-import okio.utf8Size
-import java.io.File
+import com.clonect.feeltalk.presentation.utils.infoLog
+import java.io.Serializable
 import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
@@ -30,7 +26,7 @@ class AppLevelEncryptHelper(
         val ivString = Base64.encodeToString(iv, Base64.NO_WRAP)
         pref.edit().putString("${name}_iv", ivString).apply()
 
-        val encryptedByteArray = cipher.doFinal(message.toByteArray())
+        val encryptedByteArray = cipher.doFinal(message.encodeToByteArray())
         return Base64.encodeToString(encryptedByteArray, Base64.NO_WRAP)
     }
 
@@ -43,13 +39,41 @@ class AppLevelEncryptHelper(
         cipher.init(Cipher.DECRYPT_MODE, appLevelKey, spec)
 
         val decryptedByteArray = cipher.doFinal(Base64.decode(digest, Base64.NO_WRAP))
-        return String(decryptedByteArray)
+        return String(decryptedByteArray, Charsets.UTF_8)
     }
+
+
+    fun encryptObject(name: String, dataObject: Serializable): ByteArray {
+        val dataBytes = dataObject.toByteArray()
+
+        val cipher = Cipher.getInstance(BuildConfig.APP_LEVEL_CIPHER_ALGORITHM)
+        cipher.init(Cipher.ENCRYPT_MODE, appLevelKey)
+
+        val iv = cipher.iv
+        val ivString = Base64.encodeToString(iv, Base64.NO_WRAP)
+        pref.edit().putString("${name}_iv", ivString).apply()
+
+        return cipher.doFinal(dataBytes)
+    }
+
+    fun <T : Serializable> decryptObject(name: String, dataBytes: ByteArray): Serializable {
+        val ivString = pref.getString("${name}_iv", null)
+        val iv = Base64.decode(ivString, Base64.NO_WRAP)
+
+        val spec = GCMParameterSpec(128, iv)
+        val cipher = Cipher.getInstance(BuildConfig.APP_LEVEL_CIPHER_ALGORITHM)
+        cipher.init(Cipher.DECRYPT_MODE, appLevelKey, spec)
+
+        val decryptedByteArray = cipher.doFinal(dataBytes)
+        return fromByteArray<T>(decryptedByteArray)
+    }
+
 
     private fun getAppLevelKey(): SecretKey {
         val keyStore = KeyStore.getInstance(BuildConfig.APP_LEVEL_KEY_PROVIDER)
         keyStore.load(null)
 
+        infoLog("load key")
         val secretKeyEntry: KeyStore.SecretKeyEntry? = keyStore.getEntry(BuildConfig.APP_LEVEL_KEY_ALIAS, null) as? KeyStore.SecretKeyEntry
         val secretKey = secretKeyEntry?.secretKey
 
@@ -58,6 +82,7 @@ class AppLevelEncryptHelper(
     }
 
     private fun generateAppLevelKey(): SecretKey {
+        infoLog("generate key")
         val keyGen = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, BuildConfig.APP_LEVEL_KEY_PROVIDER)
         keyGen.init(
             KeyGenParameterSpec

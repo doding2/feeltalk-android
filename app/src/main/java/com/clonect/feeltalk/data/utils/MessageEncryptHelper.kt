@@ -9,7 +9,7 @@ import javax.crypto.spec.SecretKeySpec
 class MessageEncryptHelper {
 
     fun encryptAES(key: ByteArray, message: String): ByteArray {
-        val textBytes = message.toByteArray()
+        val textBytes = message.encodeToByteArray()
         val ivSpec: AlgorithmParameterSpec = IvParameterSpec(ByteArray(16))
         val newKey = SecretKeySpec(key, "AES")
         val cipher: Cipher = Cipher.getInstance(BuildConfig.SHORTEN_ENCRYPT_HELPER_CIPHER_ALGORITHM)
@@ -23,6 +23,6 @@ class MessageEncryptHelper {
         val cipher = Cipher.getInstance(BuildConfig.SHORTEN_ENCRYPT_HELPER_CIPHER_ALGORITHM)
         cipher.init(Cipher.DECRYPT_MODE, keySpec, iv)
         val output = cipher.doFinal(digest)
-        return String(output)
+        return String(output, Charsets.UTF_8)
     }
 }

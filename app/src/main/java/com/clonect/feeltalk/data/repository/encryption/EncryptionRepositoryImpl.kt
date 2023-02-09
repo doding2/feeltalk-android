@@ -2,7 +2,6 @@ package com.clonect.feeltalk.data.repository.encryption
 
 import android.security.keystore.KeyProperties
 import android.util.Base64
-import android.util.Log
 import com.clonect.feeltalk.BuildConfig
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.common.FeelTalkException.*
@@ -11,11 +10,10 @@ import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionCach
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionLocalDataSource
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionRemoteDataSource
 import com.clonect.feeltalk.data.utils.MessageEncryptHelper
-import com.clonect.feeltalk.domain.model.user.AccessToken
 import com.clonect.feeltalk.domain.repository.EncryptionRepository
+import com.clonect.feeltalk.presentation.utils.infoLog
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
-import retrofit2.HttpException
 import java.security.*
 import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
@@ -35,12 +33,12 @@ class EncryptionRepositoryImpl(
     override suspend fun test() {
         generateUserLevelKeyPair()
 
-        val message = "안녕하세요 구텐탁 하이 할로 할로 할로 아아아미ㅏㅣㅇ gutentak!"
+        val message = "01047625824 안녕 Nihao 구텐탁 \n 하이요 zzㅇㅇㅋ잌llds"
         val encrypted = encrypt(getPartnerPublicKey(), message)
-        Log.i("Fragment", "message: $message")
+        infoLog("message: $message")
 
         val decrypted = decrypt(getPartnerPrivateKey(), encrypted)
-        Log.i("Fragment", "decrypted message: $decrypted")
+        infoLog("decrypted message: $decrypted")
     }
 
     
@@ -55,13 +53,12 @@ class EncryptionRepositoryImpl(
         }
     }
 
-    override suspend fun uploadMyPublicKey(accessToken: AccessToken): Resource<String> {
+    override suspend fun uploadMyPublicKey(accessToken: String): Resource<String> {
         return try {
             val myKeyPair = generateUserLevelKeyPair()
 
-            val response = remoteSource.uploadMyPublicKey(accessToken, myKeyPair.public)
-            if (!response.isSuccessful) throw HttpException(response)
-            if (response.body() == null) throw NullPointerException("Response body from server is null.")
+            val publicString = Base64.encodeToString(myKeyPair.public.encoded, Base64.NO_WRAP)
+            val response = remoteSource.uploadMyPublicKey(accessToken, publicString)
 
             val status = response.body()!!.status
             Resource.Success(status)
@@ -73,11 +70,9 @@ class EncryptionRepositoryImpl(
         }
     }
 
-    override suspend fun loadPartnerPublicKey(accessToken: AccessToken): Resource<String> {
+    override suspend fun loadPartnerPublicKey(accessToken: String): Resource<String> {
         return try {
             val response = remoteSource.loadPartnerPublicKey(accessToken)
-            if (!response.isSuccessful) throw HttpException(response)
-            if (response.body() == null) throw NullPointerException("Response body from server is null.")
 
             val publicKeyString = response.body()!!.publicKey
             if (tryCount >= 5) {
@@ -107,11 +102,10 @@ class EncryptionRepositoryImpl(
         }
     }
 
-    override suspend fun uploadMyPrivateKey(accessToken: AccessToken): Resource<String> {
+    override suspend fun uploadMyPrivateKey(accessToken: String): Resource<String> {
         return try {
             val myPrivateKey = getMyPrivateKey()
-            val myPrivateKeyBytes = Base64.encode(myPrivateKey.encoded, Base64.NO_WRAP)
-            val myPrivateKeyString = String(myPrivateKeyBytes)
+            val myPrivateKeyString = Base64.encodeToString(myPrivateKey.encoded, Base64.NO_WRAP)
 
             val encryptedResource = encryptPartnerText(myPrivateKeyString)
             val encryptedPrivateKey = when (encryptedResource) {
@@ -121,8 +115,6 @@ class EncryptionRepositoryImpl(
             }
 
             val response = remoteSource.uploadMyPrivateKey(accessToken, encryptedPrivateKey)
-            if (!response.isSuccessful) throw HttpException(response)
-            if (response.body() == null) throw NullPointerException("Response body from server is null.")
 
             val status = response.body()!!.status
             Resource.Success(status)
@@ -134,11 +126,9 @@ class EncryptionRepositoryImpl(
         }
     }
 
-    override suspend fun loadPartnerPrivateKey(accessToken: AccessToken): Resource<String> {
+    override suspend fun loadPartnerPrivateKey(accessToken: String): Resource<String> {
         return try {
             val response = remoteSource.loadPartnerPrivateKey(accessToken)
-            if (!response.isSuccessful) throw HttpException(response)
-            if (response.body() == null) throw NullPointerException("Response body from server is null.")
 
             val privateKeyString = response.body()!!.privateKey
             if (tryCount >= 5) {
@@ -231,7 +221,7 @@ class EncryptionRepositoryImpl(
 
     
 
-    /** RSA, AES 모두 이용한 암호화
+    /** Note: RSA, AES 모두 이용한 암호화
      *
      * - 암호화
      * 1. 128 비트짜리 데이터를 랜덤하게 생성 -> 결과값은 K라고 부름
