@@ -8,6 +8,7 @@ class UserCacheDataSourceImpl: UserCacheDataSource {
     private var accessToken: String? = null
     private var userInfo: UserInfo? = null
     private var partnerInfo: UserInfo? = null
+    private var coupleAnniversary: String? = null
     private var coupleRegistrationCode: String? = null
 
 
@@ -15,6 +16,13 @@ class UserCacheDataSourceImpl: UserCacheDataSource {
 
     override fun saveAccessTokenToCache(accessToken: String) {
         this.accessToken = accessToken
+    }
+
+
+    override fun getCoupleAnniversary() = coupleAnniversary
+
+    override fun saveCoupleAnniversary(date: String) {
+        this.coupleAnniversary = date
     }
 
 

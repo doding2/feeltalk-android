@@ -44,8 +44,8 @@ class MainViewModel @Inject constructor(
         when (autoLogInWithGoogleUseCase()) {
             is Resource.Success -> {
                 _isLoggedIn.value = true
-                checkUserInfoIsEntered()
                 getUserInfo()
+                checkUserInfoIsEntered()
                 infoLog("Success to log in")
             }
             else -> {
@@ -57,7 +57,7 @@ class MainViewModel @Inject constructor(
     }
 
 
-    private fun getUserInfo() = viewModelScope.launch(Dispatchers.IO) {
+    private suspend fun getUserInfo() {
         val result = getUserInfoUseCase()
         if (result is Resource.Success) {
             infoLog("Success to get user info: ${result.data}")
@@ -67,7 +67,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun getPartnerInfo() = CoroutineScope(Dispatchers.IO).launch {
+    private suspend fun getPartnerInfo() {
         val result = getPartnerInfoUseCase()
         if (result is Resource.Success) {
             infoLog("Success to get partner info: ${result.data}")

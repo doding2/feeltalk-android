@@ -43,9 +43,6 @@ class TodayQuestionFragment : Fragment() {
     ): View {
         binding = FragmentTodayQuestionBinding.inflate(inflater, container, false)
 
-//        val args: TodayQuestionFragmentArgs by navArgs()
-//        args.selectedQuestion?.let { viewModel.setQuestion(it) }
-
         initMyAnswerEditText()
         collectQuestion()
 
@@ -94,7 +91,7 @@ class TodayQuestionFragment : Fragment() {
             message = getString(messageId),
             confirmButtonText = getString(confirmId),
             onConfirmClick = {
-                if (question.partnerAnswer.isNullOrEmpty()) {
+                if (question.partnerAnswer.isEmpty()) {
                     requestPartnerAnswer()
                 }
                 navigateToChatPage(question)

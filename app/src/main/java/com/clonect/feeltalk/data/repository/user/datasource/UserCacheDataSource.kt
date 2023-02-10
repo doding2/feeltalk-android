@@ -12,6 +12,9 @@ interface UserCacheDataSource {
     fun getAccessToken(): String?
     fun saveAccessTokenToCache(accessToken: String)
 
+    fun getCoupleAnniversary(): String?
+    fun saveCoupleAnniversary(date: String)
+
     fun getCoupleRegistrationCode(): String?
     fun saveCoupleRegistrationCode(code: String)
     fun clearCoupleRegistrationCode()

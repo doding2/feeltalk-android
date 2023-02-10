@@ -1,17 +1,15 @@
 package com.clonect.feeltalk.data.repository.user.datasource
 
-import com.clonect.feeltalk.domain.model.dto.user.AccessTokenDto
 import com.clonect.feeltalk.domain.model.dto.common.StatusDto
-import com.clonect.feeltalk.domain.model.dto.user.CoupleCheckDto
-import com.clonect.feeltalk.domain.model.dto.user.PartnerCodeCheckDto
-import com.clonect.feeltalk.domain.model.dto.user.SignUpDto
-import com.clonect.feeltalk.domain.model.dto.user.UserInfoDto
+import com.clonect.feeltalk.domain.model.dto.user.*
 import com.google.gson.JsonObject
 import retrofit2.Response
 
 interface UserRemoteDataSource {
     suspend fun getUserInfo(accessToken: String): Response<UserInfoDto>
     suspend fun getPartnerInfo(accessToken: String): Response<AccessTokenDto>
+
+    suspend fun getCoupleAnniversary(accessToken: String): Response<DDayDto>
 
     suspend fun checkUserIsCouple(accessToken: String): Response<CoupleCheckDto>
     suspend fun checkUserInfoIsEntered(accessToken: String): Response<JsonObject>

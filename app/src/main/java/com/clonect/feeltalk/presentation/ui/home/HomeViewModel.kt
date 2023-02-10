@@ -2,6 +2,7 @@ package com.clonect.feeltalk.presentation.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.model.data.user.Emotion
@@ -9,6 +10,7 @@ import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.usecase.notification.GetFcmTokenUseCase
 import com.clonect.feeltalk.domain.usecase.notification.SendFcmUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionUseCase
+import com.clonect.feeltalk.domain.usecase.user.GetCoupleAnniversaryUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetPartnerInfoUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetUserInfoUseCase
 import com.clonect.feeltalk.domain.usecase.user.UpdateMyEmotionUseCase
@@ -18,6 +20,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,7 +31,8 @@ class HomeViewModel @Inject constructor(
     private val updateMyEmotionUseCase: UpdateMyEmotionUseCase,
     private val getFcmTokenUseCase: GetFcmTokenUseCase,
     private val sendFcmUseCase: SendFcmUseCase,
-    private val getTodayQuestionUseCase: GetTodayQuestionUseCase
+    private val getTodayQuestionUseCase: GetTodayQuestionUseCase,
+    private val getCoupleAnniversaryUseCase: GetCoupleAnniversaryUseCase,
 ): ViewModel() {
 
     private val _userInfo = MutableStateFlow(UserInfo())
@@ -35,6 +40,9 @@ class HomeViewModel @Inject constructor(
 
     private val _partnerInfo = MutableStateFlow(UserInfo())
     val partnerInfo = _partnerInfo.asStateFlow()
+
+    private val _dday = MutableStateFlow<Long?>(null)
+    val dday = _dday.asStateFlow()
 
     private val _todayQuestion = MutableStateFlow<Question?>(null)
     val todayQuestion = _todayQuestion.asStateFlow()
@@ -44,6 +52,7 @@ class HomeViewModel @Inject constructor(
         getUserInfo()
         getPartnerInfo()
         getTodayQuestion()
+        getCoupleAnniversary()
     }
 
     fun sendNotification() = viewModelScope.launch(Dispatchers.IO) {
@@ -66,8 +75,8 @@ class HomeViewModel @Inject constructor(
         val result = getUserInfoUseCase()
         when (result) {
             is Resource.Success -> _userInfo.value = result.data
-            is Resource.Error -> infoLog("Fail to get partner info: ${result.throwable.localizedMessage}")
-            else -> infoLog("Fail to get partner info")
+            is Resource.Error -> infoLog("Fail to get user info: ${result.throwable.localizedMessage}")
+            else -> infoLog("Fail to get user info")
         }
     }
 
@@ -75,8 +84,21 @@ class HomeViewModel @Inject constructor(
         val result = getPartnerInfoUseCase()
         when (result) {
             is Resource.Success -> _partnerInfo.value = result.data
-            is Resource.Error -> infoLog("Fail to get user info: ${result.throwable.localizedMessage}")
-            else -> infoLog("Fail to get user info")
+            is Resource.Error -> infoLog("Fail to get partner info: ${result.throwable.localizedMessage}")
+            else -> infoLog("Fail to get partner info")
+        }
+    }
+
+    private fun getCoupleAnniversary() = viewModelScope.launch(Dispatchers.IO) {
+        val result = getCoupleAnniversaryUseCase()
+        when (result) {
+            is Resource.Success -> {
+                val date = result.data
+                infoLog("couple anniversary date: ${date}")
+                _dday.value = calculateDDay(date)
+            }
+            is Resource.Error -> infoLog("Fail to get d day: ${result.throwable.localizedMessage}")
+            else -> infoLog("Fail to get partner d day")
         }
     }
 
@@ -90,4 +112,20 @@ class HomeViewModel @Inject constructor(
     }
 
 
+    private fun calculateDDay(date: String): Long {
+        try {
+            val format = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+            val anniversaryDate = format.parse(date) ?: return 0
+            val anniversaryCalendar = Calendar.getInstance(Locale.getDefault()).apply {
+                time = anniversaryDate
+            }
+
+            val anniversaryDay = anniversaryCalendar.timeInMillis / Constants.ONE_DAY
+            val nowDay = Calendar.getInstance(Locale.getDefault()).timeInMillis / Constants.ONE_DAY
+
+            return nowDay - anniversaryDay
+        } catch (e: Exception) {
+            return 0
+        }
+    }
 }

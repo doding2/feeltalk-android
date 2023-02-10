@@ -4,11 +4,7 @@ import com.clonect.feeltalk.domain.model.dto.common.StatusDto
 import com.clonect.feeltalk.domain.model.data.encryption.LoadPartnerPrivateKeyDto
 import com.clonect.feeltalk.domain.model.data.encryption.LoadPartnerPublicKeyDto
 import com.clonect.feeltalk.domain.model.dto.question.QuestionDto
-import com.clonect.feeltalk.domain.model.dto.user.AccessTokenDto
-import com.clonect.feeltalk.domain.model.dto.user.CoupleCheckDto
-import com.clonect.feeltalk.domain.model.dto.user.PartnerCodeCheckDto
-import com.clonect.feeltalk.domain.model.dto.user.SignUpDto
-import com.clonect.feeltalk.domain.model.dto.user.UserInfoDto
+import com.clonect.feeltalk.domain.model.dto.user.*
 import com.google.gson.JsonObject
 import retrofit2.Response
 import retrofit2.http.Body
@@ -42,7 +38,7 @@ interface ClonectService {
     @GET("api/DDay/{accessToken}")
     suspend fun getDDay(
         @Path("accessToken") accessToken: String
-    ): Response<String>
+    ): Response<DDayDto>
 
     @POST("api/member/additional")
     suspend fun updateUserInfo(

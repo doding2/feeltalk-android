@@ -4,7 +4,6 @@ import android.content.Context
 import com.clonect.feeltalk.data.repository.user.datasource.UserLocalDataSource
 import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
-import com.clonect.feeltalk.presentation.utils.infoLog
 import okio.use
 import java.io.File
 
@@ -45,6 +44,24 @@ class UserLocalDataSourceImpl(
         val file = File(context.filesDir, "user_info.dat")
         val encrypted = appLevelEncryptHelper.encryptObject("userInfo", userInfo)
         file.writeBytes(encrypted)
+    }
+
+    override suspend fun getCoupleAnniversary(): String? {
+        val file = File(context.filesDir, "couple_anniversary.txt")
+        if (!file.exists()) return null
+        val coupleAnniversary = file.bufferedReader().use {
+            val encrypted = it.readLine()
+            appLevelEncryptHelper.decrypt("coupleAnniversary", encrypted)
+        }
+        return coupleAnniversary
+    }
+
+    override suspend fun saveCoupleAnniversary(date: String) {
+        val file = File(context.filesDir, "couple_anniversary.txt")
+        file.bufferedWriter().use {
+            val encrypted = appLevelEncryptHelper.encrypt("coupleAnniversary", date)
+            it.write(encrypted)
+        }
     }
 
 

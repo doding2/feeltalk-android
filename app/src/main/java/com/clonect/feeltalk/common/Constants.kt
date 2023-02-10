@@ -9,5 +9,7 @@ class Constants {
 
         const val EXCHANGE_KEY_WAIT_DELAY = 500L
         const val RSA_ENCRYPTED_AES_KEY_SIZE = 64
+
+        const val ONE_DAY = 24 * 60 * 60 * 1000
     }
 }

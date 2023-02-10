@@ -185,4 +185,17 @@ class UseCaseModule {
     fun providesGetPartnerInfoUseCase(userRepository: UserRepository): GetPartnerInfoUseCase {
         return GetPartnerInfoUseCase(userRepository)
     }
+
+    @Singleton
+    @Provides
+    fun providesGetCoupleAnniversaryUseCase(userRepository: UserRepository): GetCoupleAnniversaryUseCase {
+        return GetCoupleAnniversaryUseCase(userRepository)
+    }
+
+
+
+
+
+
+
 }

@@ -14,6 +14,8 @@ interface UserRepository {
     suspend fun getUserInfo(): Resource<UserInfo>
     suspend fun getPartnerInfo(): Resource<UserInfo>
 
+    suspend fun getCoupleAnniversary(): Resource<String>
+
     suspend fun checkUserInfoIsEntered(): Resource<Boolean>
     suspend fun updateUserInfo(nickname: String, age: Long, birthDate: String, anniversary: String): Resource<StatusDto>
     suspend fun updateMyEmotion(emotion: String): Resource<StatusDto>

@@ -17,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
+import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.databinding.FragmentHomeBinding
 import com.clonect.feeltalk.domain.model.data.user.Emotion
 import com.clonect.feeltalk.presentation.utils.addTextGradient
@@ -25,6 +26,8 @@ import com.clonect.feeltalk.presentation.utils.showMyEmotionChangerDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -45,16 +48,14 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         collectTodayQuestion()
+        collectCoupleAnniversary()
         collectUserInfo()
         collectPartnerInfo()
 
         binding.apply {
 
-            textDDayValue.text = "32"
             textDDayValue.addTextGradient()
             textDDayUnit.addTextGradient()
-
-            textPartnerName.text = "Daniel"
 
             btnTodayQuestion.setOnClickListener {
                 navigateToTodayQuestionPage()
@@ -82,6 +83,16 @@ class HomeFragment : Fragment() {
             viewModel.todayQuestion.collectLatest {
                 if (it != null) {
                     infoLog("question: $it")
+                }
+            }
+        }
+    }
+
+    private fun collectCoupleAnniversary() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.dday.collectLatest { dday ->
+                dday?.let {
+                    binding.textDDayValue.text = dday.toString()
                 }
             }
         }
@@ -151,6 +162,7 @@ class HomeFragment : Fragment() {
             .findNavController()
             .navigate(R.id.action_bottomNavigationFragment_to_todayQuestionFragment, bundle)
     }
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

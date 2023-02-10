@@ -30,7 +30,7 @@ class TodayQuestionViewModel @Inject constructor(
         }
     }
 
-    fun setQuestion(question: Question) {
+    private fun setQuestion(question: Question) {
         _questionStateFlow.value = question
     }
 

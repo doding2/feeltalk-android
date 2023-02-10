@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
+import com.clonect.feeltalk.domain.usecase.user.GetCoupleAnniversaryUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetPartnerInfoUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetUserInfoUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
@@ -18,6 +19,7 @@ import javax.inject.Inject
 class CoupleSettingViewModel @Inject constructor(
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val getPartnerInfoUseCase: GetPartnerInfoUseCase,
+    private val getCoupleAnniversaryUseCase: GetCoupleAnniversaryUseCase,
 ): ViewModel() {
 
     private val _userInfo = MutableStateFlow(UserInfo())
@@ -26,9 +28,13 @@ class CoupleSettingViewModel @Inject constructor(
     private val _partnerInfo = MutableStateFlow(UserInfo())
     val partnerInfo = _partnerInfo.asStateFlow()
 
+    private val _coupleAnniversary = MutableStateFlow<String?>(null)
+    val coupleAnniversary = _coupleAnniversary.asStateFlow()
+
     init {
         getUserInfo()
         getPartnerInfo()
+        getCoupleAnniversary()
     }
 
     private fun getUserInfo() = viewModelScope.launch(Dispatchers.IO) {
@@ -43,8 +49,17 @@ class CoupleSettingViewModel @Inject constructor(
         val result = getPartnerInfoUseCase()
         when (result) {
             is Resource.Success -> _partnerInfo.value = result.data
-            is Resource.Error -> infoLog("Fail to get user info: ${result.throwable.localizedMessage}")
-            else -> infoLog("Fail to get user info")
+            is Resource.Error -> infoLog("Fail to get partner info: ${result.throwable.localizedMessage}")
+            else -> infoLog("Fail to get partner info")
+        }
+    }
+
+    private fun getCoupleAnniversary() = viewModelScope.launch(Dispatchers.IO) {
+        val result = getCoupleAnniversaryUseCase()
+        when (result) {
+            is Resource.Success -> { _coupleAnniversary.value = result.data }
+            is Resource.Error -> infoLog("Fail to get d day: ${result.throwable.localizedMessage}")
+            else -> infoLog("Fail to get partner d day")
         }
     }
 }

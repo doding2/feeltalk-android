@@ -10,6 +10,9 @@ interface UserLocalDataSource {
     suspend fun getUserInfo(): UserInfo?
     suspend fun saveUserInfo(userInfo: UserInfo)
 
+    suspend fun getCoupleAnniversary(): String?
+    suspend fun saveCoupleAnniversary(date: String)
+
     suspend fun getCoupleRegistrationCode(): String?
     suspend fun saveCoupleRegistrationCode(code: String)
     suspend fun removeCoupleRegistrationCode()

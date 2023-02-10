@@ -2,12 +2,8 @@ package com.clonect.feeltalk.data.repository.user.datasourceImpl
 
 import com.clonect.feeltalk.data.api.ClonectService
 import com.clonect.feeltalk.data.repository.user.datasource.UserRemoteDataSource
-import com.clonect.feeltalk.domain.model.dto.user.AccessTokenDto
-import com.clonect.feeltalk.domain.model.dto.user.PartnerCodeCheckDto
-import com.clonect.feeltalk.domain.model.dto.user.SignUpDto
 import com.clonect.feeltalk.domain.model.dto.common.StatusDto
-import com.clonect.feeltalk.domain.model.dto.user.CoupleCheckDto
-import com.clonect.feeltalk.domain.model.dto.user.UserInfoDto
+import com.clonect.feeltalk.domain.model.dto.user.*
 import com.google.gson.JsonObject
 import retrofit2.HttpException
 import retrofit2.Response
@@ -27,6 +23,13 @@ class UserRemoteDataSourceImpl(
 
     override suspend fun getPartnerInfo(accessToken: String): Response<AccessTokenDto> {
         val response = clonectService.getPartnerInfo(accessToken)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
+
+    override suspend fun getCoupleAnniversary(accessToken: String): Response<DDayDto> {
+        val response = clonectService.getDDay(accessToken)
         if (!response.isSuccessful) throw HttpException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response

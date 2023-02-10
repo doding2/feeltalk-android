@@ -9,6 +9,7 @@ import com.clonect.feeltalk.domain.usecase.encryption.LoadPartnerPublicKeyUseCas
 import com.clonect.feeltalk.domain.usecase.encryption.UploadMyPrivateKeyUseCase
 import com.clonect.feeltalk.domain.usecase.encryption.UploadMyPublicKeyUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetCoupleRegistrationCodeUseCase
+import com.clonect.feeltalk.domain.usecase.user.GetPartnerInfoUseCase
 import com.clonect.feeltalk.domain.usecase.user.RemoveCoupleRegistrationCodeUseCase
 import com.clonect.feeltalk.domain.usecase.user.SendPartnerCoupleRegistrationCodeUseCase
 import com.clonect.feeltalk.presentation.service.notification_observer.CoupleRegistrationObserver
@@ -28,7 +29,8 @@ class CoupleRegistrationViewModel @Inject constructor(
     private val uploadMyPublicKeyUseCase: UploadMyPublicKeyUseCase,
     private val loadPartnerPublicKeyUseCase: LoadPartnerPublicKeyUseCase,
     private val uploadMyPrivateKeyUseCase: UploadMyPrivateKeyUseCase,
-    private val loadPartnerPrivateKeyUseCase: LoadPartnerPrivateKeyUseCase
+    private val loadPartnerPrivateKeyUseCase: LoadPartnerPrivateKeyUseCase,
+    private val getPartnerInfoUseCase: GetPartnerInfoUseCase,
 ) : ViewModel() {
 
     private val _toastMessage = MutableSharedFlow<String>()
@@ -139,6 +141,11 @@ class CoupleRegistrationViewModel @Inject constructor(
             infoLog("Fail to load PartnerPrivateKey : ${partnerPrivateKeyResult.throwable.localizedMessage}")
             _isLoading.value = false
             return@launch
+        }
+
+        val partnerInfoResult = getPartnerInfoUseCase()
+        if (partnerInfoResult is Resource.Error) {
+            infoLog("Fail to get partner info: ${partnerInfoResult.throwable.localizedMessage}")
         }
 
         _isKeyPairExchangingCompleted.value = true

@@ -16,12 +16,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
+import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.databinding.FragmentSettingBinding
 import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
 import com.kyleduo.switchbutton.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 
 @AndroidEntryPoint
 class SettingFragment : Fragment() {
@@ -42,11 +45,10 @@ class SettingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         collectUserInfo()
+        collectCoupleAnniversary()
         initSwitch()
 
         binding.apply {
-            textMyName.text = "jenny"
-
             textMyName.setOnClickListener { navigateToCoupleSettingPage() }
             ivHalfArrowRight.setOnClickListener { navigateToCoupleSettingPage() }
             flProfile.setOnClickListener { navigateToCoupleSettingPage() }
@@ -67,6 +69,35 @@ class SettingFragment : Fragment() {
             viewModel.userInfo.collectLatest {
                 binding.textMyName.text = it.nickname
             }
+        }
+    }
+
+
+    private fun collectCoupleAnniversary() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.coupleAnniversary.collectLatest {
+                binding.textCoupleAnniversary.text = it?.replace("/", ". ")
+                it?.let {
+                    binding.textDDayValue.text = calculateDDay(it)
+                }
+            }
+        }
+    }
+
+    private fun calculateDDay(date: String): String {
+        try {
+            val format = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+            val anniversaryDate = format.parse(date) ?: return "0"
+            val anniversaryCalendar = Calendar.getInstance(Locale.getDefault()).apply {
+                time = anniversaryDate
+            }
+
+            val anniversaryDay = anniversaryCalendar.timeInMillis / Constants.ONE_DAY
+            val nowDay = Calendar.getInstance(Locale.getDefault()).timeInMillis / Constants.ONE_DAY
+
+            return (nowDay - anniversaryDay).toString()
+        } catch (e: Exception) {
+            return "0"
         }
     }
 

@@ -81,7 +81,7 @@
                         android:layout_gravity="center_horizontal">
 
                         <TextView
-                            android:id="@+id/text_start_date"
+                            android:id="@+id/text_couple_anniversary"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/start_date_default_text"
