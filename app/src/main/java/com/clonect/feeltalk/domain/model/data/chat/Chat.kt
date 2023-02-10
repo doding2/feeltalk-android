@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 data class Chat(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
-    val questionId: Long,
+    val question: String,
     val ownerEmail: String,
     val content: String,
     val date: String,

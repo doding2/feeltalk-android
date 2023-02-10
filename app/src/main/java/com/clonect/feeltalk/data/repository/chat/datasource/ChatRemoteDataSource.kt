@@ -5,7 +5,7 @@ import retrofit2.Response
 
 interface ChatRemoteDataSource {
 
-    suspend fun getChatListByQuestionId(questionId: Long): Response<List<Chat>>
+    suspend fun getChatListByQuestion(questionContent: String): Response<List<Chat>>
 
     suspend fun sendChat(chat: Chat): Response<String>
 

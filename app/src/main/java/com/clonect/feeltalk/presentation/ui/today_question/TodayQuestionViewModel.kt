@@ -18,7 +18,7 @@ class TodayQuestionViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
-    private val _questionStateFlow = MutableStateFlow(Question())
+    private val _questionStateFlow = MutableStateFlow(Question("Question Content"))
     val questionStateFlow = _questionStateFlow.asStateFlow()
 
     private val _myAnswerStateFlow = MutableStateFlow("")

@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.notification.Topics
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
+import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
+import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetCoupleAnniversaryUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetUserInfoUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
@@ -20,10 +22,13 @@ import javax.inject.Named
 
 @HiltViewModel
 class SettingViewModel @Inject constructor(
-    @Named("AppSettings") private val pref: SharedPreferences,
+    private val getAppSettingsUseCase: GetAppSettingsUseCase,
+    private val saveAppSettingsUseCase: SaveAppSettingsUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val getCoupleAnniversaryUseCase: GetCoupleAnniversaryUseCase,
 ): ViewModel() {
+
+    private val appSettings = getAppSettingsUseCase()
 
     private val _userInfo = MutableStateFlow(UserInfo())
     val userInfo = _userInfo.asStateFlow()
@@ -31,13 +36,12 @@ class SettingViewModel @Inject constructor(
     private val _coupleAnniversary = MutableStateFlow<String?>(null)
     val coupleAnniversary = _coupleAnniversary.asStateFlow()
 
-
     private var _isPushNotificationEnabled: MutableStateFlow<Boolean> =
-        MutableStateFlow(pref.getBoolean("isPushNotificationEnabled", false))
+        MutableStateFlow(appSettings.isPushNotificationEnabled)
     val isPushNotificationEnabled = _isPushNotificationEnabled.asStateFlow()
 
     private var _isUsageInfoNotificationEnabled: MutableStateFlow<Boolean> =
-        MutableStateFlow(pref.getBoolean("isUsageInfoNotificationEnabled", false))
+        MutableStateFlow(appSettings.isUsageInfoNotificationEnabled)
     val isUsageInfoNotificationEnabled = _isUsageInfoNotificationEnabled.asStateFlow()
 
 
@@ -71,9 +75,8 @@ class SettingViewModel @Inject constructor(
                 } else {
                     unsubscribeFromTopic(Topics.Push.text)
                 }
-                pref.edit()
-                    .putBoolean("isPushNotificationEnabled", enabled)
-                    .apply()
+                appSettings.isPushNotificationEnabled = enabled
+                saveAppSettingsUseCase(appSettings)
                 _isPushNotificationEnabled.value = enabled
             }
         }
@@ -88,9 +91,8 @@ class SettingViewModel @Inject constructor(
                 } else {
                     unsubscribeFromTopic(Topics.UsageInfo.text)
                 }
-                pref.edit()
-                    .putBoolean("isUsageInfoNotificationEnabled", enabled)
-                    .apply()
+                appSettings.isUsageInfoNotificationEnabled = enabled
+                saveAppSettingsUseCase(appSettings)
                 _isUsageInfoNotificationEnabled.value = enabled
             }
         }

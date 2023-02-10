@@ -10,10 +10,10 @@ interface ChatDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertChat(chat: Chat): Long
 
-    @Query("SELECT * FROM ChatTable WHERE questionId == :questionId")
-    fun getChatListFlowByQuestionId(questionId: Long): Flow<List<Chat>>
+    @Query("SELECT * FROM ChatTable WHERE question == :questionContent")
+    fun getChatListFlowByQuestion(questionContent: String): Flow<List<Chat>>
 
-    @Query("SELECT * FROM ChatTable WHERE questionId == :questionId")
-    suspend fun getChatListByQuestionId(questionId: Long): List<Chat>
+    @Query("SELECT * FROM ChatTable WHERE question == :questionContent")
+    suspend fun getChatListByQuestion(questionContent: String): List<Chat>
 
 }

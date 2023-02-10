@@ -10,9 +10,7 @@ fun QuestionDto.toQuestion(): Question {
     val date = format.format(Date())
 
     return Question(
-        contentPrefix = "",
-        content = todayQuestion,
-        contentSuffix = "",
+        question = todayQuestion,
         questionDate = date,
         myAnswer = "",
         partnerAnswer = "",

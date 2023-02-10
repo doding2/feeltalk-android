@@ -17,13 +17,6 @@ class SharedPreferencesModule {
 
     @Singleton
     @Provides
-    @Named("FcmToken")
-    fun providesFcmTokenSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
-        return context.getSharedPreferences("FcmTokenSharedPreference", AppCompatActivity.MODE_PRIVATE)
-    }
-
-    @Singleton
-    @Provides
     @Named("AppSettings")
     fun providesAppSettingsPref(@ApplicationContext context: Context): SharedPreferences {
         return context.getSharedPreferences("AppSettingsSharedPreferences", AppCompatActivity.MODE_PRIVATE)

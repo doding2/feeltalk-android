@@ -1,0 +1,33 @@
+package com.clonect.feeltalk.domain.usecase.app_settings
+
+import android.content.SharedPreferences
+import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
+import com.clonect.feeltalk.presentation.utils.AppSettings
+
+class GetAppSettingsUseCase(
+    private val settingsPref: SharedPreferences,
+    private val appLevelEncryptHelper: AppLevelEncryptHelper,
+) {
+    operator fun invoke(): AppSettings {
+        return settingsPref.run {
+            AppSettings(
+                isAppSettingsNotChanged = getBoolean(
+                    "isAppSettingsNotChanged",
+                    true
+                ),
+                isPushNotificationEnabled = getBoolean(
+                    "isPushNotificationEnabled",
+                    false
+                ),
+                isUsageInfoNotificationEnabled = getBoolean(
+                    "isUsageInfoNotificationEnabled",
+                    false,
+                ),
+                fcmToken = getString(
+                    "fcmToken",
+                    null,
+                )?.let { appLevelEncryptHelper.decrypt("fcmToken", it) }
+            )
+        }
+    }
+}

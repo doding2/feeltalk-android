@@ -7,8 +7,6 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.model.data.user.Emotion
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
-import com.clonect.feeltalk.domain.usecase.notification.GetFcmTokenUseCase
-import com.clonect.feeltalk.domain.usecase.notification.SendFcmUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetCoupleAnniversaryUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetPartnerInfoUseCase
@@ -29,8 +27,6 @@ class HomeViewModel @Inject constructor(
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val getPartnerInfoUseCase: GetPartnerInfoUseCase,
     private val updateMyEmotionUseCase: UpdateMyEmotionUseCase,
-    private val getFcmTokenUseCase: GetFcmTokenUseCase,
-    private val sendFcmUseCase: SendFcmUseCase,
     private val getTodayQuestionUseCase: GetTodayQuestionUseCase,
     private val getCoupleAnniversaryUseCase: GetCoupleAnniversaryUseCase,
 ): ViewModel() {
@@ -53,12 +49,6 @@ class HomeViewModel @Inject constructor(
         getPartnerInfo()
         getTodayQuestion()
         getCoupleAnniversary()
-    }
-
-    fun sendNotification() = viewModelScope.launch(Dispatchers.IO) {
-        getFcmTokenUseCase()?.let {
-//            sendFcmUseCase(it)
-        }
     }
 
     fun changeMyEmotion(emotion: Emotion) = viewModelScope.launch(Dispatchers.IO) {

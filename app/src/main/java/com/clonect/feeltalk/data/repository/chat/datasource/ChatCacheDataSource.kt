@@ -4,9 +4,9 @@ import com.clonect.feeltalk.domain.model.data.chat.Chat
 
 interface ChatCacheDataSource {
 
-    fun getChatListByQuestionId(questionId: Long): List<Chat>?
+    fun getChatListByQuestion(questionContent: String): List<Chat>?
 
-    fun saveChatListToCacheByQuestionId(questionId: Long, chatList: List<Chat>)
+    fun saveChatListToCacheByQuestion(questionContent: String, chatList: List<Chat>)
 
     fun saveOneChatToCache(chat: Chat)
 

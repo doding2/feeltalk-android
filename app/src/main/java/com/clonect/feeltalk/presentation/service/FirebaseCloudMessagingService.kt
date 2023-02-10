@@ -6,7 +6,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.os.bundleOf
 import androidx.navigation.NavDeepLinkBuilder
@@ -14,9 +13,9 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.chat.Chat
 import com.clonect.feeltalk.domain.model.data.question.Question
-import com.clonect.feeltalk.domain.usecase.question.GetQuestionByIdUseCase
+import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
+import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SaveChatUseCase
-import com.clonect.feeltalk.domain.usecase.notification.SaveFcmTokenUseCase
 import com.clonect.feeltalk.presentation.service.notification_observer.CoupleRegistrationObserver
 import com.clonect.feeltalk.presentation.service.notification_observer.FcmNewChatObserver
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
@@ -32,20 +31,21 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.random.Random
-import kotlin.random.nextUInt
 
 @AndroidEntryPoint
 class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
-    // Fcm
+    // App Settings
     @Inject
-    lateinit var saveFcmTokenUseCase: SaveFcmTokenUseCase
+    lateinit var getAppSettingsUseCase: GetAppSettingsUseCase
+    @Inject
+    lateinit var saveAppSettingsUseCase: SaveAppSettingsUseCase
 
     // Chat
     @Inject
     lateinit var saveChatUseCase: SaveChatUseCase
-    @Inject
-    lateinit var getQuestionByIdUseCase: GetQuestionByIdUseCase
+//    @Inject
+//    lateinit var getQuestionByIdUseCase: GetQuestionByIdUseCase
 
 
     companion object {
@@ -59,7 +59,9 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
     override fun onNewToken(newToken: String) {
         super.onNewToken(newToken)
-        saveFcmTokenUseCase(newToken)
+        val appSettings = getAppSettingsUseCase()
+        appSettings.fcmToken = newToken
+        saveAppSettingsUseCase(appSettings)
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
@@ -140,10 +142,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             .setDestination(R.id.todayQuestionFragment)
             .setArguments(
                 bundleOf("selectedQuestion" to Question(
-                    id = Random.nextUInt().toLong(),
-                    contentPrefix = data["contentPrefix"] ?: "",
-                    content = data["content"] ?: "",
-                    contentSuffix = data["contentSuffix"] ?: "",
+                    question = data["question"] ?: "",
                     partnerAnswer = data["partnerAnswer"] ?: "",
                     partnerAnswerDate = data["partnerAnswerDate"] ?: "",
                 ))
@@ -159,10 +158,10 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     }
 
     private fun handleChatData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
-        val questionId = data["questionId"]?.toLong() ?: 0L
+        val questionContent = data["question"].toString()
 
         val chat = Chat(
-            questionId = questionId,
+            question = questionContent,
             ownerEmail = "partner@email.com",
             content = data["content"].toString(),
             date = data["date"].toString())
@@ -172,26 +171,32 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             return@launch
 
         val showingQuestionId = FeeltalkApp.getQuestionIdOfShowingChatFragment()
-        if (showingQuestionId == questionId) {
+        if (showingQuestionId == questionContent) {
             FcmNewChatObserver
                 .getInstance()
                 .setNewChat(chat)
         }
 
-        val questionResult = getQuestionByIdUseCase(questionId)
-        if (questionResult !is Resource.Success)
-            return@launch
-        val question = questionResult.data
+//          TODO 나중에 변경
+//        val questionResult = getQuestionByIdUseCase(questionId)
+//        if (questionResult !is Resource.Success)
+//            return@launch
+//        var question = questionResult.data
+        val question = Question(
+            question = "question",
+            questionDate = "date",
+            myAnswer = "myAnswer",
+            myAnswerDate = "date",
+            partnerAnswer = "partnerAnswer",
+            partnerAnswerDate = "date",
+        )
 
         val pendingIntent = NavDeepLinkBuilder(applicationContext)
             .setGraph(R.navigation.overall_nav_graph)
             .setDestination(R.id.chatFragment)
             .setArguments(
                 bundleOf("selectedQuestion" to Question(
-                    id = question.id,
-                    contentPrefix = data["contentPrefix"] ?: question.contentPrefix,
-                    content = data["content"] ?: question.content,
-                    contentSuffix = data["contentSuffix"] ?: question.contentSuffix,
+                    question = data["question"] ?: question.question,
                     partnerAnswer = data["partnerAnswer"] ?: question.partnerAnswer,
                     partnerAnswerDate = data["partnerAnswerDate"] ?: question.partnerAnswerDate,
                     myAnswer = data["myAnswer"] ?: question.myAnswer,

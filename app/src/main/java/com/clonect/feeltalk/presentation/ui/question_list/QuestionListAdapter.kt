@@ -18,7 +18,7 @@ class QuestionListAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val callback = object: DiffUtil.ItemCallback<Question>() {
         override fun areItemsTheSame(oldItem: Question, newItem: Question): Boolean {
-            return oldItem.id == newItem.id
+            return oldItem.question == newItem.question
         }
 
         override fun areContentsTheSame(oldItem: Question, newItem: Question): Boolean {
@@ -52,8 +52,11 @@ class QuestionListAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun getItemViewType(position: Int): Int {
         val question = differ.currentList[position]
-        return if (question.id == -50505L) TYPE_HEADER
-        else TYPE_ITEM
+        return when (question.viewType) {
+            "header" -> TYPE_HEADER
+            "item" -> TYPE_ITEM
+            else -> TYPE_ITEM
+        }
     }
 
     fun setOnItemClickListener(listener: (Question) -> Unit) {
@@ -66,7 +69,7 @@ class QuestionListAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     ): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(question: Question) {
-            binding.textQuestionTitle.text = question.content
+            binding.textQuestionTitle.text = question.question
             binding.root.setOnClickListener { _ ->
                 onItemClickListener?.let { it(question) }
             }

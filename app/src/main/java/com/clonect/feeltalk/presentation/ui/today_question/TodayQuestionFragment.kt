@@ -51,7 +51,7 @@ class TodayQuestionFragment : Fragment() {
 
             etMyAnswer.addTextChangedListener {
                 viewModel.setMyAnswer(it.toString().trim())
-                val isEnterAnswerButtonReady = viewModel.questionStateFlow.value.content.isNotBlank() && !it.isNullOrBlank()
+                val isEnterAnswerButtonReady = viewModel.questionStateFlow.value.question.isNotBlank() && !it.isNullOrBlank()
                 enableEnterAnswerButton(isEnterAnswerButtonReady)
             }
 
@@ -91,7 +91,7 @@ class TodayQuestionFragment : Fragment() {
             message = getString(messageId),
             confirmButtonText = getString(confirmId),
             onConfirmClick = {
-                if (question.partnerAnswer.isEmpty()) {
+                if (question.partnerAnswer.isNullOrEmpty()) {
                     requestPartnerAnswer()
                 }
                 navigateToChatPage(question)
@@ -140,7 +140,7 @@ class TodayQuestionFragment : Fragment() {
     }
 
     private fun changePartnerStateTextView(question: Question) = binding.apply {
-        if (question.partnerAnswer.isNotBlank()) {
+        if (!question.partnerAnswer.isNullOrBlank()) {
             textPartnerStatePrefix.setText(R.string.today_question_partner_state_not_done_prefix)
             val stateText = getString(R.string.today_question_partner_state_not_done)
             val stateUnderLine = SpannableString(stateText).apply {
@@ -163,9 +163,9 @@ class TodayQuestionFragment : Fragment() {
     private fun reassembleQuestionTitle(question: Question) {
         binding.layoutQuestionContent.removeAllViewsInLayout()
 
-        question.contentPrefix.reassembleTextView(R.layout.text_view_question_content_prefix)
-        question.content.reassembleTextView(R.layout.text_view_question_content)
-        question.contentSuffix.reassembleTextView(R.layout.text_view_question_content_suffix)
+//        question.contentPrefix.reassembleTextView(R.layout.text_view_question_content_prefix)
+        question.question.reassembleTextView(R.layout.text_view_question_content)
+//        question.contentSuffix.reassembleTextView(R.layout.text_view_question_content_suffix)
     }
 
     private fun String.reassembleTextView(@LayoutRes resource: Int) {

@@ -5,24 +5,24 @@ import com.clonect.feeltalk.domain.model.data.chat.Chat
 
 class ChatCacheDataSourceImpl: ChatCacheDataSource {
 
-    private var chatListMap = mutableMapOf<Long, MutableList<Chat>>()
+    private var chatListMap = mutableMapOf<String, MutableList<Chat>>()
 
-    override fun getChatListByQuestionId(questionId: Long): List<Chat>? {
-        return chatListMap[questionId]
+    override fun getChatListByQuestion(questionContent: String): List<Chat>? {
+        return chatListMap[questionContent]
     }
 
-    override fun saveChatListToCacheByQuestionId(questionId: Long, chatList: List<Chat>) {
-        chatListMap[questionId] = chatList.toMutableList()
+    override fun saveChatListToCacheByQuestion(questionContent: String, chatList: List<Chat>) {
+        chatListMap[questionContent] = chatList.toMutableList()
     }
 
     override fun saveOneChatToCache(chat: Chat) {
-        val chatList = chatListMap[chat.questionId]
+        val chatList = chatListMap[chat.question]
         if (chatList != null) {
             chatList.add(chat)
             return
         }
         val newList = mutableListOf(chat)
-        chatListMap[chat.questionId] = newList
+        chatListMap[chat.question] = newList
     }
 
 }

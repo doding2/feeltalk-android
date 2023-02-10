@@ -6,14 +6,12 @@ import java.io.Serializable
 
 @Entity(tableName = "QuestionTable")
 data class Question(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
-    val contentPrefix: String = "",
-    val content: String = "",
-    val contentSuffix: String = "",
-    var questionDate: String = "",
-    var myAnswer: String = "",
-    val partnerAnswer: String = "",
-    var myAnswerDate: String = "",
-    val partnerAnswerDate: String ="",
+    @PrimaryKey
+    val question: String,
+    var questionDate: String? = null,
+    var myAnswer: String? = null,
+    var myAnswerDate: String? = null,
+    val partnerAnswer: String? = null,
+    val partnerAnswerDate: String? = null,
+    val viewType: String = "item",
 ): Serializable

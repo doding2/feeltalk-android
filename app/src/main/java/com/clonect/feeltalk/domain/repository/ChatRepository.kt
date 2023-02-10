@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface ChatRepository {
 
-    fun getChatListByQuestionId(questionId: Long): Flow<Resource<List<Chat>>>
+    fun getChatListByQuestion(questionContent: String): Flow<Resource<List<Chat>>>
 
     suspend fun sendChat(chat: Chat): Resource<String>
 

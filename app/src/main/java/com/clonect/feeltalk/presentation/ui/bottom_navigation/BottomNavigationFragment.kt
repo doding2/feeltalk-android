@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -51,8 +50,12 @@ class BottomNavigationFragment : Fragment() {
 
 
         checkPostNotificationsPermission { isGranted ->
-            viewModel.enablePushNotificationEnabled(isGranted)
-            viewModel.enableUsageInfoNotification(isGranted)
+            viewModel.run {
+                if (getAppSettingsNotChanged()) {
+                    enablePushNotificationEnabled(isGranted)
+                    enableUsageInfoNotification(isGranted)
+                }
+            }
         }
     }
 

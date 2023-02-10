@@ -1,6 +1,5 @@
 package com.clonect.feeltalk.presentation.ui.chat
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,7 +9,6 @@ import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.usecase.chat.GetChatListUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SendChatUseCase
-import com.clonect.feeltalk.presentation.service.FirebaseCloudMessagingService
 import com.clonect.feeltalk.presentation.service.notification_observer.FcmNewChatObserver
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,7 +32,7 @@ class ChatViewModel @Inject constructor(
     private val _userInfoState = MutableStateFlow(UserInfo(null, "", null, 0, ""))
     val userInfoState = _userInfoState.asStateFlow()
 
-    private val _questionState = MutableStateFlow(Question())
+    private val _questionState = MutableStateFlow(Question(""))
     val questionState = _questionState.asStateFlow()
 
     private val _chatListState = MutableStateFlow<List<Chat>>(emptyList())
@@ -50,7 +48,7 @@ class ChatViewModel @Inject constructor(
     init {
         savedStateHandle.get<Question>("selectedQuestion")?.let {
             _questionState.value = it
-            FeeltalkApp.setQuestionIdOfShowingChatFragment(it.id)
+            FeeltalkApp.setQuestionIdOfShowingChatFragment(it.question)
         }
         collectFcmNewChat()
         getChatList()
@@ -63,7 +61,7 @@ class ChatViewModel @Inject constructor(
 
         Chat(
             id = _chatListState.value.size.toLong(),
-            questionId = _questionState.value.id,
+            question = _questionState.value.question,
             ownerEmail = "mine",
             content = content,
             date = date
@@ -89,7 +87,7 @@ class ChatViewModel @Inject constructor(
     }
 
     private fun getChatList() = viewModelScope.launch(Dispatchers.IO) {
-        val questionId = _questionState.value.id
+        val questionId = _questionState.value.question
         getChatListUseCase(questionId).collect { result ->
             when (result) {
                 is Resource.Success -> updateChatList(result.data)
@@ -106,26 +104,26 @@ class ChatViewModel @Inject constructor(
         val currentQuestion = questionState.value
         val newList = mutableListOf<Chat>()
 
-        if (currentQuestion.myAnswer.isNotBlank()) {
+        if (!currentQuestion.myAnswer.isNullOrBlank()) {
             Chat(
                 id = 0L,
-                questionId = _questionState.value.id,
+                question = _questionState.value.question,
                 ownerEmail = "mine", // TODO 제대로된 정보로 변경
-                content = _questionState.value.myAnswer,
-                date = _questionState.value.myAnswerDate,
+                content = _questionState.value.myAnswer ?: "",
+                date = _questionState.value.myAnswerDate ?: "",
                 isAnswer = true
             ).also {
                 newList.add(it)
             }
         }
-        if (currentQuestion.partnerAnswer.isNotBlank()) {
+        if (!currentQuestion.partnerAnswer.isNullOrBlank()) {
             Chat(
                 id = 1L,
-                questionId = _questionState.value.id,
+                question = _questionState.value.question,
                 ownerEmail = "partner", // TODO 제대로된 정보로 변경
-                content = _questionState.value.partnerAnswer,
-                date = _questionState.value.partnerAnswerDate,
-                isAnswer = true
+                content = _questionState.value.partnerAnswer ?: "",
+                date = _questionState.value.partnerAnswerDate ?: "",
+                isAnswer = true,
             ).also {
                 newList.add(it)
             }

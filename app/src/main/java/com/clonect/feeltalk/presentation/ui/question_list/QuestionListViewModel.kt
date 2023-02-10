@@ -17,7 +17,7 @@ class QuestionListViewModel @Inject constructor(
     private val getQuestionListUseCase: GetQuestionListUseCase
 ) : ViewModel() {
 
-    private val _questionListState = MutableStateFlow(listOf(Question(id = -50505L)))
+    private val _questionListState = MutableStateFlow(listOf(Question(question = "", viewType = "header")))
     val questionListState: StateFlow<List<Question>> = _questionListState.asStateFlow()
 
     private val _listState = MutableStateFlow<Parcelable?>(null)
@@ -32,7 +32,10 @@ class QuestionListViewModel @Inject constructor(
             when (it) {
                 is Resource.Success -> {
                     val newList = it.data.toMutableList()
-                    newList.add(Question(id = -50505L))
+                    newList.add(Question(
+                        question = "",
+                        viewType = "header"
+                    ))
                     _questionListState.value = newList
                 }
                 is Resource.Error -> {}

@@ -132,9 +132,9 @@ class ChatFragment : Fragment() {
     private fun reassembleQuestionTitle(question: Question) {
         binding.layoutQuestionContent.removeAllViewsInLayout()
 
-        question.contentPrefix.reassembleTextView(R.layout.text_view_question_content_prefix)
-        question.content.reassembleTextView(R.layout.text_view_question_content)
-        question.contentSuffix.reassembleTextView(R.layout.text_view_question_content_suffix)
+//        question.contentPrefix.reassembleTextView(R.layout.text_view_question_content_prefix)
+        question.question.reassembleTextView(R.layout.text_view_question_content)
+//        question.contentSuffix.reassembleTextView(R.layout.text_view_question_content_suffix)
     }
 
     private fun String.reassembleTextView(@LayoutRes resource: Int) {

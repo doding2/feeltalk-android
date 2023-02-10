@@ -4,6 +4,7 @@ import com.clonect.feeltalk.domain.model.dto.common.StatusDto
 import com.clonect.feeltalk.domain.model.data.encryption.LoadPartnerPrivateKeyDto
 import com.clonect.feeltalk.domain.model.data.encryption.LoadPartnerPublicKeyDto
 import com.clonect.feeltalk.domain.model.dto.question.QuestionDto
+import com.clonect.feeltalk.domain.model.dto.question.SendQuestionDto
 import com.clonect.feeltalk.domain.model.dto.user.*
 import com.google.gson.JsonObject
 import retrofit2.Response
@@ -61,7 +62,7 @@ interface ClonectService {
     @POST("/api/chattingRoom")
     suspend fun sendQuestionAnswer(
         @Body body: JsonObject
-    ): Response<String>
+    ): Response<SendQuestionDto>
 
     // fcm
     @POST("/api/fcm/answerRequest")

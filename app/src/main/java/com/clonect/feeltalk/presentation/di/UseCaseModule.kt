@@ -2,20 +2,20 @@ package com.clonect.feeltalk.presentation.di
 
 import android.content.SharedPreferences
 import com.clonect.feeltalk.data.repository.notification.NotificationRepository
+import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
 import com.clonect.feeltalk.domain.repository.ChatRepository
 import com.clonect.feeltalk.domain.repository.EncryptionRepository
 import com.clonect.feeltalk.domain.repository.QuestionRepository
 import com.clonect.feeltalk.domain.repository.UserRepository
 import com.clonect.feeltalk.domain.usecase.*
+import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
+import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.chat.GetChatListUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SaveChatUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SendChatUseCase
 import com.clonect.feeltalk.domain.usecase.encryption.*
-import com.clonect.feeltalk.domain.usecase.notification.GetFcmTokenUseCase
-import com.clonect.feeltalk.domain.usecase.notification.SaveFcmTokenUseCase
 import com.clonect.feeltalk.domain.usecase.notification.SendFcmUseCase
 import com.clonect.feeltalk.domain.usecase.news.GetNewsListUseCase
-import com.clonect.feeltalk.domain.usecase.question.GetQuestionByIdUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetQuestionListUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionUseCase
 import com.clonect.feeltalk.domain.usecase.user.*
@@ -29,6 +29,27 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class UseCaseModule {
+
+    @Singleton
+    @Provides
+    fun providesGetAppSettingsUseCase(
+        @Named("AppSettings")
+        pref: SharedPreferences,
+        appLevelEncryptHelper: AppLevelEncryptHelper
+    ): GetAppSettingsUseCase {
+        return GetAppSettingsUseCase(pref, appLevelEncryptHelper)
+    }
+
+    @Singleton
+    @Provides
+    fun providesSaveAppSettingsUseCase(
+        @Named("AppSettings")
+        pref: SharedPreferences,
+        appLevelEncryptHelper: AppLevelEncryptHelper
+    ): SaveAppSettingsUseCase {
+        return SaveAppSettingsUseCase(pref, appLevelEncryptHelper)
+    }
+
 
     @Singleton
     @Provides
@@ -56,18 +77,6 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesSaveFcmTokenUseCase(@Named("FcmToken") fcmPref: SharedPreferences): SaveFcmTokenUseCase {
-        return SaveFcmTokenUseCase(fcmPref)
-    }
-
-    @Singleton
-    @Provides
-    fun providesGetFcmTokenUseCase(@Named("FcmToken") fcmPref: SharedPreferences): GetFcmTokenUseCase {
-        return GetFcmTokenUseCase(fcmPref)
-    }
-
-    @Singleton
-    @Provides
     fun providesSendFcmUseCase(notificationRepository: NotificationRepository): SendFcmUseCase {
         return SendFcmUseCase(notificationRepository)
     }
@@ -76,12 +85,6 @@ class UseCaseModule {
     @Provides
     fun providesSaveChatUseCase(chatRepository: ChatRepository): SaveChatUseCase {
         return SaveChatUseCase(chatRepository)
-    }
-
-    @Singleton
-    @Provides
-    fun providesGetQuestionByIdUseCase(): GetQuestionByIdUseCase {
-        return GetQuestionByIdUseCase()
     }
 
     @Singleton

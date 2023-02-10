@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.Flow
 
 class GetChatListUseCase(private val chatRepository: ChatRepository) {
 
-    operator fun invoke(questionId: Long): Flow<Resource<List<Chat>>> {
-        return chatRepository.getChatListByQuestionId(questionId)
+    operator fun invoke(questionContent: String): Flow<Resource<List<Chat>>> {
+        return chatRepository.getChatListByQuestion(questionContent)
     }
 
 }

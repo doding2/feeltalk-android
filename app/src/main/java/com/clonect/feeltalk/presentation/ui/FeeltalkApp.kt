@@ -32,7 +32,7 @@ class FeeltalkApp: Application() {
 
     companion object {
         private var isAppRunning = false
-        private var questionIdOfChatFragment: Long? = null
+        private var questionContentOfChatFragment: String? = null
 
         fun getAppRunning() = isAppRunning
 
@@ -44,10 +44,10 @@ class FeeltalkApp: Application() {
             isAppRunning = false
         }
 
-        fun getQuestionIdOfShowingChatFragment() = questionIdOfChatFragment
+        fun getQuestionIdOfShowingChatFragment() = questionContentOfChatFragment
 
-        fun setQuestionIdOfShowingChatFragment(questionId: Long?) {
-            questionIdOfChatFragment = questionId
+        fun setQuestionIdOfShowingChatFragment(questionContent: String?) {
+            questionContentOfChatFragment = questionContent
         }
     }
 }

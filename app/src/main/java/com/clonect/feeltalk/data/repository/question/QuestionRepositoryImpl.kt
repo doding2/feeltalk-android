@@ -19,11 +19,16 @@ class QuestionRepositoryImpl(
 
     override suspend fun getTodayQuestion(accessToken: String): Resource<Question> {
         try {
-            val cache = cacheDataSource.getTodayQuestion()
-            cache?.let { return Resource.Success(cache) }
-
             val format = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
             val date = format.format(Date())
+
+            val cache = cacheDataSource.getTodayQuestion()
+            cache?.let {
+                if (cache.questionDate != date)
+                    return@let
+                return Resource.Success(cache)
+            }
+
             val local = localDataSource.getTodayQuestion(date)
             local?.let {
                 cacheDataSource.saveTodayQuestion(local)
@@ -52,11 +57,12 @@ class QuestionRepositoryImpl(
         return try {
             val response = remoteDataSource.sendQuestionAnswer(
                 accessToken = accessToken,
-                question = question.content,
-                answer = question.myAnswer,
+                question = question.question,
+                answer = question.myAnswer!!,
             )
 
             // TODO 변경내역 캐시랑 로컬에도 업데이트
+            localDataSource.saveOneQuestion(question)
 
             Resource.Success(response.body()!!.status)
         } catch (e: CancellationException) {

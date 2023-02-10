@@ -10,7 +10,7 @@ class ChatRemoteDataSourceImpl(
 ): ChatRemoteDataSource {
 
     // TODO 서버랑 연결하기
-    override suspend fun getChatListByQuestionId(questionId: Long): Response<List<Chat>> {
+    override suspend fun getChatListByQuestion(questionContent: String): Response<List<Chat>> {
         throw Exception("아직 서버 기능을 안 만들었음")
     }
 

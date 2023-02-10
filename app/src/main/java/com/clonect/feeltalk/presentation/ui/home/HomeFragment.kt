@@ -72,7 +72,7 @@ class HomeFragment : Fragment() {
             }
 
             cvPartnerEmotion.setOnClickListener {
-                viewModel.sendNotification()
+                // TODO 5번 클릭하면 감정 물어봄
             }
         }
     }

@@ -7,10 +7,8 @@ import com.clonect.feeltalk.data.repository.chat.datasource.ChatRemoteDataSource
 import com.clonect.feeltalk.domain.model.data.chat.Chat
 import com.clonect.feeltalk.domain.repository.ChatRepository
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 
 class ChatRepositoryImpl(
@@ -19,14 +17,14 @@ class ChatRepositoryImpl(
     private val cacheDataSource: ChatCacheDataSource
 ): ChatRepository {
 
-    override fun getChatListByQuestionId(questionId: Long): Flow<Resource<List<Chat>>> = flow {
-        val cache = getChatListFromCache(questionId)
+    override fun getChatListByQuestion(questionContent: String): Flow<Resource<List<Chat>>> = flow {
+        val cache = getChatListFromCache(questionContent)
         emit(cache)
 
-        val localFlow = getChatListFlowFromDB(questionId)
+        val localFlow = getChatListFlowFromDB(questionContent)
         if (localFlow is Resource.Success) {
             localFlow.data.collect {
-                cacheDataSource.saveChatListToCacheByQuestionId(questionId, it)
+                cacheDataSource.saveChatListToCacheByQuestion(questionContent, it)
                 emit(Resource.Success(it))
             }
         }
@@ -37,10 +35,10 @@ class ChatRepositoryImpl(
             emit(Resource.Loading(localFlow.isLoading))
         }
 
-        val remote = getChatListFromServer(questionId)
+        val remote = getChatListFromServer(questionContent)
         if (remote is Resource.Success) {
-            saveChatListToDB(questionId, remote.data)
-            cacheDataSource.saveChatListToCacheByQuestionId(questionId, remote.data)
+            saveChatListToDB(questionContent, remote.data)
+            cacheDataSource.saveChatListToCacheByQuestion(questionContent, remote.data)
         }
         emit(remote)
     }
@@ -72,8 +70,8 @@ class ChatRepositoryImpl(
 
 
 
-    private suspend fun saveChatListToDB(questionId: Long, newList: List<Chat>) {
-        val oldList = localDataSource.getChatListByQuestionId(questionId)
+    private suspend fun saveChatListToDB(questionContent: String, newList: List<Chat>) {
+        val oldList = localDataSource.getChatListByQuestion(questionContent)
         newList.forEach {
             val isNewChat = !oldList.contains(it)
             if (isNewChat) {
@@ -95,9 +93,9 @@ class ChatRepositoryImpl(
         }
     }
 
-    private fun getChatListFromCache(questionId: Long): Resource<List<Chat>> {
+    private fun getChatListFromCache(questionContent: String): Resource<List<Chat>> {
         return try {
-            val chatList = cacheDataSource.getChatListByQuestionId(questionId)
+            val chatList = cacheDataSource.getChatListByQuestion(questionContent)
                 ?: throw NullPointerException("Chat list is not saved at cache yet.")
             Resource.Success(chatList)
         } catch (e: Exception) {
@@ -105,18 +103,18 @@ class ChatRepositoryImpl(
         }
     }
 
-    private fun getChatListFlowFromDB(questionId: Long): Resource<Flow<List<Chat>>> {
+    private fun getChatListFlowFromDB(questionString: String): Resource<Flow<List<Chat>>> {
         return try {
-            val chatList = localDataSource.getChatListFlowByQuestionId(questionId)
+            val chatList = localDataSource.getChatListFlowByQuestion(questionString)
             Resource.Success(chatList)
         } catch (e: Exception) {
             Resource.Error(e)
         }
     }
 
-    private suspend fun getChatListFromServer(questionId: Long): Resource<List<Chat>> {
+    private suspend fun getChatListFromServer(questionString: String): Resource<List<Chat>> {
         return try {
-            val response = remoteDataSource.getChatListByQuestionId(questionId)
+            val response = remoteDataSource.getChatListByQuestion(questionString)
             if (!response.isSuccessful) throw HttpException(response)
             if (response.body() == null) throw NullPointerException("Response body from server is null.")
             Resource.Success(response.body()!!)
