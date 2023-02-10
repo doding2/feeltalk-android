@@ -24,6 +24,11 @@ interface ClonectService {
         @Path("accessToken") accessToken: String
     ): Response<UserInfoDto>
 
+    @GET("api/couple/partner/{accessToken}")
+    suspend fun getPartnerInfo(
+        @Path("accessToken") accessToken: String
+    ): Response<AccessTokenDto>
+
     @GET("api/isMemberAdditional/{accessToken}")
     suspend fun checkUserInfoIsEntered(
         @Path("accessToken") accessToken: String

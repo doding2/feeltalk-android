@@ -2,6 +2,7 @@ package com.clonect.feeltalk.data.repository.question.datasourceImpl
 
 import com.clonect.feeltalk.data.api.ClonectService
 import com.clonect.feeltalk.data.repository.question.datasource.QuestionRemoteDataSource
+import com.clonect.feeltalk.domain.model.dto.common.StatusDto
 import com.clonect.feeltalk.domain.model.dto.question.QuestionDto
 import com.google.gson.JsonObject
 import retrofit2.HttpException
@@ -17,5 +18,13 @@ class QuestionRemoteDataSourceImpl(
         if (!response.isSuccessful) throw HttpException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
+    }
+
+    override suspend fun sendQuestionAnswer(
+        accessToken: String,
+        question: String,
+        answer: String,
+    ): Response<StatusDto> {
+        TODO("Not yet implemented")
     }
 }

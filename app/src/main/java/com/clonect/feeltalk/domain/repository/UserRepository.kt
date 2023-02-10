@@ -12,6 +12,7 @@ interface UserRepository {
 
     suspend fun getAccessToken(): Resource<String>
     suspend fun getUserInfo(): Resource<UserInfo>
+    suspend fun getPartnerInfo(): Resource<UserInfo>
 
     suspend fun checkUserInfoIsEntered(): Resource<Boolean>
     suspend fun updateUserInfo(nickname: String, age: Long, birthDate: String, anniversary: String): Resource<StatusDto>

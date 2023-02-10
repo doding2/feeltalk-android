@@ -10,7 +10,6 @@ import com.clonect.feeltalk.domain.usecase.*
 import com.clonect.feeltalk.domain.usecase.chat.GetChatListUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SaveChatUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SendChatUseCase
-import com.clonect.feeltalk.domain.usecase.emotion.GetPartnerEmotionUseCase
 import com.clonect.feeltalk.domain.usecase.encryption.*
 import com.clonect.feeltalk.domain.usecase.notification.GetFcmTokenUseCase
 import com.clonect.feeltalk.domain.usecase.notification.SaveFcmTokenUseCase
@@ -47,12 +46,6 @@ class UseCaseModule {
     @Provides
     fun providesGetNewsListUseCase(): GetNewsListUseCase {
         return GetNewsListUseCase()
-    }
-
-    @Singleton
-    @Provides
-    fun providesGetPartnerEmotionUseCase(): GetPartnerEmotionUseCase {
-        return GetPartnerEmotionUseCase()
     }
 
     @Singleton
@@ -185,5 +178,11 @@ class UseCaseModule {
     @Provides
     fun providesUpdateMyEmotionUseCase(userRepository: UserRepository): UpdateMyEmotionUseCase {
         return UpdateMyEmotionUseCase(userRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetPartnerInfoUseCase(userRepository: UserRepository): GetPartnerInfoUseCase {
+        return GetPartnerInfoUseCase(userRepository)
     }
 }

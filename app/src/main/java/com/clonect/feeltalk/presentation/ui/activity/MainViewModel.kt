@@ -3,12 +3,10 @@ package com.clonect.feeltalk.presentation.ui.activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.domain.usecase.user.AutoLogInWithGoogleUseCase
-import com.clonect.feeltalk.domain.usecase.user.CheckUserInfoIsEnteredUseCase
-import com.clonect.feeltalk.domain.usecase.user.CheckUserIsCoupleUseCase
-import com.clonect.feeltalk.domain.usecase.user.GetUserInfoUseCase
+import com.clonect.feeltalk.domain.usecase.user.*
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,6 +19,7 @@ class MainViewModel @Inject constructor(
     private val checkUserInfoIsEnteredUseCase: CheckUserInfoIsEnteredUseCase,
     private val checkUserIsCoupleUseCase: CheckUserIsCoupleUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
+    private val getPartnerInfoUseCase: GetPartnerInfoUseCase,
 ) : ViewModel() {
 
     private val _isReady = MutableStateFlow(false)
@@ -42,7 +41,7 @@ class MainViewModel @Inject constructor(
 
 
     fun autoGoogleLogIn() = viewModelScope.launch(Dispatchers.IO) {
-        when (val result = autoLogInWithGoogleUseCase()) {
+        when (autoLogInWithGoogleUseCase()) {
             is Resource.Success -> {
                 _isLoggedIn.value = true
                 checkUserInfoIsEntered()
@@ -68,6 +67,16 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    private fun getPartnerInfo() = CoroutineScope(Dispatchers.IO).launch {
+        val result = getPartnerInfoUseCase()
+        if (result is Resource.Success) {
+            infoLog("Success to get partner info: ${result.data}")
+        }
+        if (result is Resource.Error) {
+            infoLog("Fail to get partner info: ${result.throwable}")
+        }
+    }
+
 
     private fun checkUserInfoIsEntered()= viewModelScope.launch(Dispatchers.IO) {
         val result = checkUserInfoIsEnteredUseCase()
@@ -86,11 +95,21 @@ class MainViewModel @Inject constructor(
     }
 
     private fun checkUserIsCouple()= viewModelScope.launch(Dispatchers.IO) {
-        when (val result = checkUserIsCoupleUseCase()) {
-            is Resource.Success -> _isUserCouple.value = result.data.isMatch
-            else -> _isUserCouple.value = false
+        val isUserCouple = when (val result = checkUserIsCoupleUseCase()) {
+            is Resource.Success -> {
+                _isUserCouple.value = result.data.isMatch
+                result.data.isMatch
+            }
+            else -> {
+                _isUserCouple.value = false
+                false
+            }
         }
-        infoLog("Is user couple: ${_isUserCouple.value}")
+        infoLog("Is user couple: $isUserCouple")
+
+        if (isUserCouple) {
+            getPartnerInfo()
+        }
         setReady()
     }
 

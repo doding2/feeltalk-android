@@ -75,7 +75,7 @@ class EncryptionRepositoryImpl(
             val response = remoteSource.loadPartnerPublicKey(accessToken)
 
             val publicKeyString = response.body()!!.publicKey
-            if (tryCount >= 5) {
+            if (tryCount >= 10) {
                 tryCount = 0
                 throw NullPointerException("Response body from server is null.")
             }
@@ -131,7 +131,7 @@ class EncryptionRepositoryImpl(
             val response = remoteSource.loadPartnerPrivateKey(accessToken)
 
             val privateKeyString = response.body()!!.privateKey
-            if (tryCount >= 5) {
+            if (tryCount >= 10) {
                 tryCount = 0
                 throw NullPointerException("Response body from server is null.")
             }

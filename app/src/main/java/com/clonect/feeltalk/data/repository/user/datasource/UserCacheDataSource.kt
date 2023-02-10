@@ -6,6 +6,9 @@ interface UserCacheDataSource {
     fun getUserInfo(): UserInfo?
     fun saveUserInfoToCache(userInfo: UserInfo)
 
+    fun getPartnerInfo(): UserInfo?
+    fun savePartnerInfoToCache(userInfo: UserInfo)
+
     fun getAccessToken(): String?
     fun saveAccessTokenToCache(accessToken: String)
 

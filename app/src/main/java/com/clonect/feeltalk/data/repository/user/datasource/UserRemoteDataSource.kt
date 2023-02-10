@@ -11,6 +11,8 @@ import retrofit2.Response
 
 interface UserRemoteDataSource {
     suspend fun getUserInfo(accessToken: String): Response<UserInfoDto>
+    suspend fun getPartnerInfo(accessToken: String): Response<AccessTokenDto>
+
     suspend fun checkUserIsCouple(accessToken: String): Response<CoupleCheckDto>
     suspend fun checkUserInfoIsEntered(accessToken: String): Response<JsonObject>
 

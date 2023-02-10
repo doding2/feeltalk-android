@@ -31,7 +31,10 @@ class QuestionRepositoryImpl(
             }
 
             val remoteQuestionDto = remoteDataSource.getTodayQuestion(accessToken).body()!!
-            val remoteQuestion = remoteQuestionDto.toQuestion()
+            val remoteQuestion = remoteQuestionDto.toQuestion().apply {
+                questionDate = date
+            }
+            localDataSource.saveOneQuestion(remoteQuestion)
             cacheDataSource.saveTodayQuestion(remoteQuestion)
             return Resource.Success(remoteQuestion)
         } catch (e: CancellationException) {
@@ -41,4 +44,25 @@ class QuestionRepositoryImpl(
         }
     }
 
+
+    override suspend fun sendQuestionAnswer(
+        accessToken: String,
+        question: Question,
+    ): Resource<String> {
+        return try {
+            val response = remoteDataSource.sendQuestionAnswer(
+                accessToken = accessToken,
+                question = question.content,
+                answer = question.myAnswer,
+            )
+
+            // TODO 변경내역 캐시랑 로컬에도 업데이트
+
+            Resource.Success(response.body()!!.status)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
 }

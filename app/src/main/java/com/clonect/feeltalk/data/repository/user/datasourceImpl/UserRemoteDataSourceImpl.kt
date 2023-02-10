@@ -25,6 +25,14 @@ class UserRemoteDataSourceImpl(
         return response
     }
 
+    override suspend fun getPartnerInfo(accessToken: String): Response<AccessTokenDto> {
+        val response = clonectService.getPartnerInfo(accessToken)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
+
+
     override suspend fun checkUserIsCouple(accessToken: String): Response<CoupleCheckDto> {
         val response =  clonectService.checkUserIsCouple(accessToken)
         if (!response.isSuccessful) throw HttpException(response)

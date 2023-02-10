@@ -52,6 +52,29 @@ class UserRepositoryImpl(
         return remote
     }
 
+    override suspend fun getPartnerInfo(): Resource<UserInfo> {
+        try {
+            val accessToken = cacheDataSource.getAccessToken()
+                ?: localDataSource.getAccessToken()
+                ?: throw NullPointerException("User is Not logged in.")
+
+            val cache = cacheDataSource.getPartnerInfo()
+            cache?.let { return Resource.Success(cache) }
+
+            val partnerAccessToken = remoteDataSource.getPartnerInfo(accessToken).body()!!.accessToken
+            val partnerInfo = remoteDataSource.getUserInfo(partnerAccessToken).body()!!.toUserInfo()
+
+            cacheDataSource.savePartnerInfoToCache(partnerInfo)
+            return Resource.Success(partnerInfo)
+
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            return Resource.Error(e)
+        }
+    }
+
+
     override suspend fun checkUserInfoIsEntered(): Resource<Boolean> {
         return try {
             val accessToken = cacheDataSource.getAccessToken()

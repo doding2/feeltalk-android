@@ -1,6 +1,7 @@
 package com.clonect.feeltalk.presentation.ui.couple_registration
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.ClipData
 import android.content.Context
 import android.os.Bundle
@@ -21,6 +22,7 @@ import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentCoupleRegistrationBinding
 import com.clonect.feeltalk.presentation.utils.addTextGradient
+import com.clonect.feeltalk.presentation.utils.makeLoadingDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -31,18 +33,21 @@ class CoupleRegistrationFragment : Fragment() {
     private lateinit var binding: FragmentCoupleRegistrationBinding
     private val viewModel: CoupleRegistrationViewModel by viewModels()
     private lateinit var onBackCallback: OnBackPressedCallback
+    private lateinit var loadingDialog: Dialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentCoupleRegistrationBinding.inflate(inflater, container, false)
+        loadingDialog = makeLoadingDialog()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        collectIsLoading()
         collectMyCoupleCode()
         collectIsCoupleRegistrationCompleted()
         initPartnerCoupleCodeValue()
@@ -69,11 +74,9 @@ class CoupleRegistrationFragment : Fragment() {
     }
 
     private fun sendPartnerCode() = lifecycleScope.launch {
-        repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.sendPartnerCode()
-            binding.btnNext.isEnabled = false
-        }
+        viewModel.sendPartnerCode()
     }
+
 
     private fun navigateCoupleRegistrationDonePage() {
         findNavController().navigate(R.id.action_coupleRegistrationFragment_to_coupleRegistrationDoneFragment)
@@ -86,6 +89,19 @@ class CoupleRegistrationFragment : Fragment() {
         val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
         val clip = ClipData.newPlainText("초대코드", text)
         clipboard.setPrimaryClip(clip)
+    }
+
+
+    private fun collectIsLoading() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.isLoading.collectLatest {
+                if (it) {
+                    loadingDialog.show()
+                } else {
+                    loadingDialog.dismiss()
+                }
+            }
+        }
     }
 
     private fun collectMyCoupleCode() = lifecycleScope.launch {
@@ -102,7 +118,6 @@ class CoupleRegistrationFragment : Fragment() {
                 if (isCompleted) {
                     viewModel.exchangeKeyPair()
                 }
-                binding.btnNext.isEnabled = true
             }
         }
     }

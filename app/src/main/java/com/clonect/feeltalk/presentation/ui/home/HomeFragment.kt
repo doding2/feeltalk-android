@@ -10,6 +10,7 @@ import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -19,11 +20,11 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentHomeBinding
 import com.clonect.feeltalk.domain.model.data.user.Emotion
 import com.clonect.feeltalk.presentation.utils.addTextGradient
+import com.clonect.feeltalk.presentation.utils.infoLog
 import com.clonect.feeltalk.presentation.utils.showMyEmotionChangerDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -43,8 +44,9 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        collectTodayQuestion()
         collectUserInfo()
-        collectPartnerEmotion()
+        collectPartnerInfo()
 
         binding.apply {
 
@@ -75,6 +77,16 @@ class HomeFragment : Fragment() {
     }
 
 
+    private fun collectTodayQuestion() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.todayQuestion.collectLatest {
+                if (it != null) {
+                    infoLog("question: $it")
+                }
+            }
+        }
+    }
+
     private fun collectUserInfo() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.userInfo.collectLatest {
@@ -85,11 +97,12 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun collectPartnerEmotion() = lifecycleScope.launch {
+    private fun collectPartnerInfo() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.partnerEmotionState.collectLatest {
-                binding.ivPartnerEmotion.setEmotion(it)
-                binding.cvPartnerEmotion.setEmotionBackground(it)
+            viewModel.partnerInfo.collectLatest {
+                binding.textPartnerName.text = it.nickname
+                binding.ivPartnerEmotion.setEmotion(it.emotion)
+                binding.cvPartnerEmotion.setEmotionBackground(it.emotion)
             }
         }
     }
@@ -130,10 +143,13 @@ class HomeFragment : Fragment() {
     }
 
     private fun navigateToTodayQuestionPage() {
+        val bundle = bundleOf(
+            "selectedQuestion" to viewModel.todayQuestion.value
+        )
         requireParentFragment()
             .requireParentFragment()
             .findNavController()
-            .navigate(R.id.action_bottomNavigationFragment_to_todayQuestionFragment)
+            .navigate(R.id.action_bottomNavigationFragment_to_todayQuestionFragment, bundle)
     }
 
     override fun onAttach(context: Context) {

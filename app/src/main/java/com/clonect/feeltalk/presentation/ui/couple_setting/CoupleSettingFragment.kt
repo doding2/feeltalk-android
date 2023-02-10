@@ -49,6 +49,16 @@ class CoupleSettingFragment : Fragment() {
         }
     }
 
+    private fun collectPartnerInfo() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.partnerInfo.collectLatest {
+                binding.textPartnerName.text = it.nickname
+                binding.textPartnerBirthDate.text = it.birth
+            }
+        }
+    }
+
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         onBackCallback = object: OnBackPressedCallback(true) {

@@ -11,7 +11,7 @@ fun QuestionDto.toQuestion(): Question {
 
     return Question(
         contentPrefix = "",
-        content = question,
+        content = todayQuestion,
         contentSuffix = "",
         questionDate = date,
         myAnswer = "",

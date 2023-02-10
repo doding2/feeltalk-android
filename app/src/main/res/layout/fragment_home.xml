@@ -146,7 +146,7 @@
                         app:layout_constraintEnd_toStartOf="@+id/iv_emotion_heart"
                         android:layout_marginEnd="-17dp"
                         app:cardElevation="0dp"
-                        app:cardCornerRadius="157dp"
+                        app:cardCornerRadius="100dp"
                         app:cardBackgroundColor="@color/emotion_happy_color">
 
                         <ImageView
@@ -188,7 +188,7 @@
                         app:layout_constraintStart_toEndOf="@id/iv_emotion_heart"
                         android:layout_marginStart="-17dp"
                         app:cardElevation="0dp"
-                        app:cardCornerRadius="157dp"
+                        app:cardCornerRadius="100dp"
                         app:cardBackgroundColor="@color/emotion_puzzling_color">
 
                         <ImageView

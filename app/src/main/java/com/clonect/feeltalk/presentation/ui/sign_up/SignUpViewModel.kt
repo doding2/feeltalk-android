@@ -57,7 +57,7 @@ class SignUpViewModel @Inject constructor(
                     _isSignUpSuccessful.value = true
                     infoLog("Success to sign up")
                 }
-                if (dto.annotation == "login") {
+                if (dto.annotation == "login" || dto.annotation == "login_noCouple") {
                     checkUserInfoIsEntered()
                     infoLog("Success to log in")
                 }
