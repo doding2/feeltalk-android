@@ -23,7 +23,7 @@ interface UserRepository {
     suspend fun updateMyEmotion(emotion: String): Resource<StatusDto>
 
     suspend fun checkUserInCouple(): Resource<CoupleCheckDto>
-    suspend fun getCoupleRegistrationCode(): Resource<String>
+    suspend fun getCoupleRegistrationCode(withCache: Boolean): Resource<String>
     suspend fun removeCoupleRegistrationCode()
     suspend fun sendPartnerCoupleRegistrationCode(partnerCode: String): Resource<PartnerCodeCheckDto>
 

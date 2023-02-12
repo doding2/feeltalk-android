@@ -7,10 +7,7 @@ import com.clonect.feeltalk.domain.usecase.encryption.LoadPartnerPrivateKeyUseCa
 import com.clonect.feeltalk.domain.usecase.encryption.LoadPartnerPublicKeyUseCase
 import com.clonect.feeltalk.domain.usecase.encryption.UploadMyPrivateKeyUseCase
 import com.clonect.feeltalk.domain.usecase.encryption.UploadMyPublicKeyUseCase
-import com.clonect.feeltalk.domain.usecase.user.GetCoupleRegistrationCodeUseCase
-import com.clonect.feeltalk.domain.usecase.user.GetPartnerInfoUseCase
-import com.clonect.feeltalk.domain.usecase.user.RemoveCoupleRegistrationCodeUseCase
-import com.clonect.feeltalk.domain.usecase.user.SendPartnerCoupleRegistrationCodeUseCase
+import com.clonect.feeltalk.domain.usecase.user.*
 import com.clonect.feeltalk.presentation.service.notification_observer.CoupleRegistrationObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,6 +26,7 @@ class CoupleRegistrationViewModel @Inject constructor(
     private val uploadMyPrivateKeyUseCase: UploadMyPrivateKeyUseCase,
     private val loadPartnerPrivateKeyUseCase: LoadPartnerPrivateKeyUseCase,
     private val getPartnerInfoUseCase: GetPartnerInfoUseCase,
+    private val breakUpCoupleUseCase: BreakUpCoupleUseCase,
 ) : ViewModel() {
 
     private val _toastMessage = MutableSharedFlow<String>()
@@ -113,6 +111,8 @@ class CoupleRegistrationViewModel @Inject constructor(
         if (myPublicKeyResult is Resource.Error) {
             sendToast("Fail to upload MyPublicKey : ${myPublicKeyResult.throwable.localizedMessage}")
             infoLog("Fail to upload MyPublicKey : ${myPublicKeyResult.throwable.localizedMessage}")
+            breakUpCouple()
+            reloadCoupleRegistrationCode()
             _isLoading.value = false
             return@launch
         }
@@ -121,6 +121,8 @@ class CoupleRegistrationViewModel @Inject constructor(
         if (partnerPublicKeyResult is Resource.Error) {
             sendToast("Fail to load PartnerPublicKey : ${partnerPublicKeyResult.throwable.localizedMessage}")
             infoLog("Fail to load PartnerPublicKey : ${partnerPublicKeyResult.throwable.localizedMessage}")
+            breakUpCouple()
+            reloadCoupleRegistrationCode()
             _isLoading.value = false
             return@launch
         }
@@ -129,6 +131,8 @@ class CoupleRegistrationViewModel @Inject constructor(
         if (myPrivateKeyResult is Resource.Error) {
             sendToast("Fail to upload MyPrivateKey : ${myPrivateKeyResult.throwable.localizedMessage}")
             infoLog("Fail to upload MyPrivateKey : ${myPrivateKeyResult.throwable.localizedMessage}")
+            breakUpCouple()
+            reloadCoupleRegistrationCode()
             _isLoading.value = false
             return@launch
         }
@@ -137,6 +141,8 @@ class CoupleRegistrationViewModel @Inject constructor(
         if (partnerPrivateKeyResult is Resource.Error) {
             sendToast("Fail to load PartnerPrivateKey : ${partnerPrivateKeyResult.throwable.localizedMessage}")
             infoLog("Fail to load PartnerPrivateKey : ${partnerPrivateKeyResult.throwable.localizedMessage}")
+            breakUpCouple()
+            reloadCoupleRegistrationCode()
             _isLoading.value = false
             return@launch
         }
@@ -149,6 +155,40 @@ class CoupleRegistrationViewModel @Inject constructor(
         _isLoading.value = false
         _isKeyPairExchangingCompleted.value = true
     }
+
+    private suspend fun breakUpCouple() {
+        val result = breakUpCoupleUseCase()
+        when (result) {
+            is Resource.Success -> {
+                infoLog("Success to break up couple caused by Fail To Exchange KeyPair")
+            }
+            is Resource.Error -> {
+                infoLog("Fail to break up couple caused by Fail To Exchange KeyPair: ${result.throwable.localizedMessage}")
+            }
+            else -> {
+                infoLog("Fail to break up couple caused by Fail To Exchange KeyPair")
+            }
+        }
+    }
+
+    private suspend fun reloadCoupleRegistrationCode() {
+        val result = getCoupleRegistrationCodeUseCase(withCache = false)
+        when (result) {
+            is Resource.Success -> {
+                _myCoupleCode.value = result.data
+                infoLog("Success to reload couple registration code: ${result.data}")
+            }
+            is Resource.Error -> {
+                _myCoupleCode.value = ""
+                infoLog("Fail to reload couple registration code: ${result.throwable.localizedMessage}")
+            }
+            else -> {
+                _myCoupleCode.value = ""
+                infoLog("Fail to reload couple registration code")
+            }
+        }
+    }
+
 
     fun setPartnerCodeInput(input: String) {
         _partnerCoupleCodeInput.value = input

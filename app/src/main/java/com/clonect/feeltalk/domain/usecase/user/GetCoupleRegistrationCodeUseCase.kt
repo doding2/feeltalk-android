@@ -5,8 +5,8 @@ import com.clonect.feeltalk.domain.repository.UserRepository
 
 class GetCoupleRegistrationCodeUseCase(private val userRepository: UserRepository) {
 
-    suspend operator fun invoke(): Resource<String> {
-        return userRepository.getCoupleRegistrationCode()
+    suspend operator fun invoke(withCache: Boolean = true): Resource<String> {
+        return userRepository.getCoupleRegistrationCode(withCache)
     }
 
 }

@@ -215,10 +215,10 @@ class UserRepositoryImpl(
         }
     }
 
-    override suspend fun getCoupleRegistrationCode(): Resource<String> {
+    override suspend fun getCoupleRegistrationCode(withCache: Boolean): Resource<String> {
         try {
             val cache = cacheDataSource.getCoupleRegistrationCode()
-            if (cache != null)
+            if (cache != null && withCache)
                 return Resource.Success(cache)
 
             val accessToken = cacheDataSource.getAccessToken()
