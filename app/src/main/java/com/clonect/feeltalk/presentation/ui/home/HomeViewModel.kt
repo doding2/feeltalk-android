@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
+import kotlin.math.ceil
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -143,14 +144,8 @@ class HomeViewModel @Inject constructor(
         try {
             val format = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
             val anniversaryDate = format.parse(date) ?: return 0
-            val anniversaryCalendar = Calendar.getInstance(Locale.getDefault()).apply {
-                time = anniversaryDate
-            }
-
-            val anniversaryDay = anniversaryCalendar.timeInMillis / Constants.ONE_DAY
-            val nowDay = Calendar.getInstance(Locale.getDefault()).timeInMillis / Constants.ONE_DAY
-
-            return nowDay - anniversaryDay
+            val ddayPoint = (Date().time - anniversaryDate.time).toDouble() / Constants.ONE_DAY
+            return ceil(ddayPoint).toLong()
         } catch (e: Exception) {
             return 0
         }

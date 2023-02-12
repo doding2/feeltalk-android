@@ -4,12 +4,12 @@ import android.Manifest
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.ceil
 
 @AndroidEntryPoint
 class SettingFragment : Fragment() {
@@ -88,14 +89,8 @@ class SettingFragment : Fragment() {
         try {
             val format = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
             val anniversaryDate = format.parse(date) ?: return "0"
-            val anniversaryCalendar = Calendar.getInstance(Locale.getDefault()).apply {
-                time = anniversaryDate
-            }
-
-            val anniversaryDay = anniversaryCalendar.timeInMillis / Constants.ONE_DAY
-            val nowDay = Calendar.getInstance(Locale.getDefault()).timeInMillis / Constants.ONE_DAY
-
-            return (nowDay - anniversaryDay).toString()
+            val ddayPoint = (Date().time - anniversaryDate.time).toDouble() / Constants.ONE_DAY
+            return ceil(ddayPoint).toLong().toString()
         } catch (e: Exception) {
             return "0"
         }

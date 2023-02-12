@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.ceil
 
 @AndroidEntryPoint
 class CoupleSettingFragment : Fragment() {
@@ -101,14 +102,8 @@ class CoupleSettingFragment : Fragment() {
         try {
             val format = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
             val anniversaryDate = format.parse(date) ?: return "0"
-            val anniversaryCalendar = Calendar.getInstance(Locale.getDefault()).apply {
-                time = anniversaryDate
-            }
-
-            val anniversaryDay = anniversaryCalendar.timeInMillis / Constants.ONE_DAY
-            val nowDay = Calendar.getInstance(Locale.getDefault()).timeInMillis / Constants.ONE_DAY
-
-            return (nowDay - anniversaryDay).toString()
+            val ddayPoint = (Date().time - anniversaryDate.time).toDouble() / Constants.ONE_DAY
+            return ceil(ddayPoint).toLong().toString()
         } catch (e: Exception) {
             return "0"
         }
