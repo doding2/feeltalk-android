@@ -50,7 +50,7 @@ class HomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-//            testUseCase()
+            testUseCase()
         }
         getUserInfo()
         getPartnerInfo()
@@ -107,8 +107,14 @@ class HomeViewModel @Inject constructor(
                 getTodayQuestionAnswer()
                 infoLog("Today Question: ${_todayQuestion.value}")
             }
-            is Resource.Error -> infoLog("Fail to load today question: ${result.throwable.localizedMessage}")
-            is Resource.Loading -> infoLog("Fail to load today question")
+            is Resource.Error -> {
+                _todayQuestion.value = Question("")
+                infoLog("Fail to load today question: ${result.throwable.localizedMessage}")
+            }
+            is Resource.Loading -> {
+                _todayQuestion.value = Question("")
+                infoLog("Fail to load today question")
+            }
         }
     }
 

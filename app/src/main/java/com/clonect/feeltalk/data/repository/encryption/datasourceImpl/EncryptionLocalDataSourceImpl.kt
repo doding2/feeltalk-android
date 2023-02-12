@@ -60,8 +60,7 @@ class EncryptionLocalDataSourceImpl(
     override suspend fun saveMyPublicKeyToDatabase(publicKey: PublicKey) {
         val myPublicKeyFile = File(context.filesDir, "my_public_key.txt")
         myPublicKeyFile.bufferedWriter().use {
-            val keyBytes = Base64.encode(publicKey.encoded, Base64.NO_WRAP)
-            val keyString = String(keyBytes)
+            val keyString = Base64.encodeToString(publicKey.encoded, Base64.NO_WRAP)
             val encrypted = appLevelEncryptHelper.encrypt("myPublicKey", keyString)
             it.write(encrypted)
         }
@@ -70,8 +69,7 @@ class EncryptionLocalDataSourceImpl(
     override suspend fun saveMyPrivateKeyToDatabase(privateKey: PrivateKey) {
         val myPrivateKeyFile = File(context.filesDir, "my_private_key.txt")
         myPrivateKeyFile.bufferedWriter().use {
-            val keyBytes = Base64.encode(privateKey.encoded, Base64.NO_WRAP)
-            val keyString = String(keyBytes)
+            val keyString = Base64.encodeToString(privateKey.encoded, Base64.NO_WRAP)
             val encrypted = appLevelEncryptHelper.encrypt("myPrivateKey", keyString)
             it.write(encrypted)
         }
@@ -108,8 +106,7 @@ class EncryptionLocalDataSourceImpl(
     override suspend fun savePartnerPublicKeyToDatabase(publicKey: PublicKey) {
         val partnerPublicKeyFile = File(context.filesDir, "partner_public_key.txt")
         partnerPublicKeyFile.bufferedWriter().use {
-            val keyBytes = Base64.encode(publicKey.encoded, Base64.NO_WRAP)
-            val keyString = String(keyBytes)
+            val keyString = Base64.encodeToString(publicKey.encoded, Base64.NO_WRAP)
             val encrypted = appLevelEncryptHelper.encrypt("partnerPublicKey", keyString)
             it.write(encrypted)
         }
@@ -118,8 +115,7 @@ class EncryptionLocalDataSourceImpl(
     override suspend fun savePartnerPrivateKeyToDatabase(privateKey: PrivateKey) {
         val partnerPrivateKeyFile = File(context.filesDir, "partner_private_key.txt")
         partnerPrivateKeyFile.bufferedWriter().use {
-            val keyBytes = Base64.encode(privateKey.encoded, Base64.NO_WRAP)
-            val keyString = String(keyBytes)
+            val keyString = Base64.encodeToString(privateKey.encoded, Base64.NO_WRAP)
             val encrypted = appLevelEncryptHelper.encrypt("partnerPrivateKey", keyString)
             it.write(encrypted)
         }

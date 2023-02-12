@@ -2,6 +2,7 @@ package com.clonect.feeltalk.data.utils
 
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.repository.EncryptionRepository
+import com.clonect.feeltalk.presentation.utils.infoLog
 
 class UserLevelEncryptHelper(
     private val encryptRepository: EncryptionRepository
@@ -9,7 +10,10 @@ class UserLevelEncryptHelper(
     suspend fun encryptMyText(message: String): String {
         val encrypted = encryptRepository.encryptMyText(message)
         when (encrypted) {
-            is Resource.Success -> return encrypted.data
+            is Resource.Success -> {
+                infoLog("User Level Encryption: ${message} -> ${encrypted.data}")
+                return encrypted.data
+            }
             is Resource.Error -> throw encrypted.throwable
             is Resource.Loading -> throw IllegalStateException("Unexpected Error Occurred.")
         }
@@ -17,9 +21,12 @@ class UserLevelEncryptHelper(
 
     suspend fun decryptMyText(digest: String): String {
         val decrypted = encryptRepository.decryptMyText(digest)
-        when (decrypted) {
-            is Resource.Success -> return decrypted.data
-            is Resource.Error -> throw decrypted.throwable
+        return when (decrypted) {
+            is Resource.Success -> {
+                infoLog("User Level Decryption: ${digest} -> ${decrypted.data}")
+                decrypted.data
+            }
+            is Resource.Error -> digest
             is Resource.Loading -> throw IllegalStateException("Unexpected Error Occurred.")
         }
     }
@@ -27,7 +34,10 @@ class UserLevelEncryptHelper(
     suspend fun encryptPartnerText(message: String): String {
         val encrypted = encryptRepository.encryptPartnerText(message)
         when (encrypted) {
-            is Resource.Success -> return encrypted.data
+            is Resource.Success -> {
+                infoLog("User Level Encryption: ${message} -> ${encrypted.data}")
+                return encrypted.data
+            }
             is Resource.Error -> throw encrypted.throwable
             is Resource.Loading -> throw IllegalStateException("Unexpected Error Occurred.")
         }
@@ -35,9 +45,12 @@ class UserLevelEncryptHelper(
 
     suspend fun decryptPartnerText(digest: String): String {
         val decrypted = encryptRepository.decryptPartnerText(digest)
-        when (decrypted) {
-            is Resource.Success -> return decrypted.data
-            is Resource.Error -> throw decrypted.throwable
+        return when (decrypted) {
+            is Resource.Success -> {
+                infoLog("User Level Decryption: ${digest} -> ${decrypted.data}")
+                decrypted.data
+            }
+            is Resource.Error -> digest
             is Resource.Loading -> throw IllegalStateException("Unexpected Error Occurred.")
         }
     }

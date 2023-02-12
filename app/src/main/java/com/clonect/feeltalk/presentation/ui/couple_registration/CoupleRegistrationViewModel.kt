@@ -1,6 +1,5 @@
 package com.clonect.feeltalk.presentation.ui.couple_registration
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
@@ -15,7 +14,6 @@ import com.clonect.feeltalk.domain.usecase.user.SendPartnerCoupleRegistrationCod
 import com.clonect.feeltalk.presentation.service.notification_observer.CoupleRegistrationObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -98,12 +96,12 @@ class CoupleRegistrationViewModel @Inject constructor(
             is Resource.Error -> {
                 sendToast("초대코드 확인에 에러가 발생했습니다.")
                 infoLog("send partner code error: ${result.throwable.localizedMessage ?: "Unexpected error is occurred."}")
-                _isCoupleRegistrationCompleted.value = false
                 _isLoading.value = false
+                _isCoupleRegistrationCompleted.value = false
             }
             else -> {
-                _isCoupleRegistrationCompleted.value = false
                 _isLoading.value = false
+                _isCoupleRegistrationCompleted.value = false
             }
         }
     }
@@ -148,8 +146,8 @@ class CoupleRegistrationViewModel @Inject constructor(
             infoLog("Fail to get partner info: ${partnerInfoResult.throwable.localizedMessage}")
         }
 
-        _isKeyPairExchangingCompleted.value = true
         _isLoading.value = false
+        _isKeyPairExchangingCompleted.value = true
     }
 
     fun setPartnerCodeInput(input: String) {

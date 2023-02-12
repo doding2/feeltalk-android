@@ -1,6 +1,7 @@
 package com.clonect.feeltalk.presentation.ui.sign_up
 
 import android.app.Activity.RESULT_OK
+import android.app.Dialog
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,6 +19,7 @@ import com.clonect.feeltalk.BuildConfig
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentSignUpBinding
 import com.clonect.feeltalk.presentation.utils.infoLog
+import com.clonect.feeltalk.presentation.utils.makeLoadingDialog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -33,12 +35,14 @@ class SignUpFragment : Fragment() {
 
     private lateinit var binding: FragmentSignUpBinding
     private val viewModel: SignUpViewModel by viewModels()
+    private lateinit var loadingDialog: Dialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentSignUpBinding.inflate(inflater, container, false)
+        loadingDialog = makeLoadingDialog()
         return binding.root
     }
 
@@ -47,6 +51,7 @@ class SignUpFragment : Fragment() {
 
         collectState()
         collectToast()
+        collectIsLoading()
         initCustomerServiceText()
 
         binding.apply {
@@ -65,14 +70,17 @@ class SignUpFragment : Fragment() {
     }
 
     private fun navigateToHomePage() {
+        viewModel.setLoading(false)
         findNavController().navigate(R.id.action_signUpFragment_to_bottomNavigationFragment)
     }
 
     private fun navigateToUserNicknameInputPage() {
+        viewModel.setLoading(false)
         findNavController().navigate(R.id.action_signUpFragment_to_userNicknameInputFragment)
     }
 
     private fun navigateToCoupleRegistrationPage() {
+        viewModel.setLoading(false)
         findNavController().navigate(R.id.action_signUpFragment_to_coupleRegistrationFragment)
     }
 
@@ -81,6 +89,18 @@ class SignUpFragment : Fragment() {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.toast.collectLatest {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun collectIsLoading() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.isLoading.collectLatest {
+                if (it) {
+                    loadingDialog.show()
+                } else {
+                    loadingDialog.dismiss()
+                }
             }
         }
     }
@@ -183,6 +203,7 @@ class SignUpFragment : Fragment() {
             Toast.makeText(requireContext(), "회원가입에 실패했습니다.", Toast.LENGTH_SHORT).show()
         }
     }
+
 
 
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.usecase.question.SendQuestionAnswerUseCase
+import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -63,6 +64,10 @@ class TodayQuestionViewModel @Inject constructor(
                     myAnswerDate = _questionStateFlow.value.myAnswerDate
                 }
                 true
+            }
+            is Resource.Error -> {
+                infoLog("Fail to send question answer: ${result.throwable.localizedMessage}")
+                false
             }
             else -> false
         }

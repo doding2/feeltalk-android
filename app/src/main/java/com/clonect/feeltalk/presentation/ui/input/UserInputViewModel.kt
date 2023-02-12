@@ -106,8 +106,8 @@ class UserInputViewModel @Inject constructor(
             is Resource.Success -> result.data.status == "ok"
             else -> false
         }
-        _isUserInfoUpdateCompleted.value = isSuccessful
         _isLoading.value = false
+        _isUserInfoUpdateCompleted.value = isSuccessful
     }
 
     fun clear() {

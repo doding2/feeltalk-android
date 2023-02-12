@@ -39,17 +39,21 @@ class SignUpViewModel @Inject constructor(
     private val _isUserCouple = MutableStateFlow(false)
     val isUserCouple = _isUserCouple.asStateFlow()
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
 
     private val _toast = MutableSharedFlow<String>()
     val toast = _toast.asSharedFlow()
 
 
     suspend fun signUpWithGoogle(idToken: String, serverAuthCode: String) = viewModelScope.launch(Dispatchers.IO) {
+        setLoading(true)
         val result = signUpWithGoogleUseCase(idToken, serverAuthCode, getFcmToken())
          when (result) {
             is Resource.Success -> {
                 val dto = result.data
                 if (dto.annotation == "signUp") {
+                    setLoading(false)
                     _isSignUpSuccessful.value = true
                     infoLog("Success to sign up")
                 }
@@ -61,10 +65,12 @@ class SignUpViewModel @Inject constructor(
             is Resource.Error -> {
                 infoLog("sign up error: ${result.throwable.localizedMessage}")
                 sendToast("구글로 가입하는데 실패했습니다")
+                setLoading(false)
             }
             else -> {
                 infoLog("sign up error")
                 sendToast("구글로 가입하는데 실패했습니다")
+                setLoading(false)
             }
         }
     }
@@ -82,6 +88,7 @@ class SignUpViewModel @Inject constructor(
         if (isEntered) {
             checkUserIsCouple()
         } else {
+            setLoading(false)
             _isLogInSuccessful.value = true
         }
     }
@@ -92,6 +99,7 @@ class SignUpViewModel @Inject constructor(
             else -> _isUserCouple.value = false
         }
         infoLog("Is user couple: ${_isUserCouple.value}")
+        setLoading(false)
         _isLogInSuccessful.value = true
     }
 
@@ -108,4 +116,9 @@ class SignUpViewModel @Inject constructor(
     fun sendToast(message: String) = viewModelScope.launch {
         _toast.emit(message)
     }
+
+    fun setLoading(isLoading: Boolean) {
+        _isLoading.value = isLoading
+    }
+
 }
