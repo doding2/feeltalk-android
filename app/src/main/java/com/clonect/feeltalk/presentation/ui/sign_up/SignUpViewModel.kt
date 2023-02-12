@@ -1,26 +1,20 @@
 package com.clonect.feeltalk.presentation.ui.sign_up
 
-import android.content.Context
-import android.util.Log
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.usecase.user.CheckUserInfoIsEnteredUseCase
 import com.clonect.feeltalk.domain.usecase.user.CheckUserIsCoupleUseCase
-import com.clonect.feeltalk.domain.usecase.user.GetUserInfoUseCase
 import com.clonect.feeltalk.domain.usecase.user.SignUpWithGoogleUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -46,6 +40,8 @@ class SignUpViewModel @Inject constructor(
     val isUserCouple = _isUserCouple.asStateFlow()
 
 
+    private val _toast = MutableSharedFlow<String>()
+    val toast = _toast.asSharedFlow()
 
 
     suspend fun signUpWithGoogle(idToken: String, serverAuthCode: String) = viewModelScope.launch(Dispatchers.IO) {
@@ -64,9 +60,11 @@ class SignUpViewModel @Inject constructor(
             }
             is Resource.Error -> {
                 infoLog("sign up error: ${result.throwable.localizedMessage}")
+                sendToast("구글로 가입하는데 실패했습니다")
             }
             else -> {
                 infoLog("sign up error")
+                sendToast("구글로 가입하는데 실패했습니다")
             }
         }
     }
@@ -107,4 +105,7 @@ class SignUpViewModel @Inject constructor(
             }
     }
 
+    fun sendToast(message: String) = viewModelScope.launch {
+        _toast.emit(message)
+    }
 }

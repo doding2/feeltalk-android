@@ -199,6 +199,7 @@ class CoupleRegistrationFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         onBackCallback.remove()
+        loadingDialog.dismiss()
     }
 
 }

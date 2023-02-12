@@ -3,13 +3,12 @@ package com.clonect.feeltalk.presentation.ui.sign_up
 import android.app.Activity.RESULT_OK
 import android.graphics.Paint
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -47,6 +46,7 @@ class SignUpFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         collectState()
+        collectToast()
         initCustomerServiceText()
 
         binding.apply {
@@ -76,6 +76,14 @@ class SignUpFragment : Fragment() {
         findNavController().navigate(R.id.action_signUpFragment_to_coupleRegistrationFragment)
     }
 
+
+    private fun collectToast() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.toast.collectLatest {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     private fun collectState() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {

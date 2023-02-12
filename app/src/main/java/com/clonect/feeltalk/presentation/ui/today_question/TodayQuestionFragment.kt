@@ -1,10 +1,10 @@
 package com.clonect.feeltalk.presentation.ui.today_question
 
+import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,16 +15,16 @@ import androidx.annotation.LayoutRes
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.clonect.feeltalk.R
-import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.databinding.FragmentTodayQuestionBinding
 import com.clonect.feeltalk.domain.model.data.question.Question
+import com.clonect.feeltalk.presentation.utils.makeLoadingDialog
 import com.clonect.feeltalk.presentation.utils.showAlertDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -36,15 +36,23 @@ class TodayQuestionFragment : Fragment() {
     private lateinit var binding: FragmentTodayQuestionBinding
     private val viewModel: TodayQuestionViewModel by viewModels()
     private lateinit var onBackCallback: OnBackPressedCallback
+    private lateinit var loadingDialog : Dialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentTodayQuestionBinding.inflate(inflater, container, false)
+        loadingDialog = makeLoadingDialog()
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         initMyAnswerEditText()
         collectQuestion()
+        collectIsLoading()
 
         binding.apply {
             btnBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
@@ -58,10 +66,7 @@ class TodayQuestionFragment : Fragment() {
             btnEnterAnswer.setOnClickListener {
                 clickEnterAnswerButton()
             }
-
         }
-
-        return binding.root
     }
 
     private fun initMyAnswerEditText() = lifecycleScope.launchWhenStarted {
@@ -72,37 +77,24 @@ class TodayQuestionFragment : Fragment() {
         enableEnterAnswerButton(enabled)
     }
 
-    private fun clickEnterAnswerButton() = lifecycleScope.launch {
-        val question = viewModel.questionStateFlow.value
-
-        var titleId = R.string.dialog_partner_state_not_done_title
-        var messageId = R.string.dialog_partner_state_not_done_message
-        var confirmId = R.string.dialog_partner_state_not_done_confirm
-
-        val isPartnerReady = !question.partnerAnswer.isNullOrEmpty()
-        if (isPartnerReady) {
-            titleId = R.string.dialog_partner_state_already_done_title
-            messageId = R.string.dialog_partner_state_already_done_message
-            confirmId = R.string.dialog_partner_state_already_done_confirm
-        }
-
+    private fun clickEnterAnswerButton() {
         showAlertDialog(
-            title = getString(titleId),
-            message = getString(messageId),
-            confirmButtonText = getString(confirmId),
+            title = getString(R.string.dialog_partner_done_title),
+            message = getString(R.string.dialog_partner_done_message),
+            confirmButtonText = getString(R.string.dialog_partner_done_confirm),
             onConfirmClick = {
-                if (question.partnerAnswer.isNullOrEmpty()) {
-                    requestPartnerAnswer()
+                lifecycleScope.launch {
+                    val isSendAnswerSuccessful = viewModel.sendQuestionAnswer()
+                    if (isSendAnswerSuccessful) {
+                        navigateToChatPage(viewModel.questionStateFlow.value)
+                        return@launch
+                    }
+                    Toast.makeText(requireContext(), "대답을 작성하는데 실패했습니다", Toast.LENGTH_SHORT).show()
                 }
-                navigateToChatPage(question)
             }
         )
     }
 
-    private fun requestPartnerAnswer() = lifecycleScope.launch {
-        viewModel.requestPartnerAnswer()
-        Toast.makeText(requireContext(), "상대방에게 답변을 요청했습니다.", Toast.LENGTH_SHORT).show()
-    }
 
     private fun navigateToChatPage(question: Question) {
         val bundle = bundleOf("selectedQuestion" to question)
@@ -127,6 +119,19 @@ class TodayQuestionFragment : Fragment() {
         }
     }
 
+
+    private fun collectIsLoading() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.isLoading.collectLatest {
+                if (it) {
+                    loadingDialog.show()
+                } else {
+                    loadingDialog.dismiss()
+                }
+            }
+        }
+    }
+
     private fun collectQuestion() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.questionStateFlow.collectLatest {
@@ -138,6 +143,7 @@ class TodayQuestionFragment : Fragment() {
             }
         }
     }
+
 
     private fun changePartnerStateTextView(question: Question) = binding.apply {
         if (!question.partnerAnswer.isNullOrBlank()) {
@@ -195,5 +201,6 @@ class TodayQuestionFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         onBackCallback.remove()
+        loadingDialog.dismiss()
     }
 }

@@ -1,10 +1,12 @@
 package com.clonect.feeltalk.data.api
 
-import com.clonect.feeltalk.domain.model.dto.common.StatusDto
 import com.clonect.feeltalk.domain.model.data.encryption.LoadPartnerPrivateKeyDto
 import com.clonect.feeltalk.domain.model.data.encryption.LoadPartnerPublicKeyDto
-import com.clonect.feeltalk.domain.model.dto.question.QuestionDto
+import com.clonect.feeltalk.domain.model.dto.common.StatusDto
+import com.clonect.feeltalk.domain.model.dto.question.QuestionAnswersDto
+import com.clonect.feeltalk.domain.model.dto.question.QuestionListDto
 import com.clonect.feeltalk.domain.model.dto.question.SendQuestionDto
+import com.clonect.feeltalk.domain.model.dto.question.TodayQuestionDto
 import com.clonect.feeltalk.domain.model.dto.user.*
 import com.google.gson.JsonObject
 import retrofit2.Response
@@ -56,13 +58,17 @@ interface ClonectService {
     @POST("/api/todayQuestion")
     suspend fun getTodayQuestion(
         @Body body: JsonObject
-    ): Response<QuestionDto>
+    ): Response<TodayQuestionDto>
 
-    // "accessToken": String, "question": String, "answer": String
     @POST("/api/chattingRoom")
     suspend fun sendQuestionAnswer(
         @Body body: JsonObject
     ): Response<SendQuestionDto>
+
+    @POST("/api/isAnswer")
+    suspend fun getTodayQuestionAnswers(
+        @Body body: JsonObject
+    ): Response<QuestionAnswersDto>
 
     // fcm
     @POST("/api/fcm/answerRequest")
@@ -78,10 +84,11 @@ interface ClonectService {
         @Body body: JsonObject
     ): Response<String>
 
+    // Chatting Room List = Question List
     @GET("/api/chattingRoom/{accessToken}")
     suspend fun getChattingRoomList(
         @Path("accessToken") accessToken: String
-    ): Response<String>
+    ): Response<QuestionListDto>
 
     // "accessToken": String, "question": String
     @GET("/api/chattingMessageList")

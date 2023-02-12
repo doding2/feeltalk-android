@@ -11,7 +11,7 @@ data class Question(
     var questionDate: String? = null,
     var myAnswer: String? = null,
     var myAnswerDate: String? = null,
-    val partnerAnswer: String? = null,
+    var partnerAnswer: String? = null,
     val partnerAnswerDate: String? = null,
     val viewType: String = "item",
 ): Serializable

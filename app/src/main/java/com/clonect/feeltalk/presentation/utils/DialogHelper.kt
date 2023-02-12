@@ -9,7 +9,6 @@ import android.net.Uri
 import android.provider.Settings
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -38,6 +37,7 @@ fun Fragment.showAlertDialog(
     confirmButtonText: String,
     onCancelClick: () -> Unit = {},
     onConfirmClick: () -> Unit = {},
+    onDismiss: () -> Unit = {},
 ) {
     val dialog = Dialog(requireContext()).apply {
         setContentView(R.layout.dialog_gradient_alert)
@@ -71,6 +71,10 @@ fun Fragment.showAlertDialog(
     btnCancel.setOnClickListener {
         onCancelClick()
         dialog.dismiss()
+    }
+
+    dialog.setOnDismissListener {
+        onDismiss()
     }
 
     dialog.show()

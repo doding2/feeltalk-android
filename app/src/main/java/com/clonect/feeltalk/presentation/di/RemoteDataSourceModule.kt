@@ -9,7 +9,6 @@ import com.clonect.feeltalk.data.repository.question.datasource.QuestionRemoteDa
 import com.clonect.feeltalk.data.repository.question.datasourceImpl.QuestionRemoteDataSourceImpl
 import com.clonect.feeltalk.data.repository.user.datasource.UserRemoteDataSource
 import com.clonect.feeltalk.data.repository.user.datasourceImpl.UserRemoteDataSourceImpl
-import com.clonect.feeltalk.data.utils.UserLevelEncryptHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,10 +38,9 @@ class RemoteDataSourceModule {
     @Singleton
     @Provides
     fun providesQuestionRemoteDataSource(
-        clonectService: ClonectService,
-        userLevelEncryptHelper: UserLevelEncryptHelper
+        clonectService: ClonectService
     ): QuestionRemoteDataSource {
-        return QuestionRemoteDataSourceImpl(clonectService, userLevelEncryptHelper)
+        return QuestionRemoteDataSourceImpl(clonectService)
     }
 
     @Singleton

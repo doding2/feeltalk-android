@@ -6,9 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.usecase.question.GetQuestionListUseCase
+import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,7 +41,7 @@ class QuestionListViewModel @Inject constructor(
                     ))
                     _questionListState.value = newList
                 }
-                is Resource.Error -> {}
+                is Resource.Error -> { infoLog("Fail to get question list: ${it.throwable.localizedMessage}") }
                 else -> {}
             }
         }

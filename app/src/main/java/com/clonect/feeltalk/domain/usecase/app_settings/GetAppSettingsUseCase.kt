@@ -26,7 +26,7 @@ class GetAppSettingsUseCase(
                 fcmToken = getString(
                     "fcmToken",
                     null,
-                )?.let { appLevelEncryptHelper.decrypt("fcmToken", it) }
+                )?.let { try { appLevelEncryptHelper.decrypt("fcmToken", it) } catch (e: Exception) { null } }
             )
         }
     }

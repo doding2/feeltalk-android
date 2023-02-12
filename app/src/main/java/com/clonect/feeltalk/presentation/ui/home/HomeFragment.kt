@@ -2,7 +2,6 @@ package com.clonect.feeltalk.presentation.ui.home
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,23 +10,21 @@ import androidx.activity.OnBackPressedCallback
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
-import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.databinding.FragmentHomeBinding
+import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.model.data.user.Emotion
 import com.clonect.feeltalk.presentation.utils.addTextGradient
-import com.clonect.feeltalk.presentation.utils.infoLog
 import com.clonect.feeltalk.presentation.utils.showMyEmotionChangerDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.*
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -58,10 +55,10 @@ class HomeFragment : Fragment() {
             textDDayUnit.addTextGradient()
 
             btnTodayQuestion.setOnClickListener {
-                navigateToTodayQuestionPage()
+                navigateByQuestion()
             }
             layoutTodayQuestionTitle.setOnClickListener {
-                navigateToTodayQuestionPage()
+                navigateByQuestion()
             }
             btnNews.setOnClickListener {
                 navigateToNewsPage()
@@ -81,9 +78,7 @@ class HomeFragment : Fragment() {
     private fun collectTodayQuestion() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.todayQuestion.collectLatest {
-                if (it != null) {
-                    infoLog("question: $it")
-                }
+                setQuestionLetterText(it)
             }
         }
     }
@@ -145,6 +140,47 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun setQuestionLetterText(question: Question?) = binding.apply {
+        if (question == null) {
+            textLetterTitle.visibility = View.GONE
+            textLetterMessage.visibility = View.GONE
+        } else {
+            textLetterTitle.visibility = View.VISIBLE
+            textLetterMessage.visibility = View.VISIBLE
+        }
+
+        if (question?.question == "") {
+            textLetterTitle.text = "질문이 준비되지 않았습니다."
+            textLetterMessage.text = "조금만 기다려주세요"
+            return@apply
+        }
+        if (question?.myAnswer == null) {
+            textLetterTitle.text = getString(R.string.letter_paper_title_empty)
+            textLetterMessage.text = getString(R.string.letter_paper_message)
+            return@apply
+        }
+        if (question.partnerAnswer == null) {
+            textLetterTitle.text = "내가 답변한 질문 !"
+            textLetterMessage.text = "내 답변 확인하러 가기"
+            return@apply
+        }
+
+        textLetterTitle.text = getString(R.string.letter_paper_title_partner_written)
+        textLetterMessage.text = getString(R.string.letter_paper_message)
+    }
+
+
+    private fun navigateByQuestion() {
+        val question = viewModel.todayQuestion.value ?: return
+
+        if (question.myAnswer == null) {
+            navigateToTodayQuestionPage()
+            return
+        }
+
+        navigateToChatPage()
+    }
+
 
     private fun navigateToNewsPage() {
         requireParentFragment()
@@ -152,6 +188,7 @@ class HomeFragment : Fragment() {
             .findNavController()
             .navigate(R.id.action_bottomNavigationFragment_to_newsFragment)
     }
+
 
     private fun navigateToTodayQuestionPage() {
         val bundle = bundleOf(
@@ -162,6 +199,17 @@ class HomeFragment : Fragment() {
             .findNavController()
             .navigate(R.id.action_bottomNavigationFragment_to_todayQuestionFragment, bundle)
     }
+
+    private fun navigateToChatPage() {
+        val bundle = bundleOf(
+            "selectedQuestion" to viewModel.todayQuestion.value?.copy()
+        )
+        requireParentFragment()
+            .requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_bottomNavigationFragment_to_chatFragment, bundle)
+    }
+
 
 
     override fun onAttach(context: Context) {

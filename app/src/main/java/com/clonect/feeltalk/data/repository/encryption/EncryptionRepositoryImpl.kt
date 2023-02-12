@@ -4,7 +4,8 @@ import android.security.keystore.KeyProperties
 import android.util.Base64
 import com.clonect.feeltalk.BuildConfig
 import com.clonect.feeltalk.common.Constants
-import com.clonect.feeltalk.common.FeelTalkException.*
+import com.clonect.feeltalk.common.FeelTalkException.NoMyKeyException
+import com.clonect.feeltalk.common.FeelTalkException.NoPartnerKeyException
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionCacheDataSource
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionLocalDataSource
@@ -34,10 +35,10 @@ class EncryptionRepositoryImpl(
         generateUserLevelKeyPair()
 
         val message = "01047625824 안녕 Nihao 구텐탁 \n 하이요 zzㅇㅇㅋ잌llds"
-        val encrypted = encrypt(getPartnerPublicKey(), message)
+        val encrypted = encrypt(getMyPublicKey(), message)
         infoLog("message: $message")
 
-        val decrypted = decrypt(getPartnerPrivateKey(), encrypted)
+        val decrypted = decrypt(getMyPrivateKey(), encrypted)
         infoLog("decrypted message: $decrypted")
     }
 

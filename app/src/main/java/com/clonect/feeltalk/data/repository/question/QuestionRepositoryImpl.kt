@@ -2,10 +2,14 @@ package com.clonect.feeltalk.data.repository.question
 
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.data.mapper.toQuestion
+import com.clonect.feeltalk.data.mapper.toQuestionList
 import com.clonect.feeltalk.data.repository.question.datasource.QuestionCacheDataSource
 import com.clonect.feeltalk.data.repository.question.datasource.QuestionLocalDataSource
 import com.clonect.feeltalk.data.repository.question.datasource.QuestionRemoteDataSource
+import com.clonect.feeltalk.data.utils.UserLevelEncryptHelper
 import com.clonect.feeltalk.domain.model.data.question.Question
+import com.clonect.feeltalk.domain.model.dto.question.QuestionAnswersDto
+import com.clonect.feeltalk.domain.model.dto.question.SendQuestionDto
 import com.clonect.feeltalk.domain.repository.QuestionRepository
 import kotlinx.coroutines.CancellationException
 import java.text.SimpleDateFormat
@@ -14,7 +18,8 @@ import java.util.*
 class QuestionRepositoryImpl(
     private val remoteDataSource: QuestionRemoteDataSource,
     private val localDataSource: QuestionLocalDataSource,
-    private val cacheDataSource: QuestionCacheDataSource
+    private val cacheDataSource: QuestionCacheDataSource,
+    private val userLevelEncryptHelper: UserLevelEncryptHelper
 ): QuestionRepository {
 
     override suspend fun getTodayQuestion(accessToken: String): Resource<Question> {
@@ -39,6 +44,7 @@ class QuestionRepositoryImpl(
             val remoteQuestion = remoteQuestionDto.toQuestion().apply {
                 questionDate = date
             }
+
             localDataSource.saveOneQuestion(remoteQuestion)
             cacheDataSource.saveTodayQuestion(remoteQuestion)
             return Resource.Success(remoteQuestion)
@@ -53,22 +59,82 @@ class QuestionRepositoryImpl(
     override suspend fun sendQuestionAnswer(
         accessToken: String,
         question: Question,
-    ): Resource<String> {
+    ): Resource<SendQuestionDto> {
         return try {
+            val encrypted = userLevelEncryptHelper.encryptMyText(question.myAnswer!!)
             val response = remoteDataSource.sendQuestionAnswer(
                 accessToken = accessToken,
                 question = question.question,
-                answer = question.myAnswer!!,
+                answer = encrypted,
             )
 
-            // TODO 변경내역 캐시랑 로컬에도 업데이트
             localDataSource.saveOneQuestion(question)
 
-            Resource.Success(response.body()!!.status)
+            val cacheTodayQuestion = cacheDataSource.getTodayQuestion()
+            if (cacheTodayQuestion?.question == question.question) {
+                cacheDataSource.saveTodayQuestion(question)
+            } else {
+                cacheDataSource.saveOneQuestion(question)
+            }
+
+            Resource.Success(response.body()!!)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
             Resource.Error(e)
         }
     }
+
+    override suspend fun getQuestionList(accessToken: String): Resource<List<Question>> {
+        return try {
+            val response = remoteDataSource.getQuestionList(
+                accessToken = accessToken
+            )
+            val dto = response.body()!!
+            val questionList = dto.toQuestionList().map { question ->
+                val decrypted = question.myAnswer?.let { userLevelEncryptHelper.decryptPartnerText(it) }
+                question.copy(myAnswer = decrypted)
+            }
+
+            // TODO
+
+
+            Resource.Success(questionList)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun getTodayQuestionAnswersFromServer(accessToken: String): Resource<QuestionAnswersDto> {
+        return try {
+            val format = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+            val date = format.format(Date())
+
+            val remote = remoteDataSource.getTodayQuestionAnswers(accessToken).body()!!
+
+            val cache = cacheDataSource.getTodayQuestion()
+            cache?.let { question ->
+                question.myAnswer = remote.myAnswer?.let { userLevelEncryptHelper.decryptMyText(it) }
+                question.partnerAnswer = remote.partnerAnswer?.let { userLevelEncryptHelper.decryptPartnerText(it) }
+                cacheDataSource.saveTodayQuestion(question)
+            }
+
+            val local = localDataSource.getTodayQuestion(date)
+            local?.let { question ->
+                question.myAnswer = remote.myAnswer?.let { userLevelEncryptHelper.decryptMyText(it) }
+                question.partnerAnswer = remote.partnerAnswer?.let { userLevelEncryptHelper.decryptPartnerText(it) }
+                localDataSource.saveOneQuestion(question)
+                cacheDataSource.saveTodayQuestion(question)
+            }
+
+            Resource.Success(remote)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
 }

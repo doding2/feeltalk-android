@@ -1,17 +1,22 @@
 package com.clonect.feeltalk.presentation.ui.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.ViewTreeObserver
+import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.ActivityMainBinding
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
+import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -26,10 +31,22 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        collectToast()
+
         waitForSplash()
 
         tryAutoLogIn()
+
     }
+
+    private fun collectToast() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.toast.collectLatest {
+                Toast.makeText(applicationContext, it, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
 
     private fun waitForSplash() {
         binding.root.viewTreeObserver.addOnPreDrawListener(
@@ -75,6 +92,7 @@ class MainActivity : AppCompatActivity() {
         if (tryAppleAutoLogIn()) return@launch
 
         viewModel.setReady()
+        infoLog("로그인 된 계정이 없음")
     }
 
     private fun tryGoogleAutoLogIn(): Boolean {

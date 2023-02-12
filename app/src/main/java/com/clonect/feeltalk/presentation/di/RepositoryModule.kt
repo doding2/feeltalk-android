@@ -19,6 +19,7 @@ import com.clonect.feeltalk.data.repository.user.datasource.UserCacheDataSource
 import com.clonect.feeltalk.data.repository.user.datasource.UserLocalDataSource
 import com.clonect.feeltalk.data.repository.user.datasource.UserRemoteDataSource
 import com.clonect.feeltalk.data.utils.MessageEncryptHelper
+import com.clonect.feeltalk.data.utils.UserLevelEncryptHelper
 import com.clonect.feeltalk.domain.repository.ChatRepository
 import com.clonect.feeltalk.domain.repository.EncryptionRepository
 import com.clonect.feeltalk.domain.repository.QuestionRepository
@@ -58,9 +59,10 @@ class RepositoryModule {
     fun providesQuestionRepository(
         remoteDataSource: QuestionRemoteDataSource,
         localDataSource: QuestionLocalDataSource,
-        cacheDataSource: QuestionCacheDataSource
+        cacheDataSource: QuestionCacheDataSource,
+        userLevelEncryptHelper: UserLevelEncryptHelper
     ): QuestionRepository {
-        return QuestionRepositoryImpl(remoteDataSource, localDataSource, cacheDataSource)
+        return QuestionRepositoryImpl(remoteDataSource, localDataSource, cacheDataSource, userLevelEncryptHelper)
     }
 
     @Singleton

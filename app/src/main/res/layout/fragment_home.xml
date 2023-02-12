@@ -305,6 +305,7 @@
                         android:layout_gravity="center"/>
 
                     <TextView
+                        android:id="@+id/text_letter_message"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/letter_paper_message"

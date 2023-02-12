@@ -1,5 +1,5 @@
 package com.clonect.feeltalk.domain.model.dto.question
 
-data class QuestionDto(
+data class TodayQuestionDto(
     val todayQuestion: String
 )

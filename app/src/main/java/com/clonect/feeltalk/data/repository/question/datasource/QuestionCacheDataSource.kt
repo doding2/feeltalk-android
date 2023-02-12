@@ -7,4 +7,8 @@ interface QuestionCacheDataSource {
     fun getTodayQuestion(): Question?
     fun saveTodayQuestion(todayQuestion: Question)
 
+    fun getQuestionList(): List<Question>
+    fun saveQuestionList(questionList: List<Question>)
+    fun saveOneQuestion(question: Question)
+
 }

@@ -6,9 +6,10 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.usecase.user.*
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,6 +35,8 @@ class MainViewModel @Inject constructor(
     private val _isUserCouple = MutableStateFlow(false)
     val isUserCouple = _isUserCouple.asStateFlow()
 
+    private val _toast = MutableSharedFlow<String>()
+    val toast = _toast.asSharedFlow()
 
     init {
 
@@ -44,14 +47,14 @@ class MainViewModel @Inject constructor(
         when (autoLogInWithGoogleUseCase()) {
             is Resource.Success -> {
                 _isLoggedIn.value = true
-                getUserInfo()
                 checkUserInfoIsEntered()
                 infoLog("Success to log in")
             }
             else -> {
                 _isLoggedIn.value = false
-                setReady()
                 infoLog("Fail to log in")
+                sendToast("로그인에 실패했습니다")
+                setReady()
             }
         }
     }
@@ -63,6 +66,7 @@ class MainViewModel @Inject constructor(
             infoLog("Success to get user info: ${result.data}")
         }
         if (result is Resource.Error) {
+            sendToast("내 정보를 불러오는데 실패했습니다")
             infoLog("Fail to get user info: ${result.throwable}")
         }
     }
@@ -73,6 +77,7 @@ class MainViewModel @Inject constructor(
             infoLog("Success to get partner info: ${result.data}")
         }
         if (result is Resource.Error) {
+            sendToast("애인의 정보를 불러오는데 실패했습니다")
             infoLog("Fail to get partner info: ${result.throwable}")
         }
     }
@@ -82,12 +87,16 @@ class MainViewModel @Inject constructor(
         val result = checkUserInfoIsEnteredUseCase()
         val isEntered = when (result) {
             is Resource.Success -> result.data
-            else -> false
+            else -> {
+                _isLoggedIn.value = false
+                false
+            }
         }
         _isUserInfoEntered.value = isEntered
         infoLog("Is user info entered: ${_isUserInfoEntered.value}")
 
         if (isEntered) {
+            getUserInfo()
             checkUserIsCouple()
         } else {
             setReady()
@@ -101,6 +110,7 @@ class MainViewModel @Inject constructor(
                 result.data.isMatch
             }
             else -> {
+                _isLoggedIn.value = false
                 _isUserCouple.value = false
                 false
             }
@@ -116,6 +126,10 @@ class MainViewModel @Inject constructor(
 
     fun setReady() {
         _isReady.value = true
+    }
+
+    fun sendToast(message: String) = viewModelScope.launch {
+        _toast.emit(message)
     }
 
 }

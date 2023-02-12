@@ -1,32 +1,41 @@
 package com.clonect.feeltalk.presentation.ui.today_question
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.question.Question
+import com.clonect.feeltalk.domain.usecase.question.SendQuestionAnswerUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class TodayQuestionViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle
+    private val sendQuestionAnswerUseCase: SendQuestionAnswerUseCase,
+    savedStateHandle: SavedStateHandle,
 ): ViewModel() {
 
-    private val _questionStateFlow = MutableStateFlow(Question("Question Content"))
+    private val homeQuestionReference = MutableStateFlow(Question(""))
+
+    private val _questionStateFlow = MutableStateFlow(Question(""))
     val questionStateFlow = _questionStateFlow.asStateFlow()
 
     private val _myAnswerStateFlow = MutableStateFlow("")
     val myAnswerStateFlow: StateFlow<String> = _myAnswerStateFlow.asStateFlow()
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
     init {
         savedStateHandle.get<Question>("selectedQuestion")?.let {
-            setQuestion(it)
+            setQuestion(it.copy())
+            homeQuestionReference.value = it
         }
     }
 
@@ -35,7 +44,7 @@ class TodayQuestionViewModel @Inject constructor(
     }
 
     fun setMyAnswer(answer: String) {
-        val format = SimpleDateFormat("yyyy년 MM월 dd일 hh:mm:ss", Locale.getDefault())
+        val format = SimpleDateFormat("yyyy/MM/dd/hh/mm", Locale.getDefault())
         val date = format.format(Date())
 
         _myAnswerStateFlow.value = answer
@@ -43,8 +52,20 @@ class TodayQuestionViewModel @Inject constructor(
         _questionStateFlow.value.myAnswerDate = date
     }
 
-    suspend fun requestPartnerAnswer() {
-        // TODO
+    suspend fun sendQuestionAnswer() = withContext(Dispatchers.IO) {
+        _isLoading.value = true
+        val result = sendQuestionAnswerUseCase(_questionStateFlow.value)
+        _isLoading.value = false
+        return@withContext when (result) {
+            is Resource.Success -> {
+                homeQuestionReference.value.apply {
+                    myAnswer = _questionStateFlow.value.myAnswer
+                    myAnswerDate = _questionStateFlow.value.myAnswerDate
+                }
+                true
+            }
+            else -> false
+        }
     }
 
 }

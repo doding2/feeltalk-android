@@ -7,6 +7,8 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.model.data.user.Emotion
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
+import com.clonect.feeltalk.domain.usecase.encryption.TestUseCase
+import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionAnswersFromServer
 import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetCoupleAnniversaryUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetPartnerInfoUseCase
@@ -28,7 +30,9 @@ class HomeViewModel @Inject constructor(
     private val getPartnerInfoUseCase: GetPartnerInfoUseCase,
     private val updateMyEmotionUseCase: UpdateMyEmotionUseCase,
     private val getTodayQuestionUseCase: GetTodayQuestionUseCase,
+    private val getTodayQuestionAnswersFromServer: GetTodayQuestionAnswersFromServer,
     private val getCoupleAnniversaryUseCase: GetCoupleAnniversaryUseCase,
+    private val testUseCase: TestUseCase
 ): ViewModel() {
 
     private val _userInfo = MutableStateFlow(UserInfo())
@@ -45,6 +49,9 @@ class HomeViewModel @Inject constructor(
 
 
     init {
+        viewModelScope.launch {
+//            testUseCase()
+        }
         getUserInfo()
         getPartnerInfo()
         getTodayQuestion()
@@ -95,9 +102,33 @@ class HomeViewModel @Inject constructor(
     private fun getTodayQuestion() = viewModelScope.launch(Dispatchers.IO) {
         val result = getTodayQuestionUseCase()
         when (result) {
-            is Resource.Success -> _todayQuestion.value = result.data
+            is Resource.Success -> {
+                _todayQuestion.value = result.data
+                getTodayQuestionAnswer()
+                infoLog("Today Question: ${_todayQuestion.value}")
+            }
             is Resource.Error -> infoLog("Fail to load today question: ${result.throwable.localizedMessage}")
             is Resource.Loading -> infoLog("Fail to load today question")
+        }
+    }
+
+    private suspend fun getTodayQuestionAnswer() {
+        val result = getTodayQuestionAnswersFromServer()
+        when (result) {
+            is Resource.Success -> {
+                _todayQuestion.value = _todayQuestion.value?.copy(
+                    myAnswer = result.data.myAnswer,
+                    partnerAnswer = result.data.partnerAnswer
+                )
+            }
+            is Resource.Error -> {
+                _todayQuestion.value = Question("")
+                infoLog("Fail to load today question answers: ${result.throwable.localizedMessage}")
+            }
+            is Resource.Loading -> {
+                _todayQuestion.value = Question("")
+                infoLog("Fail to load today question answers")
+            }
         }
     }
 

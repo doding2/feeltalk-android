@@ -14,10 +14,12 @@ import com.clonect.feeltalk.domain.usecase.chat.GetChatListUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SaveChatUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SendChatUseCase
 import com.clonect.feeltalk.domain.usecase.encryption.*
-import com.clonect.feeltalk.domain.usecase.notification.SendFcmUseCase
 import com.clonect.feeltalk.domain.usecase.news.GetNewsListUseCase
+import com.clonect.feeltalk.domain.usecase.notification.SendFcmUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetQuestionListUseCase
+import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionAnswersFromServer
 import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionUseCase
+import com.clonect.feeltalk.domain.usecase.question.SendQuestionAnswerUseCase
 import com.clonect.feeltalk.domain.usecase.user.*
 import dagger.Module
 import dagger.Provides
@@ -71,8 +73,20 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesGetQuestionListUseCase(): GetQuestionListUseCase {
-        return GetQuestionListUseCase()
+    fun providesGetQuestionListUseCase(userRepository: UserRepository, questionRepository: QuestionRepository): GetQuestionListUseCase {
+        return GetQuestionListUseCase(userRepository, questionRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetTodayQuestionAnswersFromServer(userRepository: UserRepository, questionRepository: QuestionRepository): GetTodayQuestionAnswersFromServer {
+        return GetTodayQuestionAnswersFromServer(userRepository, questionRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesSendQuestionAnswerUseCase(userRepository: UserRepository, questionRepository: QuestionRepository): SendQuestionAnswerUseCase {
+        return SendQuestionAnswerUseCase(userRepository, questionRepository)
     }
 
     @Singleton

@@ -97,16 +97,13 @@
     <string name="today_question_enter_answer_button">답변완료</string>
 
     <!--  TodayQuestionFragment.kt  -->
-    <string name="dialog_partner_state_already_done_title">답변 확인</string>
-    <string name="dialog_partner_state_already_done_confirm">확 인</string>
-    <string name="dialog_partner_state_already_done_message">상대방의 답변을 확인하시겠습니까?</string>
-
-    <string name="dialog_partner_state_not_done_confirm">요청하기</string>
-    <string name="dialog_partner_state_not_done_title">답변 요청</string>
-    <string name="dialog_partner_state_not_done_message">상대방에게 답변 작성을 요청하시겠어요?</string>
+    <string name="dialog_partner_done_title">답변 저장</string>
+    <string name="dialog_partner_done_message">내 답변을 저장하시겠습니까?</string>
+    <string name="dialog_partner_done_confirm">저장하기</string>
 
     <!--  fragment_chat.xml  -->
     <string name="chat_text_field_hint">메시지를 입력하세요...</string>
+    <string name="chat_text_field_hint_waiting">상대의 답변을 기다려주세요...</string>
 
     <!--  item_chat_mine.xml && item_chat_partner.xml -->
     <string name="item_chat_owner_mine">나의 답변</string>

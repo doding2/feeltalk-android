@@ -1,22 +1,20 @@
 package com.clonect.feeltalk.data.repository.question.datasourceImpl
 
-import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.data.api.ClonectService
 import com.clonect.feeltalk.data.repository.question.datasource.QuestionRemoteDataSource
-import com.clonect.feeltalk.data.utils.UserLevelEncryptHelper
-import com.clonect.feeltalk.domain.model.dto.common.StatusDto
-import com.clonect.feeltalk.domain.model.dto.question.QuestionDto
+import com.clonect.feeltalk.domain.model.dto.question.QuestionAnswersDto
+import com.clonect.feeltalk.domain.model.dto.question.QuestionListDto
 import com.clonect.feeltalk.domain.model.dto.question.SendQuestionDto
+import com.clonect.feeltalk.domain.model.dto.question.TodayQuestionDto
 import com.google.gson.JsonObject
 import retrofit2.HttpException
 import retrofit2.Response
 
 class QuestionRemoteDataSourceImpl(
-    private val clonectService: ClonectService,
-    private val userLevelEncryptHelper: UserLevelEncryptHelper
+    private val clonectService: ClonectService
 ): QuestionRemoteDataSource {
 
-    override suspend fun getTodayQuestion(accessToken: String): Response<QuestionDto> {
+    override suspend fun getTodayQuestion(accessToken: String): Response<TodayQuestionDto> {
         val body = JsonObject()
         body.addProperty("accessToken", accessToken)
         val response = clonectService.getTodayQuestion(body)
@@ -30,18 +28,29 @@ class QuestionRemoteDataSourceImpl(
         question: String,
         answer: String,
     ): Response<SendQuestionDto> {
-        val encrypted = when (val result = userLevelEncryptHelper.encryptMyText(answer)) {
-            is Resource.Success -> result.data
-            is Resource.Error -> throw result.throwable
-            is Resource.Loading -> throw Exception("Encryption Failed in send question answer")
-        }
-
         val body = JsonObject().apply {
             addProperty("accessToken", accessToken)
             addProperty("question", question)
-            addProperty("answer", encrypted)
+            addProperty("answer", answer)
         }
         val response = clonectService.sendQuestionAnswer(body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
+
+    override suspend fun getQuestionList(accessToken: String): Response<QuestionListDto> {
+        val response = clonectService.getChattingRoomList(accessToken)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
+
+    override suspend fun getTodayQuestionAnswers(accessToken: String): Response<QuestionAnswersDto> {
+        val body = JsonObject().apply {
+            addProperty("accessToken", accessToken)
+        }
+        val response = clonectService.getTodayQuestionAnswers(body)
         if (!response.isSuccessful) throw HttpException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
