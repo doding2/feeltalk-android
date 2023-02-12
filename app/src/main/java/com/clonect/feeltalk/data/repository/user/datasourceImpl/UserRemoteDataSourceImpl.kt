@@ -7,8 +7,6 @@ import com.clonect.feeltalk.domain.model.dto.user.*
 import com.google.gson.JsonObject
 import retrofit2.HttpException
 import retrofit2.Response
-import java.text.SimpleDateFormat
-import java.util.*
 
 class UserRemoteDataSourceImpl(
     private val clonectService: ClonectService,
@@ -27,6 +25,17 @@ class UserRemoteDataSourceImpl(
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
+
+    override suspend fun breakUpCouple(accessToken: String): Response<StatusDto> {
+        val body = JsonObject().apply {
+            addProperty("accessToken", accessToken)
+        }
+        val response = clonectService.breakUpCouple(body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
+
 
     override suspend fun getCoupleAnniversary(accessToken: String): Response<DDayDto> {
         val response = clonectService.getDDay(accessToken)
@@ -76,6 +85,16 @@ class UserRemoteDataSourceImpl(
             addProperty("emotion", emotion)
         }
         val response = clonectService.updateMyEmotion(body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
+
+    override suspend fun getCoupleRegistrationCode(accessToken: String): Response<CoupleRegistrationCodeDto> {
+        val body = JsonObject().apply {
+            addProperty("accessToken", accessToken)
+        }
+        val response = clonectService.getCoupleRegistrationCode(body)
         if (!response.isSuccessful) throw HttpException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response

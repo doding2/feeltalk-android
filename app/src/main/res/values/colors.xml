@@ -23,6 +23,13 @@
     <color name="emotion_puzzling_color">#fff9ba</color>
     <color name="emotion_bad_color">#DFDEFF</color>
     <color name="emotion_angry_color">#FFB6B3</color>
+    
+    <!--  dialog_couple_divorce.xml  -->
+    <color name="divorce_partner_name_text_color">#C8C8C8</color>
+    <color name="divorce_confirm_button_text_color">@color/black</color>
+    <color name="divorce_cancel_button_text_color">@color/white</color>
+    <color name="divorce_cancel_button_background">#FF2C77</color>
+    <color name="divorce_border_background">#F7F7F7</color>
 
     <!--  fragment_sign_up.xml  -->
     <color name="sign_up_kakao_background">#F5E14C</color>

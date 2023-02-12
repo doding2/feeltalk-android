@@ -3,6 +3,10 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="white_space">&#160;</string>
 
+    <!--  dialog_couple_divorce.xml  -->
+    <string name="divorce_confirm_button">연인 끊기</string>
+    <string name="divorce_cancel_button">취 소</string>
+
     <!--  fragment_sign_up.xml  -->
     <string name="sign_up_kakao">카카오톡으로 계속하기</string>
     <string name="sign_up_naver">네이버로 계속하기</string>

@@ -8,6 +8,7 @@ import retrofit2.Response
 interface UserRemoteDataSource {
     suspend fun getUserInfo(accessToken: String): Response<UserInfoDto>
     suspend fun getPartnerInfo(accessToken: String): Response<AccessTokenDto>
+    suspend fun breakUpCouple(accessToken: String): Response<StatusDto>
 
     suspend fun getCoupleAnniversary(accessToken: String): Response<DDayDto>
 
@@ -17,8 +18,10 @@ interface UserRemoteDataSource {
     suspend fun updateUserInfo(accessToken: String, nickname: String, age: Long, birthDate: String, anniversary: String): Response<StatusDto>
     suspend fun updateMyEmotion(accessToken: String, emotion: String): Response<StatusDto>
 
+    suspend fun getCoupleRegistrationCode(accessToken: String): Response<CoupleRegistrationCodeDto>
     suspend fun sendPartnerCoupleRegistrationCode(accessToken: String, partnerCode: String): Response<PartnerCodeCheckDto>
 
     suspend fun autoLogInWithGoogle(idToken: String): Response<AccessTokenDto>
     suspend fun signUpWithGoogle(idToken: String, serverAuthCode: String, fcmToken: String): Response<SignUpDto>
+
 }

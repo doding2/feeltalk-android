@@ -76,31 +76,47 @@ class SignUpViewModel @Inject constructor(
     }
 
 
-    private fun checkUserInfoIsEntered()= viewModelScope.launch(Dispatchers.IO) {
+    private fun checkUserInfoIsEntered() = viewModelScope.launch(Dispatchers.IO) {
         val result = checkUserInfoIsEnteredUseCase()
-        val isEntered = when (result) {
-            is Resource.Success -> result.data
-            else -> false
+        when (result) {
+            is Resource.Success -> {
+                val isSuccessful = result.data
+                if (isSuccessful) {
+                    checkUserIsCouple()
+                }
+                setLoading(false)
+                _isUserInfoEntered.value = isSuccessful
+                _isLogInSuccessful.value = true
+                infoLog("Is user info entered: ${isSuccessful}")
+            }
+            else -> {
+                sendToast("구글로 가입하는데 실패했습니다")
+                setLoading(false)
+                _isUserInfoEntered.value = false
+                _isLogInSuccessful.value = false
+                infoLog("Fail to check user info is entered")
+            }
         }
-        _isUserInfoEntered.value = isEntered
-        infoLog("Is user info entered: ${_isUserInfoEntered.value}")
 
-        if (isEntered) {
-            checkUserIsCouple()
-        } else {
-            setLoading(false)
-            _isLogInSuccessful.value = true
-        }
+
     }
 
-    private fun checkUserIsCouple()= viewModelScope.launch(Dispatchers.IO) {
+    private suspend fun checkUserIsCouple() {
         when (val result = checkUserIsCoupleUseCase()) {
-            is Resource.Success -> _isUserCouple.value = result.data.isMatch
-            else -> _isUserCouple.value = false
+            is Resource.Success -> {
+                setLoading(false)
+                _isUserCouple.value = result.data.isMatch
+                _isLogInSuccessful.value = true
+                infoLog("Is user couple: ${result.data.isMatch}")
+            }
+            else -> {
+                sendToast("구글로 가입하는데 실패했습니다")
+                setLoading(false)
+                _isUserCouple.value = false
+                _isLogInSuccessful.value = false
+                infoLog("Fail to check user is couple")
+            }
         }
-        infoLog("Is user couple: ${_isUserCouple.value}")
-        setLoading(false)
-        _isLogInSuccessful.value = true
     }
 
 

@@ -53,6 +53,16 @@ interface ClonectService {
         @Body body: JsonObject
     ): Response<StatusDto>
 
+    @POST("api/couple/break")
+    suspend fun breakUpCouple(
+        @Body body: JsonObject
+    ): Response<StatusDto>
+
+    @POST("/api/couple/coupleCode")
+    suspend fun getCoupleRegistrationCode(
+        @Body body: JsonObject
+    ): Response<CoupleRegistrationCodeDto>
+
 
     /** Question **/
     @POST("/api/todayQuestion")

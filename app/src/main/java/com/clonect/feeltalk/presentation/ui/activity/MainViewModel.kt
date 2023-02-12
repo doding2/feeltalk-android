@@ -86,14 +86,18 @@ class MainViewModel @Inject constructor(
     private fun checkUserInfoIsEntered()= viewModelScope.launch(Dispatchers.IO) {
         val result = checkUserInfoIsEnteredUseCase()
         val isEntered = when (result) {
-            is Resource.Success -> result.data
+            is Resource.Success -> {
+                infoLog("Is user info entered: ${result.data}")
+                result.data
+            }
             else -> {
                 _isLoggedIn.value = false
+                sendToast("로그인에 실패했습니다")
+                infoLog("Fail to check user info is entered")
                 false
             }
         }
         _isUserInfoEntered.value = isEntered
-        infoLog("Is user info entered: ${_isUserInfoEntered.value}")
 
         if (isEntered) {
             getUserInfo()
@@ -106,16 +110,17 @@ class MainViewModel @Inject constructor(
     private fun checkUserIsCouple()= viewModelScope.launch(Dispatchers.IO) {
         val isUserCouple = when (val result = checkUserIsCoupleUseCase()) {
             is Resource.Success -> {
-                _isUserCouple.value = result.data.isMatch
+                infoLog("Is user couple: $isUserCouple")
                 result.data.isMatch
             }
             else -> {
                 _isLoggedIn.value = false
-                _isUserCouple.value = false
+                sendToast("로그인에 실패했습니다")
+                infoLog("Fail to check user is couple")
                 false
             }
         }
-        infoLog("Is user couple: $isUserCouple")
+        _isUserCouple.value = isUserCouple
 
         if (isUserCouple) {
             getPartnerInfo()

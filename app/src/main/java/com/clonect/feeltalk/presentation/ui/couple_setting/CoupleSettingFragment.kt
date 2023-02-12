@@ -2,18 +2,21 @@ package com.clonect.feeltalk.presentation.ui.couple_setting
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.databinding.FragmentCoupleSettingBinding
+import com.clonect.feeltalk.presentation.utils.showBreakUpCoupleDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -44,7 +47,25 @@ class CoupleSettingFragment : Fragment() {
 
         binding.apply {
             btnBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
+            
+            clPartnerProfile.setOnClickListener { 
+                showBreakUpCoupleDialog(
+                    partnerNickname = viewModel.partnerInfo.value.nickname,
+                    onConfirm = {
+                        lifecycleScope.launch {
+                            val isSuccessful = viewModel.breakUpCouple()
+                            if (isSuccessful) {
+                                Toast.makeText(requireContext(), "커플이 해제되었습니다", Toast.LENGTH_SHORT).show()
+                                navigateToSignUpPage()
+                            } else {
+                                Toast.makeText(requireContext(), "실패했습니다", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                )
+            }
         }
+        
     }
 
     private fun collectUserInfo() = lifecycleScope.launch {
@@ -91,6 +112,12 @@ class CoupleSettingFragment : Fragment() {
         } catch (e: Exception) {
             return "0"
         }
+    }
+
+
+    private fun navigateToSignUpPage() {
+        findNavController()
+            .navigate(R.id.action_coupleSettingFragment_to_signUpFragment)
     }
 
 

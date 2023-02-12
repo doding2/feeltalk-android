@@ -173,6 +173,8 @@ class HomeFragment : Fragment() {
     private fun navigateByQuestion() {
         val question = viewModel.todayQuestion.value ?: return
 
+        if (question.question == "") return
+
         if (question.myAnswer == null) {
             navigateToTodayQuestionPage()
             return

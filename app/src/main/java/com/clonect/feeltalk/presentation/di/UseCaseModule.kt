@@ -209,7 +209,11 @@ class UseCaseModule {
         return GetCoupleAnniversaryUseCase(userRepository)
     }
 
-
+    @Singleton
+    @Provides
+    fun providesBreakUpCoupleUseCase(userRepository: UserRepository): BreakUpCoupleUseCase {
+        return BreakUpCoupleUseCase(userRepository)
+    }
 
 
 

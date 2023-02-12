@@ -1,9 +1,9 @@
 package com.clonect.feeltalk.domain.repository
 
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.domain.model.dto.user.AccessTokenDto
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.model.dto.common.StatusDto
+import com.clonect.feeltalk.domain.model.dto.user.AccessTokenDto
 import com.clonect.feeltalk.domain.model.dto.user.CoupleCheckDto
 import com.clonect.feeltalk.domain.model.dto.user.PartnerCodeCheckDto
 import com.clonect.feeltalk.domain.model.dto.user.SignUpDto
@@ -13,6 +13,8 @@ interface UserRepository {
     suspend fun getAccessToken(): Resource<String>
     suspend fun getUserInfo(): Resource<UserInfo>
     suspend fun getPartnerInfo(): Resource<UserInfo>
+
+    suspend fun breakUpCouple(): Resource<StatusDto>
 
     suspend fun getCoupleAnniversary(): Resource<String>
 

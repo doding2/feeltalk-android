@@ -73,6 +73,21 @@ class UserRepositoryImpl(
         }
     }
 
+    override suspend fun breakUpCouple(): Resource<StatusDto> {
+        return try {
+            val accessToken = cacheDataSource.getAccessToken()
+                ?: localDataSource.getAccessToken()
+                ?: throw NullPointerException("User is Not logged in.")
+
+            val remote = remoteDataSource.breakUpCouple(accessToken).body()!!
+            return Resource.Success(remote)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
     override suspend fun getCoupleAnniversary(): Resource<String> {
         try {
             val accessToken = cacheDataSource.getAccessToken()
@@ -206,11 +221,27 @@ class UserRepositoryImpl(
             if (cache != null)
                 return Resource.Success(cache)
 
-            val local = localDataSource.getCoupleRegistrationCode()
-            if (local != null)
-                return Resource.Success(local)
+            val accessToken = cacheDataSource.getAccessToken()
+                ?: localDataSource.getAccessToken()
+                ?: throw NullPointerException("User is Not logged in.")
 
-            throw Exception("Couple Registration Code Not Found.")
+            try {
+                val remote = remoteDataSource.getCoupleRegistrationCode(accessToken).body()!!.coupleCode
+                cacheDataSource.saveCoupleRegistrationCode(remote)
+                localDataSource.saveCoupleRegistrationCode(remote)
+                return Resource.Success(remote)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {}
+
+
+            val local = localDataSource.getCoupleRegistrationCode()
+            if (local != null) {
+                cacheDataSource.saveCoupleRegistrationCode(local)
+                return Resource.Success(local)
+            }
+
+            throw Exception("Fail To Load Couple Registration Code")
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {

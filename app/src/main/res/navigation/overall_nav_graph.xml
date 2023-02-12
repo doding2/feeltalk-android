@@ -76,7 +76,13 @@
         android:id="@+id/coupleSettingFragment"
         android:name="com.clonect.feeltalk.presentation.ui.couple_setting.CoupleSettingFragment"
         android:label="fragment_couple_setting"
-        tools:layout="@layout/fragment_couple_setting" />
+        tools:layout="@layout/fragment_couple_setting" >
+        <action
+            android:id="@+id/action_coupleSettingFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment"
+            app:popUpTo="@id/coupleSettingFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
     <fragment
         android:id="@+id/coupleRegistrationFragment"
         android:name="com.clonect.feeltalk.presentation.ui.couple_registration.CoupleRegistrationFragment"

@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.provider.Settings
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -16,6 +17,7 @@ import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.domain.model.data.user.Emotion
+
 
 fun Fragment.makeLoadingDialog(onDismiss: () -> Unit = {}): Dialog {
     val dialog = Dialog(requireContext()).apply {
@@ -83,7 +85,7 @@ fun Fragment.showAlertDialog(
 
 fun Fragment.showMyEmotionChangerDialog(
     currentEmotion: Emotion,
-    onClickItem: (Emotion) -> Unit
+    onClickItem: (Emotion) -> Unit,
 ) {
     val dialog = Dialog(requireContext()).apply {
         setContentView(R.layout.dialog_my_emotion_changer)
@@ -131,11 +133,45 @@ fun Fragment.showMyEmotionChangerDialog(
 }
 
 
+fun Fragment.showBreakUpCoupleDialog(
+    partnerNickname: String,
+    onConfirm: () -> Unit = {},
+    onCancel: () -> Unit = {},
+    onDismiss: () -> Unit = {},
+) {
+    val dialog = Dialog(requireContext()).apply {
+        setContentView(R.layout.dialog_break_up_couple)
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        window?.setGravity(Gravity.BOTTOM)
+
+        findViewById<LinearLayout>(R.id.ll_root).setOnClickListener {
+            dismiss()
+        }
+
+        findViewById<TextView>(R.id.tv_partner_nickname).text = partnerNickname
+
+        findViewById<TextView>(R.id.tv_divorce).setOnClickListener {
+            onConfirm()
+            dismiss()
+        }
+
+        findViewById<CardView>(R.id.cv_cancel).setOnClickListener {
+            onCancel()
+            dismiss()
+        }
+
+        setOnDismissListener { onDismiss() }
+    }
+
+    dialog.show()
+}
+
+
 
 fun Fragment.showPermissionRequestDialog(
     title: String = "권한 설정",
     message: String = "이 기능을 사용하기 위해서는 권한을 설정해주셔야 합니다.",
-    confirmButtonText: String = "설정하러 가기"
+    confirmButtonText: String = "설정하러 가기",
 ) {
     showAlertDialog(
         title = title,

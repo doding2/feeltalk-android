@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
+import com.clonect.feeltalk.domain.usecase.user.BreakUpCoupleUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetCoupleAnniversaryUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetPartnerInfoUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetUserInfoUseCase
@@ -13,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,6 +22,7 @@ class CoupleSettingViewModel @Inject constructor(
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val getPartnerInfoUseCase: GetPartnerInfoUseCase,
     private val getCoupleAnniversaryUseCase: GetCoupleAnniversaryUseCase,
+    private val breakUpCoupleUseCase: BreakUpCoupleUseCase,
 ): ViewModel() {
 
     private val _userInfo = MutableStateFlow(UserInfo())
@@ -60,6 +63,22 @@ class CoupleSettingViewModel @Inject constructor(
             is Resource.Success -> { _coupleAnniversary.value = result.data }
             is Resource.Error -> infoLog("Fail to get d day: ${result.throwable.localizedMessage}")
             else -> infoLog("Fail to get partner d day")
+        }
+    }
+
+
+    suspend fun breakUpCouple() = withContext(Dispatchers.IO) {
+        val result = breakUpCoupleUseCase()
+        when (result) {
+            is Resource.Success -> {
+                infoLog("Success to break up couple: ${result.data}")
+                true
+            }
+            is Resource.Error -> {
+                infoLog("Fail to break up couple: ${result.throwable.localizedMessage}")
+                false
+            }
+            else -> false
         }
     }
 }
