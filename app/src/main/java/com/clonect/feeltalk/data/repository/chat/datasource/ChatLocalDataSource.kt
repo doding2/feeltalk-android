@@ -7,6 +7,8 @@ interface ChatLocalDataSource {
 
     fun getChatListFlowByQuestion(questionContent: String): Flow<List<Chat>>
 
+    suspend fun saveChatList(chatLis: List<Chat>): List<Long>
+
     suspend fun saveOneChatToDatabase(chat: Chat): Long
 
     suspend fun getChatListByQuestion(questionContent: String): List<Chat>

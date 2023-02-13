@@ -12,6 +12,9 @@ interface QuestionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertQuestion(question: Question): Long
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertQuestionList(questionList: List<Question>): List<Long>
+
     @Query("SELECT * FROM QuestionTable WHERE questionDate == :date")
     suspend fun getQuestionListByDate(date: String): List<Question>
 

@@ -6,6 +6,7 @@ interface QuestionLocalDataSource {
 
     suspend fun getTodayQuestion(date: String): Question?
     suspend fun saveOneQuestion(question: Question): Long
+    suspend fun saveQuestionList(questionList: List<Question>): List<Long>
 
     suspend fun getQuestionByContent(content: String): Question?
 

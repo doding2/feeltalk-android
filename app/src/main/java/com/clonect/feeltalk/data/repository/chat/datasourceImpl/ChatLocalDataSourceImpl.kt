@@ -2,7 +2,6 @@ package com.clonect.feeltalk.data.repository.chat.datasourceImpl
 
 import com.clonect.feeltalk.data.db.ChatDao
 import com.clonect.feeltalk.data.repository.chat.datasource.ChatLocalDataSource
-import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
 import com.clonect.feeltalk.domain.model.data.chat.Chat
 import kotlinx.coroutines.flow.Flow
 
@@ -11,6 +10,10 @@ class ChatLocalDataSourceImpl(
 ): ChatLocalDataSource {
 
     override fun getChatListFlowByQuestion(questionContent: String): Flow<List<Chat>> = chatDao.getChatListFlowByQuestion(questionContent)
+
+    override suspend fun saveChatList(chatList: List<Chat>): List<Long> {
+        return chatDao.insertChatList(chatList)
+    }
 
     override suspend fun saveOneChatToDatabase(chat: Chat): Long = chatDao.insertChat(chat)
 

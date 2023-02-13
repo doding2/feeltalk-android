@@ -11,8 +11,8 @@ import com.clonect.feeltalk.domain.model.dto.chat.ChatListItemDto
 import com.clonect.feeltalk.domain.model.dto.chat.SendChatDto
 import com.clonect.feeltalk.domain.repository.ChatRepository
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.*
 
 class ChatRepositoryImpl(
     private val remoteDataSource: ChatRemoteDataSource,
@@ -21,35 +21,40 @@ class ChatRepositoryImpl(
     private val userLevelEncryptHelper: UserLevelEncryptHelper,
 ): ChatRepository {
 
-    override fun getChatListByQuestion(accessToken: String, questionContent: String): Flow<Resource<List<Chat>>> = flow {
-//        val cache = cacheDataSource.getChatListByQuestion(questionContent)
-//        cache?.let { emit(Resource.Success(cache)) }
-//
-//        val localFlow = getChatListFlowFromDB(questionContent)
-//        if (localFlow is Resource.Success) {
-//            localFlow.data.collect {
-//                cacheDataSource.saveChatListToCacheByQuestion(questionContent, it)
-//                emit(Resource.Success(it))
-//            }
-//        }
-//        if (localFlow is Resource.Error) {
-//            emit(Resource.Error(localFlow.throwable))
-//        }
+    @OptIn(FlowPreview::class)
+    override fun getChatListByQuestion(accessToken: String, questionContent: String): Flow<Resource<List<Chat>>> {
+        val cacheFlow = channelFlow {
+            val cache = cacheDataSource.getChatListByQuestion(questionContent)
+            cache?.let { send(Resource.Success(cache)) }
+        }
 
-        val remote = getChatListFromServer(accessToken, questionContent)
-        if (remote is Resource.Success) {
-            val newChatList = remote.data.toChatList(
-                accessToken = accessToken,
-                questionString = questionContent,
-                userLevelEncryptHelper = userLevelEncryptHelper,
-            )
-            saveChatListToDB(questionContent, newChatList)
-            cacheDataSource.saveChatListToCacheByQuestion(questionContent, newChatList)
-            emit(Resource.Success(newChatList))
+        val localFlow = channelFlow {
+            val local = localDataSource.getChatListFlowByQuestion(questionContent)
+            local.collectLatest {
+                cacheDataSource.saveChatListToCacheByQuestion(questionContent, it)
+                send(Resource.Success(it))
+            }
         }
-        if (remote is Resource.Error) {
-            emit(Resource.Error(remote.throwable))
+
+        val remoteFlow = channelFlow {
+            val remote = getChatListFromServer(accessToken, questionContent)
+            if (remote is Resource.Success) {
+                val newChatList = remote.data.toChatList(
+                    accessToken = accessToken,
+                    questionString = questionContent,
+                    userLevelEncryptHelper = userLevelEncryptHelper,
+                )
+
+                localDataSource.saveChatList(newChatList)
+                cacheDataSource.saveChatListToCacheByQuestion(questionContent, newChatList)
+                send(Resource.Success(newChatList))
+            }
+            if (remote is Resource.Error) {
+                send(Resource.Error(remote.throwable))
+            }
         }
+
+        return flowOf(cacheFlow, localFlow, remoteFlow).flattenMerge()
     }
 
     override suspend fun sendChat(accessToken: String, chat: Chat): Resource<SendChatDto> {
@@ -78,26 +83,6 @@ class ChatRepositoryImpl(
         }
     }
 
-
-    private suspend fun saveChatListToDB(questionContent: String, newList: List<Chat>) {
-        val oldList = localDataSource.getChatListByQuestion(questionContent)
-        newList.forEach {
-            val isNewChat = !oldList.contains(it)
-            if (isNewChat) {
-                localDataSource.saveOneChatToDatabase(it)
-            }
-        }
-    }
-
-
-    private fun getChatListFlowFromDB(questionString: String): Resource<Flow<List<Chat>>> {
-        return try {
-            val chatList = localDataSource.getChatListFlowByQuestion(questionString)
-            Resource.Success(chatList)
-        } catch (e: Exception) {
-            Resource.Error(e)
-        }
-    }
 
     private suspend fun getChatListFromServer(accessToken: String, questionString: String): Resource<List<ChatListItemDto>> {
         return try {

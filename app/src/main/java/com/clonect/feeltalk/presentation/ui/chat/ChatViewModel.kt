@@ -13,10 +13,7 @@ import com.clonect.feeltalk.presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -70,7 +67,9 @@ class ChatViewModel @Inject constructor(
 
     private fun collectChatList() = viewModelScope.launch(Dispatchers.IO) {
         val questionContent = _question.value.question
-        getChatListUseCase(questionContent).collect { result ->
+        getChatListUseCase(questionContent)
+            .catch { infoLog("collect chat list error: ${it.localizedMessage}") }
+            .collect { result ->
             when (result) {
                 is Resource.Success -> {
                     updateChatList(result.data)
@@ -99,11 +98,11 @@ class ChatViewModel @Inject constructor(
 
 
     fun sendChat(content: String) = viewModelScope.launch(Dispatchers.IO) {
-        val format = SimpleDateFormat("yyyy/MM/dd/hh/mm/ss", Locale.getDefault())
+        val format = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
         val date = format.format(Date())
 
         val chat = Chat(
-            id = _chatList.value.size.toLong(),
+            id = _chatList.value.size.toLong() + 1,
             question = _question.value.question,
             owner = "mine",
             message = content,

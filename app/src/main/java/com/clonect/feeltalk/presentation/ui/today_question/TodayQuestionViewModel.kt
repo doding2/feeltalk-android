@@ -45,23 +45,24 @@ class TodayQuestionViewModel @Inject constructor(
     }
 
     fun setMyAnswer(answer: String) {
-        val format = SimpleDateFormat("yyyy/MM/dd/hh/mm", Locale.getDefault())
-        val date = format.format(Date())
-
         _myAnswerStateFlow.value = answer
         _questionStateFlow.value.myAnswer = answer
-        _questionStateFlow.value.myAnswerDate = date
     }
 
     suspend fun sendQuestionAnswer() = withContext(Dispatchers.IO) {
         _isLoading.value = true
-        val result = sendQuestionAnswerUseCase(_questionStateFlow.value)
+        val format = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
+        val date = format.format(Date())
+        val question = _questionStateFlow.value.apply {
+            myAnswerDate = date
+        }
+        val result = sendQuestionAnswerUseCase(question)
         _isLoading.value = false
         return@withContext when (result) {
             is Resource.Success -> {
                 homeQuestionReference.value.apply {
-                    myAnswer = _questionStateFlow.value.myAnswer
-                    myAnswerDate = _questionStateFlow.value.myAnswerDate
+                    myAnswer = question.myAnswer
+                    myAnswerDate = question.myAnswerDate
                 }
                 true
             }

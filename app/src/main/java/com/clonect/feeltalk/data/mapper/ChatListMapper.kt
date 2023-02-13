@@ -13,6 +13,7 @@ suspend fun List<ChatListItemDto>.toChatList(
     var isPartnerAnswerExist = false
 
     return mapIndexed { index, itemDto ->
+        val id = (index + 1).toLong()
         val isMine = accessToken == itemDto.accessToken
         val owner = if (isMine) "mine" else "partner"
         val message = userLevelEncryptHelper.run {
@@ -20,9 +21,7 @@ suspend fun List<ChatListItemDto>.toChatList(
             else decryptPartnerText(itemDto.message)
         }
         val date = itemDto.time
-            .replace("T", "/")
-            .replace(":", "/")
-            .replace("-", "/")
+            .replace("T", " ")
 
         var isAnswer = false
         if (!isMyAnswerExist && isMine) {
@@ -35,7 +34,7 @@ suspend fun List<ChatListItemDto>.toChatList(
         }
 
         Chat(
-            id = index.toLong(),
+            id = id,
             question = questionString,
             owner = owner,
             message = message,

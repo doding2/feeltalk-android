@@ -107,12 +107,12 @@ class QuestionRepositoryImpl(
             )
             val dto = response.body()!!
             val questionList = dto.toQuestionList().map { question ->
-                val decrypted = question.myAnswer?.let { userLevelEncryptHelper.decryptPartnerText(it) }
+                val decrypted = question.myAnswer?.let { userLevelEncryptHelper.decryptMyText(it) }
                 question.copy(myAnswer = decrypted)
             }
 
-            // TODO
-
+            localDataSource.saveQuestionList(questionList)
+            cacheDataSource.saveQuestionList(questionList)
 
             Resource.Success(questionList)
         } catch (e: CancellationException) {

@@ -164,7 +164,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     private fun handleChatData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
         val questionContent = data["title_detail"] ?: return@launch
         val chatMessage = data["message_detail"]?.let { userLevelEncryptHelper.decryptPartnerText(it) } ?: "(Server Error)"
-        val date = data["createAt"] ?: ""
+        val date = (data["createAt"] ?: "").replace("", "")
 
         val chat = Chat(
             question = questionContent,
@@ -173,15 +173,26 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             date = date
         )
 
-        saveChatUseCase(chat)
 
         val showingQuestionContent = FeeltalkApp.getQuestionIdOfShowingChatFragment()
-        if (showingQuestionContent == questionContent) {
-            FcmNewChatObserver
-                .getInstance()
-                .setNewChat(chat)
+        val isAppShowing = FeeltalkApp.getAppRunning()
+        
+        val saveResult = saveChatUseCase(chat)
+        if (saveResult !is Resource.Success) {
+            // 채팅 저장이 실패하고
+            // 보이는 화면이 이 채팅의 채팅방일때
+            if (showingQuestionContent == questionContent) {
+                FcmNewChatObserver
+                    .getInstance()
+                    .setNewChat(chat)
+                return@launch
+            }
         }
 
+
+        if (showingQuestionContent == questionContent && isAppShowing) {
+            return@launch
+        }
 
         val questionResult = getQuestionByContentFromDataBaseUseCase(questionContent)
         val question = if (questionResult is Resource.Success) {

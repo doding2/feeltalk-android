@@ -19,6 +19,10 @@ class QuestionLocalDataSourceImpl(
         return dao.insertQuestion(question)
     }
 
+    override suspend fun saveQuestionList(questionList: List<Question>): List<Long> {
+        return dao.insertQuestionList(questionList)
+    }
+
     override suspend fun getQuestionByContent(content: String): Question? {
         val questionList = dao.getQuestionListByContent(content)
         if (questionList.isEmpty())
