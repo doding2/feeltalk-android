@@ -1,10 +1,8 @@
 package com.clonect.feeltalk.domain.repository
 
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.domain.model.dto.user.AccessTokenDto
 
 interface EncryptionRepository {
-    suspend fun test()
     suspend fun checkKeyPairsExist(): Boolean
 
     suspend fun uploadMyPublicKey(accessToken: String): Resource<String>

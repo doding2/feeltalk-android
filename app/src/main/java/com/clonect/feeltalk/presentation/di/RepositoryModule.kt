@@ -49,9 +49,10 @@ class RepositoryModule {
     fun providesChatRepository(
         remoteDataSource: ChatRemoteDataSource,
         localDataSource: ChatLocalDataSource,
-        cacheDataSource: ChatCacheDataSource
+        cacheDataSource: ChatCacheDataSource,
+        userLevelEncryptHelper: UserLevelEncryptHelper,
     ): ChatRepository {
-        return ChatRepositoryImpl(remoteDataSource, localDataSource, cacheDataSource)
+        return ChatRepositoryImpl(remoteDataSource, localDataSource, cacheDataSource, userLevelEncryptHelper)
     }
 
     @Singleton

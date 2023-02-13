@@ -5,6 +5,7 @@ import androidx.core.content.edit
 import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
 import com.clonect.feeltalk.domain.repository.UserRepository
 import com.clonect.feeltalk.presentation.utils.AppSettings
+import com.clonect.feeltalk.presentation.utils.infoLog
 
 class SaveAppSettingsUseCase(
     private val settingsPref: SharedPreferences,
@@ -13,8 +14,12 @@ class SaveAppSettingsUseCase(
 ) {
     suspend operator fun invoke(appSettings: AppSettings) {
         val prefFcmToken = settingsPref.getString("fcmToken", null)
+            ?.let { appLevelEncryptHelper.decrypt("fcmToken", it)  }
         if (prefFcmToken != appSettings.fcmToken) {
-            prefFcmToken?.let { userRepository.updateFcmToken(it) }
+            appSettings.fcmToken?.let {
+                infoLog("update fcm token: ${it}")
+                userRepository.updateFcmToken(it)
+            }
         }
 
         settingsPref.edit {

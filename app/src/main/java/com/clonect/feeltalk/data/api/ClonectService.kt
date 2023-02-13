@@ -2,6 +2,8 @@ package com.clonect.feeltalk.data.api
 
 import com.clonect.feeltalk.domain.model.data.encryption.LoadPartnerPrivateKeyDto
 import com.clonect.feeltalk.domain.model.data.encryption.LoadPartnerPublicKeyDto
+import com.clonect.feeltalk.domain.model.dto.chat.ChatListItemDto
+import com.clonect.feeltalk.domain.model.dto.chat.SendChatDto
 import com.clonect.feeltalk.domain.model.dto.common.StatusDto
 import com.clonect.feeltalk.domain.model.dto.question.QuestionAnswersDto
 import com.clonect.feeltalk.domain.model.dto.question.QuestionListDto
@@ -94,22 +96,20 @@ interface ClonectService {
 
     /** Chat **/
     // "accessToken": String, "question": String, "message": String
-    @POST("/api/fcm/chattingMessage")
+    @POST("/api/chattingMessage")
     suspend fun sendChat(
         @Body body: JsonObject
-    ): Response<String>
+    ): Response<SendChatDto>
 
-    // Chatting Room List = Question List
     @GET("/api/chattingRoom/{accessToken}")
     suspend fun getChattingRoomList(
         @Path("accessToken") accessToken: String
     ): Response<QuestionListDto>
 
-    // "accessToken": String, "question": String
-    @GET("/api/chattingMessageList")
+    @POST("/api/chattingMessageList")
     suspend fun getChatList(
         @Body body: JsonObject
-    ): Response<String>
+    ): Response<List<ChatListItemDto>>
 
 
     /** Sign Up **/

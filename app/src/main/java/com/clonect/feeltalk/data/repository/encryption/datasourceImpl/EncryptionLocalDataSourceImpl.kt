@@ -37,7 +37,6 @@ class EncryptionLocalDataSourceImpl(
         val myPublicKey = myPublicKeyFile.bufferedReader().use {
             val encrypted = it.readLine()
             val key = appLevelEncryptHelper.decrypt("myPublicKey", encrypted)
-            infoLog("my public key: ${key}")
             val keyBytes = Base64.decode(key, Base64.NO_WRAP)
             val keySpec = X509EncodedKeySpec(keyBytes)
             val keyFactory = KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_RSA)
@@ -51,7 +50,6 @@ class EncryptionLocalDataSourceImpl(
         val myPrivateKey = myPrivateKeyFile.bufferedReader().use {
             val encrypted = it.readLine()
             val key = appLevelEncryptHelper.decrypt("myPrivateKey", encrypted)
-            infoLog("my private key: ${key}")
             val keyBytes = Base64.decode(key, Base64.NO_WRAP)
             val keySpec = PKCS8EncodedKeySpec(keyBytes)
             val keyFactory = KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_RSA)

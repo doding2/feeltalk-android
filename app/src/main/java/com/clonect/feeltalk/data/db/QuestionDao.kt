@@ -15,4 +15,7 @@ interface QuestionDao {
     @Query("SELECT * FROM QuestionTable WHERE questionDate == :date")
     suspend fun getQuestionListByDate(date: String): List<Question>
 
+    @Query("SELECT * FROM QuestionTable WHERE question == :content")
+    suspend fun getQuestionListByContent(content: String): List<Question>
+
 }

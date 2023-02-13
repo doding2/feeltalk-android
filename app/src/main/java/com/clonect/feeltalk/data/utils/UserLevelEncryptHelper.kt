@@ -11,7 +11,6 @@ class UserLevelEncryptHelper(
         val encrypted = encryptRepository.encryptMyText(message)
         when (encrypted) {
             is Resource.Success -> {
-                infoLog("User Level Encryption: ${message} -> ${encrypted.data}")
                 return encrypted.data
             }
             is Resource.Error -> throw encrypted.throwable
@@ -23,7 +22,6 @@ class UserLevelEncryptHelper(
         val decrypted = encryptRepository.decryptMyText(digest)
         return when (decrypted) {
             is Resource.Success -> {
-                infoLog("User Level Decryption: ${digest} -> ${decrypted.data}")
                 decrypted.data
             }
             is Resource.Error -> digest
@@ -35,7 +33,6 @@ class UserLevelEncryptHelper(
         val encrypted = encryptRepository.encryptPartnerText(message)
         when (encrypted) {
             is Resource.Success -> {
-                infoLog("User Level Encryption: ${message} -> ${encrypted.data}")
                 return encrypted.data
             }
             is Resource.Error -> throw encrypted.throwable
@@ -47,7 +44,6 @@ class UserLevelEncryptHelper(
         val decrypted = encryptRepository.decryptPartnerText(digest)
         return when (decrypted) {
             is Resource.Success -> {
-                infoLog("User Level Decryption: ${digest} -> ${decrypted.data}")
                 decrypted.data
             }
             is Resource.Error -> digest

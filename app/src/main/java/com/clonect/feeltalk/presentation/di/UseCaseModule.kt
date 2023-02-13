@@ -16,10 +16,7 @@ import com.clonect.feeltalk.domain.usecase.chat.SendChatUseCase
 import com.clonect.feeltalk.domain.usecase.encryption.*
 import com.clonect.feeltalk.domain.usecase.news.GetNewsListUseCase
 import com.clonect.feeltalk.domain.usecase.notification.SendFcmUseCase
-import com.clonect.feeltalk.domain.usecase.question.GetQuestionListUseCase
-import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionAnswersFromServer
-import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionUseCase
-import com.clonect.feeltalk.domain.usecase.question.SendQuestionAnswerUseCase
+import com.clonect.feeltalk.domain.usecase.question.*
 import com.clonect.feeltalk.domain.usecase.user.*
 import dagger.Module
 import dagger.Provides
@@ -56,14 +53,14 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesGetChatListUseCase(chatRepository: ChatRepository): GetChatListUseCase {
-        return GetChatListUseCase(chatRepository)
+    fun providesGetChatListUseCase(userRepository: UserRepository, chatRepository: ChatRepository): GetChatListUseCase {
+        return GetChatListUseCase(userRepository, chatRepository)
     }
 
     @Singleton
     @Provides
-    fun providesSendChatUseCase(chatRepository: ChatRepository): SendChatUseCase {
-        return SendChatUseCase(chatRepository)
+    fun providesSendChatUseCase(userRepository: UserRepository, chatRepository: ChatRepository): SendChatUseCase {
+        return SendChatUseCase(userRepository, chatRepository)
     }
 
     @Singleton
@@ -146,12 +143,6 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesTestUseCase(encryptionRepository: EncryptionRepository): TestUseCase {
-        return TestUseCase(encryptionRepository)
-    }
-
-    @Singleton
-    @Provides
     fun providesUploadMyPublicKeyUseCase(userRepository: UserRepository, encryptionRepository: EncryptionRepository): UploadMyPublicKeyUseCase {
         return UploadMyPublicKeyUseCase(userRepository, encryptionRepository)
     }
@@ -216,7 +207,11 @@ class UseCaseModule {
         return BreakUpCoupleUseCase(userRepository)
     }
 
-
+    @Singleton
+    @Provides
+    fun providesGetQuestionByContentFromDataBaseUseCase(questionRepository: QuestionRepository): GetQuestionByContentFromDataBaseUseCase {
+        return GetQuestionByContentFromDataBaseUseCase(questionRepository)
+    }
 
 
 

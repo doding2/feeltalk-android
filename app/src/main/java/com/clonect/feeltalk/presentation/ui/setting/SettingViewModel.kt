@@ -74,6 +74,7 @@ class SettingViewModel @Inject constructor(
                 } else {
                     unsubscribeFromTopic(Topics.Push.text)
                 }
+                appSettings.fcmToken = it
                 appSettings.isPushNotificationEnabled = enabled
                 saveAppSettings(appSettings)
                 _isPushNotificationEnabled.value = enabled
@@ -90,6 +91,7 @@ class SettingViewModel @Inject constructor(
                 } else {
                     unsubscribeFromTopic(Topics.UsageInfo.text)
                 }
+                appSettings.fcmToken = it
                 appSettings.isUsageInfoNotificationEnabled = enabled
                 saveAppSettings(appSettings)
                 _isUsageInfoNotificationEnabled.value = enabled

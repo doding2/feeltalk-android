@@ -12,7 +12,6 @@ import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionLoca
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionRemoteDataSource
 import com.clonect.feeltalk.data.utils.MessageEncryptHelper
 import com.clonect.feeltalk.domain.repository.EncryptionRepository
-import com.clonect.feeltalk.presentation.utils.infoLog
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import java.security.*
@@ -31,17 +30,6 @@ class EncryptionRepositoryImpl(
 
     private var tryCount = 0
 
-    override suspend fun test() {
-        val message = "유승준이 좋아하는 스킨십"
-        val encrypted = encrypt(getMyPublicKey(), message)
-        infoLog("message: $message")
-        infoLog("encrypted: ${encrypted}")
-
-        val decrypted = decrypt(getMyPrivateKey(), encrypted)
-        infoLog("decrypted message: $decrypted")
-    }
-
-    
     override suspend fun checkKeyPairsExist(): Boolean {
         return try {
             val isExist = localDataSource.checkKeyPairsExist()

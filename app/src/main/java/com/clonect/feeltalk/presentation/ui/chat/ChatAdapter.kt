@@ -9,8 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.databinding.ItemChatMineBinding
 import com.clonect.feeltalk.databinding.ItemChatPartnerBinding
 import com.clonect.feeltalk.domain.model.data.chat.Chat
-import com.clonect.feeltalk.domain.model.data.question.Question
-import com.clonect.feeltalk.presentation.ui.question_list.QuestionListAdapter
 
 class ChatAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -21,7 +19,7 @@ class ChatAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val callback = object: DiffUtil.ItemCallback<Chat>() {
         override fun areItemsTheSame(oldItem: Chat, newItem: Chat): Boolean {
-            return oldItem.date == newItem.date && oldItem.ownerEmail == newItem.ownerEmail && oldItem.id == newItem.id
+            return oldItem.date == newItem.date && oldItem.owner == newItem.owner && oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: Chat, newItem: Chat): Boolean {
@@ -57,7 +55,7 @@ class ChatAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun getItemViewType(position: Int): Int {
         val question = differ.currentList[position]
-        return if (question.ownerEmail == "mine") TYPE_MINE     // TODO 내 이메일 바꾸기
+        return if (question.owner == "mine") TYPE_MINE     // TODO 내 이메일 바꾸기
         else TYPE_PARTNER
     }
 
@@ -77,7 +75,7 @@ class ChatAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 else
                     layoutChatOwner.visibility = View.GONE
 
-                textChat.text = chat.content
+                textChat.text = chat.message
                 textDate.text = chat.date
 
                 root.setOnClickListener { _ ->
@@ -98,8 +96,8 @@ class ChatAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 else
                     layoutChatOwner.visibility = View.GONE
 
-                textPartnerName.text = chat.ownerEmail
-                textChat.text = chat.content
+                textPartnerName.text = chat.owner
+                textChat.text = chat.message
                 textDate.text = chat.date
 
                 root.setOnClickListener { _ ->

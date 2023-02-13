@@ -19,5 +19,12 @@ class QuestionLocalDataSourceImpl(
         return dao.insertQuestion(question)
     }
 
+    override suspend fun getQuestionByContent(content: String): Question? {
+        val questionList = dao.getQuestionListByContent(content)
+        if (questionList.isEmpty())
+            return null
+        return questionList.last()
+    }
+
 
 }

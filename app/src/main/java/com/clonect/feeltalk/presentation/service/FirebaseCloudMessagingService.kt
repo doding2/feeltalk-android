@@ -11,11 +11,13 @@ import androidx.core.os.bundleOf
 import androidx.navigation.NavDeepLinkBuilder
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.data.utils.UserLevelEncryptHelper
 import com.clonect.feeltalk.domain.model.data.chat.Chat
 import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SaveChatUseCase
+import com.clonect.feeltalk.domain.usecase.question.GetQuestionByContentFromDataBaseUseCase
 import com.clonect.feeltalk.presentation.service.notification_observer.CoupleRegistrationObserver
 import com.clonect.feeltalk.presentation.service.notification_observer.FcmNewChatObserver
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
@@ -28,7 +30,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -41,11 +42,17 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     @Inject
     lateinit var saveAppSettingsUseCase: SaveAppSettingsUseCase
 
+    // User Level Encryptor
+    @Inject
+    lateinit var userLevelEncryptHelper: UserLevelEncryptHelper
+
     // Chat
     @Inject
     lateinit var saveChatUseCase: SaveChatUseCase
-//    @Inject
-//    lateinit var getQuestionByIdUseCase: GetQuestionByIdUseCase
+
+    // Question
+    @Inject
+    lateinit var getQuestionByContentFromDataBaseUseCase: GetQuestionByContentFromDataBaseUseCase
 
 
     companion object {
@@ -79,7 +86,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 ?: message.data
         }
 
-        infoLog("new fcm: $data")
+        infoLog("새로 도착한 FCM: $data")
 
         when (data["type"]) {
             "today_question" -> handleTodayQuestionData(data)
@@ -155,71 +162,69 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     }
 
     private fun handleChatData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
-        val questionContent = data["question"].toString()
+        val questionContent = data["title_detail"] ?: return@launch
+        val chatMessage = data["message_detail"]?.let { userLevelEncryptHelper.decryptPartnerText(it) } ?: "(Server Error)"
+        val date = data["createAt"] ?: ""
 
         val chat = Chat(
             question = questionContent,
-            ownerEmail = "partner@email.com",
-            content = data["content"].toString(),
-            date = data["date"].toString())
+            owner = "partner",
+            message = chatMessage,
+            date = date
+        )
 
-        val saveResult = saveChatUseCase(chat)
-        if (saveResult !is Resource.Success)
-            return@launch
+        saveChatUseCase(chat)
 
-        val showingQuestionId = FeeltalkApp.getQuestionIdOfShowingChatFragment()
-        if (showingQuestionId == questionContent) {
+        val showingQuestionContent = FeeltalkApp.getQuestionIdOfShowingChatFragment()
+        if (showingQuestionContent == questionContent) {
             FcmNewChatObserver
                 .getInstance()
                 .setNewChat(chat)
         }
 
-//          TODO 나중에 변경
-//        val questionResult = getQuestionByIdUseCase(questionId)
-//        if (questionResult !is Resource.Success)
-//            return@launch
-//        var question = questionResult.data
-        val question = Question(
-            question = "question",
-            questionDate = "date",
-            myAnswer = "myAnswer",
-            myAnswerDate = "date",
-            partnerAnswer = "partnerAnswer",
-            partnerAnswerDate = "date",
-        )
+
+        val questionResult = getQuestionByContentFromDataBaseUseCase(questionContent)
+        val question = if (questionResult is Resource.Success) {
+            questionResult.data
+        } else {
+            Question(question = questionContent)
+        }
 
         val pendingIntent = NavDeepLinkBuilder(applicationContext)
             .setGraph(R.navigation.overall_nav_graph)
             .setDestination(R.id.chatFragment)
             .setArguments(
-                bundleOf("selectedQuestion" to Question(
-                    question = data["title_detail"] ?: question.question,
-                ))
+                bundleOf("selectedQuestion" to question)
             )
             .createPendingIntent()
 
-        withContext(Dispatchers.Main) {
-            showNotification(
-                title = data["title"].toString(),
-                message = data["title"].toString(),
-                channelID = CHAT_CHANNEL_ID,
-                pendingIntent = pendingIntent
-            )
-        }
+        showNotification(
+            title = data["title"].toString(),
+            message = data["message"].toString(),
+            notificationID = questionContent.toBytesInt(),
+            channelID = CHAT_CHANNEL_ID,
+            pendingIntent = pendingIntent
+        )
     }
 
+    private fun String.toBytesInt(): Int {
+        val bytes = encodeToByteArray()
+        var result = 0
+        for (i in bytes.indices) {
+            result = result or (bytes[i].toInt() shl 8 * i)
+        }
+        return result
+    }
 
-
-    private fun showNotification(title: String, message: String, channelID: String, pendingIntent: PendingIntent?) {
+    private fun showNotification(title: String, message: String, notificationID: Int = Random.nextInt(), channelID: String, pendingIntent: PendingIntent?) {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val notificationID = Random.nextInt()
 
         createNotificationChannel(
             notificationManager = notificationManager,
             channelID = channelID
         )
 
-        val notification = NotificationCompat.Builder(this, TODAY_QUESTION_CHANNEL_ID)
+        val notification = NotificationCompat.Builder(applicationContext, channelID)
             .setContentTitle(title)
             .setContentText(message)
             .setSmallIcon(R.mipmap.ic_launcher_round)
@@ -247,6 +252,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             notificationManager.createNotificationChannel(channel)
         }
     }
+
 
     private fun getChannelName(channelID: String): String = when (channelID) {
         TODAY_QUESTION_CHANNEL_ID -> "오늘의 질문"

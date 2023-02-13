@@ -5,7 +5,6 @@ import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
 import com.clonect.feeltalk.BuildConfig
-import com.clonect.feeltalk.presentation.utils.infoLog
 import java.io.Serializable
 import java.security.KeyStore
 import javax.crypto.Cipher
@@ -19,27 +18,35 @@ class AppLevelEncryptHelper(
     private var appLevelKey = getAppLevelKey()
 
     fun encrypt(name: String, message: String): String {
-        val cipher = Cipher.getInstance(BuildConfig.APP_LEVEL_CIPHER_ALGORITHM)
-        cipher.init(Cipher.ENCRYPT_MODE, appLevelKey)
+        return try {
+            val cipher = Cipher.getInstance(BuildConfig.APP_LEVEL_CIPHER_ALGORITHM)
+            cipher.init(Cipher.ENCRYPT_MODE, appLevelKey)
 
-        val iv = cipher.iv
-        val ivString = Base64.encodeToString(iv, Base64.NO_WRAP)
-        pref.edit().putString("${name}_iv", ivString).apply()
+            val iv = cipher.iv
+            val ivString = Base64.encodeToString(iv, Base64.NO_WRAP)
+            pref.edit().putString("${name}_iv", ivString).apply()
 
-        val encryptedByteArray = cipher.doFinal(message.encodeToByteArray())
-        return Base64.encodeToString(encryptedByteArray, Base64.NO_WRAP)
+            val encryptedByteArray = cipher.doFinal(message.encodeToByteArray())
+            Base64.encodeToString(encryptedByteArray, Base64.NO_WRAP)
+        } catch (_: Exception) {
+            return message
+        }
     }
 
     fun decrypt(name: String, digest: String): String {
-        val ivString = pref.getString("${name}_iv", null)
-        val iv = Base64.decode(ivString, Base64.NO_WRAP)
+        return try {
+            val ivString = pref.getString("${name}_iv", null)
+            val iv = Base64.decode(ivString, Base64.NO_WRAP)
 
-        val spec = GCMParameterSpec(128, iv)
-        val cipher = Cipher.getInstance(BuildConfig.APP_LEVEL_CIPHER_ALGORITHM)
-        cipher.init(Cipher.DECRYPT_MODE, appLevelKey, spec)
+            val spec = GCMParameterSpec(128, iv)
+            val cipher = Cipher.getInstance(BuildConfig.APP_LEVEL_CIPHER_ALGORITHM)
+            cipher.init(Cipher.DECRYPT_MODE, appLevelKey, spec)
 
-        val decryptedByteArray = cipher.doFinal(Base64.decode(digest, Base64.NO_WRAP))
-        return String(decryptedByteArray, Charsets.UTF_8)
+            val decryptedByteArray = cipher.doFinal(Base64.decode(digest, Base64.NO_WRAP))
+            String(decryptedByteArray, Charsets.UTF_8)
+        } catch (e: Exception) {
+            digest
+        }
     }
 
 

@@ -2,7 +2,6 @@ package com.clonect.feeltalk.presentation.ui.chat
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +9,7 @@ import android.view.WindowManager
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.LayoutRes
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -21,8 +21,6 @@ import com.clonect.feeltalk.domain.model.data.question.Question
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -72,6 +70,35 @@ class ChatFragment : Fragment() {
             }
     }
 
+    private fun collectQuestion() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.question.collectLatest {
+                reassembleQuestionTitle(it)
+            }
+        }
+    }
+
+    private fun collectChatList() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.chatList.collectLatest {
+                adapter.differ.submitList(it) {
+                    scrollRemainHeight -= computeRemainScrollHeight()
+                    val position = adapter.itemCount - 1
+                    viewModel.updateScrollPosition(position)
+                }
+            }
+        }
+    }
+
+    private fun collectScrollPosition() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.scrollPositionState.collectLatest {
+                binding.rvChat.scrollToPosition(it)
+            }
+        }
+    }
+
+
     private fun initRecyclerView() {
         binding.rvChat.adapter = adapter
         // adjust scroll y when keboard up/down
@@ -94,35 +121,6 @@ class ChatFragment : Fragment() {
         }
     }
 
-    private fun collectQuestion() = lifecycleScope.launch {
-        repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.questionState.collectLatest {
-                reassembleQuestionTitle(it)
-            }
-        }
-    }
-
-    private fun collectChatList() = lifecycleScope.launch {
-        repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.chatListState.collectLatest {
-                adapter.differ.submitList(it) {
-                    scrollRemainHeight -= computeRemainScrollHeight()
-                    val position = adapter.itemCount - 1
-                    viewModel.updateScrollPosition(position)
-                }
-            }
-        }
-    }
-
-    private fun collectScrollPosition() = lifecycleScope.launch {
-        repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.scrollPositionState.collectLatest {
-                binding.rvChat.scrollToPosition(it)
-            }
-        }
-    }
-
-
     private fun computeRemainScrollHeight(): Int {
         return binding.rvChat.run {
             computeVerticalScrollRange() - computeVerticalScrollOffset() - computeVerticalScrollExtent()
@@ -136,6 +134,7 @@ class ChatFragment : Fragment() {
         question.question.reassembleTextView(R.layout.text_view_question_content)
 //        question.contentSuffix.reassembleTextView(R.layout.text_view_question_content_suffix)
     }
+
 
     private fun String.reassembleTextView(@LayoutRes resource: Int) {
         val wordList = this.split(" ")

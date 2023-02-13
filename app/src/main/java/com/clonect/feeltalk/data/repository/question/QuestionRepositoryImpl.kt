@@ -44,6 +44,21 @@ class QuestionRepositoryImpl(
             val remoteQuestion = remoteQuestionDto.toQuestion().apply {
                 questionDate = date
             }
+            
+            // 어제자 질문이랑 오늘 서버의 질문이랑 같은지 체크
+            val yesterday = Date(System.currentTimeMillis()-24*60*60*1000)
+            val yesterdayDate = format.format(yesterday)
+            val yesterdayQuestion = localDataSource.getTodayQuestion(yesterdayDate)
+
+            if (yesterdayQuestion?.question == null) {
+                localDataSource.saveOneQuestion(remoteQuestion)
+                cacheDataSource.saveTodayQuestion(remoteQuestion)
+                return Resource.Success(remoteQuestion)
+            }
+
+            if (yesterdayQuestion.question == remoteQuestion.question) {
+                throw Exception("Today question of server is not updated yet")
+            }
 
             localDataSource.saveOneQuestion(remoteQuestion)
             cacheDataSource.saveTodayQuestion(remoteQuestion)
@@ -106,6 +121,19 @@ class QuestionRepositoryImpl(
             Resource.Error(e)
         }
     }
+
+    override suspend fun getQuestionByContentFromDB(question: String): Resource<Question> {
+        return try {
+            val local = localDataSource.getQuestionByContent(question)
+                ?: throw NullPointerException("Question is not saved in database: ${question}")
+            Resource.Success(local)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
 
     override suspend fun getTodayQuestionAnswersFromServer(accessToken: String): Resource<QuestionAnswersDto> {
         return try {
