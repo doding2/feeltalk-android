@@ -1,6 +1,5 @@
 package com.clonect.feeltalk.presentation.ui.setting
 
-import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
@@ -10,6 +9,7 @@ import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetCoupleAnniversaryUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetUserInfoUseCase
+import com.clonect.feeltalk.presentation.utils.AppSettings
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import javax.inject.Named
 
 @HiltViewModel
 class SettingViewModel @Inject constructor(
@@ -76,7 +75,7 @@ class SettingViewModel @Inject constructor(
                     unsubscribeFromTopic(Topics.Push.text)
                 }
                 appSettings.isPushNotificationEnabled = enabled
-                saveAppSettingsUseCase(appSettings)
+                saveAppSettings(appSettings)
                 _isPushNotificationEnabled.value = enabled
             }
         }
@@ -92,11 +91,13 @@ class SettingViewModel @Inject constructor(
                     unsubscribeFromTopic(Topics.UsageInfo.text)
                 }
                 appSettings.isUsageInfoNotificationEnabled = enabled
-                saveAppSettingsUseCase(appSettings)
+                saveAppSettings(appSettings)
                 _isUsageInfoNotificationEnabled.value = enabled
             }
         }
     }
 
-
+    fun saveAppSettings(appSettings: AppSettings) = viewModelScope.launch(Dispatchers.IO) {
+        saveAppSettingsUseCase(appSettings)
+    }
 }

@@ -6,23 +6,12 @@
         <type value="RUNNING_DEVICE_TARGET" />
         <deviceKey>
           <Key>
-            <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\drago\.android\avd\Pixel_6_Pro_API_UpsideDownCake_API_34_.avd" />
+            <type value="SERIAL_NUMBER" />
+            <value value="R3CR10NL8BZ" />
           </Key>
         </deviceKey>
       </Target>
     </runningDeviceTargetSelectedWithDropDown>
-    <targetSelectedWithDropDown>
-      <Target>
-        <type value="QUICK_BOOT_TARGET" />
-        <deviceKey>
-          <Key>
-            <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\drago\.android\avd\Pixel_6_Pro_API_UpsideDownCake_API_34_.avd" />
-          </Key>
-        </deviceKey>
-      </Target>
-    </targetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2023-02-13T10:31:19.337121600Z" />
+    <timeTargetWasSelectedWithDropDown value="2023-02-13T10:47:12.375105Z" />
   </component>
 </project>

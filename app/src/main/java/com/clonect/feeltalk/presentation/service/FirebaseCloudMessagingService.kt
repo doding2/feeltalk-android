@@ -61,7 +61,9 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         super.onNewToken(newToken)
         val appSettings = getAppSettingsUseCase()
         appSettings.fcmToken = newToken
-        saveAppSettingsUseCase(appSettings)
+        CoroutineScope(Dispatchers.IO).launch {
+            saveAppSettingsUseCase(appSettings)
+        }
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
@@ -69,7 +71,6 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
         val isAppRunning = FeeltalkApp.getAppRunning()
         infoLog("isAppRunning: $isAppRunning")
-        infoLog("message: ${message.data}")
 
         val data = if (message.data["data"] == null) {
             message.data
@@ -78,7 +79,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 ?: message.data
         }
 
-        infoLog("parsed message: $data")
+        infoLog("new fcm: $data")
 
         when (data["type"]) {
             "today_question" -> handleTodayQuestionData(data)
@@ -96,14 +97,10 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         } else {
             PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
         }
-
-        val isAppRunning = FeeltalkApp.getAppRunning()
-        if (isAppRunning) {
-            CoupleRegistrationObserver
-                .getInstance()
-                .setCoupleRegistrationCompleted(true)
-            return
-        }
+        
+        CoupleRegistrationObserver
+            .getInstance()
+            .setCoupleRegistrationCompleted(true)
 
         val title = data["title"] ?: "제목 읽기 실패"
         val message = data["message"] ?: "내용 읽기 실패"
@@ -196,11 +193,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             .setDestination(R.id.chatFragment)
             .setArguments(
                 bundleOf("selectedQuestion" to Question(
-                    question = data["question"] ?: question.question,
-                    partnerAnswer = data["partnerAnswer"] ?: question.partnerAnswer,
-                    partnerAnswerDate = data["partnerAnswerDate"] ?: question.partnerAnswerDate,
-                    myAnswer = data["myAnswer"] ?: question.myAnswer,
-                    myAnswerDate = data["myAnswerDate"] ?: question.myAnswerDate,
+                    question = data["title_detail"] ?: question.question,
                 ))
             )
             .createPendingIntent()

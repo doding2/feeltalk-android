@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.domain.model.data.notification.Topics
 import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
+import com.clonect.feeltalk.presentation.utils.AppSettings
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -46,7 +47,7 @@ class BottomNavigationViewModel @Inject constructor(
                     unsubscribeFromTopic(Topics.Push.text)
                 }
                 appSettings.isPushNotificationEnabled = enabled
-                saveAppSettingsUseCase(appSettings)
+                saveAppSettings(appSettings)
             }
         }
     }
@@ -61,9 +62,14 @@ class BottomNavigationViewModel @Inject constructor(
                     unsubscribeFromTopic(Topics.UsageInfo.text)
                 }
                 appSettings.isUsageInfoNotificationEnabled = enabled
-                saveAppSettingsUseCase(appSettings)
+                saveAppSettings(appSettings)
             }
         }
+    }
+
+
+    private fun saveAppSettings(appSettings: AppSettings) = viewModelScope.launch(Dispatchers.IO) {
+        saveAppSettingsUseCase(appSettings)
     }
 
 }
