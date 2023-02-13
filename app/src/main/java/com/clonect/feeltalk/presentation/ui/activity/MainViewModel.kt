@@ -110,7 +110,7 @@ class MainViewModel @Inject constructor(
     private fun checkUserIsCouple()= viewModelScope.launch(Dispatchers.IO) {
         val isUserCouple = when (val result = checkUserIsCoupleUseCase()) {
             is Resource.Success -> {
-                infoLog("Is user couple: $isUserCouple")
+                infoLog("Is user couple: ${isUserCouple.value}")
                 result.data.isMatch
             }
             else -> {

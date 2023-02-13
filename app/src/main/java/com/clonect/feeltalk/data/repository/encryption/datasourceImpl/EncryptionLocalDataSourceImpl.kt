@@ -6,6 +6,7 @@ import android.util.Base64
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionLocalDataSource
 import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
 import com.clonect.feeltalk.data.utils.MessageEncryptHelper
+import com.clonect.feeltalk.presentation.utils.infoLog
 import java.io.File
 import java.security.KeyFactory
 import java.security.PrivateKey
@@ -36,6 +37,7 @@ class EncryptionLocalDataSourceImpl(
         val myPublicKey = myPublicKeyFile.bufferedReader().use {
             val encrypted = it.readLine()
             val key = appLevelEncryptHelper.decrypt("myPublicKey", encrypted)
+            infoLog("my public key: ${key}")
             val keyBytes = Base64.decode(key, Base64.NO_WRAP)
             val keySpec = X509EncodedKeySpec(keyBytes)
             val keyFactory = KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_RSA)
@@ -49,6 +51,7 @@ class EncryptionLocalDataSourceImpl(
         val myPrivateKey = myPrivateKeyFile.bufferedReader().use {
             val encrypted = it.readLine()
             val key = appLevelEncryptHelper.decrypt("myPrivateKey", encrypted)
+            infoLog("my private key: ${key}")
             val keyBytes = Base64.decode(key, Base64.NO_WRAP)
             val keySpec = PKCS8EncodedKeySpec(keyBytes)
             val keyFactory = KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_RSA)

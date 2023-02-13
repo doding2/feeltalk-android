@@ -7,7 +7,6 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.model.data.user.Emotion
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
-import com.clonect.feeltalk.domain.usecase.encryption.TestUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionAnswersFromServer
 import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetCoupleAnniversaryUseCase
@@ -32,8 +31,7 @@ class HomeViewModel @Inject constructor(
     private val updateMyEmotionUseCase: UpdateMyEmotionUseCase,
     private val getTodayQuestionUseCase: GetTodayQuestionUseCase,
     private val getTodayQuestionAnswersFromServer: GetTodayQuestionAnswersFromServer,
-    private val getCoupleAnniversaryUseCase: GetCoupleAnniversaryUseCase,
-    private val testUseCase: TestUseCase
+    private val getCoupleAnniversaryUseCase: GetCoupleAnniversaryUseCase
 ): ViewModel() {
 
     private val _userInfo = MutableStateFlow(UserInfo())
@@ -50,9 +48,6 @@ class HomeViewModel @Inject constructor(
 
 
     init {
-        viewModelScope.launch {
-            testUseCase()
-        }
         getUserInfo()
         getPartnerInfo()
         getTodayQuestion()

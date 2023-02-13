@@ -32,11 +32,10 @@ class EncryptionRepositoryImpl(
     private var tryCount = 0
 
     override suspend fun test() {
-        generateUserLevelKeyPair()
-
-        val message = "01047625824 안녕 Nihao 구텐탁 \n 하이요 zzㅇㅇㅋ잌llds"
+        val message = "유승준이 좋아하는 스킨십"
         val encrypted = encrypt(getMyPublicKey(), message)
         infoLog("message: $message")
+        infoLog("encrypted: ${encrypted}")
 
         val decrypted = decrypt(getMyPrivateKey(), encrypted)
         infoLog("decrypted message: $decrypted")
