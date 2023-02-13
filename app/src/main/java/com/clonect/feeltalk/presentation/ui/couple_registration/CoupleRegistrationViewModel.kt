@@ -38,9 +38,6 @@ class CoupleRegistrationViewModel @Inject constructor(
     private val _partnerCoupleCodeInput = MutableStateFlow("")
     val partnerCoupleCodeInput = _partnerCoupleCodeInput.asStateFlow()
 
-    private val _isCoupleRegistrationCompleted = MutableStateFlow(false)
-    val isCoupleRegistrationCompleted = _isCoupleRegistrationCompleted.asStateFlow()
-
     private val _isKeyPairExchangingCompleted = MutableStateFlow(false)
     val isKeyPairExchangingCompleted = _isKeyPairExchangingCompleted.asStateFlow()
 
@@ -57,7 +54,9 @@ class CoupleRegistrationViewModel @Inject constructor(
     private fun collectIsCoupleRegistrationCompleted() = viewModelScope.launch(Dispatchers.IO) {
         CoupleRegistrationObserver.getInstance()
             .isCoupleRegistrationCompleted.collectLatest { isCompleted ->
-                _isCoupleRegistrationCompleted.value = isCompleted
+                if (isCompleted) {
+                    exchangeKeyPair()
+                }
             }
     }
 
@@ -85,21 +84,19 @@ class CoupleRegistrationViewModel @Inject constructor(
                 val isValid = result.data.isValidCoupleCode
                 if (isValid) {
                     removeCoupleRegistrationCodeUseCase()
+                    exchangeKeyPair()
                 } else {
                     sendToast("올바르지 않은 초대코드입니다.")
                     _isLoading.value = false
                 }
-                _isCoupleRegistrationCompleted.value = isValid
             }
             is Resource.Error -> {
                 sendToast("초대코드 확인에 에러가 발생했습니다.")
                 infoLog("send partner code error: ${result.throwable.localizedMessage ?: "Unexpected error is occurred."}")
                 _isLoading.value = false
-                _isCoupleRegistrationCompleted.value = false
             }
             else -> {
                 _isLoading.value = false
-                _isCoupleRegistrationCompleted.value = false
             }
         }
     }
@@ -109,7 +106,7 @@ class CoupleRegistrationViewModel @Inject constructor(
 
         val myPublicKeyResult = uploadMyPublicKeyUseCase()
         if (myPublicKeyResult is Resource.Error) {
-            sendToast("Fail to upload MyPublicKey : ${myPublicKeyResult.throwable.localizedMessage}")
+            sendToast("실패했습니다.\n상대방의 네트워크 상태를 확인해주세요.")
             infoLog("Fail to upload MyPublicKey : ${myPublicKeyResult.throwable.localizedMessage}")
             breakUpCouple()
             reloadCoupleRegistrationCode()
@@ -119,7 +116,7 @@ class CoupleRegistrationViewModel @Inject constructor(
 
         val partnerPublicKeyResult = loadPartnerPublicKeyUseCase()
         if (partnerPublicKeyResult is Resource.Error) {
-            sendToast("Fail to load PartnerPublicKey : ${partnerPublicKeyResult.throwable.localizedMessage}")
+            sendToast("실패했습니다.\n상대방의 네트워크 상태를 확인해주세요.")
             infoLog("Fail to load PartnerPublicKey : ${partnerPublicKeyResult.throwable.localizedMessage}")
             breakUpCouple()
             reloadCoupleRegistrationCode()
@@ -129,7 +126,7 @@ class CoupleRegistrationViewModel @Inject constructor(
 
         val myPrivateKeyResult = uploadMyPrivateKeyUseCase()
         if (myPrivateKeyResult is Resource.Error) {
-            sendToast("Fail to upload MyPrivateKey : ${myPrivateKeyResult.throwable.localizedMessage}")
+            sendToast("실패했습니다.\n상대방의 네트워크 상태를 확인해주세요.")
             infoLog("Fail to upload MyPrivateKey : ${myPrivateKeyResult.throwable.localizedMessage}")
             breakUpCouple()
             reloadCoupleRegistrationCode()
@@ -139,7 +136,7 @@ class CoupleRegistrationViewModel @Inject constructor(
 
         val partnerPrivateKeyResult = loadPartnerPrivateKeyUseCase()
         if (partnerPrivateKeyResult is Resource.Error) {
-            sendToast("Fail to load PartnerPrivateKey : ${partnerPrivateKeyResult.throwable.localizedMessage}")
+            sendToast("실패했습니다.\n상대방의 네트워크 상태를 확인해주세요.")
             infoLog("Fail to load PartnerPrivateKey : ${partnerPrivateKeyResult.throwable.localizedMessage}")
             breakUpCouple()
             reloadCoupleRegistrationCode()

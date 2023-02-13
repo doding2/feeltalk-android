@@ -4,10 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
-import com.clonect.feeltalk.domain.usecase.user.BreakUpCoupleUseCase
-import com.clonect.feeltalk.domain.usecase.user.GetCoupleAnniversaryUseCase
-import com.clonect.feeltalk.domain.usecase.user.GetPartnerInfoUseCase
-import com.clonect.feeltalk.domain.usecase.user.GetUserInfoUseCase
+import com.clonect.feeltalk.domain.usecase.user.*
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -23,6 +20,7 @@ class CoupleSettingViewModel @Inject constructor(
     private val getPartnerInfoUseCase: GetPartnerInfoUseCase,
     private val getCoupleAnniversaryUseCase: GetCoupleAnniversaryUseCase,
     private val breakUpCoupleUseCase: BreakUpCoupleUseCase,
+    private val getCoupleRegistrationCodeUseCase: GetCoupleRegistrationCodeUseCase,
 ): ViewModel() {
 
     private val _userInfo = MutableStateFlow(UserInfo())
@@ -69,8 +67,10 @@ class CoupleSettingViewModel @Inject constructor(
 
     suspend fun breakUpCouple() = withContext(Dispatchers.IO) {
         val result = breakUpCoupleUseCase()
+
         when (result) {
             is Resource.Success -> {
+                getCoupleRegistrationCodeUseCase(withCache = false)
                 infoLog("Success to break up couple: ${result.data}")
                 true
             }

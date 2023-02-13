@@ -19,6 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Feeltalk"
         tools:targetApi="31">
+
         <activity
             android:name=".presentation.ui.activity.MainActivity"
             android:exported="true"
@@ -29,6 +30,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true">
@@ -41,6 +43,7 @@
                     android:scheme="kakaob2e92652651b8321288757cbb1f7ce8b" />
             </intent-filter>
         </activity>
+
         <service android:name=".presentation.service.FirebaseCloudMessagingService"
             android:permission="com.google.android.c2dm.permission.SEND"
             android:exported="true"

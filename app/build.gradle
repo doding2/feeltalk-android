@@ -19,6 +19,8 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
+        buildConfigField("String", "CLONECT_BASE_URL", CLONECT_BASE_URL)
+
         buildConfigField("String", "APP_LEVEL_KEY_PROVIDER", APP_LEVEL_KEY_PROVIDER)
         buildConfigField("String", "APP_LEVEL_KEY_ALIAS", APP_LEVEL_KEY_ALIAS)
         buildConfigField("String", "APP_LEVEL_CIPHER_ALGORITHM", APP_LEVEL_CIPHER_ALGORITHM)
@@ -29,8 +31,11 @@ android {
         buildConfigField("String", "SHORTEN_ENCRYPT_HELPER_IV", SHORTEN_ENCRYPT_HELPER_IV)
         buildConfigField("String", "SHORTEN_ENCRYPT_HELPER_CIPHER_ALGORITHM", SHORTEN_ENCRYPT_HELPER_CIPHER_ALGORITHM)
 
-        buildConfigField("String", "CLONECT_BASE_URL", CLONECT_BASE_URL)
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", KAKAO_NATIVE_APP_KEY)
+
+        buildConfigField("String", "NAVER_AUTH_CLIENT_ID", NAVER_AUTH_CLIENT_ID)
+        buildConfigField("String", "NAVER_AUTH_CLIENT_SECRET", NAVER_AUTH_CLIENT_SECRET)
+
         buildConfigField("String", "GOOGLE_AUTH_BASE_URL", GOOGLE_AUTH_BASE_URL)
         buildConfigField("String", "GOOGLE_AUTH_CLIENT_ID", GOOGLE_AUTH_CLIENT_ID)
         buildConfigField("String", "GOOGLE_AUTH_CLIENT_SECRET", GOOGLE_AUTH_CLIENT_SECRET)
@@ -112,7 +117,8 @@ dependencies {
     // Kakao oauth
     implementation "com.kakao.sdk:v2-user:2.12.1"   // 카카오 로그인
     implementation "com.kakao.sdk:v2-share:2.12.1"  // 메시지(카카오톡 공유)
-
+    // Naver ouath
+    implementation "com.navercorp.nid:oauth:5.4.0" // jdk 11
 
 
 

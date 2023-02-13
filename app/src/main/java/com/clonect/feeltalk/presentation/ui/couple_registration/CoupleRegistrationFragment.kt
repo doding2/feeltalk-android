@@ -49,7 +49,6 @@ class CoupleRegistrationFragment : Fragment() {
 
         collectIsLoading()
         collectMyCoupleCode()
-        collectIsCoupleRegistrationCompleted()
         initPartnerCoupleCodeValue()
 
         collectIsKeyPairExchangingCompleted()
@@ -108,16 +107,6 @@ class CoupleRegistrationFragment : Fragment() {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.myCoupleCode.collectLatest {
                 binding.textMyCoupleCode.text = it
-            }
-        }
-    }
-
-    private fun collectIsCoupleRegistrationCompleted() = lifecycleScope.launch {
-        repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.isCoupleRegistrationCompleted.collectLatest { isCompleted ->
-                if (isCompleted) {
-                    viewModel.exchangeKeyPair()
-                }
             }
         }
     }

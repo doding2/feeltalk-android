@@ -63,6 +63,11 @@ interface ClonectService {
         @Body body: JsonObject
     ): Response<CoupleRegistrationCodeDto>
 
+    @POST("api/member/updateFcmToken")
+    suspend fun updateFcmToken(
+        @Body body: JsonObject
+    ): Response<StatusDto>
+
 
     /** Question **/
     @POST("/api/todayQuestion")

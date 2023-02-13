@@ -115,6 +115,19 @@ class UserRemoteDataSourceImpl(
         return response
     }
 
+    override suspend fun updateFcmToken(
+        accessToken: String,
+        fcmToken: String,
+    ): Response<StatusDto> {
+        val body = JsonObject().apply {
+            addProperty("accessToken", accessToken)
+            addProperty("fcmToken", fcmToken)
+        }
+        val response = clonectService.updateFcmToken(body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
 
 
     override suspend fun autoLogInWithGoogle(idToken: String): Response<AccessTokenDto> {

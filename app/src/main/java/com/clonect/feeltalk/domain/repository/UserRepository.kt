@@ -13,10 +13,9 @@ interface UserRepository {
     suspend fun getAccessToken(): Resource<String>
     suspend fun getUserInfo(): Resource<UserInfo>
     suspend fun getPartnerInfo(): Resource<UserInfo>
+    suspend fun getCoupleAnniversary(): Resource<String>
 
     suspend fun breakUpCouple(): Resource<StatusDto>
-
-    suspend fun getCoupleAnniversary(): Resource<String>
 
     suspend fun checkUserInfoIsEntered(): Resource<Boolean>
     suspend fun updateUserInfo(nickname: String, age: Long, birthDate: String, anniversary: String): Resource<StatusDto>
@@ -26,6 +25,7 @@ interface UserRepository {
     suspend fun getCoupleRegistrationCode(withCache: Boolean): Resource<String>
     suspend fun removeCoupleRegistrationCode()
     suspend fun sendPartnerCoupleRegistrationCode(partnerCode: String): Resource<PartnerCodeCheckDto>
+    suspend fun updateFcmToken(fcmToken: String): Resource<StatusDto>
 
     suspend fun autoLogInWithGoogle(): Resource<AccessTokenDto>
     suspend fun signUpWithGoogle(idToken: String, serverAuthCode: String, fcmToken: String): Resource<SignUpDto>

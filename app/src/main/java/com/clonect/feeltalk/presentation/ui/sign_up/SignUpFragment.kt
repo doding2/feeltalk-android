@@ -29,6 +29,8 @@ import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @AndroidEntryPoint
 class SignUpFragment : Fragment() {
@@ -57,6 +59,9 @@ class SignUpFragment : Fragment() {
         binding.apply {
             mcvSignUpGoogle.setOnClickListener {
                 launchGoogleSignUp()
+            }
+            mcvSignUpKakao.setOnClickListener {
+                signInWithKakao()
             }
         }
     }
@@ -147,15 +152,31 @@ class SignUpFragment : Fragment() {
             loginWithKakaoTalk(requireContext()) { token, error ->
                 error?.let {
                     infoLog("카카오 로그인 실패: ${error}")
+                    Toast.makeText(requireContext(), "카카오로 가입하는데 실패했습니다", Toast.LENGTH_SHORT).show()
                     return@loginWithKakaoTalk
                 }
 
                 token?.let {
-                    infoLog( "카카오 로그인 성공: ${token.accessToken}")
+                    infoLog( "카카오 로그인 성공\n -> idToken: ${token.idToken}\n accessToken: ${token.accessToken}")
                     return@loginWithKakaoTalk
                 }
             }
         }
+    }
+
+    private suspend fun kakaoLogOut(): Boolean = suspendCoroutine {
+        UserApiClient.instance.unlink { error ->
+            if (error == null) {
+                it.resume(true)
+            } else {
+                it.resume(false)
+            }
+        }
+    }
+
+
+    private fun signInWithNaver() {
+
     }
 
 
@@ -200,7 +221,7 @@ class SignUpFragment : Fragment() {
             viewModel.signUpWithGoogle(idToken, serverAuthCode)
         } catch (e: ApiException) {
             googleLogOut()
-            Toast.makeText(requireContext(), "회원가입에 실패했습니다.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "구글로 가입하는데 실패했습니다", Toast.LENGTH_SHORT).show()
         }
     }
 

@@ -15,9 +15,13 @@ import com.clonect.feeltalk.databinding.ActivityMainBinding
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.kakao.sdk.auth.AuthApiClient
+import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -105,8 +109,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     // TODO 얘네들 다 만들어야댐
-    private fun tryKakaoAutoLogIn(): Boolean {
-        return false
+    private suspend fun tryKakaoAutoLogIn(): Boolean = suspendCoroutine { continuation ->
+        // Note: 카카오 액세스 토큰의 존재여부 확인 (액세스 토큰이 유효하지 않을 수도 있음)
+        if (AuthApiClient.instance.hasToken()) {
+            UserApiClient.instance.accessTokenInfo { _, error ->
+                if (error == null) {
+                    // TODO 자동으로 로그인 허용
+//                    viewModel.autoKakaoLogIn()
+                    continuation.resume(true)
+                } else {
+                    continuation.resume(false)
+                }
+            }
+        }
+        continuation.resume(false)
     }
 
     private fun tryNaverAutoLogIn(): Boolean {

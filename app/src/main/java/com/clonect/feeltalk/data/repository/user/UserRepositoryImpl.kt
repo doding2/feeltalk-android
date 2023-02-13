@@ -272,6 +272,20 @@ class UserRepositoryImpl(
         }
     }
 
+    override suspend fun updateFcmToken(fcmToken: String): Resource<StatusDto> {
+        return try {
+            val accessToken = cacheDataSource.getAccessToken()
+                ?: localDataSource.getAccessToken()
+                ?: throw NullPointerException("User is Not logged in.")
+
+            val response = remoteDataSource.updateFcmToken(accessToken, fcmToken)
+            Resource.Success(response.body()!!)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
 
 
     override suspend fun autoLogInWithGoogle(): Resource<AccessTokenDto> {

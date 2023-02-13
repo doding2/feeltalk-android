@@ -47,9 +47,10 @@ class UseCaseModule {
     fun providesSaveAppSettingsUseCase(
         @Named("AppSettings")
         pref: SharedPreferences,
-        appLevelEncryptHelper: AppLevelEncryptHelper
+        appLevelEncryptHelper: AppLevelEncryptHelper,
+        userRepository: UserRepository
     ): SaveAppSettingsUseCase {
-        return SaveAppSettingsUseCase(pref, appLevelEncryptHelper)
+        return SaveAppSettingsUseCase(pref, appLevelEncryptHelper, userRepository)
     }
 
 

@@ -57,7 +57,7 @@ class CoupleSettingFragment : Fragment() {
                             val isSuccessful = viewModel.breakUpCouple()
                             if (isSuccessful) {
                                 Toast.makeText(requireContext(), "커플이 해제되었습니다", Toast.LENGTH_SHORT).show()
-                                navigateToSignUpPage()
+                                navigateToCoupleRegistrationPage()
                             } else {
                                 Toast.makeText(requireContext(), "실패했습니다", Toast.LENGTH_SHORT).show()
                             }
@@ -110,9 +110,9 @@ class CoupleSettingFragment : Fragment() {
     }
 
 
-    private fun navigateToSignUpPage() {
+    private fun navigateToCoupleRegistrationPage() {
         findNavController()
-            .navigate(R.id.action_coupleSettingFragment_to_signUpFragment)
+            .navigate(R.id.action_coupleSettingFragment_to_coupleRegistrationFragment)
     }
 
 
