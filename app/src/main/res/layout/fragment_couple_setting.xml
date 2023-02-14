@@ -84,7 +84,6 @@
                             android:id="@+id/text_couple_anniversary"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/start_date_default_text"
                             android:textSize="14sp"
                             android:textColor="@color/start_date_color"
                             android:fontFamily="@font/pretendard_medium"/>
@@ -102,7 +101,6 @@
                             android:id="@+id/text_d_day_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/setting_d_day_default_text"
                             android:textSize="14sp"
                             android:textColor="@color/main"
                             android:fontFamily="@font/pretendard_light"/>

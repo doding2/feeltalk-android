@@ -70,9 +70,7 @@
     <string name="default_question_text">오늘의 질문</string>
 
     <!--  fragment_setting.xml  -->
-    <string name="start_date_default_text">2021. 04. 16</string>
     <string name="setting_d_day_prefix">(D-</string>
-    <string name="setting_d_day_default_text">628</string>
     <string name="setting_d_day_suffix">)</string>
     <string name="setting_notification_header_title">알림 설정</string>
     <string name="setting_push_notification">푸쉬 알림 설정</string>

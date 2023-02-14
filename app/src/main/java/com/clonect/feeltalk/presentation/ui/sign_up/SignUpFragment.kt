@@ -59,9 +59,9 @@ class SignUpFragment : Fragment() {
         initCustomerServiceText()
 
         binding.apply {
-            mcvSignUpGoogle.setOnClickListener { clickGoogleButton() }
             mcvSignUpKakao.setOnClickListener { clickKakaoButton() }
             mcvSignUpNaver.setOnClickListener { clickNaverButton() }
+            mcvSignUpGoogle.setOnClickListener { clickGoogleButton() }
         }
     }
 
@@ -216,7 +216,7 @@ class SignUpFragment : Fragment() {
     }
 
 
-    val naverCallback = object: OAuthLoginCallback {
+    private val naverSignUpCallback = object: OAuthLoginCallback {
         override fun onError(errorCode: Int, message: String) {
             infoLog("Fail to sign up with naver: ${message}")
             setSignUpButtonsEnabled(true)
@@ -248,7 +248,7 @@ class SignUpFragment : Fragment() {
     }
 
     private fun signInWithNaver() {
-        NaverIdLoginSDK.authenticate(requireContext(), naverCallback)
+        NaverIdLoginSDK.authenticate(requireContext(), naverSignUpCallback)
     }
 
     private fun tryNaverLogOut() {
@@ -281,7 +281,7 @@ class SignUpFragment : Fragment() {
         googleSignUpLauncher.launch(intent)
     }
 
-    private var googleSignUpLauncher = registerForActivityResult(
+    private val googleSignUpLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == RESULT_OK) {
