@@ -26,6 +26,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.kakao.sdk.user.UserApiClient
+import com.navercorp.nid.NaverIdLoginSDK
+import com.navercorp.nid.oauth.OAuthLoginCallback
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -57,20 +59,31 @@ class SignUpFragment : Fragment() {
         initCustomerServiceText()
 
         binding.apply {
-            mcvSignUpGoogle.setOnClickListener {
-                lifecycleScope.launch {
-                    logOut()
-                    launchGoogleSignUp()
-                }
-            }
-            mcvSignUpKakao.setOnClickListener {
-                lifecycleScope.launch {
-                    logOut()
-                    signInWithKakao()
-                }
-            }
+            mcvSignUpGoogle.setOnClickListener { clickGoogleButton() }
+            mcvSignUpKakao.setOnClickListener { clickKakaoButton() }
+            mcvSignUpNaver.setOnClickListener { clickNaverButton() }
         }
     }
+
+    private fun clickGoogleButton() = lifecycleScope.launch {
+        setSignUpButtonsEnabled(false)
+        logOut()
+        launchGoogleSignUp()
+    }
+
+    private fun clickKakaoButton() = lifecycleScope.launch {
+        setSignUpButtonsEnabled(false)
+        logOut()
+        signInWithKakao()
+    }
+
+    private fun clickNaverButton() = lifecycleScope.launch {
+        setSignUpButtonsEnabled(false)
+        logOut()
+        signInWithNaver()
+    }
+
+
 
     private fun initCustomerServiceText() = binding.tvCustomerService.apply {
         paintFlags = Paint.UNDERLINE_TEXT_FLAG
@@ -153,11 +166,12 @@ class SignUpFragment : Fragment() {
     private suspend fun logOut() {
         tryGoogleLogOut()
         tryKakaoLogOut()
+        tryNaverLogOut()
         viewModel.clearAllTokens()
     }
 
 
-    private fun signInWithKakao() = lifecycleScope.launch {
+    private fun signInWithKakao() = lifecycleScope.launch func@{
         UserApiClient.instance.run {
             if (!isKakaoTalkLoginAvailable(requireContext())) {
                 tryKakaoLogOut()
@@ -169,28 +183,31 @@ class SignUpFragment : Fragment() {
                         infoLog("카카오 로그인 실패: $error")
                         tryKakaoLogOut()
                     }
+                    setSignUpButtonsEnabled(true)
                     return@loginWithKakaoTalk
                 }
 
                 token?.let {
-                    val accessToken = token.accessToken
-                    val idToken = token.idToken ?: run {
-                        infoLog("카카오 로그인 실패: idToken is null")
-                        return@loginWithKakaoTalk
-                    }
+                    lifecycleScope.launch {
+                        val accessToken = token.accessToken
 
-                    viewModel.signUpWithKakao(idToken, accessToken)
-                    infoLog( "카카오 로그인 성공")
-                    return@loginWithKakaoTalk
+                        val isSuccessful = viewModel.signUpWithKakao(accessToken)
+                        if (isSuccessful) {
+                            infoLog( "카카오 로그인 성공")
+                        } else {
+                            infoLog("카카오 로그인 실패")
+                            tryKakaoLogOut()
+                        }
+                        setSignUpButtonsEnabled(true)
+                    }
                 }
             }
         }
     }
 
     private suspend fun tryKakaoLogOut() = suspendCoroutine { continuation ->
-        UserApiClient.instance.unlink { error ->
+        UserApiClient.instance.logout { error ->
             if (error == null) {
-                infoLog("카카오 로그 아웃 성공")
                 continuation.resume(true)
             } else {
                 continuation.resume(false)
@@ -199,10 +216,44 @@ class SignUpFragment : Fragment() {
     }
 
 
-    private fun signInWithNaver() {
+    val naverCallback = object: OAuthLoginCallback {
+        override fun onError(errorCode: Int, message: String) {
+            infoLog("Fail to sign up with naver: ${message}")
+            setSignUpButtonsEnabled(true)
+        }
 
+        override fun onFailure(httpStatus: Int, message: String) {
+            infoLog("Fail to sign up with naver: ${message}")
+            setSignUpButtonsEnabled(true)
+        }
+
+        override fun onSuccess() {
+            lifecycleScope.launch {
+                val accessToken = NaverIdLoginSDK.getAccessToken()
+                if (accessToken == null) {
+                    tryNaverLogOut()
+                    infoLog("Fail to sign up with naver :Naver Access Token is null")
+                    Toast.makeText(requireContext(), "네이버로 가입하는데 실패했습니다", Toast.LENGTH_SHORT).show()
+                    setSignUpButtonsEnabled(true)
+                    return@launch
+                }
+                
+                val isSuccessful = viewModel.signUpWithNaver(accessToken)
+                if (!isSuccessful) {
+                    tryNaverLogOut()
+                }
+                setSignUpButtonsEnabled(true)
+            }
+        }
     }
 
+    private fun signInWithNaver() {
+        NaverIdLoginSDK.authenticate(requireContext(), naverCallback)
+    }
+
+    private fun tryNaverLogOut() {
+        NaverIdLoginSDK.logout()
+    }
 
 
     private suspend fun tryGoogleLogOut() = suspendCoroutine { continuation ->
@@ -212,7 +263,6 @@ class SignUpFragment : Fragment() {
         mGoogleSignInClient.signOut()
             .addOnSuccessListener {
                 continuation.resume(true)
-                infoLog("구글 로그 아웃 성공")
             }
             .addOnFailureListener {
                 continuation.resume(false)
@@ -239,6 +289,7 @@ class SignUpFragment : Fragment() {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             handleGoogleSignUpResult(task)
         }
+        setSignUpButtonsEnabled(true)
     }
 
     private fun handleGoogleSignUpResult(completedTask: Task<GoogleSignInAccount>) = lifecycleScope.launch {
@@ -247,7 +298,10 @@ class SignUpFragment : Fragment() {
             val idToken = account?.idToken.toString()
             val serverAuthCode = account?.serverAuthCode.toString()
 
-            viewModel.signUpWithGoogle(idToken, serverAuthCode)
+            val isSuccessful = viewModel.signUpWithGoogle(idToken, serverAuthCode)
+            if (!isSuccessful) {
+                tryGoogleLogOut()
+            }
         } catch (e: ApiException) {
             tryGoogleLogOut()
             Toast.makeText(requireContext(), "구글로 가입하는데 실패했습니다", Toast.LENGTH_SHORT).show()
@@ -255,5 +309,11 @@ class SignUpFragment : Fragment() {
     }
 
 
+    private fun setSignUpButtonsEnabled(enabled: Boolean) = binding.apply {
+        mcvSignUpKakao.isEnabled = enabled
+        mcvSignUpNaver.isEnabled = enabled
+        mcvSignUpGoogle.isEnabled = enabled
+        mcvSignUpApple.isEnabled = enabled
+    }
 
 }

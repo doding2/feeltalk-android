@@ -25,6 +25,9 @@ interface UserRemoteDataSource {
     suspend fun signUpWithGoogle(idToken: String, serverAuthCode: String, fcmToken: String): Response<SignUpDto>
     suspend fun autoLogInWithGoogle(idToken: String): Response<AccessTokenDto>
 
-    suspend fun signUpWithKakao(idToken: String, accessToken: String, fcmToken: String): Response<SignUpDto>
-    suspend fun autoLogInWithKakao(idToken: String): Response<AccessTokenDto>
+    suspend fun signUpWithKakao(accessToken: String, fcmToken: String): Response<SignUpDto>
+    suspend fun autoLogInWithKakao(accessToken: String): Response<AccessTokenDto>
+
+    suspend fun signUpWithNaver(accessToken: String, fcmToken: String): Response<SignUpDto>
+    suspend fun autoLogInWithNaver(accessToken: String): Response<AccessTokenDto>
 }

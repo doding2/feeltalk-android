@@ -18,6 +18,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val autoLogInWithGoogleUseCase: AutoLogInWithGoogleUseCase,
     private val autoLogInWithKakaoUseCase: AutoLogInWithKakaoUseCase,
+    private val autoLogInWithNaverUseCase: AutoLogInWithNaverUseCase,
     private val checkUserInfoIsEnteredUseCase: CheckUserInfoIsEnteredUseCase,
     private val checkUserIsCoupleUseCase: CheckUserIsCoupleUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
@@ -61,7 +62,23 @@ class MainViewModel @Inject constructor(
     }
 
     fun autoKakaoLogIn() = viewModelScope.launch(Dispatchers.IO) {
-        when (autoLogInWithGoogleUseCase()) {
+        when (autoLogInWithKakaoUseCase()) {
+            is Resource.Success -> {
+                _isLoggedIn.value = true
+                checkUserInfoIsEntered()
+                infoLog("Success to log in with kakao")
+            }
+            else -> {
+                _isLoggedIn.value = false
+                infoLog("Fail to log in with kakao")
+                sendToast("로그인에 실패했습니다")
+                setReady()
+            }
+        }
+    }
+
+    fun autoNaverLogIn() = viewModelScope.launch(Dispatchers.IO) {
+        when (autoLogInWithNaverUseCase()) {
             is Resource.Success -> {
                 _isLoggedIn.value = true
                 checkUserInfoIsEntered()

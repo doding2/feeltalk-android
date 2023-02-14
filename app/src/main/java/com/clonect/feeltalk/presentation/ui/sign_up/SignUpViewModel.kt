@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -22,6 +23,7 @@ import kotlin.coroutines.suspendCoroutine
 class SignUpViewModel @Inject constructor(
     private val signUpWithGoogleUseCase: SignUpWithGoogleUseCase,
     private val signUpWithKakaoUseCase: SignUpWithKakaoUseCase,
+    private val signUpWithNaverUseCase: SignUpWithNaverUseCase,
     private val checkUserInfoIsEnteredUseCase: CheckUserInfoIsEnteredUseCase,
     private val checkUserIsCoupleUseCase: CheckUserIsCoupleUseCase,
     private val clearAllTokensUseCase: ClearAllTokensUseCase,
@@ -46,63 +48,108 @@ class SignUpViewModel @Inject constructor(
     val toast = _toast.asSharedFlow()
 
 
-    suspend fun signUpWithGoogle(idToken: String, serverAuthCode: String) = viewModelScope.launch(Dispatchers.IO) {
+    suspend fun signUpWithGoogle(idToken: String, serverAuthCode: String) = withContext(Dispatchers.IO) {
         setLoading(true)
         val result = signUpWithGoogleUseCase(idToken, serverAuthCode, getFcmToken())
-        when (result) {
+        return@withContext when (result) {
             is Resource.Success -> {
                 val dto = result.data
                 if (dto.annotation == "signUp") {
                     setLoading(false)
                     _isSignUpSuccessful.value = true
                     infoLog("Success to sign up with google")
+                    return@withContext true
                 }
                 if (dto.annotation == "login" || dto.annotation == "login_noCouple") {
                     checkUserInfoIsEntered()
                     infoLog("Success to log in with google")
+                    return@withContext true
                 }
+                false
             }
             is Resource.Error -> {
                 infoLog("sign up error with google: ${result.throwable.localizedMessage}")
                 sendToast("구글로 가입하는데 실패했습니다")
                 setLoading(false)
+                false
             }
             else -> {
                 infoLog("sign up error with google")
                 sendToast("구글로 가입하는데 실패했습니다")
                 setLoading(false)
+                false
             }
         }
     }
 
-    fun signUpWithKakao(idToken: String, accessToken: String) = viewModelScope.launch(Dispatchers.IO) {
+    suspend fun signUpWithKakao(accessToken: String) = withContext(Dispatchers.IO) {
         setLoading(true)
-        val result = signUpWithKakaoUseCase(idToken, accessToken, getFcmToken())
-        when (result) {
+        val result = signUpWithKakaoUseCase(accessToken, getFcmToken())
+        return@withContext when (result) {
             is Resource.Success -> {
                 val dto = result.data
                 if (dto.annotation == "signUp") {
                     setLoading(false)
                     _isSignUpSuccessful.value = true
                     infoLog("Success to sign up with kakao")
+                    return@withContext true
                 }
                 if (dto.annotation == "login" || dto.annotation == "login_noCouple") {
                     checkUserInfoIsEntered()
                     infoLog("Success to log in with kakao")
+                    return@withContext true
                 }
+                false
             }
             is Resource.Error -> {
                 infoLog("sign up error with kakao: ${result.throwable.localizedMessage}")
                 sendToast("카카오로 가입하는데 실패했습니다")
                 setLoading(false)
+                false
             }
             else -> {
                 infoLog("sign up error with kakao")
                 sendToast("카카오로 가입하는데 실패했습니다")
                 setLoading(false)
+                false
             }
         }
     }
+
+    suspend fun signUpWithNaver(accessToken: String) = withContext(Dispatchers.IO) {
+        setLoading(true)
+        val result = signUpWithNaverUseCase(accessToken, getFcmToken())
+        return@withContext when (result) {
+            is Resource.Success -> {
+                val dto = result.data
+                if (dto.annotation == "signUp") {
+                    setLoading(false)
+                    _isSignUpSuccessful.value = true
+                    infoLog("Success to sign up with naver")
+                    return@withContext true
+                }
+                if (dto.annotation == "login" || dto.annotation == "login_noCouple") {
+                    checkUserInfoIsEntered()
+                    infoLog("Success to log in with naver")
+                    return@withContext true
+                }
+                false
+            }
+            is Resource.Error -> {
+                infoLog("sign up error with naver: ${result.throwable.localizedMessage}")
+                sendToast("네이버로 가입하는데 실패했습니다")
+                setLoading(false)
+                false
+            }
+            else -> {
+                infoLog("sign up error with naver")
+                sendToast("네이버로 가입하는데 실패했습니다")
+                setLoading(false)
+                false
+            }
+        }
+    }
+
 
 
     private fun checkUserInfoIsEntered() = viewModelScope.launch(Dispatchers.IO) {

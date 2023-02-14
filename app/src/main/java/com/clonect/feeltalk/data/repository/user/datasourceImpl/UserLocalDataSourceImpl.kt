@@ -90,27 +90,27 @@ class UserLocalDataSourceImpl(
     }
 
 
-    override suspend fun getGoogleOrKakaoIdToken(): String? {
-        val file = File(context.filesDir, "id_token.txt")
+    override suspend fun getGoogleIdToken(): String? {
+        val file = File(context.filesDir, "google_id_token.txt")
         if (!file.exists())
             return null
         val idToken = file.bufferedReader().use {
             val encrypted = it.readLine()
-            appLevelEncryptHelper.decrypt("idToken", encrypted)
+            appLevelEncryptHelper.decrypt("googleIdToken", encrypted)
         }
         return idToken
     }
 
-    override suspend fun saveGoogleOrKakaoIdToken(idToken: String) {
-        val file = File(context.filesDir, "id_token.txt")
+    override suspend fun saveGoogleIdToken(idToken: String) {
+        val file = File(context.filesDir, "google_id_token.txt")
         file.bufferedWriter().use {
-            val encrypted = appLevelEncryptHelper.encrypt("idToken", idToken)
+            val encrypted = appLevelEncryptHelper.encrypt("googleIdToken", idToken)
             it.write(encrypted)
         }
     }
 
     override suspend fun clearAllTokens(): Boolean {
-        val idTokenFile = File(context.filesDir, "id_token.txt")
+        val idTokenFile = File(context.filesDir, "google_id_token.txt")
         val accessTokenFile = File(context.filesDir, "access_token.txt")
         return idTokenFile.delete() && accessTokenFile.delete()
     }

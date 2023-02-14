@@ -230,4 +230,16 @@ class UseCaseModule {
     fun providesAutoLogInWithKakaoUseCase(userRepository: UserRepository): AutoLogInWithKakaoUseCase {
         return AutoLogInWithKakaoUseCase(userRepository)
     }
+
+    @Singleton
+    @Provides
+    fun providesSignUpWithNaverUseCase(userRepository: UserRepository): SignUpWithNaverUseCase {
+        return SignUpWithNaverUseCase(userRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesAutoLogInWithNaverUseCase(userRepository: UserRepository): AutoLogInWithNaverUseCase {
+        return AutoLogInWithNaverUseCase(userRepository)
+    }
 }

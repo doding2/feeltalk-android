@@ -65,6 +65,11 @@ interface ClonectService {
         @Body body: JsonObject
     ): Response<CoupleRegistrationCodeDto>
 
+    @POST("api/couple/match")
+    suspend fun sendPartnerCoupleRegistrationCode(
+        @Body body: JsonObject
+    ): Response<PartnerCodeCheckDto>
+
     @POST("api/member/updateFcmToken")
     suspend fun updateFcmToken(
         @Body body: JsonObject
@@ -113,10 +118,6 @@ interface ClonectService {
 
 
     /** Sign Up **/
-    @POST("/api/member/kakao")
-    suspend fun signUpWithKakao(
-        @Body body: JsonObject
-    ): Response<SignUpDto>
 
     @POST("api/member")
     suspend fun signUpWithGoogle(
@@ -128,16 +129,25 @@ interface ClonectService {
         @Body body: JsonObject
     ): Response<AccessTokenDto>
 
-    // TODO 카카오 자동 로그인
-    @POST("api/login")
+    @POST("/api/member/kakao")
+    suspend fun signUpWithKakao(
+        @Body body: JsonObject
+    ): Response<SignUpDto>
+
+    @POST("/api/login/kakao")
     suspend fun autoLogInWithKakao(
         @Body body: JsonObject
     ): Response<AccessTokenDto>
 
-    @POST("api/couple/match")
-    suspend fun sendPartnerCoupleRegistrationCode(
+    @POST("/api/member/naver")
+    suspend fun signUpWithNaver(
         @Body body: JsonObject
-    ): Response<PartnerCodeCheckDto>
+    ): Response<SignUpDto>
+
+    @POST("/api/login/naver")
+    suspend fun autoLogInWithNaver(
+        @Body body: JsonObject
+    ): Response<AccessTokenDto>
 
 
 

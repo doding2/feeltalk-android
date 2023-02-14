@@ -17,6 +17,8 @@ import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.kakao.sdk.auth.AuthApiClient
 import com.kakao.sdk.user.UserApiClient
+import com.navercorp.nid.NaverIdLoginSDK
+import com.navercorp.nid.oauth.NidOAuthLoginState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -108,7 +110,6 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 
-    // TODO 얘네들 다 만들어야댐
     private suspend fun tryKakaoAutoLogIn(): Boolean = suspendCoroutine { continuation ->
         if (AuthApiClient.instance.hasToken()) {
             UserApiClient.instance.accessTokenInfo { _, error ->
@@ -125,9 +126,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun tryNaverAutoLogIn(): Boolean {
+        val state = NaverIdLoginSDK.getState()
+        if (state == NidOAuthLoginState.OK) {
+            viewModel.autoNaverLogIn()
+            return true
+        }
         return false
     }
 
+    // TODO 얘 만들어야댐
     private fun tryAppleAutoLogIn(): Boolean {
         return false
     }

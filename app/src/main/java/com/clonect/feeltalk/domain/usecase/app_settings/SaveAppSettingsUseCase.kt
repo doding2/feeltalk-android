@@ -2,6 +2,7 @@ package com.clonect.feeltalk.domain.usecase.app_settings
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
 import com.clonect.feeltalk.domain.repository.UserRepository
 import com.clonect.feeltalk.presentation.utils.AppSettings
@@ -18,7 +19,10 @@ class SaveAppSettingsUseCase(
         if (prefFcmToken != appSettings.fcmToken) {
             appSettings.fcmToken?.let {
                 infoLog("update fcm token: ${it}")
-                userRepository.updateFcmToken(it)
+                val result = userRepository.updateFcmToken(it)
+                if (result !is Resource.Success) {
+                    appSettings.fcmToken = null
+                }
             }
         }
 

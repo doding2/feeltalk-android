@@ -3,8 +3,10 @@ package com.clonect.feeltalk.presentation.ui
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.clonect.feeltalk.BuildConfig
+import com.clonect.feeltalk.R
 import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.common.KakaoSdk
+import com.navercorp.nid.NaverIdLoginSDK
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
@@ -13,7 +15,8 @@ class FeeltalkApp: Application() {
         super.onCreate()
 
         disableNightMode()
-        initializeKakaoSdk()
+        initKakao()
+        initNaver()
         initFcm()
     }
 
@@ -21,8 +24,17 @@ class FeeltalkApp: Application() {
         FirebaseMessaging.getInstance().token.addOnSuccessListener {  }
     }
 
-    private fun initializeKakaoSdk() {
-        KakaoSdk.init(this, BuildConfig.KAKAO_NATIVE_APP_KEY)
+    private fun initKakao() {
+        KakaoSdk.init(context = this, appKey = BuildConfig.KAKAO_NATIVE_APP_KEY)
+    }
+
+    private fun initNaver() {
+        NaverIdLoginSDK.initialize(
+            context = this,
+            clientId = BuildConfig.NAVER_AUTH_CLIENT_ID,
+            clientSecret = BuildConfig.NAVER_AUTH_CLIENT_SECRET,
+            clientName = getString(R.string.app_name),
+        )
     }
 
     private fun disableNightMode() {

@@ -290,7 +290,7 @@ class UserRepositoryImpl(
 
     override suspend fun autoLogInWithGoogle(): Resource<AccessTokenDto> {
         return try {
-            val idToken = localDataSource.getGoogleOrKakaoIdToken()
+            val idToken = localDataSource.getGoogleIdToken()
                 ?: throw Exception("User is not auto logged in. Please re-log in.")
 
             val response = remoteDataSource.autoLogInWithGoogle(idToken)
@@ -323,7 +323,7 @@ class UserRepositoryImpl(
 
             val accessToken = AccessTokenDto(response.body()!!.token)
             localDataSource.saveAccessToken(accessToken.accessToken)
-            localDataSource.saveGoogleOrKakaoIdToken(idToken)
+            localDataSource.saveGoogleIdToken(idToken)
             cacheDataSource.saveAccessTokenToCache(accessToken.accessToken)
             Resource.Success(response.body()!!)
         } catch (e: CancellationException) {
@@ -334,9 +334,11 @@ class UserRepositoryImpl(
     }
 
 
-    override suspend fun signUpWithKakao(idToken: String, accessToken: String, fcmToken: String): Resource<SignUpDto> {
+    override suspend fun signUpWithKakao(
+        accessToken: String, fcmToken: String
+    ): Resource<SignUpDto> {
         return try {
-            val response = remoteDataSource.signUpWithKakao(idToken, accessToken, fcmToken).body()!!
+            val response = remoteDataSource.signUpWithKakao(accessToken, fcmToken).body()!!
 
             val coupleRegistrationCode = response.validCode
             coupleRegistrationCode?.let {
@@ -345,7 +347,6 @@ class UserRepositoryImpl(
             }
 
             localDataSource.saveAccessToken(response.token)
-            localDataSource.saveGoogleOrKakaoIdToken(idToken)
             cacheDataSource.saveAccessTokenToCache(response.token)
             Resource.Success(response)
         } catch (e: CancellationException) {
@@ -357,10 +358,11 @@ class UserRepositoryImpl(
 
     override suspend fun autoLogInWithKakao(): Resource<AccessTokenDto> {
         return try {
-            val idToken = localDataSource.getGoogleOrKakaoIdToken()
-                ?: throw Exception("User is not auto logged in. Please re-log in.")
+            val accessToken = cacheDataSource.getAccessToken()
+                ?: localDataSource.getAccessToken()
+                ?: throw NullPointerException("User is Not logged in.")
 
-            val response = remoteDataSource.autoLogInWithKakao(idToken)
+            val response = remoteDataSource.autoLogInWithKakao(accessToken)
 
             val accessTokenDto = response.body()!!
             localDataSource.saveAccessToken(accessTokenDto.accessToken)
@@ -373,6 +375,51 @@ class UserRepositoryImpl(
             Resource.Error(e)
         }
     }
+
+
+    override suspend fun signUpWithNaver(
+        accessToken: String,
+        fcmToken: String,
+    ): Resource<SignUpDto> {
+        return try {
+            val response = remoteDataSource.signUpWithNaver(accessToken, fcmToken).body()!!
+
+            val coupleRegistrationCode = response.validCode
+            coupleRegistrationCode?.let {
+                localDataSource.saveCoupleRegistrationCode(it)
+                cacheDataSource.saveCoupleRegistrationCode(it)
+            }
+
+            localDataSource.saveAccessToken(response.token)
+            cacheDataSource.saveAccessTokenToCache(response.token)
+            Resource.Success(response)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun autoLogInWithNaver(): Resource<AccessTokenDto> {
+        return try {
+            val accessToken = cacheDataSource.getAccessToken()
+                ?: localDataSource.getAccessToken()
+                ?: throw NullPointerException("User is Not logged in.")
+
+            val response = remoteDataSource.autoLogInWithNaver(accessToken)
+
+            val accessTokenDto = response.body()!!
+            localDataSource.saveAccessToken(accessTokenDto.accessToken)
+            cacheDataSource.saveAccessTokenToCache(accessTokenDto.accessToken)
+            Resource.Success(accessTokenDto)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Error(e)
+        }
+    }
+
 
 
     override suspend fun clearAllTokens(): Resource<Boolean> {

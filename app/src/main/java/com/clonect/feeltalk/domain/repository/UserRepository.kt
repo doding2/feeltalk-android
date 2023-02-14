@@ -30,8 +30,11 @@ interface UserRepository {
     suspend fun signUpWithGoogle(idToken: String, serverAuthCode: String, fcmToken: String): Resource<SignUpDto>
     suspend fun autoLogInWithGoogle(): Resource<AccessTokenDto>
 
-    suspend fun signUpWithKakao(idToken: String, accessToken: String, fcmToken: String): Resource<SignUpDto>
+    suspend fun signUpWithKakao(accessToken: String, fcmToken: String): Resource<SignUpDto>
     suspend fun autoLogInWithKakao(): Resource<AccessTokenDto>
+
+    suspend fun signUpWithNaver(accessToken: String, fcmToken: String): Resource<SignUpDto>
+    suspend fun autoLogInWithNaver(): Resource<AccessTokenDto>
 
     suspend fun clearAllTokens(): Resource<Boolean>
 

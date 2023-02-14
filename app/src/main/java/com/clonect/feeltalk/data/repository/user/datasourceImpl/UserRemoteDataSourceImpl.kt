@@ -138,7 +138,6 @@ class UserRemoteDataSourceImpl(
         val body = JsonObject().apply {
             addProperty("idToken", idToken)
             addProperty("authCode", serverAuthCode)
-            addProperty("fcmToken", fcmToken)
         }
         val response = clonectService.signUpWithGoogle(body)
         if (!response.isSuccessful) throw HttpException(response)
@@ -157,9 +156,11 @@ class UserRemoteDataSourceImpl(
     }
 
 
-    override suspend fun signUpWithKakao(idToken: String, accessToken: String, fcmToken: String): Response<SignUpDto> {
+    override suspend fun signUpWithKakao(
+        accessToken: String,
+        fcmToken: String
+    ): Response<SignUpDto> {
         val body = JsonObject().apply {
-            addProperty("idToken", idToken)
             addProperty("accessToken", accessToken)
             addProperty("fcmToken", fcmToken)
         }
@@ -169,11 +170,36 @@ class UserRemoteDataSourceImpl(
         return response
     }
 
-    override suspend fun autoLogInWithKakao(idToken: String): Response<AccessTokenDto> {
+    override suspend fun autoLogInWithKakao(accessToken: String): Response<AccessTokenDto> {
         val body = JsonObject().apply {
-            addProperty("idToken", idToken)
+            addProperty("accessToken", accessToken)
         }
         val response = clonectService.autoLogInWithKakao(body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
+
+
+    override suspend fun signUpWithNaver(
+        accessToken: String,
+        fcmToken: String,
+    ): Response<SignUpDto> {
+        val body = JsonObject().apply {
+            addProperty("accessToken", accessToken)
+            addProperty("fcmToken", fcmToken)
+        }
+        val response = clonectService.signUpWithNaver(body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
+
+    override suspend fun autoLogInWithNaver(accessToken: String): Response<AccessTokenDto> {
+        val body = JsonObject().apply {
+            addProperty("accessToken", accessToken)
+        }
+        val response = clonectService.autoLogInWithNaver(body)
         if (!response.isSuccessful) throw HttpException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
