@@ -290,7 +290,7 @@ class UserRepositoryImpl(
 
     override suspend fun autoLogInWithGoogle(): Resource<AccessTokenDto> {
         return try {
-            val idToken = localDataSource.getGoogleIdToken()
+            val idToken = localDataSource.getGoogleOrKakaoIdToken()
                 ?: throw Exception("User is not auto logged in. Please re-log in.")
 
             val response = remoteDataSource.autoLogInWithGoogle(idToken)
@@ -323,7 +323,7 @@ class UserRepositoryImpl(
 
             val accessToken = AccessTokenDto(response.body()!!.token)
             localDataSource.saveAccessToken(accessToken.accessToken)
-            localDataSource.saveGoogleIdToken(idToken)
+            localDataSource.saveGoogleOrKakaoIdToken(idToken)
             cacheDataSource.saveAccessTokenToCache(accessToken.accessToken)
             Resource.Success(response.body()!!)
         } catch (e: CancellationException) {
@@ -332,6 +332,41 @@ class UserRepositoryImpl(
             Resource.Error(e)
         }
     }
+
+
+    override suspend fun signUpWithKakao(idToken: String, fcmToken: String): Resource<SignUpDto> {
+        return try {
+            val response = remoteDataSource.signUpWithKakao(idToken, fcmToken).body()!!
+
+            val coupleRegistrationCode = response.validCode
+            coupleRegistrationCode?.let {
+                localDataSource.saveCoupleRegistrationCode(it)
+                cacheDataSource.saveCoupleRegistrationCode(it)
+            }
+
+            val accessToken = AccessTokenDto(response.token)
+            localDataSource.saveAccessToken(accessToken.accessToken)
+            localDataSource.saveGoogleOrKakaoIdToken(idToken)
+            cacheDataSource.saveAccessTokenToCache(accessToken.accessToken)
+            Resource.Success(response)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun clearAllTokens(): Resource<Boolean> {
+        return try {
+            val isSuccessful = localDataSource.clearAllTokens()
+            Resource.Success(isSuccessful)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
 
 
     private fun getUserInfoFromCache(): Resource<UserInfo> {

@@ -114,15 +114,15 @@ class MainActivity : AppCompatActivity() {
         if (AuthApiClient.instance.hasToken()) {
             UserApiClient.instance.accessTokenInfo { _, error ->
                 if (error == null) {
-                    // TODO 자동으로 로그인 허용
-//                    viewModel.autoKakaoLogIn()
+                    viewModel.autoKakaoLogIn()
                     continuation.resume(true)
                 } else {
                     continuation.resume(false)
                 }
             }
+        } else {
+            continuation.resume(false)
         }
-        continuation.resume(false)
     }
 
     private fun tryNaverAutoLogIn(): Boolean {

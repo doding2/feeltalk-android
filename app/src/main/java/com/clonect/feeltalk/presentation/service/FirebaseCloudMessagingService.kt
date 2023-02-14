@@ -164,7 +164,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     private fun handleChatData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
         val questionContent = data["title_detail"] ?: return@launch
         val chatMessage = data["message_detail"]?.let { userLevelEncryptHelper.decryptPartnerText(it) } ?: "(Server Error)"
-        val date = (data["createAt"] ?: "").replace("", "")
+        val date = (data["createAt"] ?: "").replace("T", " ")
 
         val chat = Chat(
             question = questionContent,

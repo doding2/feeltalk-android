@@ -32,6 +32,7 @@ android {
         buildConfigField("String", "SHORTEN_ENCRYPT_HELPER_CIPHER_ALGORITHM", SHORTEN_ENCRYPT_HELPER_CIPHER_ALGORITHM)
 
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", KAKAO_NATIVE_APP_KEY)
+        buildConfigField("String", "KAKAO_CLIENT_SECRET", KAKAO_CLIENT_SECRET)
 
         buildConfigField("String", "NAVER_AUTH_CLIENT_ID", NAVER_AUTH_CLIENT_ID)
         buildConfigField("String", "NAVER_AUTH_CLIENT_SECRET", NAVER_AUTH_CLIENT_SECRET)

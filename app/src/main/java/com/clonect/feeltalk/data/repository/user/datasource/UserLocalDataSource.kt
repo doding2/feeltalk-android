@@ -17,7 +17,8 @@ interface UserLocalDataSource {
     suspend fun saveCoupleRegistrationCode(code: String)
     suspend fun removeCoupleRegistrationCode()
 
-    suspend fun getGoogleIdToken(): String?
-    suspend fun saveGoogleIdToken(idToken: String)
+    suspend fun getGoogleOrKakaoIdToken(): String?
+    suspend fun saveGoogleOrKakaoIdToken(idToken: String)
 
+    suspend fun clearAllTokens(): Boolean
 }

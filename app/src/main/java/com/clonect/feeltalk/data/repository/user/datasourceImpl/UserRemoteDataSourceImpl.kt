@@ -156,4 +156,15 @@ class UserRemoteDataSourceImpl(
         return response
     }
 
+    override suspend fun signUpWithKakao(idToken: String, fcmToken: String): Response<SignUpDto> {
+        val body = JsonObject().apply {
+            addProperty("idToken", idToken)
+            addProperty("fcmToken", fcmToken)
+        }
+        val response = clonectService.signUpWithKakao(body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
+
 }

@@ -113,6 +113,12 @@ class UseCaseModule {
 
     @Singleton
     @Provides
+    fun providesSignUpWithKakaoUseCase(userRepository: UserRepository): SignUpWithKakaoUseCase {
+        return SignUpWithKakaoUseCase(userRepository)
+    }
+
+    @Singleton
+    @Provides
     fun providesGetCoupleRegistrationCode(userRepository: UserRepository): GetCoupleRegistrationCodeUseCase {
         return GetCoupleRegistrationCodeUseCase(userRepository)
     }

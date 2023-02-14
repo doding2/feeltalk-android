@@ -58,10 +58,14 @@ class SignUpFragment : Fragment() {
 
         binding.apply {
             mcvSignUpGoogle.setOnClickListener {
-                launchGoogleSignUp()
+                lifecycleScope.launch {
+                    launchGoogleSignUp()
+                    kakaoLogOut()
+                }
             }
             mcvSignUpKakao.setOnClickListener {
                 signInWithKakao()
+                googleLogOut()
             }
         }
     }
@@ -145,31 +149,41 @@ class SignUpFragment : Fragment() {
 
 
 
-    private fun signInWithKakao() {
+    private fun signInWithKakao() = lifecycleScope.launch {
         UserApiClient.instance.run {
-            if (!isKakaoTalkLoginAvailable(requireContext())) return
+            if (!isKakaoTalkLoginAvailable(requireContext())) {
+                kakaoLogOut()
+            }
 
             loginWithKakaoTalk(requireContext()) { token, error ->
                 error?.let {
-                    infoLog("카카오 로그인 실패: ${error}")
-                    Toast.makeText(requireContext(), "카카오로 가입하는데 실패했습니다", Toast.LENGTH_SHORT).show()
+                    lifecycleScope.launch {
+                        infoLog("카카오 로그인 실패: $error")
+                        Toast.makeText(requireContext(), "카카오로 가입하는데 실패했습니다", Toast.LENGTH_SHORT).show()
+                        kakaoLogOut()
+                    }
                     return@loginWithKakaoTalk
                 }
 
                 token?.let {
-                    infoLog( "카카오 로그인 성공\n -> idToken: ${token.idToken}\n accessToken: ${token.accessToken}")
+                    token.idToken?.let {
+                        viewModel.signUpWithKakao(it)
+                        infoLog( "카카오 로그인 성공 idToken: ${token.idToken}")
+                    }
                     return@loginWithKakaoTalk
                 }
             }
         }
     }
 
-    private suspend fun kakaoLogOut(): Boolean = suspendCoroutine {
-        UserApiClient.instance.unlink { error ->
+    private suspend fun kakaoLogOut() = suspendCoroutine { continuation ->
+        UserApiClient.instance.logout { error ->
             if (error == null) {
-                it.resume(true)
+                infoLog("카카오 로그 아웃 성공")
+                continuation.resume(true)
             } else {
-                it.resume(false)
+                infoLog("카카오 로그 아웃 실패")
+                continuation.resume(false)
             }
         }
     }

@@ -59,6 +59,11 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    // TODO 카카오 자동 로그인
+    fun autoKakaoLogIn() = viewModelScope.launch(Dispatchers.IO) {
+        setReady()
+    }
+
 
     private suspend fun getUserInfo() {
         val result = getUserInfoUseCase()

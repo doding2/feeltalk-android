@@ -6,6 +6,7 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.usecase.user.CheckUserInfoIsEnteredUseCase
 import com.clonect.feeltalk.domain.usecase.user.CheckUserIsCoupleUseCase
 import com.clonect.feeltalk.domain.usecase.user.SignUpWithGoogleUseCase
+import com.clonect.feeltalk.domain.usecase.user.SignUpWithKakaoUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +24,7 @@ import kotlin.coroutines.suspendCoroutine
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val signUpWithGoogleUseCase: SignUpWithGoogleUseCase,
+    private val signUpWithKakaoUseCase: SignUpWithKakaoUseCase,
     private val checkUserInfoIsEnteredUseCase: CheckUserInfoIsEnteredUseCase,
     private val checkUserIsCoupleUseCase: CheckUserIsCoupleUseCase,
 ): ViewModel() {
@@ -49,27 +51,56 @@ class SignUpViewModel @Inject constructor(
     suspend fun signUpWithGoogle(idToken: String, serverAuthCode: String) = viewModelScope.launch(Dispatchers.IO) {
         setLoading(true)
         val result = signUpWithGoogleUseCase(idToken, serverAuthCode, getFcmToken())
-         when (result) {
+        when (result) {
             is Resource.Success -> {
                 val dto = result.data
                 if (dto.annotation == "signUp") {
                     setLoading(false)
                     _isSignUpSuccessful.value = true
-                    infoLog("Success to sign up")
+                    infoLog("Success to sign up with google")
                 }
                 if (dto.annotation == "login" || dto.annotation == "login_noCouple") {
                     checkUserInfoIsEntered()
-                    infoLog("Success to log in")
+                    infoLog("Success to log in with google")
                 }
             }
             is Resource.Error -> {
-                infoLog("sign up error: ${result.throwable.localizedMessage}")
+                infoLog("sign up error with google: ${result.throwable.localizedMessage}")
                 sendToast("구글로 가입하는데 실패했습니다")
                 setLoading(false)
             }
             else -> {
-                infoLog("sign up error")
+                infoLog("sign up error with google")
                 sendToast("구글로 가입하는데 실패했습니다")
+                setLoading(false)
+            }
+        }
+    }
+
+    fun signUpWithKakao(idToken: String) = viewModelScope.launch(Dispatchers.IO) {
+        setLoading(true)
+        val result = signUpWithKakaoUseCase(idToken, getFcmToken())
+        when (result) {
+            is Resource.Success -> {
+                val dto = result.data
+                if (dto.annotation == "signUp") {
+                    setLoading(false)
+                    _isSignUpSuccessful.value = true
+                    infoLog("Success to sign up with kakao")
+                }
+                if (dto.annotation == "login" || dto.annotation == "login_noCouple") {
+                    checkUserInfoIsEntered()
+                    infoLog("Success to log in with kakao")
+                }
+            }
+            is Resource.Error -> {
+                infoLog("sign up error with kakao: ${result.throwable.localizedMessage}")
+                sendToast("카카오로 가입하는데 실패했습니다")
+                setLoading(false)
+            }
+            else -> {
+                infoLog("sign up error with kakao")
+                sendToast("카카오로 가입하는데 실패했습니다")
                 setLoading(false)
             }
         }

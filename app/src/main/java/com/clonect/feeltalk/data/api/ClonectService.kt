@@ -113,6 +113,11 @@ interface ClonectService {
 
 
     /** Sign Up **/
+    @POST("/api/member/kakao")
+    suspend fun signUpWithKakao(
+        @Body body: JsonObject
+    ): Response<SignUpDto>
+
     @POST("api/member")
     suspend fun signUpWithGoogle(
         @Body body: JsonObject
@@ -127,6 +132,7 @@ interface ClonectService {
     suspend fun sendPartnerCoupleRegistrationCode(
         @Body body: JsonObject
     ): Response<PartnerCodeCheckDto>
+
 
 
     /** Encryption **/
