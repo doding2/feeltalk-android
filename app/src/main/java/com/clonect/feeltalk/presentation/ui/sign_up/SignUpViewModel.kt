@@ -3,10 +3,7 @@ package com.clonect.feeltalk.presentation.ui.sign_up
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.domain.usecase.user.CheckUserInfoIsEnteredUseCase
-import com.clonect.feeltalk.domain.usecase.user.CheckUserIsCoupleUseCase
-import com.clonect.feeltalk.domain.usecase.user.SignUpWithGoogleUseCase
-import com.clonect.feeltalk.domain.usecase.user.SignUpWithKakaoUseCase
+import com.clonect.feeltalk.domain.usecase.user.*
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,6 +24,7 @@ class SignUpViewModel @Inject constructor(
     private val signUpWithKakaoUseCase: SignUpWithKakaoUseCase,
     private val checkUserInfoIsEnteredUseCase: CheckUserInfoIsEnteredUseCase,
     private val checkUserIsCoupleUseCase: CheckUserIsCoupleUseCase,
+    private val clearAllTokensUseCase: ClearAllTokensUseCase,
 ): ViewModel() {
 
     private val _isSignUpSuccessful = MutableStateFlow(false)
@@ -77,9 +75,9 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    fun signUpWithKakao(idToken: String) = viewModelScope.launch(Dispatchers.IO) {
+    fun signUpWithKakao(idToken: String, accessToken: String) = viewModelScope.launch(Dispatchers.IO) {
         setLoading(true)
-        val result = signUpWithKakaoUseCase(idToken, getFcmToken())
+        val result = signUpWithKakaoUseCase(idToken, accessToken, getFcmToken())
         when (result) {
             is Resource.Success -> {
                 val dto = result.data
@@ -158,6 +156,15 @@ class SignUpViewModel @Inject constructor(
             }.addOnFailureListener {
                 continuation.resumeWithException(it)
             }
+    }
+
+
+    suspend fun clearAllTokens(): Boolean {
+        val result = clearAllTokensUseCase()
+        return when (result) {
+            is Resource.Success -> true
+            else -> false
+        }
     }
 
     fun sendToast(message: String) = viewModelScope.launch {

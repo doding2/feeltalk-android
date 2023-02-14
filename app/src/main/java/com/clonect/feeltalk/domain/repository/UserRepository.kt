@@ -27,10 +27,12 @@ interface UserRepository {
     suspend fun sendPartnerCoupleRegistrationCode(partnerCode: String): Resource<PartnerCodeCheckDto>
     suspend fun updateFcmToken(fcmToken: String): Resource<StatusDto>
 
-    suspend fun autoLogInWithGoogle(): Resource<AccessTokenDto>
     suspend fun signUpWithGoogle(idToken: String, serverAuthCode: String, fcmToken: String): Resource<SignUpDto>
+    suspend fun autoLogInWithGoogle(): Resource<AccessTokenDto>
 
-    suspend fun signUpWithKakao(idToken: String, fcmToken: String): Resource<SignUpDto>
+    suspend fun signUpWithKakao(idToken: String, accessToken: String, fcmToken: String): Resource<SignUpDto>
+    suspend fun autoLogInWithKakao(): Resource<AccessTokenDto>
 
     suspend fun clearAllTokens(): Resource<Boolean>
+
 }

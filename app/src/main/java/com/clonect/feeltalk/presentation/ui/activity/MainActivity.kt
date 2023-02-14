@@ -110,7 +110,6 @@ class MainActivity : AppCompatActivity() {
 
     // TODO 얘네들 다 만들어야댐
     private suspend fun tryKakaoAutoLogIn(): Boolean = suspendCoroutine { continuation ->
-        // Note: 카카오 액세스 토큰의 존재여부 확인 (액세스 토큰이 유효하지 않을 수도 있음)
         if (AuthApiClient.instance.hasToken()) {
             UserApiClient.instance.accessTokenInfo { _, error ->
                 if (error == null) {

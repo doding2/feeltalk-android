@@ -22,8 +22,9 @@ interface UserRemoteDataSource {
     suspend fun sendPartnerCoupleRegistrationCode(accessToken: String, partnerCode: String): Response<PartnerCodeCheckDto>
     suspend fun updateFcmToken(accessToken: String, fcmToken: String): Response<StatusDto>
 
-    suspend fun autoLogInWithGoogle(idToken: String): Response<AccessTokenDto>
     suspend fun signUpWithGoogle(idToken: String, serverAuthCode: String, fcmToken: String): Response<SignUpDto>
+    suspend fun autoLogInWithGoogle(idToken: String): Response<AccessTokenDto>
 
-    suspend fun signUpWithKakao(idToken: String, fcmToken: String): Response<SignUpDto>
+    suspend fun signUpWithKakao(idToken: String, accessToken: String, fcmToken: String): Response<SignUpDto>
+    suspend fun autoLogInWithKakao(idToken: String): Response<AccessTokenDto>
 }

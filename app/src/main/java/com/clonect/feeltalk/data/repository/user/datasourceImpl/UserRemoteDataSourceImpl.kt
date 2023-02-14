@@ -130,16 +130,6 @@ class UserRemoteDataSourceImpl(
     }
 
 
-    override suspend fun autoLogInWithGoogle(idToken: String): Response<AccessTokenDto> {
-        val body = JsonObject().apply {
-            addProperty("idToken", idToken)
-        }
-        val response = clonectService.autoLogInWithGoogle(body)
-        if (!response.isSuccessful) throw HttpException(response)
-        if (response.body() == null) throw NullPointerException("Response body from server is null.")
-        return response
-    }
-
     override suspend fun signUpWithGoogle(
         idToken: String,
         serverAuthCode: String,
@@ -156,12 +146,34 @@ class UserRemoteDataSourceImpl(
         return response
     }
 
-    override suspend fun signUpWithKakao(idToken: String, fcmToken: String): Response<SignUpDto> {
+    override suspend fun autoLogInWithGoogle(idToken: String): Response<AccessTokenDto> {
         val body = JsonObject().apply {
             addProperty("idToken", idToken)
+        }
+        val response = clonectService.autoLogInWithGoogle(body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
+
+
+    override suspend fun signUpWithKakao(idToken: String, accessToken: String, fcmToken: String): Response<SignUpDto> {
+        val body = JsonObject().apply {
+            addProperty("idToken", idToken)
+            addProperty("accessToken", accessToken)
             addProperty("fcmToken", fcmToken)
         }
         val response = clonectService.signUpWithKakao(body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
+
+    override suspend fun autoLogInWithKakao(idToken: String): Response<AccessTokenDto> {
+        val body = JsonObject().apply {
+            addProperty("idToken", idToken)
+        }
+        val response = clonectService.autoLogInWithKakao(body)
         if (!response.isSuccessful) throw HttpException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response

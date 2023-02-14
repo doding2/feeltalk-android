@@ -128,6 +128,12 @@ interface ClonectService {
         @Body body: JsonObject
     ): Response<AccessTokenDto>
 
+    // TODO 카카오 자동 로그인
+    @POST("api/login")
+    suspend fun autoLogInWithKakao(
+        @Body body: JsonObject
+    ): Response<AccessTokenDto>
+
     @POST("api/couple/match")
     suspend fun sendPartnerCoupleRegistrationCode(
         @Body body: JsonObject

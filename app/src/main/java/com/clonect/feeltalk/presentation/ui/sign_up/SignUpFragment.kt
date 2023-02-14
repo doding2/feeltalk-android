@@ -59,13 +59,15 @@ class SignUpFragment : Fragment() {
         binding.apply {
             mcvSignUpGoogle.setOnClickListener {
                 lifecycleScope.launch {
+                    logOut()
                     launchGoogleSignUp()
-                    kakaoLogOut()
                 }
             }
             mcvSignUpKakao.setOnClickListener {
-                signInWithKakao()
-                googleLogOut()
+                lifecycleScope.launch {
+                    logOut()
+                    signInWithKakao()
+                }
             }
         }
     }
@@ -147,42 +149,50 @@ class SignUpFragment : Fragment() {
         }
     }
 
+    
+    private suspend fun logOut() {
+        tryGoogleLogOut()
+        tryKakaoLogOut()
+        viewModel.clearAllTokens()
+    }
 
 
     private fun signInWithKakao() = lifecycleScope.launch {
         UserApiClient.instance.run {
             if (!isKakaoTalkLoginAvailable(requireContext())) {
-                kakaoLogOut()
+                tryKakaoLogOut()
             }
 
             loginWithKakaoTalk(requireContext()) { token, error ->
                 error?.let {
                     lifecycleScope.launch {
                         infoLog("카카오 로그인 실패: $error")
-                        Toast.makeText(requireContext(), "카카오로 가입하는데 실패했습니다", Toast.LENGTH_SHORT).show()
-                        kakaoLogOut()
+                        tryKakaoLogOut()
                     }
                     return@loginWithKakaoTalk
                 }
 
                 token?.let {
-                    token.idToken?.let {
-                        viewModel.signUpWithKakao(it)
-                        infoLog( "카카오 로그인 성공 idToken: ${token.idToken}")
+                    val accessToken = token.accessToken
+                    val idToken = token.idToken ?: run {
+                        infoLog("카카오 로그인 실패: idToken is null")
+                        return@loginWithKakaoTalk
                     }
+
+                    viewModel.signUpWithKakao(idToken, accessToken)
+                    infoLog( "카카오 로그인 성공")
                     return@loginWithKakaoTalk
                 }
             }
         }
     }
 
-    private suspend fun kakaoLogOut() = suspendCoroutine { continuation ->
-        UserApiClient.instance.logout { error ->
+    private suspend fun tryKakaoLogOut() = suspendCoroutine { continuation ->
+        UserApiClient.instance.unlink { error ->
             if (error == null) {
                 infoLog("카카오 로그 아웃 성공")
                 continuation.resume(true)
             } else {
-                infoLog("카카오 로그 아웃 실패")
                 continuation.resume(false)
             }
         }
@@ -195,13 +205,18 @@ class SignUpFragment : Fragment() {
 
 
 
-    private fun googleLogOut() {
+    private suspend fun tryGoogleLogOut() = suspendCoroutine { continuation ->
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .build()
         val mGoogleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
-        mGoogleSignInClient.signOut().addOnSuccessListener {
-            infoLog("구글 로그 아웃")
-        }
+        mGoogleSignInClient.signOut()
+            .addOnSuccessListener {
+                continuation.resume(true)
+                infoLog("구글 로그 아웃 성공")
+            }
+            .addOnFailureListener {
+                continuation.resume(false)
+            }
     }
 
     private fun launchGoogleSignUp() {
@@ -234,7 +249,7 @@ class SignUpFragment : Fragment() {
 
             viewModel.signUpWithGoogle(idToken, serverAuthCode)
         } catch (e: ApiException) {
-            googleLogOut()
+            tryGoogleLogOut()
             Toast.makeText(requireContext(), "구글로 가입하는데 실패했습니다", Toast.LENGTH_SHORT).show()
         }
     }

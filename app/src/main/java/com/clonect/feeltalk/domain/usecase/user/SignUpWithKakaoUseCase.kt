@@ -7,7 +7,7 @@ import com.clonect.feeltalk.domain.repository.UserRepository
 class SignUpWithKakaoUseCase(
     private val userRepository: UserRepository
 ) {
-    suspend operator fun invoke(idToken: String, fcmToken: String): Resource<SignUpDto> {
-        return userRepository.signUpWithKakao(idToken, fcmToken)
+    suspend operator fun invoke(idToken: String, accessToken: String, fcmToken: String): Resource<SignUpDto> {
+        return userRepository.signUpWithKakao(idToken, accessToken, fcmToken)
     }
 }

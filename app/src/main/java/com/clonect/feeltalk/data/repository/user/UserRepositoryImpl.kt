@@ -334,9 +334,9 @@ class UserRepositoryImpl(
     }
 
 
-    override suspend fun signUpWithKakao(idToken: String, fcmToken: String): Resource<SignUpDto> {
+    override suspend fun signUpWithKakao(idToken: String, accessToken: String, fcmToken: String): Resource<SignUpDto> {
         return try {
-            val response = remoteDataSource.signUpWithKakao(idToken, fcmToken).body()!!
+            val response = remoteDataSource.signUpWithKakao(idToken, accessToken, fcmToken).body()!!
 
             val coupleRegistrationCode = response.validCode
             coupleRegistrationCode?.let {
@@ -344,10 +344,9 @@ class UserRepositoryImpl(
                 cacheDataSource.saveCoupleRegistrationCode(it)
             }
 
-            val accessToken = AccessTokenDto(response.token)
-            localDataSource.saveAccessToken(accessToken.accessToken)
+            localDataSource.saveAccessToken(response.token)
             localDataSource.saveGoogleOrKakaoIdToken(idToken)
-            cacheDataSource.saveAccessTokenToCache(accessToken.accessToken)
+            cacheDataSource.saveAccessTokenToCache(response.token)
             Resource.Success(response)
         } catch (e: CancellationException) {
             throw e
@@ -355,6 +354,26 @@ class UserRepositoryImpl(
             Resource.Error(e)
         }
     }
+
+    override suspend fun autoLogInWithKakao(): Resource<AccessTokenDto> {
+        return try {
+            val idToken = localDataSource.getGoogleOrKakaoIdToken()
+                ?: throw Exception("User is not auto logged in. Please re-log in.")
+
+            val response = remoteDataSource.autoLogInWithKakao(idToken)
+
+            val accessTokenDto = response.body()!!
+            localDataSource.saveAccessToken(accessTokenDto.accessToken)
+            cacheDataSource.saveAccessTokenToCache(accessTokenDto.accessToken)
+            Resource.Success(accessTokenDto)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Error(e)
+        }
+    }
+
 
     override suspend fun clearAllTokens(): Resource<Boolean> {
         return try {

@@ -17,6 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val autoLogInWithGoogleUseCase: AutoLogInWithGoogleUseCase,
+    private val autoLogInWithKakaoUseCase: AutoLogInWithKakaoUseCase,
     private val checkUserInfoIsEnteredUseCase: CheckUserInfoIsEnteredUseCase,
     private val checkUserIsCoupleUseCase: CheckUserIsCoupleUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
@@ -48,20 +49,31 @@ class MainViewModel @Inject constructor(
             is Resource.Success -> {
                 _isLoggedIn.value = true
                 checkUserInfoIsEntered()
-                infoLog("Success to log in")
+                infoLog("Success to log in with google")
             }
             else -> {
                 _isLoggedIn.value = false
-                infoLog("Fail to log in")
+                infoLog("Fail to log in with google")
                 sendToast("로그인에 실패했습니다")
                 setReady()
             }
         }
     }
 
-    // TODO 카카오 자동 로그인
     fun autoKakaoLogIn() = viewModelScope.launch(Dispatchers.IO) {
-        setReady()
+        when (autoLogInWithGoogleUseCase()) {
+            is Resource.Success -> {
+                _isLoggedIn.value = true
+                checkUserInfoIsEntered()
+                infoLog("Success to log in with kakao")
+            }
+            else -> {
+                _isLoggedIn.value = false
+                infoLog("Fail to log in with kakao")
+                sendToast("로그인에 실패했습니다")
+                setReady()
+            }
+        }
     }
 
 

@@ -219,6 +219,15 @@ class UseCaseModule {
         return GetQuestionByContentFromDataBaseUseCase(questionRepository)
     }
 
+    @Singleton
+    @Provides
+    fun providesClearAllTokensUseCase(userRepository: UserRepository): ClearAllTokensUseCase {
+        return ClearAllTokensUseCase(userRepository)
+    }
 
-
+    @Singleton
+    @Provides
+    fun providesAutoLogInWithKakaoUseCase(userRepository: UserRepository): AutoLogInWithKakaoUseCase {
+        return AutoLogInWithKakaoUseCase(userRepository)
+    }
 }
