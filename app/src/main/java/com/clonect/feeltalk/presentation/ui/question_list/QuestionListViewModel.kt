@@ -1,6 +1,5 @@
 package com.clonect.feeltalk.presentation.ui.question_list
 
-import android.os.Parcelable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
@@ -23,9 +22,6 @@ class QuestionListViewModel @Inject constructor(
     private val _questionListState = MutableStateFlow(listOf(Question(question = "", viewType = "header")))
     val questionListState: StateFlow<List<Question>> = _questionListState.asStateFlow()
 
-    private val _listState = MutableStateFlow<Parcelable?>(null)
-    val listState = _listState.asStateFlow()
-
     init {
         getQuestionList()
     }
@@ -47,9 +43,5 @@ class QuestionListViewModel @Inject constructor(
         }
     }
 
-
-    fun setListState(listState: Parcelable?) {
-        _listState.value = listState
-    }
 
 }

@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.presentation.ui.bottom_navigation
 
+import android.os.Parcelable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.domain.model.data.notification.Topics
@@ -10,6 +11,8 @@ import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,6 +23,15 @@ class BottomNavigationViewModel @Inject constructor(
 ): ViewModel() {
 
     var appSettings = getAppSettingsUseCase()
+
+    private val _questionListScrollState = MutableStateFlow<Parcelable?>(null)
+    val questionListScrollState = _questionListScrollState.asStateFlow()
+
+    private val _homeScrollState = MutableStateFlow<Int?>(null)
+    val homeScrollState = _homeScrollState.asStateFlow()
+
+    private val _settingScrollState = MutableStateFlow<Int?>(null)
+    val settingScrollState = _settingScrollState.asStateFlow()
 
     init {
         initFirebase()
@@ -74,4 +86,17 @@ class BottomNavigationViewModel @Inject constructor(
         saveAppSettingsUseCase(appSettings)
     }
 
+
+    fun setQuestionListScrollState(state: Parcelable?) {
+        _questionListScrollState.value = state
+    }
+
+    fun setHomeScrollState(state: Int?) {
+        _homeScrollState.value = state
+    }
+
+    fun setSettingScrollState(state: Int?) {
+        infoLog("setting scroll state: ${state}")
+        _settingScrollState.value = state
+    }
 }

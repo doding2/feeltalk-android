@@ -5,12 +5,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -20,6 +22,7 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentHomeBinding
 import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.model.data.user.Emotion
+import com.clonect.feeltalk.presentation.ui.bottom_navigation.BottomNavigationViewModel
 import com.clonect.feeltalk.presentation.utils.addTextGradient
 import com.clonect.feeltalk.presentation.utils.showMyEmotionChangerDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,6 +34,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
     private val viewModel: HomeViewModel by viewModels()
+    private val navViewModel: BottomNavigationViewModel by activityViewModels()
     private lateinit var onBackCallback: OnBackPressedCallback
 
     override fun onCreateView(
@@ -38,6 +42,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
+        restoreScrollViewState()
         return binding.root
     }
 
@@ -169,6 +174,18 @@ class HomeFragment : Fragment() {
         textLetterMessage.text = getString(R.string.letter_paper_message)
     }
 
+    private fun restoreScrollViewState() {
+        binding.root.viewTreeObserver.addOnPreDrawListener(object: ViewTreeObserver.OnPreDrawListener {
+            override fun onPreDraw(): Boolean {
+                binding.scrollView.viewTreeObserver.removeOnPreDrawListener(this)
+                navViewModel.homeScrollState.value?.let {
+                    binding.scrollView.scrollY = it
+                    navViewModel.setHomeScrollState(null)
+                }
+                return false
+            }
+        })
+    }
 
     private fun navigateByQuestion() {
         val question = viewModel.todayQuestion.value ?: return
@@ -228,5 +245,7 @@ class HomeFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         onBackCallback.remove()
+        val scrollState = binding.scrollView.scrollY
+        navViewModel.setHomeScrollState(scrollState)
     }
 }

@@ -232,7 +232,7 @@ class SignUpFragment : Fragment() {
                 val accessToken = NaverIdLoginSDK.getAccessToken()
                 if (accessToken == null) {
                     tryNaverLogOut()
-                    infoLog("Fail to sign up with naver :Naver Access Token is null")
+                    infoLog("Fail to sign up with naver: Access Token is null")
                     Toast.makeText(requireContext(), "네이버로 가입하는데 실패했습니다", Toast.LENGTH_SHORT).show()
                     setSignUpButtonsEnabled(true)
                     return@launch
@@ -242,6 +242,7 @@ class SignUpFragment : Fragment() {
                 if (!isSuccessful) {
                     tryNaverLogOut()
                 }
+                infoLog("네이버 로그인 액세스 토큰: $accessToken")
                 setSignUpButtonsEnabled(true)
             }
         }

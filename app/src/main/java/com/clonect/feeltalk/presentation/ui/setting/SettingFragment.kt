@@ -7,9 +7,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -18,6 +20,7 @@ import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.databinding.FragmentSettingBinding
+import com.clonect.feeltalk.presentation.ui.bottom_navigation.BottomNavigationViewModel
 import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
 import com.kyleduo.switchbutton.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,6 +35,7 @@ class SettingFragment : Fragment() {
 
     private lateinit var binding: FragmentSettingBinding
     private val viewModel: SettingViewModel by viewModels()
+    private val navViewModel: BottomNavigationViewModel by activityViewModels()
     private lateinit var onBackCallback: OnBackPressedCallback
 
     override fun onCreateView(
@@ -39,6 +43,7 @@ class SettingFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
+        restoreScrollViewState()
         return binding.root
     }
 
@@ -56,6 +61,7 @@ class SettingFragment : Fragment() {
             llDDay.setOnClickListener { navigateToCoupleSettingPage() }
         }
     }
+
 
     private fun navigateToCoupleSettingPage() {
         requireParentFragment()
@@ -96,6 +102,19 @@ class SettingFragment : Fragment() {
         }
     }
 
+
+    private fun restoreScrollViewState() {
+        binding.root.viewTreeObserver.addOnPreDrawListener(object: ViewTreeObserver.OnPreDrawListener {
+            override fun onPreDraw(): Boolean {
+                binding.scrollView.viewTreeObserver.removeOnPreDrawListener(this)
+                navViewModel.settingScrollState.value?.let {
+                    binding.scrollView.scrollY = it
+                    navViewModel.setSettingScrollState(null)
+                }
+                return false
+            }
+        })
+    }
 
 
     private val pushNotificationPermissionLauncher = registerForActivityResult(
@@ -195,5 +214,8 @@ class SettingFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         onBackCallback.remove()
+        val scrollState = binding.scrollView.scrollY
+        navViewModel.setSettingScrollState(scrollState)
     }
+
 }
