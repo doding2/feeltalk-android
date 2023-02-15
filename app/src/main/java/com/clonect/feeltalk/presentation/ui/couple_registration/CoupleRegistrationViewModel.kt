@@ -106,40 +106,44 @@ class CoupleRegistrationViewModel @Inject constructor(
 
         val myPublicKeyResult = uploadMyPublicKeyUseCase()
         if (myPublicKeyResult is Resource.Error) {
-            sendToast("실패했습니다.\n상대방의 네트워크 상태를 확인해주세요.")
+            sendToast("실패했습니다. 상대방의 네트워크 상태를 확인해주세요.")
             infoLog("Fail to upload MyPublicKey : ${myPublicKeyResult.throwable.localizedMessage}")
             breakUpCouple()
             reloadCoupleRegistrationCode()
+            CoupleRegistrationObserver.getInstance().setCoupleRegistrationCompleted(false)
             _isLoading.value = false
             return@launch
         }
 
         val partnerPublicKeyResult = loadPartnerPublicKeyUseCase()
         if (partnerPublicKeyResult is Resource.Error) {
-            sendToast("실패했습니다.\n상대방의 네트워크 상태를 확인해주세요.")
+            sendToast("실패했습니다. 상대방의 네트워크 상태를 확인해주세요.")
             infoLog("Fail to load PartnerPublicKey : ${partnerPublicKeyResult.throwable.localizedMessage}")
             breakUpCouple()
             reloadCoupleRegistrationCode()
+            CoupleRegistrationObserver.getInstance().setCoupleRegistrationCompleted(false)
             _isLoading.value = false
             return@launch
         }
 
         val myPrivateKeyResult = uploadMyPrivateKeyUseCase()
         if (myPrivateKeyResult is Resource.Error) {
-            sendToast("실패했습니다.\n상대방의 네트워크 상태를 확인해주세요.")
+            sendToast("실패했습니다. 상대방의 네트워크 상태를 확인해주세요.")
             infoLog("Fail to upload MyPrivateKey : ${myPrivateKeyResult.throwable.localizedMessage}")
             breakUpCouple()
             reloadCoupleRegistrationCode()
+            CoupleRegistrationObserver.getInstance().setCoupleRegistrationCompleted(false)
             _isLoading.value = false
             return@launch
         }
 
         val partnerPrivateKeyResult = loadPartnerPrivateKeyUseCase()
         if (partnerPrivateKeyResult is Resource.Error) {
-            sendToast("실패했습니다.\n상대방의 네트워크 상태를 확인해주세요.")
+            sendToast("실패했습니다. 상대방의 네트워크 상태를 확인해주세요.")
             infoLog("Fail to load PartnerPrivateKey : ${partnerPrivateKeyResult.throwable.localizedMessage}")
             breakUpCouple()
             reloadCoupleRegistrationCode()
+            CoupleRegistrationObserver.getInstance().setCoupleRegistrationCompleted(false)
             _isLoading.value = false
             return@launch
         }
@@ -151,6 +155,7 @@ class CoupleRegistrationViewModel @Inject constructor(
 
         _isLoading.value = false
         _isKeyPairExchangingCompleted.value = true
+        CoupleRegistrationObserver.getInstance().setCoupleRegistrationCompleted(false)
     }
 
     private suspend fun breakUpCouple() {

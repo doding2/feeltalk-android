@@ -221,8 +221,8 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesClearAllTokensUseCase(userRepository: UserRepository): ClearAllTokensUseCase {
-        return ClearAllTokensUseCase(userRepository)
+    fun providesClearAllExceptKeysUseCase(userRepository: UserRepository): ClearAllExceptKeysUseCase {
+        return ClearAllExceptKeysUseCase(userRepository)
     }
 
     @Singleton
@@ -242,4 +242,11 @@ class UseCaseModule {
     fun providesAutoLogInWithNaverUseCase(userRepository: UserRepository): AutoLogInWithNaverUseCase {
         return AutoLogInWithNaverUseCase(userRepository)
     }
+
+    @Singleton
+    @Provides
+    fun providesRequestChangingPartnerEmotionUseCase(userRepository: UserRepository): RequestChangingPartnerEmotionUseCase {
+        return RequestChangingPartnerEmotionUseCase(userRepository)
+    }
+
 }

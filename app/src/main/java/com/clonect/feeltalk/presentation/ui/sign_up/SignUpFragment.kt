@@ -218,13 +218,19 @@ class SignUpFragment : Fragment() {
 
     private val naverSignUpCallback = object: OAuthLoginCallback {
         override fun onError(errorCode: Int, message: String) {
-            infoLog("Fail to sign up with naver: ${message}")
-            setSignUpButtonsEnabled(true)
+            lifecycleScope.launch {
+                infoLog("Fail to sign up with naver: ${message}")
+                tryNaverLogOut()
+                setSignUpButtonsEnabled(true)
+            }
         }
 
         override fun onFailure(httpStatus: Int, message: String) {
-            infoLog("Fail to sign up with naver: ${message}")
-            setSignUpButtonsEnabled(true)
+            lifecycleScope.launch {
+                infoLog("Fail to sign up with naver -> status: ${httpStatus}, message: ${message}")
+                tryNaverLogOut()
+                setSignUpButtonsEnabled(true)
+            }
         }
 
         override fun onSuccess() {
@@ -252,8 +258,9 @@ class SignUpFragment : Fragment() {
         NaverIdLoginSDK.authenticate(requireContext(), naverSignUpCallback)
     }
 
-    private fun tryNaverLogOut() {
+    private fun tryNaverLogOut(): Boolean {
         NaverIdLoginSDK.logout()
+        return true
     }
 
 

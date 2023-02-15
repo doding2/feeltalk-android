@@ -9,14 +9,13 @@ import com.clonect.feeltalk.domain.model.data.user.Emotion
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionAnswersFromServer
 import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionUseCase
-import com.clonect.feeltalk.domain.usecase.user.GetCoupleAnniversaryUseCase
-import com.clonect.feeltalk.domain.usecase.user.GetPartnerInfoUseCase
-import com.clonect.feeltalk.domain.usecase.user.GetUserInfoUseCase
-import com.clonect.feeltalk.domain.usecase.user.UpdateMyEmotionUseCase
+import com.clonect.feeltalk.domain.usecase.user.*
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -31,7 +30,8 @@ class HomeViewModel @Inject constructor(
     private val updateMyEmotionUseCase: UpdateMyEmotionUseCase,
     private val getTodayQuestionUseCase: GetTodayQuestionUseCase,
     private val getTodayQuestionAnswersFromServer: GetTodayQuestionAnswersFromServer,
-    private val getCoupleAnniversaryUseCase: GetCoupleAnniversaryUseCase
+    private val getCoupleAnniversaryUseCase: GetCoupleAnniversaryUseCase,
+    private val requestChangingPartnerEmotionUseCase: RequestChangingPartnerEmotionUseCase,
 ): ViewModel() {
 
     private val _userInfo = MutableStateFlow(UserInfo())
@@ -46,6 +46,12 @@ class HomeViewModel @Inject constructor(
     private val _todayQuestion = MutableStateFlow<Question?>(null)
     val todayQuestion = _todayQuestion.asStateFlow()
 
+    private val _partnerClickCount = MutableStateFlow(0)
+    val partnerClickCount = _partnerClickCount.asStateFlow()
+
+    private val _toast = MutableSharedFlow<String>()
+    val toast = _toast.asSharedFlow()
+
 
     init {
         getUserInfo()
@@ -54,15 +60,50 @@ class HomeViewModel @Inject constructor(
         getCoupleAnniversary()
     }
 
+
+    fun increaseClickCount() {
+        _partnerClickCount.value += 1
+    }
+
+    fun clearClickCount() {
+        _partnerClickCount.value = 0
+    }
+
     fun changeMyEmotion(emotion: Emotion) = viewModelScope.launch(Dispatchers.IO) {
         when (updateMyEmotionUseCase(emotion)) {
             is Resource.Success -> {
                 _userInfo.value = _userInfo.value.copy(emotion = emotion)
-                infoLog("update")
+                infoLog("update my emotion")
             }
-            else -> infoLog("Fail to update my emotion")
+            else -> {
+                infoLog("Fail to update my emotion")
+                sendToast("감정 변경에 실패했습니다")
+            }
         }
     }
+
+    fun requestChangingPartnerEmotion() = viewModelScope.launch(Dispatchers.IO) {
+        val result = requestChangingPartnerEmotionUseCase()
+        when (result) {
+            is Resource.Success -> {
+                sendToast("연인에게 감정을 물어봤습니다")
+                infoLog("Success to request changing partner emotion")
+            }
+            is Resource.Error -> {
+                sendToast("연인에게 감정을 물어보는 것을 실패했습니다")
+                infoLog("Fail to request changing partner emotion: ${result.throwable.localizedMessage}")
+            }
+            else -> {
+                sendToast("연인에게 감정을 물어보는 것을 실패했습니다")
+                infoLog("Fail to request changing partner emotion")
+            }
+        }
+    }
+
+    fun sendToast(message: String) = viewModelScope.launch {
+        _toast.emit(message)
+    }
+
 
     private fun getUserInfo() = viewModelScope.launch(Dispatchers.IO) {
         val result = getUserInfoUseCase()
@@ -87,7 +128,6 @@ class HomeViewModel @Inject constructor(
         when (result) {
             is Resource.Success -> {
                 val date = result.data
-                infoLog("couple anniversary date: ${date}")
                 _dday.value = calculateDDay(date)
             }
             is Resource.Error -> infoLog("Fail to get d day: ${result.throwable.localizedMessage}")
@@ -145,4 +185,6 @@ class HomeViewModel @Inject constructor(
             return 0
         }
     }
+
+
 }

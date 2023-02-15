@@ -95,6 +95,9 @@ class ChatViewModel @Inject constructor(
         _chatList.value = newList
     }
 
+    fun isPartnerAnswered(): Boolean {
+        return _chatList.value.any { it.owner == "partner" }
+    }
 
 
     fun sendChat(content: String) = viewModelScope.launch(Dispatchers.IO) {

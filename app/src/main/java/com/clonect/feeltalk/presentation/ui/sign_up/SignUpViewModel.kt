@@ -26,7 +26,7 @@ class SignUpViewModel @Inject constructor(
     private val signUpWithNaverUseCase: SignUpWithNaverUseCase,
     private val checkUserInfoIsEnteredUseCase: CheckUserInfoIsEnteredUseCase,
     private val checkUserIsCoupleUseCase: CheckUserIsCoupleUseCase,
-    private val clearAllTokensUseCase: ClearAllTokensUseCase,
+    private val clearAllExceptKeysUseCase: ClearAllExceptKeysUseCase,
 ): ViewModel() {
 
     private val _isSignUpSuccessful = MutableStateFlow(false)
@@ -207,7 +207,7 @@ class SignUpViewModel @Inject constructor(
 
 
     suspend fun clearAllTokens(): Boolean {
-        val result = clearAllTokensUseCase()
+        val result = clearAllExceptKeysUseCase()
         return when (result) {
             is Resource.Success -> true
             else -> false

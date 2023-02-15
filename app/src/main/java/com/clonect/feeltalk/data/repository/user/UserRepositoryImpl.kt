@@ -88,6 +88,21 @@ class UserRepositoryImpl(
         }
     }
 
+    override suspend fun requestChangingPartnerEmotion(): Resource<StatusDto> {
+        return try {
+            val accessToken = cacheDataSource.getAccessToken()
+                ?: localDataSource.getAccessToken()
+                ?: throw NullPointerException("User is Not logged in.")
+
+            val remote = remoteDataSource.requestChangingPartnerEmotion(accessToken).body()!!
+            return Resource.Success(remote)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
     override suspend fun getCoupleAnniversary(): Resource<String> {
         try {
             val accessToken = cacheDataSource.getAccessToken()
@@ -325,6 +340,8 @@ class UserRepositoryImpl(
             localDataSource.saveAccessToken(accessToken.accessToken)
             localDataSource.saveGoogleIdToken(idToken)
             cacheDataSource.saveAccessTokenToCache(accessToken.accessToken)
+            updateFcmToken(fcmToken)
+
             Resource.Success(response.body()!!)
         } catch (e: CancellationException) {
             throw e
@@ -348,6 +365,8 @@ class UserRepositoryImpl(
 
             localDataSource.saveAccessToken(response.token)
             cacheDataSource.saveAccessTokenToCache(response.token)
+            updateFcmToken(fcmToken)
+
             Resource.Success(response)
         } catch (e: CancellationException) {
             throw e
@@ -392,6 +411,8 @@ class UserRepositoryImpl(
 
             localDataSource.saveAccessToken(response.token)
             cacheDataSource.saveAccessTokenToCache(response.token)
+            updateFcmToken(fcmToken)
+
             Resource.Success(response)
         } catch (e: CancellationException) {
             throw e
@@ -420,18 +441,6 @@ class UserRepositoryImpl(
         }
     }
 
-
-
-    override suspend fun clearAllTokens(): Resource<Boolean> {
-        return try {
-            val isSuccessful = localDataSource.clearAllTokens()
-            Resource.Success(isSuccessful)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            Resource.Error(e)
-        }
-    }
 
 
 
@@ -471,4 +480,16 @@ class UserRepositoryImpl(
     }
 
 
+
+
+    override suspend fun clearAllExceptKeys(): Resource<Boolean> {
+        return try {
+            val isSuccessful = localDataSource.clearAllExceptKeys()
+            Resource.Success(isSuccessful)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
 }

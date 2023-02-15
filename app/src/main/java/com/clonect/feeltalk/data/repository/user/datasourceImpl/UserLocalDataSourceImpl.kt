@@ -1,6 +1,7 @@
 package com.clonect.feeltalk.data.repository.user.datasourceImpl
 
 import android.content.Context
+import com.clonect.feeltalk.data.db.FeeltalkDatabase
 import com.clonect.feeltalk.data.repository.user.datasource.UserLocalDataSource
 import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
@@ -9,7 +10,8 @@ import java.io.File
 
 class UserLocalDataSourceImpl(
     private val context: Context,
-    private val appLevelEncryptHelper: AppLevelEncryptHelper
+    private val appLevelEncryptHelper: AppLevelEncryptHelper,
+    private val feeltalkDatabase: FeeltalkDatabase
 ): UserLocalDataSource {
 
     override suspend fun getAccessToken(): String? {
@@ -109,9 +111,20 @@ class UserLocalDataSourceImpl(
         }
     }
 
-    override suspend fun clearAllTokens(): Boolean {
+
+    override suspend fun clearAllExceptKeys(): Boolean {
         val idTokenFile = File(context.filesDir, "google_id_token.txt")
         val accessTokenFile = File(context.filesDir, "access_token.txt")
-        return idTokenFile.delete() && accessTokenFile.delete()
+        val registrationCodeFile = File(context.filesDir, "couple_registration_code.txt")
+        val coupleAnniversaryFile = File(context.filesDir, "couple_anniversary.txt")
+        val userInfoFile = File(context.filesDir, "user_info.dat")
+
+        feeltalkDatabase.clearAllTables()
+
+        return idTokenFile.delete()
+                && accessTokenFile.delete()
+                && registrationCodeFile.delete()
+                && coupleAnniversaryFile.delete()
+                && userInfoFile.delete()
     }
 }

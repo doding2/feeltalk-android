@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
@@ -53,6 +54,8 @@ class HomeFragment : Fragment() {
         collectCoupleAnniversary()
         collectUserInfo()
         collectPartnerInfo()
+        collectPartnerClickCount()
+        collectToast()
 
         binding.apply {
 
@@ -72,13 +75,31 @@ class HomeFragment : Fragment() {
             cvMyEmotion.setOnClickListener {
                 showMyEmotionChanger()
             }
-
             cvPartnerEmotion.setOnClickListener {
-                // TODO 5번 클릭하면 감정 물어봄
+                viewModel.increaseClickCount()
             }
         }
     }
 
+
+    private fun collectToast() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.toast.collectLatest {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun collectPartnerClickCount() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.partnerClickCount.collectLatest {
+                if (it >= 5) {
+                    viewModel.clearClickCount()
+                    viewModel.requestChangingPartnerEmotion()
+                }
+            }
+        }
+    }
 
     private fun collectTodayQuestion() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -189,7 +210,6 @@ class HomeFragment : Fragment() {
 
     private fun navigateByQuestion() {
         val question = viewModel.todayQuestion.value ?: return
-
         if (question.question == "") return
 
         if (question.myAnswer == null) {

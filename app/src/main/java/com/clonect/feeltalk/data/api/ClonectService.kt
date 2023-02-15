@@ -75,6 +75,11 @@ interface ClonectService {
         @Body body: JsonObject
     ): Response<StatusDto>
 
+    @POST("api/fcm/emotion")
+    suspend fun requestChangingPartnerEmotion(
+        @Body body: JsonObject
+    ): Response<StatusDto>
+
 
     /** Question **/
     @POST("/api/todayQuestion")

@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.navigation.NavDeepLinkBuilder
 import com.clonect.feeltalk.R
@@ -57,11 +58,18 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
     companion object {
         const val TODAY_QUESTION_CHANNEL_ID ="feeltalk_today_question_notification"
-        const val PARTNER_QUESTION_ANSWER_CHANNEL_ID ="feeltalk_partner_question_answer_notification"
-        const val EMOTION_CHANGE_CHANNEL_ID ="feeltalk_emotion_change_notification"
+        const val PARTNER_ANSWERED_CHANNEL_ID ="feeltalk_partner_question_answer_notification"
+        const val REQUEST_EMOTION_CHANGE_CHANNEL_ID ="feeltalk_emotion_change_notification"
         const val CHAT_CHANNEL_ID ="feeltalk_chat_notification"
+        const val COUPLE_REGISTRATION_CHANNEL_ID ="feeltalk_couple_registration_completed_notification"
         const val ADVERTISING_CHANNEL_ID ="feeltalk_advertising_notification"
-        const val COUPLE_REGISTRATION_COMPLETED_CHANNEL_ID ="feeltalk_couple_registration_completed_notification"
+
+        const val TYPE_CHAT = "chat"
+        const val TYPE_COUPLE_REGISTRATION = "커플매칭성공"
+        const val TYPE_TODAY_QUESTION = "newQuestion"
+        const val TYPE_PARTNER_ANSWERED = "isAnswer"
+        const val TYPE_REQUEST_EMOTION_CHANGE = "emotionRequest"
+
     }
 
     override fun onNewToken(newToken: String) {
@@ -82,82 +90,97 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         val data = if (message.data["data"] == null) {
             message.data
         } else {
-            Gson().fromJson(message.data["data"], Map::class.java) as? Map<String, String>
-                ?: message.data
+            try {
+                Gson().fromJson(message.data["data"], Map::class.java) as? Map<String, String> ?: message.data
+            } catch (_: Exception) {
+                message.data
+            }
         }
-
-        infoLog("새로 도착한 FCM: $data")
+        infoLog("새로 도착한 FCM: ${message.data}")
+        infoLog("파싱된 FCM: $data")
 
         when (data["type"]) {
-            "today_question" -> handleTodayQuestionData(data)
-            "chat" -> handleChatData(data)
-            "커플매칭성공" -> handleCoupleRegistrationData(data)
+            TYPE_TODAY_QUESTION -> handleTodayQuestionData(data)
+            TYPE_PARTNER_ANSWERED -> handlePartnerAnsweredData(data)
+            TYPE_REQUEST_EMOTION_CHANGE -> handleRequestEmotionChangeData(data)
+            TYPE_CHAT -> handleChatData(data)
+            TYPE_COUPLE_REGISTRATION -> handleCoupleRegistrationData(data)
             else -> handleOtherCases(data)
         }
     }
 
-    private fun handleCoupleRegistrationData(data: Map<String, String>) {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent: PendingIntent? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE)
-        } else {
-            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
-        }
-        
-        CoupleRegistrationObserver
-            .getInstance()
-            .setCoupleRegistrationCompleted(true)
-
-        val title = data["title"] ?: "제목 읽기 실패"
-        val message = data["message"] ?: "내용 읽기 실패"
-
-        showNotification(
-            title = title,
-            message = message,
-            channelID = COUPLE_REGISTRATION_COMPLETED_CHANNEL_ID,
-            pendingIntent = pendingIntent
-        )
-    }
-
-    private fun handleOtherCases(data: Map<String, String>) {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent: PendingIntent? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE)
-        } else {
-            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
-        }
-
-        val title = data["title"] ?: "제목 읽기 실패"
-        val message = data["message"] ?: "내용 읽기 실패"
-
-        showNotification(
-            title = title,
-            message = message,
-            channelID = TODAY_QUESTION_CHANNEL_ID,
-            pendingIntent = pendingIntent
-        )
-    }
-
     private fun handleTodayQuestionData(data: Map<String, String>) {
+        val question = data["detail"] ?: return
+        val newQuestion = Question(
+            question = question
+        )
+
+        // TODO 질문 리스트 내부 저장소에도 질문 추가
+
         val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
             .setGraph(R.navigation.overall_nav_graph)
             .setDestination(R.id.todayQuestionFragment)
-            .setArguments(
-                bundleOf("selectedQuestion" to Question(
-                    question = data["question"] ?: "",
-                    partnerAnswer = data["partnerAnswer"] ?: "",
-                    partnerAnswerDate = data["partnerAnswerDate"] ?: "",
-                ))
-            )
+            .setArguments(bundleOf("selectedQuestion" to newQuestion))
             .createPendingIntent()
 
         showNotification(
-            title = data["title"] ?: "오늘의 질문 도착",
-            message = data["message"] ?: "새로운 질문이 도착했어요",
+            title = data["title"] ?: "",
+            message = data["message"] ?: "",
+            notificationID = TODAY_QUESTION_CHANNEL_ID.toBytesInt(),
             channelID = TODAY_QUESTION_CHANNEL_ID,
             pendingIntent = deepLinkPendingIntent
+        )
+    }
+
+    private fun handlePartnerAnsweredData(data: Map<String, String>) {
+
+        // TODO DB에서 질문 가져와서 내가 대답 했는지 확인 후
+        // 했으면 채팅으로
+        // 안 했으면 질문으로 보내기
+
+        val questionContent = data["detail"] ?: return
+//        val newQuestion = Question(
+//            question = questionContent
+//        )
+//
+//        val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
+//            .setGraph(R.navigation.overall_nav_graph)
+//            .setDestination(R.id.todayQuestionFragment)
+//            .setArguments(bundleOf("selectedQuestion" to newQuestion))
+//            .createPendingIntent()
+
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val pendingIntent: PendingIntent? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE)
+        } else {
+            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+        }
+
+        showNotification(
+            title = data["title"] ?: "",
+            message = data["message"] ?: "",
+            notificationID = questionContent.toBytesInt(),
+            channelID = PARTNER_ANSWERED_CHANNEL_ID,
+            pendingIntent = pendingIntent
+        )
+    }
+
+    private fun handleRequestEmotionChangeData(data: Map<String, String>) {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val pendingIntent: PendingIntent? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE)
+        } else {
+            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+        }
+
+        showNotification(
+            title = data["title"] ?: "",
+            message = data["message"] ?: "",
+            notificationID = REQUEST_EMOTION_CHANGE_CHANNEL_ID.toBytesInt(),
+            channelID = REQUEST_EMOTION_CHANGE_CHANNEL_ID,
+            pendingIntent = pendingIntent
         )
     }
 
@@ -173,10 +196,9 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             date = date
         )
 
-
         val showingQuestionContent = FeeltalkApp.getQuestionIdOfShowingChatFragment()
         val isAppShowing = FeeltalkApp.getAppRunning()
-        
+
         val saveResult = saveChatUseCase(chat)
         if (saveResult !is Resource.Success) {
             // 채팅 저장이 실패하고
@@ -201,6 +223,8 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             Question(question = questionContent)
         }
 
+        // TODO 위에서 수정된 질문 DB에 저장하기
+
         val pendingIntent = NavDeepLinkBuilder(applicationContext)
             .setGraph(R.navigation.overall_nav_graph)
             .setDestination(R.id.chatFragment)
@@ -218,6 +242,56 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         )
     }
 
+    private fun handleCoupleRegistrationData(data: Map<String, String>) {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val pendingIntent: PendingIntent? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE)
+        } else {
+            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+        }
+        
+        CoupleRegistrationObserver
+            .getInstance()
+            .setCoupleRegistrationCompleted(true)
+
+        val title = data["title"] ?: ""
+        val message = data["message"] ?: ""
+
+        val isAppRunning = FeeltalkApp.getAppRunning()
+        if (!isAppRunning) {
+            showNotification(
+                title = "커플 등록 요청",
+                message = "상대방으로부터 커플 등록 요청이 왔습니다.",
+                notificationID = COUPLE_REGISTRATION_CHANNEL_ID.toBytesInt(),
+                channelID = COUPLE_REGISTRATION_CHANNEL_ID,
+                pendingIntent = pendingIntent
+            )
+        }
+    }
+
+    private fun handleOtherCases(data: Map<String, String>) {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val pendingIntent: PendingIntent? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE)
+        } else {
+            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+        }
+
+        val title = data["title"] ?: ""
+        val message = data["message"] ?: ""
+
+        showNotification(
+            title = title,
+            message = message,
+            notificationID = title.toBytesInt(),
+            channelID = ADVERTISING_CHANNEL_ID,
+            pendingIntent = pendingIntent
+        )
+    }
+
+
     private fun String.toBytesInt(): Int {
         val bytes = encodeToByteArray()
         var result = 0
@@ -227,7 +301,18 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         return result
     }
 
-    private fun showNotification(title: String, message: String, notificationID: Int = Random.nextInt(), channelID: String, pendingIntent: PendingIntent?) {
+
+
+    private fun showNotification(
+        title: String,
+        message: String,
+        notificationID: Int = Random.nextInt(),
+        channelID: String,
+        pendingIntent: PendingIntent?,
+    ) {
+        val appSettings = getAppSettingsUseCase()
+        if (!appSettings.isPushNotificationEnabled) return
+
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         createNotificationChannel(
@@ -239,6 +324,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             .setContentTitle(title)
             .setContentText(message)
             .setSmallIcon(R.mipmap.ic_launcher_round)
+            .setColor(ContextCompat.getColor(applicationContext, R.color.white))
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
             .build()
@@ -267,21 +353,21 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
     private fun getChannelName(channelID: String): String = when (channelID) {
         TODAY_QUESTION_CHANNEL_ID -> "오늘의 질문"
-        PARTNER_QUESTION_ANSWER_CHANNEL_ID -> "상대방의 질문 답변"
-        EMOTION_CHANGE_CHANNEL_ID -> "연인의 감정"
+        PARTNER_ANSWERED_CHANNEL_ID -> "상대방의 질문 답변"
+        REQUEST_EMOTION_CHANGE_CHANNEL_ID -> "연인 감정 물어보기"
         CHAT_CHANNEL_ID -> "채팅"
         ADVERTISING_CHANNEL_ID -> "광고"
-        COUPLE_REGISTRATION_COMPLETED_CHANNEL_ID -> "커플 등록 완료"
+        COUPLE_REGISTRATION_CHANNEL_ID -> "커플 등록"
         else -> ""
     }
 
     private fun getChannelDescription(channelID: String): String = when (channelID) {
         TODAY_QUESTION_CHANNEL_ID -> "오늘의 질문"
-        PARTNER_QUESTION_ANSWER_CHANNEL_ID -> "상대방의 질문 답변"
-        EMOTION_CHANGE_CHANNEL_ID -> "연인의 감정"
+        PARTNER_ANSWERED_CHANNEL_ID -> "상대방의 질문 답변"
+        REQUEST_EMOTION_CHANGE_CHANNEL_ID -> "연인 감정 물어보기"
         CHAT_CHANNEL_ID -> "채팅"
         ADVERTISING_CHANNEL_ID -> "광고"
-        COUPLE_REGISTRATION_COMPLETED_CHANNEL_ID -> "커플 등록 완료"
+        COUPLE_REGISTRATION_CHANNEL_ID -> "커플 등록"
         else -> ""
     }
 }

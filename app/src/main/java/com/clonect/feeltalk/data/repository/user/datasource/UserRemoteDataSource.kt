@@ -9,6 +9,7 @@ interface UserRemoteDataSource {
     suspend fun getUserInfo(accessToken: String): Response<UserInfoDto>
     suspend fun getPartnerInfo(accessToken: String): Response<AccessTokenDto>
     suspend fun breakUpCouple(accessToken: String): Response<StatusDto>
+    suspend fun requestChangingPartnerEmotion(accessToken: String): Response<StatusDto>
 
     suspend fun getCoupleAnniversary(accessToken: String): Response<DDayDto>
 

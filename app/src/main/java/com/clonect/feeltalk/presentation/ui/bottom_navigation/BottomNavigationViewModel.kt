@@ -96,7 +96,6 @@ class BottomNavigationViewModel @Inject constructor(
     }
 
     fun setSettingScrollState(state: Int?) {
-        infoLog("setting scroll state: ${state}")
         _settingScrollState.value = state
     }
 }

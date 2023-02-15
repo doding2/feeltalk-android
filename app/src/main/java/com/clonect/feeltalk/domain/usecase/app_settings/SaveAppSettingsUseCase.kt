@@ -18,9 +18,10 @@ class SaveAppSettingsUseCase(
             ?.let { appLevelEncryptHelper.decrypt("fcmToken", it)  }
         if (prefFcmToken != appSettings.fcmToken) {
             appSettings.fcmToken?.let {
-                infoLog("update fcm token: ${it}")
                 val result = userRepository.updateFcmToken(it)
-                if (result !is Resource.Success) {
+                if (result is Resource.Success) {
+                    infoLog("update fcm token: $it")
+                } else {
                     appSettings.fcmToken = null
                 }
             }

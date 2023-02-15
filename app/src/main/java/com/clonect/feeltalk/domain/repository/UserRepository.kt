@@ -16,6 +16,7 @@ interface UserRepository {
     suspend fun getCoupleAnniversary(): Resource<String>
 
     suspend fun breakUpCouple(): Resource<StatusDto>
+    suspend fun requestChangingPartnerEmotion(): Resource<StatusDto>
 
     suspend fun checkUserInfoIsEntered(): Resource<Boolean>
     suspend fun updateUserInfo(nickname: String, age: Long, birthDate: String, anniversary: String): Resource<StatusDto>
@@ -36,6 +37,5 @@ interface UserRepository {
     suspend fun signUpWithNaver(accessToken: String, fcmToken: String): Resource<SignUpDto>
     suspend fun autoLogInWithNaver(): Resource<AccessTokenDto>
 
-    suspend fun clearAllTokens(): Resource<Boolean>
-
+    suspend fun clearAllExceptKeys(): Resource<Boolean>
 }

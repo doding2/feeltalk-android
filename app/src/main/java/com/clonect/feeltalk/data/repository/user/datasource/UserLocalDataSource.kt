@@ -20,5 +20,5 @@ interface UserLocalDataSource {
     suspend fun getGoogleIdToken(): String?
     suspend fun saveGoogleIdToken(idToken: String)
 
-    suspend fun clearAllTokens(): Boolean
+    suspend fun clearAllExceptKeys(): Boolean
 }

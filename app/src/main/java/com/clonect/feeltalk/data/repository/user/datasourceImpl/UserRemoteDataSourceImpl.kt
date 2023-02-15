@@ -36,6 +36,16 @@ class UserRemoteDataSourceImpl(
         return response
     }
 
+    override suspend fun requestChangingPartnerEmotion(accessToken: String): Response<StatusDto> {
+        val body = JsonObject().apply {
+            addProperty("accessToken", accessToken)
+        }
+        val response = clonectService.requestChangingPartnerEmotion(body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
+
 
     override suspend fun getCoupleAnniversary(accessToken: String): Response<DDayDto> {
         val response = clonectService.getDDay(accessToken)
@@ -138,6 +148,7 @@ class UserRemoteDataSourceImpl(
         val body = JsonObject().apply {
             addProperty("idToken", idToken)
             addProperty("authCode", serverAuthCode)
+            addProperty("fcmToken", fcmToken)
         }
         val response = clonectService.signUpWithGoogle(body)
         if (!response.isSuccessful) throw HttpException(response)
