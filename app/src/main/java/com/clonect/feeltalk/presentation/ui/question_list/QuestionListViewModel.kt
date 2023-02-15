@@ -23,21 +23,22 @@ class QuestionListViewModel @Inject constructor(
     val questionListState: StateFlow<List<Question>> = _questionListState.asStateFlow()
 
     init {
-        getQuestionList()
+        collectQuestionList()
     }
 
-    private fun getQuestionList() = viewModelScope.launch(Dispatchers.IO) {
-        getQuestionListUseCase().collect {
-            when (it) {
+    private fun collectQuestionList() = viewModelScope.launch(Dispatchers.IO) {
+        getQuestionListUseCase().collect { result ->
+            when (result) {
                 is Resource.Success -> {
-                    val newList = it.data.toMutableList()
-                    newList.add(Question(
+                    val newList = result.data.toMutableList()
+                    newList.sortByDescending { it.questionDate }
+                    newList.add(0, Question(
                         question = "",
                         viewType = "header"
                     ))
                     _questionListState.value = newList
                 }
-                is Resource.Error -> { infoLog("Fail to get question list: ${it.throwable.localizedMessage}") }
+                is Resource.Error -> { infoLog("Fail to get question list: ${result.throwable.localizedMessage}") }
                 else -> {}
             }
         }

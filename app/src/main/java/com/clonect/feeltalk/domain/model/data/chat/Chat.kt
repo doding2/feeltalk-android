@@ -12,5 +12,15 @@ data class Chat(
     val message: String,
     val date: String,
     val isAnswer: Boolean = false
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (other !is Chat) return false
+        if (other === this) return true
+        return id == other.id
+                && question == other.question
+                && owner == other.owner
+                && message == other.message
+                && isAnswer == other.isAnswer
+    }
+}
 

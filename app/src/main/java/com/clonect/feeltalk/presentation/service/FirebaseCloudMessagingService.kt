@@ -18,7 +18,7 @@ import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SaveChatUseCase
-import com.clonect.feeltalk.domain.usecase.question.GetQuestionByContentFromDataBaseUseCase
+import com.clonect.feeltalk.domain.usecase.question.SaveQuestionToDatabaseUseCase
 import com.clonect.feeltalk.domain.usecase.user.CheckUserIsSignedUpUseCase
 import com.clonect.feeltalk.presentation.service.notification_observer.CoupleRegistrationObserver
 import com.clonect.feeltalk.presentation.service.notification_observer.FcmNewChatObserver
@@ -32,8 +32,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
-import kotlin.random.Random
 
 @AndroidEntryPoint
 class FirebaseCloudMessagingService: FirebaseMessagingService() {
@@ -58,7 +59,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
     // Question
     @Inject
-    lateinit var getQuestionByContentFromDataBaseUseCase: GetQuestionByContentFromDataBaseUseCase
+    lateinit var saveQuestionToDatabaseUseCase: SaveQuestionToDatabaseUseCase
 
 
     companion object {
@@ -122,13 +123,17 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         }
     }
 
-    private fun handleTodayQuestionData(data: Map<String, String>) {
-        val question = data["detail"] ?: return
-        val newQuestion = Question(
-            question = question
-        )
+    private fun handleTodayQuestionData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+        val question = data["detail"] ?: return@launch
 
-        // TODO 질문 리스트 내부 저장소에도 질문 추가
+        val format = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+        val date = format.format(Date())
+        val newQuestion = Question(
+            question = question,
+            questionDate = date
+        ).also {
+            saveQuestionToDatabaseUseCase(it)
+        }
 
         val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
             .setGraph(R.navigation.overall_nav_graph)
@@ -139,7 +144,6 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         showNotification(
             title = data["title"] ?: "",
             message = data["message"] ?: "",
-            notificationID = TODAY_QUESTION_CHANNEL_ID.toBytesInt(),
             channelID = TODAY_QUESTION_CHANNEL_ID,
             pendingIntent = deepLinkPendingIntent
         )
@@ -172,7 +176,6 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         showNotification(
             title = data["title"] ?: "",
             message = data["message"] ?: "",
-            notificationID = questionContent.toBytesInt(),
             channelID = PARTNER_ANSWERED_CHANNEL_ID,
             pendingIntent = pendingIntent
         )
@@ -190,7 +193,6 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         showNotification(
             title = data["title"] ?: "",
             message = data["message"] ?: "",
-            notificationID = REQUEST_EMOTION_CHANGE_CHANNEL_ID.toBytesInt(),
             channelID = REQUEST_EMOTION_CHANGE_CHANNEL_ID,
             pendingIntent = pendingIntent
         )
@@ -223,19 +225,13 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             }
         }
 
-
         if (showingQuestionContent == questionContent && isAppShowing) {
             return@launch
         }
 
-        val questionResult = getQuestionByContentFromDataBaseUseCase(questionContent)
-        val question = if (questionResult is Resource.Success) {
-            questionResult.data
-        } else {
-            Question(question = questionContent)
-        }
-
-        // TODO 위에서 수정된 질문 DB에 저장하기
+        val question = Question(
+            question = questionContent
+        )
 
         val pendingIntent = NavDeepLinkBuilder(applicationContext)
             .setGraph(R.navigation.overall_nav_graph)
@@ -248,7 +244,6 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         showNotification(
             title = data["title"].toString(),
             message = data["message"].toString(),
-            notificationID = questionContent.toBytesInt(),
             channelID = CHAT_CHANNEL_ID,
             pendingIntent = pendingIntent
         )
@@ -275,7 +270,6 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             showNotification(
                 title = "커플 등록 요청",
                 message = "상대방으로부터 커플 등록 요청이 왔습니다.",
-                notificationID = COUPLE_REGISTRATION_CHANNEL_ID.toBytesInt(),
                 channelID = COUPLE_REGISTRATION_CHANNEL_ID,
                 pendingIntent = pendingIntent
             )
@@ -297,7 +291,6 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         showNotification(
             title = title,
             message = message,
-            notificationID = title.toBytesInt(),
             channelID = ADVERTISING_CHANNEL_ID,
             pendingIntent = pendingIntent
         )
@@ -318,7 +311,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     private fun showNotification(
         title: String,
         message: String,
-        notificationID: Int = Random.nextInt(),
+        notificationID: Int = System.currentTimeMillis().toInt(),
         channelID: String,
         pendingIntent: PendingIntent?,
     ) {
@@ -339,6 +332,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             .setColor(ContextCompat.getColor(applicationContext, R.color.white))
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
+            .setGroup(channelID)
             .build()
 
         notificationManager.notify(notificationID, notification)

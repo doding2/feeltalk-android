@@ -44,8 +44,6 @@
         android:paddingBottom="30dp"
         android:clipToPadding="false"
         android:orientation="vertical"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:stackFromEnd="true"
-        app:reverseLayout="true"/>
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
 </LinearLayout>

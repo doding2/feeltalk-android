@@ -3,10 +3,16 @@ package com.clonect.feeltalk.data.repository.question.datasourceImpl
 import com.clonect.feeltalk.data.db.QuestionDao
 import com.clonect.feeltalk.data.repository.question.datasource.QuestionLocalDataSource
 import com.clonect.feeltalk.domain.model.data.question.Question
+import kotlinx.coroutines.flow.Flow
 
 class QuestionLocalDataSourceImpl(
     private val dao: QuestionDao
 ): QuestionLocalDataSource {
+
+    override suspend fun getQuestionListFlow(): Flow<List<Question>> {
+        return dao.getQuestionListFlow()
+    }
+
 
     override suspend fun getTodayQuestion(date: String): Question? {
         val questionList = dao.getQuestionListByDate(date)

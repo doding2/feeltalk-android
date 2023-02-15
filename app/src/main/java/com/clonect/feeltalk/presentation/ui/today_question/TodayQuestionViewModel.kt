@@ -51,7 +51,7 @@ class TodayQuestionViewModel @Inject constructor(
 
     suspend fun sendQuestionAnswer() = withContext(Dispatchers.IO) {
         _isLoading.value = true
-        val format = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
+        val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val date = format.format(Date())
         val question = _questionStateFlow.value.apply {
             myAnswerDate = date

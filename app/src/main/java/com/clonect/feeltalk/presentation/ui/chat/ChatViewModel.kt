@@ -99,7 +99,7 @@ class ChatViewModel @Inject constructor(
     private fun updateChatList(chatList: List<Chat>) {
         val newList = mutableListOf<Chat>()
         newList.addAll(chatList)
-        newList.sortBy { it.id }
+        newList.sortWith(compareBy(Chat::date, Chat::id))
         _chatList.value = newList
     }
 
@@ -109,8 +109,9 @@ class ChatViewModel @Inject constructor(
 
 
     fun sendChat(content: String) = viewModelScope.launch(Dispatchers.IO) {
-        val format = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
+        val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val date = format.format(Date())
+        infoLog("날짜: ${date}")
 
         val chat = Chat(
             question = _question.value.question,

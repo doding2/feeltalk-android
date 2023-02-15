@@ -12,6 +12,8 @@ import com.clonect.feeltalk.domain.model.dto.question.QuestionAnswersDto
 import com.clonect.feeltalk.domain.model.dto.question.SendQuestionDto
 import com.clonect.feeltalk.domain.repository.QuestionRepository
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -100,21 +102,51 @@ class QuestionRepositoryImpl(
         }
     }
 
-    override suspend fun getQuestionList(accessToken: String): Resource<List<Question>> {
-        return try {
-            val response = remoteDataSource.getQuestionList(
-                accessToken = accessToken
-            )
-            val dto = response.body()!!
-            val questionList = dto.toQuestionList().map { question ->
-                val decrypted = question.myAnswer?.let { userLevelEncryptHelper.decryptMyText(it) }
-                question.copy(myAnswer = decrypted)
+    @OptIn(FlowPreview::class)
+    override suspend fun getQuestionList(accessToken: String): Flow<Resource<List<Question>>> {
+        val cacheFlow = channelFlow {
+            val cache = cacheDataSource.getQuestionList()
+            send(Resource.Success(cache))
+        }
+
+        val localFlow = channelFlow {
+            val local = localDataSource.getQuestionListFlow()
+            local.collectLatest {
+                cacheDataSource.saveQuestionList(it)
+                send(Resource.Success(it))
             }
+        }
 
-            localDataSource.saveQuestionList(questionList)
-            cacheDataSource.saveQuestionList(questionList)
+        val remoteFlow = channelFlow {
+            try {
+                val response = remoteDataSource.getQuestionList(
+                    accessToken = accessToken
+                )
+                val dto = response.body()!!
+                val questionList = dto.toQuestionList().map { question ->
+                    val decrypted = question.myAnswer?.let { userLevelEncryptHelper.decryptMyText(it) }
+                    question.copy(myAnswer = decrypted)
+                }
 
-            Resource.Success(questionList)
+                localDataSource.saveQuestionList(questionList)
+                cacheDataSource.saveQuestionList(questionList)
+
+                send(Resource.Success(questionList))
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                send(Resource.Error(e))
+            }
+        }
+
+        return flowOf(cacheFlow, localFlow, remoteFlow).flattenMerge()
+    }
+
+    override suspend fun getQuestionByContentFromDB(question: String): Resource<Question> {
+        return try {
+            val local = localDataSource.getQuestionByContent(question)
+                ?: throw NullPointerException("Question is not saved in database: ${question}")
+            Resource.Success(local)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -122,10 +154,10 @@ class QuestionRepositoryImpl(
         }
     }
 
-    override suspend fun getQuestionByContentFromDB(question: String): Resource<Question> {
+
+    override suspend fun saveQuestionToDatabase(question: Question): Resource<Long> {
         return try {
-            val local = localDataSource.getQuestionByContent(question)
-                ?: throw NullPointerException("Question is not saved in database: ${question}")
+            val local = localDataSource.saveOneQuestion(question)
             Resource.Success(local)
         } catch (e: CancellationException) {
             throw e

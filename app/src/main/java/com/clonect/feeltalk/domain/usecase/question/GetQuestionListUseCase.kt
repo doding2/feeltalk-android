@@ -11,13 +11,12 @@ class GetQuestionListUseCase(
     private val userRepository: UserRepository,
     private val questionRepository: QuestionRepository,
 ) {
-    operator fun invoke(): Flow<Resource<List<Question>>> = flow {
-        val accessToken = userRepository.getAccessToken()
-        val list = when (accessToken) {
-            is Resource.Success -> questionRepository.getQuestionList(accessToken.data)
-            is Resource.Error -> Resource.Error(accessToken.throwable)
-            is Resource.Loading -> Resource.Loading(accessToken.isLoading)
+    suspend operator fun invoke(): Flow<Resource<List<Question>>> {
+        val result = userRepository.getAccessToken()
+        return if (result is Resource.Success) {
+            questionRepository.getQuestionList(result.data)
+        } else {
+            flow { emit(Resource.Error(Exception("User is not logged in yet."))) }
         }
-        emit(list)
     }
 }

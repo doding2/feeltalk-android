@@ -258,7 +258,7 @@ class EncryptionRepositoryImpl(
     }
 
     private fun getRandomAESKey(): ByteArray {
-        val format = SimpleDateFormat("MMddhhmmss", Locale.getDefault())
+        val format = SimpleDateFormat("MMddHHmmss", Locale.getDefault())
         val date = format.format(Date())
         val key = ByteArray(16)
         Random(date.toLong()).nextBytes(key)
@@ -330,7 +330,7 @@ class EncryptionRepositoryImpl(
     }
 
     private fun initUserLevelKeyStore(): KeyPair {
-        val format = SimpleDateFormat("yyyy년 MM월 dd일 hh:mm:ss", Locale.getDefault())
+        val format = SimpleDateFormat("yyyy년 MM월 dd일 HH:mm:ss", Locale.getDefault())
         val date = format.format(Date())
 
         val keyGen = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA)

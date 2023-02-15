@@ -14,7 +14,7 @@ class GetChatListUseCase(private val userRepository: UserRepository, private val
         return if (result is Resource.Success) {
             chatRepository.getChatListByQuestion(result.data, questionContent)
         } else {
-            flow { Resource.Error(Exception("Access Token is not exist.")) }
+            flow { emit(Resource.Error(Exception("User is not logged in yet."))) }
         }
     }
 

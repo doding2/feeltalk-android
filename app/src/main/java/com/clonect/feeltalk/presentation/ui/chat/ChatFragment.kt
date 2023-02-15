@@ -125,7 +125,7 @@ class ChatFragment : Fragment() {
 
     private fun initRecyclerView() {
         binding.rvChat.adapter = adapter
-        binding.rvChat.itemAnimator = null
+//        binding.rvChat.itemAnimator = null
         // adjust scroll y when keboard up/down
         binding.rvChat.addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
             if (bottom == oldBottom) return@addOnLayoutChangeListener

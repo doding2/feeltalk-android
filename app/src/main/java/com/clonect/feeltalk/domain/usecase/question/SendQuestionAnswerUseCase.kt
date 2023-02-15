@@ -34,7 +34,7 @@ class SendQuestionAnswerUseCase(
             message = question.myAnswer ?: "",
             date = question.myAnswerDate
                 ?: run {
-                    val format = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
+                    val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                     val date = format.format(Date())
                     date
                 },

@@ -5,9 +5,13 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.clonect.feeltalk.domain.model.data.question.Question
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface QuestionDao {
+
+    @Query("SELECT * FROM QuestionTable")
+    fun getQuestionListFlow(): Flow<List<Question>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertQuestion(question: Question): Long

@@ -1,8 +1,11 @@
 package com.clonect.feeltalk.data.repository.question.datasource
 
 import com.clonect.feeltalk.domain.model.data.question.Question
+import kotlinx.coroutines.flow.Flow
 
 interface QuestionLocalDataSource {
+
+    suspend fun getQuestionListFlow(): Flow<List<Question>>
 
     suspend fun getTodayQuestion(date: String): Question?
     suspend fun saveOneQuestion(question: Question): Long

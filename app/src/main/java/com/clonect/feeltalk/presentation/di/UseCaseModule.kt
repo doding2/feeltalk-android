@@ -251,4 +251,10 @@ class UseCaseModule {
     fun providesCheckUserIsSignedUpUseCase(userRepository: UserRepository): CheckUserIsSignedUpUseCase {
         return CheckUserIsSignedUpUseCase(userRepository)
     }
+
+    @Singleton
+    @Provides
+    fun providesSaveQuestionToDatabaseUseCase(questionRepository: QuestionRepository): SaveQuestionToDatabaseUseCase {
+        return SaveQuestionToDatabaseUseCase(questionRepository)
+    }
 }

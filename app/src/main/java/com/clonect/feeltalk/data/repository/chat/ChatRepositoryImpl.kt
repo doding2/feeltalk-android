@@ -72,7 +72,6 @@ class ChatRepositoryImpl(
     }
 
 
-    /* Only For FCM Service */
     override suspend fun saveChat(chat: Chat): Resource<Long> {
         return try {
             val id = localDataSource.saveOneChatToDatabase(chat)
