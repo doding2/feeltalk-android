@@ -113,7 +113,6 @@ class ChatViewModel @Inject constructor(
         val date = format.format(Date())
 
         val chat = Chat(
-            id = _chatList.value.size.toLong() + 1,
             question = _question.value.question,
             owner = "mine",
             message = content,

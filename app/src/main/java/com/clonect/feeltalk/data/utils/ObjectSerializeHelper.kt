@@ -13,7 +13,7 @@ fun <T : Serializable> fromByteArray(byteArray: ByteArray): T {
     return result
 }
 
-fun Serializable.toByteArray(): ByteArray {
+fun Serializable.toByteArrayFeelTalk(): ByteArray {
     val byteArrayOutputStream = ByteArrayOutputStream()
     val objectOutputStream = ObjectOutputStream(byteArrayOutputStream)
     objectOutputStream.writeObject(this)

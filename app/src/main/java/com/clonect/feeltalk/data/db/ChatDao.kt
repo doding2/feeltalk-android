@@ -22,4 +22,6 @@ interface ChatDao {
     @Query("SELECT * FROM ChatTable WHERE question == :questionContent")
     suspend fun getChatListByQuestion(questionContent: String): List<Chat>
 
+    @Query("DELETE FROM ChatTable WHERE question == :questionContent")
+    suspend fun deleteByQuestion(questionContent: String)
 }

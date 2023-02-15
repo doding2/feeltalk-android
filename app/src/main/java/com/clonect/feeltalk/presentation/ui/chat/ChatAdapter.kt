@@ -104,7 +104,6 @@ class ChatAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 else
                     layoutChatOwner.visibility = View.GONE
 
-                textPartnerName.text = chat.owner
                 textChat.text = chat.message
                 textDate.text = chat.date
 

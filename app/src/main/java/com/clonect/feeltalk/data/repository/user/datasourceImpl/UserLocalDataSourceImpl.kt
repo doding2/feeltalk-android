@@ -11,7 +11,7 @@ import java.io.File
 class UserLocalDataSourceImpl(
     private val context: Context,
     private val appLevelEncryptHelper: AppLevelEncryptHelper,
-    private val feeltalkDatabase: FeeltalkDatabase
+    private val feeltalkDatabase: FeeltalkDatabase,
 ): UserLocalDataSource {
 
     override suspend fun getAccessToken(): String? {
@@ -120,11 +120,15 @@ class UserLocalDataSourceImpl(
         val userInfoFile = File(context.filesDir, "user_info.dat")
 
         feeltalkDatabase.clearAllTables()
+        context.deleteDatabase("feeltalkDatabase.db")
+//        val databasesDir = File(context.applicationInfo.dataDir + "/databases/")
+//        val databaseFile = File(databasesDir, "feeltalkDatabase.db")
 
         return idTokenFile.delete()
                 && accessTokenFile.delete()
                 && registrationCodeFile.delete()
                 && coupleAnniversaryFile.delete()
                 && userInfoFile.delete()
+//                && databasesDir.deleteRecursively()
     }
 }

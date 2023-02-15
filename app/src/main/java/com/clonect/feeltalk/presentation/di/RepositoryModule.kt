@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.presentation.di
 
+import com.clonect.feeltalk.data.api.ClonectService
 import com.clonect.feeltalk.data.api.NotificationService
 import com.clonect.feeltalk.data.repository.chat.ChatRepositoryImpl
 import com.clonect.feeltalk.data.repository.chat.datasource.ChatCacheDataSource
@@ -9,6 +10,7 @@ import com.clonect.feeltalk.data.repository.encryption.EncryptionRepositoryImpl
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionCacheDataSource
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionLocalDataSource
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionRemoteDataSource
+import com.clonect.feeltalk.data.repository.news.NewsRepositoryImpl
 import com.clonect.feeltalk.data.repository.notification.NotificationRepository
 import com.clonect.feeltalk.data.repository.question.QuestionRepositoryImpl
 import com.clonect.feeltalk.data.repository.question.datasource.QuestionCacheDataSource
@@ -20,10 +22,7 @@ import com.clonect.feeltalk.data.repository.user.datasource.UserLocalDataSource
 import com.clonect.feeltalk.data.repository.user.datasource.UserRemoteDataSource
 import com.clonect.feeltalk.data.utils.MessageEncryptHelper
 import com.clonect.feeltalk.data.utils.UserLevelEncryptHelper
-import com.clonect.feeltalk.domain.repository.ChatRepository
-import com.clonect.feeltalk.domain.repository.EncryptionRepository
-import com.clonect.feeltalk.domain.repository.QuestionRepository
-import com.clonect.feeltalk.domain.repository.UserRepository
+import com.clonect.feeltalk.domain.repository.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -84,4 +83,13 @@ class RepositoryModule {
     ): EncryptionRepository {
         return EncryptionRepositoryImpl(remoteDataSource, localDataSource, cacheDataSource, messageEncryptHelper)
     }
+
+    @Singleton
+    @Provides
+    fun providesNewsRepository(
+        clonectService: ClonectService
+    ): NewsRepository {
+        return NewsRepositoryImpl(clonectService)
+    }
+
 }

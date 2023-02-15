@@ -5,6 +5,7 @@ import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
 import com.clonect.feeltalk.BuildConfig
+import com.clonect.feeltalk.presentation.utils.infoLog
 import java.io.Serializable
 import java.security.KeyStore
 import javax.crypto.Cipher
@@ -26,14 +27,17 @@ class AppLevelEncryptHelper(
             val ivString = Base64.encodeToString(iv, Base64.NO_WRAP)
             pref.edit().putString("${name}_iv", ivString).apply()
 
-            val encryptedByteArray = cipher.doFinal(message.encodeToByteArray())
+            val dataBytes = message.toByteArray(Charsets.UTF_8)
+            val encryptedByteArray = cipher.doFinal(dataBytes)
             Base64.encodeToString(encryptedByteArray, Base64.NO_WRAP)
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            e.printStackTrace()
+            infoLog("Fail to encrypt app level encryptor: ${message}")
             return message
         }
     }
 
-    fun decrypt(name: String, digest: String): String {
+    fun decrypt(name: String, digest: String): String? {
         return try {
             val ivString = pref.getString("${name}_iv", null)
             val iv = Base64.decode(ivString, Base64.NO_WRAP)
@@ -42,16 +46,19 @@ class AppLevelEncryptHelper(
             val cipher = Cipher.getInstance(BuildConfig.APP_LEVEL_CIPHER_ALGORITHM)
             cipher.init(Cipher.DECRYPT_MODE, appLevelKey, spec)
 
-            val decryptedByteArray = cipher.doFinal(Base64.decode(digest, Base64.NO_WRAP))
-            String(decryptedByteArray, Charsets.UTF_8)
+            val dataBytes = Base64.decode(digest, Base64.NO_WRAP)
+            val decryptedByteArray = cipher.doFinal(dataBytes)
+            decryptedByteArray.toString(Charsets.UTF_8)
         } catch (e: Exception) {
-            digest
+            e.printStackTrace()
+            infoLog("Fail to decrypt app level encryptor: ${digest}")
+            null
         }
     }
 
 
     fun encryptObject(name: String, dataObject: Serializable): ByteArray {
-        val dataBytes = dataObject.toByteArray()
+        val dataBytes = dataObject.toByteArrayFeelTalk()
 
         val cipher = Cipher.getInstance(BuildConfig.APP_LEVEL_CIPHER_ALGORITHM)
         cipher.init(Cipher.ENCRYPT_MODE, appLevelKey)
@@ -99,6 +106,9 @@ class AppLevelEncryptHelper(
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                 .build()
         )
+        
+        infoLog("!!!!경고!!!! 앱 레벨 AES 키가 새로 생성됨")
+        
         return keyGen.generateKey()
     }
 

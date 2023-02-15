@@ -3,10 +3,7 @@ package com.clonect.feeltalk.presentation.di
 import android.content.SharedPreferences
 import com.clonect.feeltalk.data.repository.notification.NotificationRepository
 import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
-import com.clonect.feeltalk.domain.repository.ChatRepository
-import com.clonect.feeltalk.domain.repository.EncryptionRepository
-import com.clonect.feeltalk.domain.repository.QuestionRepository
-import com.clonect.feeltalk.domain.repository.UserRepository
+import com.clonect.feeltalk.domain.repository.*
 import com.clonect.feeltalk.domain.usecase.*
 import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
@@ -65,8 +62,8 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesGetNewsListUseCase(): GetNewsListUseCase {
-        return GetNewsListUseCase()
+    fun providesGetNewsListUseCase(userRepository: UserRepository, newsRepository: NewsRepository): GetNewsListUseCase {
+        return GetNewsListUseCase(userRepository, newsRepository)
     }
 
     @Singleton
@@ -83,8 +80,8 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesSendQuestionAnswerUseCase(userRepository: UserRepository, questionRepository: QuestionRepository): SendQuestionAnswerUseCase {
-        return SendQuestionAnswerUseCase(userRepository, questionRepository)
+    fun providesSendQuestionAnswerUseCase(userRepository: UserRepository, questionRepository: QuestionRepository, chatRepository: ChatRepository): SendQuestionAnswerUseCase {
+        return SendQuestionAnswerUseCase(userRepository, questionRepository, chatRepository)
     }
 
     @Singleton
@@ -249,4 +246,9 @@ class UseCaseModule {
         return RequestChangingPartnerEmotionUseCase(userRepository)
     }
 
+    @Singleton
+    @Provides
+    fun providesCheckUserIsSignedUpUseCase(userRepository: UserRepository): CheckUserIsSignedUpUseCase {
+        return CheckUserIsSignedUpUseCase(userRepository)
+    }
 }

@@ -3,9 +3,7 @@ package com.clonect.feeltalk.presentation.ui.sign_up
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.user.*
-import com.clonect.feeltalk.presentation.utils.AppSettings
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,7 +27,6 @@ class SignUpViewModel @Inject constructor(
     private val checkUserInfoIsEnteredUseCase: CheckUserInfoIsEnteredUseCase,
     private val checkUserIsCoupleUseCase: CheckUserIsCoupleUseCase,
     private val clearAllExceptKeysUseCase: ClearAllExceptKeysUseCase,
-    private val saveAppSettingsUseCase: SaveAppSettingsUseCase,
 ): ViewModel() {
 
     private val _isSignUpSuccessful = MutableStateFlow(false)
@@ -210,7 +207,6 @@ class SignUpViewModel @Inject constructor(
 
 
     suspend fun clearAllExceptKeys(): Boolean {
-        saveAppSettingsUseCase(AppSettings())
         val clearResult = clearAllExceptKeysUseCase()
         return (clearResult is Resource.Success)
     }

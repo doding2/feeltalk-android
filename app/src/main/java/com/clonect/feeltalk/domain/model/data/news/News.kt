@@ -5,5 +5,5 @@ data class News(
     val target: String,
     val content: String,
     val date: String,
-    val type: NewsType = NewsType.News
+    val type: String = NewsType.News.toString()
 )

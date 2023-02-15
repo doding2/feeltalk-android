@@ -11,6 +11,7 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.ItemNewsBinding
 import com.clonect.feeltalk.domain.model.data.news.News
 import com.clonect.feeltalk.domain.model.data.news.NewsType
+import com.clonect.feeltalk.domain.model.data.news.NewsType.Official.toNewsType
 import kotlin.random.Random
 
 class NewsAdapter: RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
@@ -42,6 +43,7 @@ class NewsAdapter: RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
 
     override fun getItemCount(): Int = differ.currentList.size
 
+
     fun setOnItemClickListener(listener: (News) -> Unit) {
         onItemClickListener = listener
     }
@@ -69,7 +71,7 @@ class NewsAdapter: RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
 
                 binding.clRoot.setBackgroundResource(backgroundId)
 
-                val profileId: Int = when (news.type) {
+                val profileId: Int = when (news.type.toNewsType()) {
                     is NewsType.News -> R.drawable.image_my_default_profile
                     is NewsType.Chat -> R.drawable.image_partner_default_profile
                     is NewsType.Official -> R.drawable.image_official_default_profile

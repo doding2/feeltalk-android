@@ -22,10 +22,9 @@ class UserRepositoryImpl(
 ): UserRepository {
 
     override suspend fun getAccessToken(): Resource<String> {
-        return cacheDataSource.getAccessToken()
-            ?.let {
-                Resource.Success(it)
-            } ?: Resource.Error(NullPointerException("User is not logged in."))
+        return cacheDataSource.getAccessToken()?.let { Resource.Success(it) }
+            ?: localDataSource.getAccessToken()?.let { Resource.Success(it) }
+             ?: Resource.Error(NullPointerException("User is not logged in."))
     }
 
     override suspend fun getUserInfo(): Resource<UserInfo> {

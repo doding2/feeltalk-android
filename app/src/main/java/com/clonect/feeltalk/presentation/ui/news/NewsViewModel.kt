@@ -17,20 +17,20 @@ class NewsViewModel @Inject constructor(
     private val getNewsListUseCase: GetNewsListUseCase
 ) : ViewModel() {
 
-    private val _newsState = MutableStateFlow<List<News>>(emptyList())
-    val newsState = _newsState.asStateFlow()
+    private val _newsList = MutableStateFlow<List<News>>(emptyList())
+    val newsList = _newsList.asStateFlow()
 
     init {
         getNewsList()
     }
 
     private fun getNewsList() = viewModelScope.launch(Dispatchers.IO) {
-        getNewsListUseCase().collect {
-            when (it) {
-                is Resource.Success -> _newsState.value = it.data
-                is Resource.Error -> { }
-                is Resource.Loading -> { }
-            }
+        val result = getNewsListUseCase()
+        when (result) {
+            is Resource.Success -> _newsList.value = result.data
+            is Resource.Error -> { }
+            is Resource.Loading -> { }
         }
+
     }
 }

@@ -74,8 +74,8 @@ class ChatFragment : Fragment() {
         binding.etChat.text.toString()
             .takeIf { it.isNotEmpty() }
             ?.let {
-                binding.etChat.setText("")
                 viewModel.sendChat(it)
+                binding.etChat.setText("")
             }
     }
 

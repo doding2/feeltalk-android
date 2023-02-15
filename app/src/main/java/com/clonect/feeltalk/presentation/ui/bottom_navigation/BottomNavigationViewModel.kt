@@ -51,7 +51,6 @@ class BottomNavigationViewModel @Inject constructor(
     fun enablePushNotificationEnabled(enabled: Boolean) {
         FirebaseMessaging.getInstance().apply {
             token.addOnSuccessListener {
-                infoLog("fcmToken: $it")
                 if (enabled) {
                     subscribeToTopic(Topics.Push.text)
                 }

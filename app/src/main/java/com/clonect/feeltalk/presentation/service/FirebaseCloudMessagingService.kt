@@ -19,6 +19,7 @@ import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SaveChatUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetQuestionByContentFromDataBaseUseCase
+import com.clonect.feeltalk.domain.usecase.user.CheckUserIsSignedUpUseCase
 import com.clonect.feeltalk.presentation.service.notification_observer.CoupleRegistrationObserver
 import com.clonect.feeltalk.presentation.service.notification_observer.FcmNewChatObserver
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
@@ -42,6 +43,10 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     lateinit var getAppSettingsUseCase: GetAppSettingsUseCase
     @Inject
     lateinit var saveAppSettingsUseCase: SaveAppSettingsUseCase
+
+    // User
+    @Inject
+    lateinit var checkUserIsSignedUpUseCase: CheckUserIsSignedUpUseCase
 
     // User Level Encryptor
     @Inject
@@ -83,29 +88,37 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
+        CoroutineScope(Dispatchers.Main).launch {
 
-        val isAppRunning = FeeltalkApp.getAppRunning()
-        infoLog("isAppRunning: $isAppRunning")
+            val isAppRunning = FeeltalkApp.getAppRunning()
+            infoLog("isAppRunning: $isAppRunning")
 
-        val data = if (message.data["data"] == null) {
-            message.data
-        } else {
-            try {
-                Gson().fromJson(message.data["data"], Map::class.java) as? Map<String, String> ?: message.data
-            } catch (_: Exception) {
+            val data = if (message.data["data"] == null) {
                 message.data
+            } else {
+                try {
+                    Gson().fromJson(message.data["data"], Map::class.java) as? Map<String, String> ?: message.data
+                } catch (_: Exception) {
+                    message.data
+                }
             }
-        }
-        infoLog("새로 도착한 FCM: ${message.data}")
-        infoLog("파싱된 FCM: $data")
+            infoLog("새로 도착한 FCM: ${message.data}")
+            infoLog("파싱된 FCM: $data")
 
-        when (data["type"]) {
-            TYPE_TODAY_QUESTION -> handleTodayQuestionData(data)
-            TYPE_PARTNER_ANSWERED -> handlePartnerAnsweredData(data)
-            TYPE_REQUEST_EMOTION_CHANGE -> handleRequestEmotionChangeData(data)
-            TYPE_CHAT -> handleChatData(data)
-            TYPE_COUPLE_REGISTRATION -> handleCoupleRegistrationData(data)
-            else -> handleOtherCases(data)
+            val isSignedUp = checkUserIsSignedUpUseCase()
+            if (isSignedUp is Resource.Error) {
+                infoLog("유저가 로그아웃된 상태입니다. fcm을 무시합니다: ${isSignedUp.throwable.localizedMessage}")
+                return@launch
+            }
+
+            when (data["type"]) {
+                TYPE_TODAY_QUESTION -> handleTodayQuestionData(data)
+                TYPE_PARTNER_ANSWERED -> handlePartnerAnsweredData(data)
+                TYPE_REQUEST_EMOTION_CHANGE -> handleRequestEmotionChangeData(data)
+                TYPE_CHAT -> handleChatData(data)
+                TYPE_COUPLE_REGISTRATION -> handleCoupleRegistrationData(data)
+                else -> handleOtherCases(data)
+            }
         }
     }
 
@@ -132,8 +145,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         )
     }
 
-    private fun handlePartnerAnsweredData(data: Map<String, String>) {
-
+    private fun handlePartnerAnsweredData(data: Map<String, String>)  {
         // TODO DB에서 질문 가져와서 내가 대답 했는지 확인 후
         // 했으면 채팅으로
         // 안 했으면 질문으로 보내기

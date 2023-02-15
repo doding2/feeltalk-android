@@ -5,6 +5,7 @@ import com.clonect.feeltalk.domain.model.data.encryption.LoadPartnerPublicKeyDto
 import com.clonect.feeltalk.domain.model.dto.chat.ChatListItemDto
 import com.clonect.feeltalk.domain.model.dto.chat.SendChatDto
 import com.clonect.feeltalk.domain.model.dto.common.StatusDto
+import com.clonect.feeltalk.domain.model.dto.news.NewsDto
 import com.clonect.feeltalk.domain.model.dto.question.QuestionAnswersDto
 import com.clonect.feeltalk.domain.model.dto.question.QuestionListDto
 import com.clonect.feeltalk.domain.model.dto.question.SendQuestionDto
@@ -120,6 +121,14 @@ interface ClonectService {
     suspend fun getChatList(
         @Body body: JsonObject
     ): Response<List<ChatListItemDto>>
+
+
+    /**  News  **/
+    @POST("api/alert/list")
+    suspend fun getNewsList(
+        @Body body: JsonObject
+    ): Response<List<NewsDto>>
+
 
 
     /** Sign Up **/

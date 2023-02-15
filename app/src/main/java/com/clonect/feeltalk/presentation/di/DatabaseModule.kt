@@ -28,7 +28,7 @@ class DatabaseModule {
     @Provides
     @Singleton
     fun providesFeeltalkDatabase(@ApplicationContext context: Context, supportFactory: SupportFactory): FeeltalkDatabase {
-        return Room.databaseBuilder(context, FeeltalkDatabase::class.java, "feeltalkDatabase")
+        return Room.databaseBuilder(context, FeeltalkDatabase::class.java, "feeltalkDatabase.db")
             .openHelperFactory(supportFactory)
             .build()
     }

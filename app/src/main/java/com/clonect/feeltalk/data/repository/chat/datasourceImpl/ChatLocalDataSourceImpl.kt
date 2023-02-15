@@ -19,7 +19,18 @@ class ChatLocalDataSourceImpl(
     override suspend fun insertOrUpdate(question: String, chatList: List<Chat>) {
         val dbList = getChatListByQuestion(question)
 
+        if (dbList.size > chatList.size) {
+            deleteByQuestion(question)
+            chatDao.insertChatList(chatList)
+            infoLog("deleted chats in: ${question}")
+            infoLog("and re-insert chat list: ${chatList.joinToString { it.message }}")
+            return
+        }
+
         val oldChat = chatList.subList(0, dbList.size)
+        for (i in dbList.indices) {
+            oldChat[i].id = dbList[i].id
+        }
         chatDao.updateChatList(oldChat)
         infoLog("updated: ${oldChat.joinToString { it.message }}")
 
@@ -28,8 +39,9 @@ class ChatLocalDataSourceImpl(
         infoLog("inserted: ${newChat.joinToString { it.message }}")
     }
 
-    override suspend fun clear(): Boolean {
-        TODO("Not yet implemented")
+
+    override suspend fun deleteByQuestion(questionContent: String) {
+        chatDao.deleteByQuestion(questionContent)
     }
 
 }

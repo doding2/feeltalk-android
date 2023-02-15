@@ -13,5 +13,5 @@ interface ChatLocalDataSource {
 
     suspend fun insertOrUpdate(question: String, chatList: List<Chat>)
 
-    suspend fun clear(): Boolean
+    suspend fun deleteByQuestion(questionContent: String)
 }
