@@ -13,3 +13,4 @@ data class Chat(
     val date: String,
     val isAnswer: Boolean = false
 )
+

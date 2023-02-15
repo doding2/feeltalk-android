@@ -7,10 +7,11 @@ interface ChatLocalDataSource {
 
     fun getChatListFlowByQuestion(questionContent: String): Flow<List<Chat>>
 
-    suspend fun saveChatList(chatList: List<Chat>): List<Long>
-
     suspend fun saveOneChatToDatabase(chat: Chat): Long
 
     suspend fun getChatListByQuestion(questionContent: String): List<Chat>
 
+    suspend fun insertOrUpdate(question: String, chatList: List<Chat>)
+
+    suspend fun clear(): Boolean
 }

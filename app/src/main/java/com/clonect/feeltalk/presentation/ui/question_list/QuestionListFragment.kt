@@ -115,9 +115,12 @@ class QuestionListFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         onBackCallback.remove()
+
+        if (!::binding.isInitialized) return
         val scrollState = binding.rvQuestionList.layoutManager?.onSaveInstanceState()
         scrollState?.let {
             navViewModel.setQuestionListScrollState(it)
         }
     }
+
 }

@@ -47,8 +47,10 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initActionBar()
         initRecyclerView()
 
+        collectPartnerInfo()
         collectQuestion()
         collectChatList()
         collectScrollPosition()
@@ -62,6 +64,7 @@ class ChatFragment : Fragment() {
         requireActivity().window?.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
     }
 
+
     private fun sendChat() {
         if (!viewModel.isPartnerAnswered()) {
             Toast.makeText(requireContext(), "상대가 질문에 답하기 전에는 채팅을 이용할 수 없습니다.", Toast.LENGTH_SHORT).show()
@@ -74,6 +77,15 @@ class ChatFragment : Fragment() {
                 binding.etChat.setText("")
                 viewModel.sendChat(it)
             }
+    }
+
+
+    private fun collectPartnerInfo() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.partnerInfo.collectLatest {
+                adapter.setPartnerNickname(it.nickname)
+            }
+        }
     }
 
     private fun collectQuestion() = lifecycleScope.launch {
@@ -105,8 +117,15 @@ class ChatFragment : Fragment() {
     }
 
 
+    private fun initActionBar() = binding.apply {
+        tvTitle.text = viewModel.partnerInfo.value.nickname
+        // TODO 파트너 프로필 사진
+//        ivPartnerProfile.setImageBitmap()
+    }
+
     private fun initRecyclerView() {
         binding.rvChat.adapter = adapter
+        binding.rvChat.itemAnimator = null
         // adjust scroll y when keboard up/down
         binding.rvChat.addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
             if (bottom == oldBottom) return@addOnLayoutChangeListener

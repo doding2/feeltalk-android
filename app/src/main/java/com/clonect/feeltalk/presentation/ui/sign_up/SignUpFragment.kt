@@ -167,7 +167,7 @@ class SignUpFragment : Fragment() {
         tryGoogleLogOut()
         tryKakaoLogOut()
         tryNaverLogOut()
-        viewModel.clearAllTokens()
+        viewModel.clearAllExceptKeys()
     }
 
 

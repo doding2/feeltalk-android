@@ -1,8 +1,8 @@
 package com.clonect.feeltalk.data.utils
 
+import com.clonect.feeltalk.common.FeelTalkException
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.repository.EncryptionRepository
-import com.clonect.feeltalk.presentation.utils.infoLog
 
 class UserLevelEncryptHelper(
     private val encryptRepository: EncryptionRepository
@@ -13,7 +13,7 @@ class UserLevelEncryptHelper(
             is Resource.Success -> {
                 return encrypted.data
             }
-            is Resource.Error -> throw encrypted.throwable
+            is Resource.Error -> throw FeelTalkException.EncryptionFailureException()
             is Resource.Loading -> throw IllegalStateException("Unexpected Error Occurred.")
         }
     }
@@ -35,7 +35,7 @@ class UserLevelEncryptHelper(
             is Resource.Success -> {
                 return encrypted.data
             }
-            is Resource.Error -> throw encrypted.throwable
+            is Resource.Error -> throw FeelTalkException.EncryptionFailureException()
             is Resource.Loading -> throw IllegalStateException("Unexpected Error Occurred.")
         }
     }

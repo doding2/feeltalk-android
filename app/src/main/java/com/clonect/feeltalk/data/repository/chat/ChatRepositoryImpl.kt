@@ -45,7 +45,7 @@ class ChatRepositoryImpl(
                     userLevelEncryptHelper = userLevelEncryptHelper,
                 )
 
-                localDataSource.saveChatList(newChatList)
+                localDataSource.insertOrUpdate(questionContent, newChatList)
                 cacheDataSource.saveChatListToCacheByQuestion(questionContent, newChatList)
                 send(Resource.Success(newChatList))
             }

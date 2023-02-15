@@ -31,6 +31,8 @@ class ChatAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var onItemClickListener: ((Chat) -> Unit)? = null
 
+    private var partnerNickname: String? = null
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == TYPE_MINE) {
@@ -63,6 +65,10 @@ class ChatAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         onItemClickListener = listener
     }
 
+    fun setPartnerNickname(nickname: String) {
+        partnerNickname = nickname
+    }
+
 
     inner class ChatMineViewHolder(
         val binding: ItemChatMineBinding
@@ -91,8 +97,10 @@ class ChatAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         fun bind(chat: Chat) {
             binding.apply {
-                if (chat.isAnswer)
+                if (chat.isAnswer) {
+                    textPartnerName.text = partnerNickname
                     layoutChatOwner.visibility = View.VISIBLE
+                }
                 else
                     layoutChatOwner.visibility = View.GONE
 

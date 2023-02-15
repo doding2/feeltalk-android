@@ -214,8 +214,12 @@ class SettingFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         onBackCallback.remove()
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
         val scrollState = binding.scrollView.scrollY
         navViewModel.setSettingScrollState(scrollState)
     }
-
 }

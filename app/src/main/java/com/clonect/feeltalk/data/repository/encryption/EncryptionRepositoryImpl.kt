@@ -12,6 +12,7 @@ import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionLoca
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionRemoteDataSource
 import com.clonect.feeltalk.data.utils.MessageEncryptHelper
 import com.clonect.feeltalk.domain.repository.EncryptionRepository
+import com.clonect.feeltalk.presentation.utils.infoLog
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import java.security.*
@@ -163,6 +164,7 @@ class EncryptionRepositoryImpl(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
+            infoLog("내 텍스트 암호화 실패: $e")
             e.printStackTrace()
             Resource.Error(e)
         }
@@ -176,6 +178,7 @@ class EncryptionRepositoryImpl(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
+            infoLog("내 텍스트 복호화 실패: $e")
             e.printStackTrace()
             Resource.Error(e)
         }
@@ -190,6 +193,7 @@ class EncryptionRepositoryImpl(
             throw e
         } catch (e: Exception) {
             e.printStackTrace()
+            infoLog("연인 텍스트 암호화 실패: $e")
             Resource.Error(e)
         }
     }
@@ -202,6 +206,7 @@ class EncryptionRepositoryImpl(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
+            infoLog("연인 텍스트 복호화 실패: $e")
             e.printStackTrace()
             Resource.Error(e)
         }

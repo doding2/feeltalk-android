@@ -6,14 +6,18 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.chat.Chat
 import com.clonect.feeltalk.domain.model.data.question.Question
+import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.usecase.chat.GetChatListUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SendChatUseCase
+import com.clonect.feeltalk.domain.usecase.user.GetPartnerInfoUseCase
 import com.clonect.feeltalk.presentation.service.notification_observer.FcmNewChatObserver
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -21,23 +25,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
+    private val getPartnerInfoUseCase: GetPartnerInfoUseCase,
     private val getChatListUseCase: GetChatListUseCase,
     private val sendChatUseCase: SendChatUseCase,
     savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading = _isLoading.asStateFlow()
-
+    private val _partnerInfo = MutableStateFlow(UserInfo())
+    val partnerInfo = _partnerInfo.asStateFlow()
 
     private val _question = MutableStateFlow(Question(""))
     val question = _question.asStateFlow()
 
     private val _chatList = MutableStateFlow<List<Chat>>(emptyList())
     val chatList = _chatList.asStateFlow()
-
-    private val _dialogEvent = MutableSharedFlow<String>()
-    val dialogEvent = _dialogEvent.asSharedFlow()
 
     private val _scrollPositionState = MutableStateFlow(0)
     val scrollPositionState = _scrollPositionState.asStateFlow()
@@ -49,6 +50,7 @@ class ChatViewModel @Inject constructor(
             FeeltalkApp.setQuestionIdOfShowingChatFragment(it.question)
             infoLog("Chat Room Entered: $it")
         }
+        getPartnerInfo()
         collectChatList()
         collectFcmNewChat()
     }
@@ -77,14 +79,20 @@ class ChatViewModel @Inject constructor(
                 }
                 is Resource.Error -> {
                     infoLog("Fail to get chat list: ${result.throwable.localizedMessage}")
-                    _dialogEvent.emit(result.throwable.localizedMessage
-                        ?: "Unexpected error occurred.")
                 }
                 is Resource.Loading -> {
                     infoLog("Fail to get chat list")
-                    _isLoading.value = result.isLoading
                 }
             }
+        }
+    }
+
+    private fun getPartnerInfo() = viewModelScope.launch(Dispatchers.IO) {
+        val result = getPartnerInfoUseCase()
+        when (result) {
+            is Resource.Success -> _partnerInfo.value = result.data
+            is Resource.Error -> infoLog("Fail to get partner info: ${result.throwable.localizedMessage}")
+            else -> infoLog("Fail to get partner info")
         }
     }
 
