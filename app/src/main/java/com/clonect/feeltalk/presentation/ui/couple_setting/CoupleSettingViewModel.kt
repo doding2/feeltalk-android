@@ -20,7 +20,7 @@ class CoupleSettingViewModel @Inject constructor(
     private val getPartnerInfoUseCase: GetPartnerInfoUseCase,
     private val getCoupleAnniversaryUseCase: GetCoupleAnniversaryUseCase,
     private val breakUpCoupleUseCase: BreakUpCoupleUseCase,
-    private val getCoupleRegistrationCodeUseCase: GetCoupleRegistrationCodeUseCase,
+    private val clearAllExceptKeysUseCase: ClearAllExceptKeysUseCase,
 ): ViewModel() {
 
     private val _userInfo = MutableStateFlow(UserInfo())
@@ -70,7 +70,7 @@ class CoupleSettingViewModel @Inject constructor(
 
         when (result) {
             is Resource.Success -> {
-                getCoupleRegistrationCodeUseCase(withCache = false)
+                clearAllExceptKeysUseCase()
                 infoLog("Success to break up couple: ${result.data}")
                 true
             }
@@ -80,5 +80,10 @@ class CoupleSettingViewModel @Inject constructor(
             }
             else -> false
         }
+    }
+
+    suspend fun clearAllExceptKeys(): Boolean {
+        val clearResult = clearAllExceptKeysUseCase()
+        return (clearResult is Resource.Success)
     }
 }

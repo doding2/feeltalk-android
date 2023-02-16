@@ -99,7 +99,7 @@ class ChatViewModel @Inject constructor(
     private fun updateChatList(chatList: List<Chat>) {
         val newList = mutableListOf<Chat>()
         newList.addAll(chatList)
-        newList.sortWith(compareBy(Chat::date, Chat::id))
+        newList.sortBy { it.id }
         _chatList.value = newList
     }
 
