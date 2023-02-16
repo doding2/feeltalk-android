@@ -33,7 +33,7 @@ class AppLevelEncryptHelper(
         } catch (e: Exception) {
             e.printStackTrace()
             infoLog("Fail to encrypt app level encryptor: ${message}")
-            return message
+            message
         }
     }
 
@@ -52,7 +52,7 @@ class AppLevelEncryptHelper(
         } catch (e: Exception) {
             e.printStackTrace()
             infoLog("Fail to decrypt app level encryptor: ${digest}")
-            null
+            digest
         }
     }
 
@@ -106,9 +106,9 @@ class AppLevelEncryptHelper(
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                 .build()
         )
-        
+
         infoLog("!!!!경고!!!! 앱 레벨 AES 키가 새로 생성됨")
-        
+
         return keyGen.generateKey()
     }
 

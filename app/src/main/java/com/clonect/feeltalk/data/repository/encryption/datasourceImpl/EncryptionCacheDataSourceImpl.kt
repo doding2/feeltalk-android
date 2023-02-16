@@ -6,12 +6,20 @@ import java.security.PublicKey
 
 class EncryptionCacheDataSourceImpl: EncryptionCacheDataSource {
 
+    private var appLevelAesKey: String? = null
+
     private var myPublicKey: PublicKey? = null
     private var myPrivateKey: PrivateKey? = null
 
     private var partnerPublicKey: PublicKey? = null
     private var partnerPrivateKey: PrivateKey? = null
 
+
+    override fun getAppLevelAesKey(): String? = appLevelAesKey
+
+    override fun saveAppLevelAesKey(key: String) {
+        appLevelAesKey = key
+    }
 
     override fun getMyPublicKey(): PublicKey? = myPublicKey
 

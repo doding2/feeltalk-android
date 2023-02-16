@@ -4,6 +4,9 @@ import java.security.PrivateKey
 import java.security.PublicKey
 
 interface EncryptionCacheDataSource {
+    fun getAppLevelAesKey(): String?
+    fun saveAppLevelAesKey(key: String)
+
     fun getMyPublicKey(): PublicKey?
     fun getMyPrivateKey(): PrivateKey?
     fun saveMyPublicKeyToCache(publicKey: PublicKey)

@@ -5,6 +5,7 @@ import com.clonect.feeltalk.domain.model.data.encryption.LoadPartnerPublicKeyDto
 import com.clonect.feeltalk.domain.model.dto.chat.ChatListItemDto
 import com.clonect.feeltalk.domain.model.dto.chat.SendChatDto
 import com.clonect.feeltalk.domain.model.dto.common.StatusDto
+import com.clonect.feeltalk.domain.model.dto.encryption.AppLevelAesKeyDto
 import com.clonect.feeltalk.domain.model.dto.news.NewsDto
 import com.clonect.feeltalk.domain.model.dto.question.QuestionAnswersDto
 import com.clonect.feeltalk.domain.model.dto.question.QuestionListDto
@@ -166,6 +167,11 @@ interface ClonectService {
 
 
     /** Encryption **/
+    @POST("api/member/clientAESKey")
+    suspend fun getAppLevelAesKey(
+        @Body body: JsonObject
+    ): Response<AppLevelAesKeyDto>
+
     @POST("api/member/publicKey")
     suspend fun uploadMyPublicKey(
         @Body body: JsonObject

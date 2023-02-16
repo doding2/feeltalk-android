@@ -31,6 +31,23 @@ class EncryptionRepositoryImpl(
 
     private var tryCount = 0
 
+
+    // 얘는 지금 안 쓰는 중
+    override suspend fun getAppLevelAesKey(accessToken: String): Resource<String> {
+        try {
+            val cache = cacheDataSource.getAppLevelAesKey()
+            cache?.let { return Resource.Success(it) }
+
+            val remote = remoteSource.getAppLevelAesKey(accessToken).body()!!
+            return Resource.Success(remote.clientAESKey)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            return Resource.Error(e)
+        }
+    }
+
+
     override suspend fun checkKeyPairsExist(): Boolean {
         return try {
             val isExist = localDataSource.checkKeyPairsExist()

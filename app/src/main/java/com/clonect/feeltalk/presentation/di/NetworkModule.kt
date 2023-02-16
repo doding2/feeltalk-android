@@ -4,6 +4,7 @@ import com.clonect.feeltalk.BuildConfig
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.data.api.ClonectService
 import com.clonect.feeltalk.data.api.NotificationService
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -49,8 +50,11 @@ class NetworkModule {
     fun providesGoogleAuthRetrofit(
         okHttpClient: OkHttpClient
     ): Retrofit {
+        val gson = GsonBuilder()
+            .disableHtmlEscaping()
+            .create()
         return Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .client(okHttpClient)
             .baseUrl(BuildConfig.GOOGLE_AUTH_BASE_URL)
             .build()
