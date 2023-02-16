@@ -22,12 +22,18 @@ import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.databinding.FragmentSettingBinding
 import com.clonect.feeltalk.presentation.ui.bottom_navigation.BottomNavigationViewModel
 import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.kakao.sdk.user.UserApiClient
 import com.kyleduo.switchbutton.SwitchButton
+import com.navercorp.nid.NaverIdLoginSDK
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import kotlin.math.ceil
 
 @AndroidEntryPoint
@@ -59,6 +65,8 @@ class SettingFragment : Fragment() {
             ivHalfArrowRight.setOnClickListener { navigateToCoupleSettingPage() }
             flProfile.setOnClickListener { navigateToCoupleSettingPage() }
             llDDay.setOnClickListener { navigateToCoupleSettingPage() }
+
+            llLogOut.setOnClickListener { logOut() }
         }
     }
 
@@ -68,6 +76,13 @@ class SettingFragment : Fragment() {
             .requireParentFragment()
             .findNavController()
             .navigate(R.id.action_bottomNavigationFragment_to_coupleSettingFragment)
+    }
+
+    private fun navigateToSignUpPage() {
+        requireParentFragment()
+            .requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_bottomNavigationFragment_to_signUpFragment)
     }
 
 
@@ -198,6 +213,43 @@ class SettingFragment : Fragment() {
             if (isChecked) R.drawable.ic_switch_thumb_on
             else R.drawable.ic_switch_thumb_off
         setThumbDrawableRes(drawableRes)
+    }
+
+
+    private fun logOut() = lifecycleScope.launch {
+        tryGoogleLogOut()
+        tryKakaoLogOut()
+        tryNaverLogOut()
+        viewModel.clearAllExceptKeys()
+        navigateToSignUpPage()
+    }
+
+    private suspend fun tryKakaoLogOut() = suspendCoroutine { continuation ->
+        UserApiClient.instance.logout { error ->
+            if (error == null) {
+                continuation.resume(true)
+            } else {
+                continuation.resume(false)
+            }
+        }
+    }
+
+    private fun tryNaverLogOut(): Boolean {
+        NaverIdLoginSDK.logout()
+        return true
+    }
+
+    private suspend fun tryGoogleLogOut() = suspendCoroutine { continuation ->
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .build()
+        val mGoogleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
+        mGoogleSignInClient.signOut()
+            .addOnSuccessListener {
+                continuation.resume(true)
+            }
+            .addOnFailureListener {
+                continuation.resume(false)
+            }
     }
 
 

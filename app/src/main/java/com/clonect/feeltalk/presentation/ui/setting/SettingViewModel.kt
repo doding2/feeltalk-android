@@ -7,6 +7,7 @@ import com.clonect.feeltalk.domain.model.data.notification.Topics
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
+import com.clonect.feeltalk.domain.usecase.user.ClearAllExceptKeysUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetCoupleAnniversaryUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetUserInfoUseCase
 import com.clonect.feeltalk.presentation.utils.AppSettings
@@ -25,6 +26,7 @@ class SettingViewModel @Inject constructor(
     private val saveAppSettingsUseCase: SaveAppSettingsUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val getCoupleAnniversaryUseCase: GetCoupleAnniversaryUseCase,
+    private val clearAllExceptKeysUseCase: ClearAllExceptKeysUseCase,
 ): ViewModel() {
 
     private val appSettings = getAppSettingsUseCase()
@@ -101,5 +103,11 @@ class SettingViewModel @Inject constructor(
 
     fun saveAppSettings(appSettings: AppSettings) = viewModelScope.launch(Dispatchers.IO) {
         saveAppSettingsUseCase(appSettings)
+    }
+
+
+    suspend fun clearAllExceptKeys(): Boolean {
+        val clearResult = clearAllExceptKeysUseCase()
+        return (clearResult is Resource.Success)
     }
 }
