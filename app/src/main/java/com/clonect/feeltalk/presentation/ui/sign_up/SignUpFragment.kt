@@ -18,6 +18,7 @@ import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.BuildConfig
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentSignUpBinding
+import com.clonect.feeltalk.presentation.utils.AppleSignInDialog
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.clonect.feeltalk.presentation.utils.makeLoadingDialog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -62,6 +63,7 @@ class SignUpFragment : Fragment() {
             mcvSignUpKakao.setOnClickListener { clickKakaoButton() }
             mcvSignUpNaver.setOnClickListener { clickNaverButton() }
             mcvSignUpGoogle.setOnClickListener { clickGoogleButton() }
+            mcvSignUpApple.setOnClickListener { clickAppleButton() }
         }
     }
 
@@ -81,6 +83,15 @@ class SignUpFragment : Fragment() {
         setSignUpButtonsEnabled(false)
         logOut()
         signInWithNaver()
+    }
+
+    private fun clickAppleButton() = lifecycleScope.launch {
+        logOut()
+        AppleSignInDialog(requireContext()) {
+            Toast.makeText(requireContext(), "email: $it", Toast.LENGTH_SHORT).show()
+        }.also {
+            it.show()
+        }
     }
 
 
@@ -255,11 +266,17 @@ class SignUpFragment : Fragment() {
     }
 
     private fun signInWithNaver() {
-        NaverIdLoginSDK.authenticate(requireContext(), naverSignUpCallback)
+        try {
+            NaverIdLoginSDK.authenticate(requireContext(), naverSignUpCallback)
+        } catch (_: Exception) {
+            setSignUpButtonsEnabled(true)
+        }
     }
 
     private fun tryNaverLogOut(): Boolean {
-        NaverIdLoginSDK.logout()
+        try {
+            NaverIdLoginSDK.logout()
+        } catch (_: Exception) {}
         return true
     }
 

@@ -257,4 +257,10 @@ class UseCaseModule {
     fun providesSaveQuestionToDatabaseUseCase(questionRepository: QuestionRepository): SaveQuestionToDatabaseUseCase {
         return SaveQuestionToDatabaseUseCase(questionRepository)
     }
+
+    @Singleton
+    @Provides
+    fun providesClearCoupleInfoUseCase(userRepository: UserRepository): ClearCoupleInfoUseCase {
+        return ClearCoupleInfoUseCase(userRepository)
+    }
 }

@@ -441,8 +441,6 @@ class UserRepositoryImpl(
     }
 
 
-
-
     private fun getUserInfoFromCache(): Resource<UserInfo> {
         return try {
             val userInfo = cacheDataSource.getUserInfo()
@@ -479,6 +477,17 @@ class UserRepositoryImpl(
     }
 
 
+
+    override suspend fun clearCoupleInfo(): Resource<Boolean> {
+        return try {
+            val isSuccessful = localDataSource.clearCoupleInfo()
+            Resource.Success(isSuccessful)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
 
 
     override suspend fun clearAllExceptKeys(): Resource<Boolean> {

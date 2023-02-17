@@ -37,5 +37,6 @@ interface UserRepository {
     suspend fun signUpWithNaver(accessToken: String, fcmToken: String): Resource<SignUpDto>
     suspend fun autoLogInWithNaver(): Resource<AccessTokenDto>
 
+    suspend fun clearCoupleInfo(): Resource<Boolean>
     suspend fun clearAllExceptKeys(): Resource<Boolean>
 }

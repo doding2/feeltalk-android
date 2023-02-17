@@ -1,7 +1,6 @@
 package com.clonect.feeltalk.presentation.ui
 
 import android.app.Application
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import com.clonect.feeltalk.BuildConfig
 import com.clonect.feeltalk.R
@@ -17,8 +16,8 @@ class FeeltalkApp: Application() {
         super.onCreate()
 
         disableNightMode()
-        initKakao()
         initNaver()
+        initKakao()
         initFcm()
     }
 
@@ -33,14 +32,13 @@ class FeeltalkApp: Application() {
     private fun initNaver() {
         try {
             NaverIdLoginSDK.initialize(
-                context = this,
+                context = applicationContext,
                 clientId = BuildConfig.NAVER_AUTH_CLIENT_ID,
                 clientSecret = BuildConfig.NAVER_AUTH_CLIENT_SECRET,
                 clientName = getString(R.string.app_name),
             )
         } catch (e: Exception) {
             infoLog("Naver sdk initialize error: ${e.localizedMessage}")
-            Toast.makeText(applicationContext, e.localizedMessage, Toast.LENGTH_SHORT).show()
         }
     }
 

@@ -12,7 +12,7 @@ class MessageEncryptHelper {
         val textBytes = message.encodeToByteArray()
         val ivSpec: AlgorithmParameterSpec = IvParameterSpec(ByteArray(16))
         val newKey = SecretKeySpec(key, "AES")
-        val cipher: Cipher = Cipher.getInstance(BuildConfig.SHORTEN_ENCRYPT_HELPER_CIPHER_ALGORITHM)
+        val cipher: Cipher = Cipher.getInstance(BuildConfig.MESSAGE_ENCRYPT_HELPER_CIPHER_ALGORITHM)
         cipher.init(Cipher.ENCRYPT_MODE, newKey, ivSpec)
         return cipher.doFinal(textBytes)
     }
@@ -20,7 +20,7 @@ class MessageEncryptHelper {
     fun decryptAES(key: ByteArray, digest: ByteArray): String {
         val iv = IvParameterSpec(ByteArray(16))
         val keySpec = SecretKeySpec(key, "AES")
-        val cipher = Cipher.getInstance(BuildConfig.SHORTEN_ENCRYPT_HELPER_CIPHER_ALGORITHM)
+        val cipher = Cipher.getInstance(BuildConfig.MESSAGE_ENCRYPT_HELPER_CIPHER_ALGORITHM)
         cipher.init(Cipher.DECRYPT_MODE, keySpec, iv)
         val output = cipher.doFinal(digest)
         return String(output, Charsets.UTF_8)

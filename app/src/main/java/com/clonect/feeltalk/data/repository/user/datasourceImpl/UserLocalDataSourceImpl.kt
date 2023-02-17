@@ -112,6 +112,19 @@ class UserLocalDataSourceImpl(
     }
 
 
+    override suspend fun clearCoupleInfo(): Boolean {
+        val registrationCodeFile = File(context.filesDir, "couple_registration_code.txt")
+        val coupleAnniversaryFile = File(context.filesDir, "couple_anniversary.txt")
+        val userInfoFile = File(context.filesDir, "user_info.dat")
+
+        feeltalkDatabase.clearAllTables()
+        context.deleteDatabase("feeltalkDatabase.db")
+
+        return registrationCodeFile.delete()
+                && coupleAnniversaryFile.delete()
+                && userInfoFile.delete()
+    }
+
     override suspend fun clearAllExceptKeys(): Boolean {
         val idTokenFile = File(context.filesDir, "google_id_token.txt")
         val accessTokenFile = File(context.filesDir, "access_token.txt")

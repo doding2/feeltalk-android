@@ -126,18 +126,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun tryNaverAutoLogIn(): Boolean {
-        val state = NaverIdLoginSDK.getState()
-        if (state == NidOAuthLoginState.OK) {
-            viewModel.autoNaverLogIn()
-            return true
+        try {
+            val state = NaverIdLoginSDK.getState()
+            if (state == NidOAuthLoginState.OK) {
+                viewModel.autoNaverLogIn()
+                return true
+            }
+            return false
+        } catch (e: Exception) {
+            return false
         }
-        return false
     }
 
     // TODO 얘 만들어야댐
     private fun tryAppleAutoLogIn(): Boolean {
         return false
     }
+
 
 
     override fun onResume() {

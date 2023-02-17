@@ -25,11 +25,10 @@ android {
         buildConfigField("String", "APP_LEVEL_KEY_ALIAS", APP_LEVEL_KEY_ALIAS)
         buildConfigField("String", "APP_LEVEL_CIPHER_ALGORITHM", APP_LEVEL_CIPHER_ALGORITHM)
         buildConfigField("String", "USER_LEVEL_CIPHER_ALGORITHM", USER_LEVEL_CIPHER_ALGORITHM)
+        buildConfigField("String", "MESSAGE_ENCRYPT_HELPER_CIPHER_ALGORITHM", MESSAGE_ENCRYPT_HELPER_CIPHER_ALGORITHM)
 
+        buildConfigField("String", "ROOM_DATABASE_KEY_ALIAS", ROOM_DATABASE_KEY_ALIAS)
         buildConfigField("String", "ROOM_DATABASE_PASS_PHRASE", ROOM_DATABASE_PASS_PHRASE)
-        buildConfigField("String", "SHORTEN_ENCRYPT_HELPER_KEY", SHORTEN_ENCRYPT_HELPER_KEY)
-        buildConfigField("String", "SHORTEN_ENCRYPT_HELPER_IV", SHORTEN_ENCRYPT_HELPER_IV)
-        buildConfigField("String", "SHORTEN_ENCRYPT_HELPER_CIPHER_ALGORITHM", SHORTEN_ENCRYPT_HELPER_CIPHER_ALGORITHM)
 
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", KAKAO_NATIVE_APP_KEY)
         buildConfigField("String", "KAKAO_CLIENT_SECRET", KAKAO_CLIENT_SECRET)
@@ -40,6 +39,11 @@ android {
         buildConfigField("String", "GOOGLE_AUTH_BASE_URL", GOOGLE_AUTH_BASE_URL)
         buildConfigField("String", "GOOGLE_AUTH_CLIENT_ID", GOOGLE_AUTH_CLIENT_ID)
         buildConfigField("String", "GOOGLE_AUTH_CLIENT_SECRET", GOOGLE_AUTH_CLIENT_SECRET)
+
+
+        buildConfigField("String", "APPLE_AUTH_CLIENT_ID", APPLE_AUTH_CLIENT_ID)
+        buildConfigField("String", "APPLE_AUTH_REDIRECT_URI", APPLE_AUTH_REDIRECT_URI)
+        buildConfigField("String", "APPLE_AUTH_BASE_URL", APPLE_AUTH_BASE_URL)
     }
 
     buildTypes {
