@@ -12,6 +12,8 @@ import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class FeeltalkApp: Application() {
+
+
     override fun onCreate() {
         super.onCreate()
 

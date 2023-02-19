@@ -127,6 +127,52 @@ class UserRepositoryImpl(
         }
     }
 
+    override suspend fun getMyProfileImageUrl(): Resource<String> {
+        try {
+            val accessToken = cacheDataSource.getAccessToken()
+                ?: localDataSource.getAccessToken()
+                ?: throw NullPointerException("User is Not logged in.")
+
+            val cache = cacheDataSource.getUserProfileUrl()
+            cache?.let { return Resource.Success(it) }
+
+            val local = localDataSource.getUserProfileUrl()
+            local?.let {
+                cacheDataSource.saveUserProfileUrl(it)
+                return Resource.Success(it)
+            }
+
+            val remote = remoteDataSource.getUserProfileUrl(accessToken).body()!!
+            localDataSource.saveUserProfileUrl(remote)
+            cacheDataSource.saveUserProfileUrl(remote)
+            return Resource.Success(remote)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            return Resource.Error(e)
+        }
+    }
+
+    override suspend fun getPartnerProfileImageUrl(): Resource<String> {
+        try {
+            val accessToken = cacheDataSource.getAccessToken()
+                ?: localDataSource.getAccessToken()
+                ?: throw NullPointerException("User is Not logged in.")
+
+            val cache = cacheDataSource.getPartnerProfileUrl()
+            cache?.let { return Resource.Success(it) }
+
+            val partnerAccessToken = remoteDataSource.getPartnerInfo(accessToken).body()!!.accessToken
+            val remote = remoteDataSource.getUserProfileUrl(partnerAccessToken).body()!!
+            cacheDataSource.savePartnerProfileUrl(remote)
+            return Resource.Success(remote)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            return Resource.Error(e)
+        }
+    }
+
 
     override suspend fun checkUserInfoIsEntered(): Resource<Boolean> {
         return try {
@@ -339,7 +385,6 @@ class UserRepositoryImpl(
             localDataSource.saveAccessToken(accessToken.accessToken)
             localDataSource.saveGoogleIdToken(idToken)
             cacheDataSource.saveAccessTokenToCache(accessToken.accessToken)
-            updateFcmToken(fcmToken)
 
             Resource.Success(response.body()!!)
         } catch (e: CancellationException) {
@@ -364,7 +409,6 @@ class UserRepositoryImpl(
 
             localDataSource.saveAccessToken(response.token)
             cacheDataSource.saveAccessTokenToCache(response.token)
-            updateFcmToken(fcmToken)
 
             Resource.Success(response)
         } catch (e: CancellationException) {
@@ -410,7 +454,6 @@ class UserRepositoryImpl(
 
             localDataSource.saveAccessToken(response.token)
             cacheDataSource.saveAccessTokenToCache(response.token)
-            updateFcmToken(fcmToken)
 
             Resource.Success(response)
         } catch (e: CancellationException) {
@@ -432,6 +475,72 @@ class UserRepositoryImpl(
             localDataSource.saveAccessToken(accessTokenDto.accessToken)
             cacheDataSource.saveAccessTokenToCache(accessTokenDto.accessToken)
             Resource.Success(accessTokenDto)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun signUpWithApple(uuid: String, fcmToken: String): Resource<SignUpDto> {
+        return try {
+            val appleAccessToken = remoteDataSource.getAppleAccessToken(uuid).body()!!.accessToken
+            val response = remoteDataSource.signUpWithApple(appleAccessToken, fcmToken).body()!!
+
+            val coupleRegistrationCode = response.validCode
+            coupleRegistrationCode?.let {
+                localDataSource.saveCoupleRegistrationCode(it)
+                cacheDataSource.saveCoupleRegistrationCode(it)
+            }
+
+            localDataSource.saveAccessToken(response.token)
+            cacheDataSource.saveAccessTokenToCache(response.token)
+            localDataSource.saveIsAppleLoggedIn(true)
+
+            Resource.Success(response)
+        } catch (e: CancellationException) {
+            localDataSource.saveIsAppleLoggedIn(false)
+            throw e
+        } catch (e: Exception) {
+            localDataSource.saveIsAppleLoggedIn(false)
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun autoLogInWithApple(): Resource<AccessTokenDto> {
+        return try {
+            val accessToken = cacheDataSource.getAccessToken()
+                ?: localDataSource.getAccessToken()
+                ?: throw NullPointerException("User is Not logged in.")
+
+            val response = remoteDataSource.autoLogInWithApple(accessToken)
+
+            val accessTokenDto = response.body()!!
+            localDataSource.saveAccessToken(accessTokenDto.accessToken)
+            cacheDataSource.saveAccessTokenToCache(accessTokenDto.accessToken)
+            localDataSource.saveIsAppleLoggedIn(true)
+
+            Resource.Success(accessTokenDto)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun checkIsAppleLoggedIn(): Resource<Boolean> {
+        return try {
+            val accessToken = cacheDataSource.getAccessToken()
+                ?: localDataSource.getAccessToken()
+
+            val local = localDataSource.getAppleLoggedIn()
+            if (local != null && accessToken != null) {
+                return Resource.Success(local)
+            }
+
+            throw NullPointerException("User is not logged in with apple.")
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {

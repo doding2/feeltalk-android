@@ -6,8 +6,13 @@ import com.clonect.feeltalk.domain.model.data.user.UserInfo
 class UserCacheDataSourceImpl: UserCacheDataSource {
 
     private var accessToken: String? = null
+
     private var userInfo: UserInfo? = null
+    private var userProfileUrl: String? = null
+
     private var partnerInfo: UserInfo? = null
+    private var partnerProfileUrl: String? = null
+
     private var coupleAnniversary: String? = null
     private var coupleRegistrationCode: String? = null
 
@@ -32,10 +37,23 @@ class UserCacheDataSourceImpl: UserCacheDataSource {
         this.userInfo = userInfo
     }
 
+    override fun getUserProfileUrl(): String? = userProfileUrl
+
+    override fun saveUserProfileUrl(url: String) {
+        this.userProfileUrl = url
+    }
+
+
     override fun getPartnerInfo(): UserInfo? = partnerInfo
 
     override fun savePartnerInfoToCache(partnerInfo: UserInfo) {
         this.partnerInfo = partnerInfo
+    }
+
+    override fun getPartnerProfileUrl(): String? = partnerProfileUrl
+
+    override fun savePartnerProfileUrl(url: String) {
+        this.partnerProfileUrl = url
     }
 
 

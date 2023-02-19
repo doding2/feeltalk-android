@@ -24,6 +24,7 @@ class SignUpViewModel @Inject constructor(
     private val signUpWithGoogleUseCase: SignUpWithGoogleUseCase,
     private val signUpWithKakaoUseCase: SignUpWithKakaoUseCase,
     private val signUpWithNaverUseCase: SignUpWithNaverUseCase,
+    private val signUpWithAppleUseCase: SignUpWithAppleUseCase,
     private val checkUserInfoIsEnteredUseCase: CheckUserInfoIsEnteredUseCase,
     private val checkUserIsCoupleUseCase: CheckUserIsCoupleUseCase,
     private val clearAllExceptKeysUseCase: ClearAllExceptKeysUseCase,
@@ -65,17 +66,18 @@ class SignUpViewModel @Inject constructor(
                     infoLog("Success to log in with google")
                     return@withContext true
                 }
+                setLoading(false)
                 false
             }
             is Resource.Error -> {
                 infoLog("sign up error with google: ${result.throwable.localizedMessage}")
-                sendToast("구글로 가입하는데 실패했습니다")
+                sendToast("구글 회원가입에 실패했습니다")
                 setLoading(false)
                 false
             }
             else -> {
                 infoLog("sign up error with google")
-                sendToast("구글로 가입하는데 실패했습니다")
+                sendToast("구글 회원가입에 실패했습니다")
                 setLoading(false)
                 false
             }
@@ -99,17 +101,18 @@ class SignUpViewModel @Inject constructor(
                     infoLog("Success to log in with kakao")
                     return@withContext true
                 }
+                setLoading(false)
                 false
             }
             is Resource.Error -> {
                 infoLog("sign up error with kakao: ${result.throwable.localizedMessage}")
-                sendToast("카카오로 가입하는데 실패했습니다")
+                sendToast("카카오 회원가입에 실패했습니다")
                 setLoading(false)
                 false
             }
             else -> {
                 infoLog("sign up error with kakao")
-                sendToast("카카오로 가입하는데 실패했습니다")
+                sendToast("카카오 회원가입에 실패했습니다")
                 setLoading(false)
                 false
             }
@@ -133,17 +136,53 @@ class SignUpViewModel @Inject constructor(
                     infoLog("Success to log in with naver")
                     return@withContext true
                 }
+                setLoading(false)
                 false
             }
             is Resource.Error -> {
                 infoLog("sign up error with naver: ${result.throwable.localizedMessage}")
-                sendToast("네이버로 가입하는데 실패했습니다")
+                sendToast("네이버 회원가입에 실패했습니다")
                 setLoading(false)
                 false
             }
             else -> {
                 infoLog("sign up error with naver")
-                sendToast("네이버로 가입하는데 실패했습니다")
+                sendToast("네이버 회원가입에 실패했습니다")
+                setLoading(false)
+                false
+            }
+        }
+    }
+
+    suspend fun signUpWithApple(uuid: String) = withContext(Dispatchers.IO) {
+        setLoading(true)
+        val result = signUpWithAppleUseCase(uuid, getFcmToken())
+        return@withContext when (result) {
+            is Resource.Success -> {
+                val dto = result.data
+                if (dto.annotation == "signUp") {
+                    setLoading(false)
+                    _isSignUpSuccessful.value = true
+                    infoLog("Success to sign up with apple")
+                    return@withContext true
+                }
+                if (dto.annotation == "login" || dto.annotation == "login_noCouple") {
+                    checkUserInfoIsEntered()
+                    infoLog("Success to log in with apple")
+                    return@withContext true
+                }
+                setLoading(false)
+                false
+            }
+            is Resource.Error -> {
+                infoLog("sign up error with apple: ${result.throwable.localizedMessage}")
+                sendToast("애플 회원가입에 실패했습니다")
+                setLoading(false)
+                false
+            }
+            else -> {
+                infoLog("sign up error with apple")
+                sendToast("애플 회원가입에 실패했습니다")
                 setLoading(false)
                 false
             }
@@ -166,7 +205,7 @@ class SignUpViewModel @Inject constructor(
                 infoLog("Is user info entered: ${isSuccessful}")
             }
             else -> {
-                sendToast("구글로 가입하는데 실패했습니다")
+                sendToast("회원가입에 실패했습니다")
                 setLoading(false)
                 _isUserInfoEntered.value = false
                 _isLogInSuccessful.value = false
@@ -186,7 +225,7 @@ class SignUpViewModel @Inject constructor(
                 infoLog("Is user couple: ${result.data.isMatch}")
             }
             else -> {
-                sendToast("구글로 가입하는데 실패했습니다")
+                sendToast("회원가입에 실패했습니다")
                 setLoading(false)
                 _isUserCouple.value = false
                 _isLogInSuccessful.value = false

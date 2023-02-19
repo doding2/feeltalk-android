@@ -19,6 +19,8 @@ class MainViewModel @Inject constructor(
     private val autoLogInWithGoogleUseCase: AutoLogInWithGoogleUseCase,
     private val autoLogInWithKakaoUseCase: AutoLogInWithKakaoUseCase,
     private val autoLogInWithNaverUseCase: AutoLogInWithNaverUseCase,
+    private val autoLogInWithAppleUseCase: AutoLogInWithAppleUseCase,
+    private val checkIsAppleLoggedInUseCase: CheckIsAppleLoggedInUseCase,
     private val checkUserInfoIsEnteredUseCase: CheckUserInfoIsEnteredUseCase,
     private val checkUserIsCoupleUseCase: CheckUserIsCoupleUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
@@ -90,6 +92,30 @@ class MainViewModel @Inject constructor(
                 sendToast("로그인에 실패했습니다")
                 setReady()
             }
+        }
+    }
+
+    fun autoAppleLogIn() = viewModelScope.launch(Dispatchers.IO) {
+        when (autoLogInWithAppleUseCase()) {
+            is Resource.Success -> {
+                _isLoggedIn.value = true
+                checkUserInfoIsEntered()
+                infoLog("Success to log in with apple")
+            }
+            else -> {
+                _isLoggedIn.value = false
+                infoLog("Fail to log in with apple")
+                sendToast("로그인에 실패했습니다")
+                setReady()
+            }
+        }
+    }
+
+    suspend fun checkIsAppleLoggedIn(): Boolean {
+        val result = checkIsAppleLoggedInUseCase()
+        return when (result) {
+            is Resource.Success -> result.data
+            else -> false
         }
     }
 

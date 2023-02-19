@@ -14,6 +14,8 @@ interface UserRepository {
     suspend fun getUserInfo(): Resource<UserInfo>
     suspend fun getPartnerInfo(): Resource<UserInfo>
     suspend fun getCoupleAnniversary(): Resource<String>
+    suspend fun getMyProfileImageUrl(): Resource<String>
+    suspend fun getPartnerProfileImageUrl(): Resource<String>
 
     suspend fun breakUpCouple(): Resource<StatusDto>
     suspend fun requestChangingPartnerEmotion(): Resource<StatusDto>
@@ -36,6 +38,10 @@ interface UserRepository {
 
     suspend fun signUpWithNaver(accessToken: String, fcmToken: String): Resource<SignUpDto>
     suspend fun autoLogInWithNaver(): Resource<AccessTokenDto>
+
+    suspend fun signUpWithApple(uuid: String, fcmToken: String): Resource<SignUpDto>
+    suspend fun autoLogInWithApple(): Resource<AccessTokenDto>
+    suspend fun checkIsAppleLoggedIn(): Resource<Boolean>
 
     suspend fun clearCoupleInfo(): Resource<Boolean>
     suspend fun clearAllExceptKeys(): Resource<Boolean>

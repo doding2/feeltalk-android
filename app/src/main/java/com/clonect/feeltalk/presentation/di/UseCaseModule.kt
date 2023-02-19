@@ -263,4 +263,35 @@ class UseCaseModule {
     fun providesClearCoupleInfoUseCase(userRepository: UserRepository): ClearCoupleInfoUseCase {
         return ClearCoupleInfoUseCase(userRepository)
     }
+
+    @Singleton
+    @Provides
+    fun providesGetMyProfileImageUrlUseCase(userRepository: UserRepository): GetMyProfileImageUrlUseCase {
+        return GetMyProfileImageUrlUseCase(userRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetPartnerProfileImageUrlUseCase(userRepository: UserRepository): GetPartnerProfileImageUrlUseCase {
+        return GetPartnerProfileImageUrlUseCase(userRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesSignUpWithAppleUseCase(userRepository: UserRepository): SignUpWithAppleUseCase {
+        return SignUpWithAppleUseCase(userRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesAutoLogInWithAppleUseCase(userRepository: UserRepository): AutoLogInWithAppleUseCase {
+        return AutoLogInWithAppleUseCase(userRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesCheckIsAppleLoggedInUseCase(userRepository: UserRepository): CheckIsAppleLoggedInUseCase {
+        return CheckIsAppleLoggedInUseCase(userRepository)
+    }
+
 }

@@ -7,9 +7,7 @@ import com.clonect.feeltalk.domain.model.data.notification.Topics
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
-import com.clonect.feeltalk.domain.usecase.user.ClearAllExceptKeysUseCase
-import com.clonect.feeltalk.domain.usecase.user.GetCoupleAnniversaryUseCase
-import com.clonect.feeltalk.domain.usecase.user.GetUserInfoUseCase
+import com.clonect.feeltalk.domain.usecase.user.*
 import com.clonect.feeltalk.presentation.utils.AppSettings
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessaging
@@ -27,6 +25,8 @@ class SettingViewModel @Inject constructor(
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val getCoupleAnniversaryUseCase: GetCoupleAnniversaryUseCase,
     private val clearAllExceptKeysUseCase: ClearAllExceptKeysUseCase,
+    private val getMyProfileImageUrlUseCase: GetMyProfileImageUrlUseCase,
+    private val getPartnerProfileImageUrlUseCase: GetPartnerProfileImageUrlUseCase,
 ): ViewModel() {
 
     private val appSettings = getAppSettingsUseCase()
@@ -36,6 +36,13 @@ class SettingViewModel @Inject constructor(
 
     private val _coupleAnniversary = MutableStateFlow<String?>(null)
     val coupleAnniversary = _coupleAnniversary.asStateFlow()
+
+    private val _myProfileImageUrl = MutableStateFlow<String?>(null)
+    val myProfileImageUrl = _myProfileImageUrl.asStateFlow()
+
+    private val _partnerProfileImageUrl = MutableStateFlow<String?>(null)
+    val partnerProfileImageUrl = _partnerProfileImageUrl.asStateFlow()
+
 
     private var _isPushNotificationEnabled: MutableStateFlow<Boolean> =
         MutableStateFlow(appSettings.isPushNotificationEnabled)
@@ -49,6 +56,7 @@ class SettingViewModel @Inject constructor(
     init {
         getUserInfo()
         getCoupleAnniversary()
+        getMyProfileImageUrl()
     }
 
     private fun getUserInfo() = viewModelScope.launch(Dispatchers.IO) {
@@ -67,6 +75,16 @@ class SettingViewModel @Inject constructor(
             else -> infoLog("Fail to get partner d day")
         }
     }
+
+    private fun getMyProfileImageUrl() = viewModelScope.launch(Dispatchers.IO) {
+        val result = getMyProfileImageUrlUseCase()
+        when (result) {
+            is Resource.Success -> { _myProfileImageUrl.value = result.data }
+            is Resource.Error -> infoLog("Fail to get my profile image url: ${result.throwable.localizedMessage}")
+            else -> infoLog("Fail to get my profile image url")
+        }
+    }
+
 
     fun enablePushNotification(enabled: Boolean) = viewModelScope.launch(Dispatchers.IO) {
         FirebaseMessaging.getInstance().apply {

@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -17,6 +18,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.databinding.FragmentSettingBinding
@@ -58,6 +60,7 @@ class SettingFragment : Fragment() {
 
         collectUserInfo()
         collectCoupleAnniversary()
+        collectMyProfileImageUrl()
         initSwitch()
 
         binding.apply {
@@ -94,7 +97,6 @@ class SettingFragment : Fragment() {
         }
     }
 
-
     private fun collectCoupleAnniversary() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.coupleAnniversary.collectLatest {
@@ -105,6 +107,24 @@ class SettingFragment : Fragment() {
             }
         }
     }
+
+    private fun collectMyProfileImageUrl() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch {
+                viewModel.myProfileImageUrl.collectLatest {
+                    binding.ivMyProfile.setProfileImageUrl(it)
+                }
+            }
+        }
+    }
+
+
+    private fun ImageView.setProfileImageUrl(url: String?) {
+        Glide.with(this)
+            .load(url)
+            .into(this)
+    }
+
 
     private fun calculateDDay(date: String): String {
         try {

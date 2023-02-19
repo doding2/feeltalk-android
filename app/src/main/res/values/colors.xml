@@ -18,6 +18,8 @@
     <color name="fragment_background_color">@color/white</color>
 
     <!--  Dialog  -->
+    <color name="dialog_out_space_color">#666666</color>
+
     <color name="dialog_title_color">@color/black</color>
     <color name="dialog_message_color">#545454</color>
     <color name="dialog_confirm_button_text_color">@color/white</color>

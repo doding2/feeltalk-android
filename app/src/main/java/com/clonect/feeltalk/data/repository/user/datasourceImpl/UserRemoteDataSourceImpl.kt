@@ -46,6 +46,13 @@ class UserRemoteDataSourceImpl(
         return response
     }
 
+    override suspend fun getUserProfileUrl(accessToken: String): Response<String> {
+        val response = clonectService.getUserProfileUrl(accessToken)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
+
 
     override suspend fun getCoupleAnniversary(accessToken: String): Response<DDayDto> {
         val response = clonectService.getDDay(accessToken)
@@ -216,4 +223,31 @@ class UserRemoteDataSourceImpl(
         return response
     }
 
+    override suspend fun signUpWithApple(accessToken: String, fcmToken: String): Response<SignUpDto> {
+        val body = JsonObject().apply {
+            addProperty("accessToken", accessToken)
+            addProperty("fcmToken", fcmToken)
+        }
+        val response = clonectService.signUpWithApple(body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
+
+    override suspend fun autoLogInWithApple(accessToken: String): Response<AccessTokenDto> {
+        val body = JsonObject().apply {
+            addProperty("accessToken", accessToken)
+        }
+        val response = clonectService.autoLogInWithApple(body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
+
+    override suspend fun getAppleAccessToken(uuid: String): Response<AccessTokenDto> {
+        val response = clonectService.getAppleAccessToken(uuid)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
 }

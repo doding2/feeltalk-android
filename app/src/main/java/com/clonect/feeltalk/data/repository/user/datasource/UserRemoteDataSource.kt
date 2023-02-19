@@ -11,6 +11,8 @@ interface UserRemoteDataSource {
     suspend fun breakUpCouple(accessToken: String): Response<StatusDto>
     suspend fun requestChangingPartnerEmotion(accessToken: String): Response<StatusDto>
 
+    suspend fun getUserProfileUrl(accessToken: String): Response<String>
+
     suspend fun getCoupleAnniversary(accessToken: String): Response<DDayDto>
 
     suspend fun checkUserIsCouple(accessToken: String): Response<CoupleCheckDto>
@@ -31,4 +33,8 @@ interface UserRemoteDataSource {
 
     suspend fun signUpWithNaver(accessToken: String, fcmToken: String): Response<SignUpDto>
     suspend fun autoLogInWithNaver(accessToken: String): Response<AccessTokenDto>
+
+    suspend fun signUpWithApple(accessToken: String, fcmToken: String): Response<SignUpDto>
+    suspend fun autoLogInWithApple(accessToken: String): Response<AccessTokenDto>
+    suspend fun getAppleAccessToken(uuid: String): Response<AccessTokenDto>
 }

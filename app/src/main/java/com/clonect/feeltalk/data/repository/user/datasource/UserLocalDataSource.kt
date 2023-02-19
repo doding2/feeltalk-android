@@ -10,6 +10,9 @@ interface UserLocalDataSource {
     suspend fun getUserInfo(): UserInfo?
     suspend fun saveUserInfo(userInfo: UserInfo)
 
+    suspend fun getUserProfileUrl(): String?
+    suspend fun saveUserProfileUrl(url: String)
+
     suspend fun getCoupleAnniversary(): String?
     suspend fun saveCoupleAnniversary(date: String)
 
@@ -19,6 +22,9 @@ interface UserLocalDataSource {
 
     suspend fun getGoogleIdToken(): String?
     suspend fun saveGoogleIdToken(idToken: String)
+
+    suspend fun getAppleLoggedIn(): Boolean?
+    suspend fun saveIsAppleLoggedIn(isLoggedIn: Boolean)
 
     suspend fun clearCoupleInfo(): Boolean
     suspend fun clearAllExceptKeys(): Boolean

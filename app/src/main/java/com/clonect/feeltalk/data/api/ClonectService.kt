@@ -82,6 +82,11 @@ interface ClonectService {
         @Body body: JsonObject
     ): Response<StatusDto>
 
+    @GET("/api/memberUrl/{accessToken}")
+    suspend fun getUserProfileUrl(
+        @Path("accessToken") accessToken: String
+    ): Response<String>
+
 
     /** Question **/
     @POST("/api/todayQuestion")
@@ -164,6 +169,20 @@ interface ClonectService {
         @Body body: JsonObject
     ): Response<AccessTokenDto>
 
+    @POST("/api/member/apple")
+    suspend fun signUpWithApple(
+        @Body body: JsonObject
+    ): Response<SignUpDto>
+
+    @POST("/api/login/apple")
+    suspend fun autoLogInWithApple(
+        @Body body: JsonObject
+    ): Response<AccessTokenDto>
+
+    @GET("api/member/appleState/{uuid}")
+    suspend fun getAppleAccessToken(
+        @Path("uuid") uuid: String
+    ): Response<AccessTokenDto>
 
 
     /** Encryption **/

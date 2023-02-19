@@ -138,9 +138,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // TODO 얘 만들어야댐
-    private fun tryAppleAutoLogIn(): Boolean {
-        return false
+    private suspend fun tryAppleAutoLogIn(): Boolean {
+        val isLoggedIn = viewModel.checkIsAppleLoggedIn()
+        if (isLoggedIn) {
+            viewModel.autoAppleLogIn()
+        }
+        return isLoggedIn
     }
 
 

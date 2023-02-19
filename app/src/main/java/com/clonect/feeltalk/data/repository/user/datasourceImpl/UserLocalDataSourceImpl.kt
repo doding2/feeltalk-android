@@ -48,6 +48,26 @@ class UserLocalDataSourceImpl(
         file.writeBytes(encrypted)
     }
 
+
+    override suspend fun getUserProfileUrl(): String? {
+        val file = File(context.filesDir, "user_profile_url.txt")
+        if (!file.exists()) return null
+        val userProfileUrl = file.bufferedReader().use {
+            val encrypted = it.readLine()
+            appLevelEncryptHelper.decrypt("userProfileUrl", encrypted)
+        }
+        return userProfileUrl
+    }
+
+    override suspend fun saveUserProfileUrl(url: String) {
+        val file = File(context.filesDir, "user_profile_url.txt")
+        file.bufferedWriter().use {
+            val encrypted = appLevelEncryptHelper.encrypt("userProfileUrl", url)
+            it.write(encrypted)
+        }
+    }
+
+
     override suspend fun getCoupleAnniversary(): String? {
         val file = File(context.filesDir, "couple_anniversary.txt")
         if (!file.exists()) return null
@@ -111,6 +131,25 @@ class UserLocalDataSourceImpl(
         }
     }
 
+    override suspend fun getAppleLoggedIn(): Boolean? {
+        val file = File(context.filesDir, "is_apple_logged_in.txt")
+        if (!file.exists())
+            return null
+        val isLoggedIn = file.bufferedReader().use {
+            val encrypted = it.readLine()
+            appLevelEncryptHelper.decrypt("isAppleLoggedIn", encrypted)
+        }
+        return isLoggedIn?.toBooleanStrictOrNull()
+    }
+
+    override suspend fun saveIsAppleLoggedIn(isLoggedIn: Boolean) {
+        val file = File(context.filesDir, "is_apple_logged_in.txt")
+        file.bufferedWriter().use {
+            val encrypted = appLevelEncryptHelper.encrypt("isAppleLoggedIn", isLoggedIn.toString())
+            it.write(encrypted)
+        }
+    }
+
 
     override suspend fun clearCoupleInfo(): Boolean {
         val registrationCodeFile = File(context.filesDir, "couple_registration_code.txt")
@@ -127,6 +166,7 @@ class UserLocalDataSourceImpl(
 
     override suspend fun clearAllExceptKeys(): Boolean {
         val idTokenFile = File(context.filesDir, "google_id_token.txt")
+        val isAppleLoggedInFile = File(context.filesDir, "is_apple_logged_in.txt")
         val accessTokenFile = File(context.filesDir, "access_token.txt")
         val registrationCodeFile = File(context.filesDir, "couple_registration_code.txt")
         val coupleAnniversaryFile = File(context.filesDir, "couple_anniversary.txt")
@@ -138,6 +178,7 @@ class UserLocalDataSourceImpl(
 //        val databaseFile = File(databasesDir, "feeltalkDatabase.db")
 
         return idTokenFile.delete()
+                && isAppleLoggedInFile.delete()
                 && accessTokenFile.delete()
                 && registrationCodeFile.delete()
                 && coupleAnniversaryFile.delete()

@@ -87,11 +87,7 @@ class SignUpFragment : Fragment() {
 
     private fun clickAppleButton() = lifecycleScope.launch {
         logOut()
-        AppleSignInDialog(requireContext()) {
-            Toast.makeText(requireContext(), "email: $it", Toast.LENGTH_SHORT).show()
-        }.also {
-            it.show()
-        }
+        signInWithApple()
     }
 
 
@@ -250,7 +246,7 @@ class SignUpFragment : Fragment() {
                 if (accessToken == null) {
                     tryNaverLogOut()
                     infoLog("Fail to sign up with naver: Access Token is null")
-                    Toast.makeText(requireContext(), "네이버로 가입하는데 실패했습니다", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "네이버 회원가입에 실패했습니다", Toast.LENGTH_SHORT).show()
                     setSignUpButtonsEnabled(true)
                     return@launch
                 }
@@ -278,6 +274,28 @@ class SignUpFragment : Fragment() {
             NaverIdLoginSDK.logout()
         } catch (_: Exception) {}
         return true
+    }
+
+
+    private fun signInWithApple() {
+        val appleDialog = AppleSignInDialog(requireContext()) { state ->
+            lifecycleScope.launch dialog@{
+                infoLog("Apple state uuid: $state")
+
+                if (state == null) {
+                    infoLog("애플 로그인 실패")
+                    return@dialog
+                }
+
+                val isSuccessful = viewModel.signUpWithApple(state)
+                if (isSuccessful) {
+                    infoLog( "애플 로그인 성공")
+                } else {
+                    infoLog("애플 로그인 실패")
+                }
+            }
+        }
+        appleDialog.show()
     }
 
 
@@ -329,7 +347,7 @@ class SignUpFragment : Fragment() {
             }
         } catch (e: ApiException) {
             tryGoogleLogOut()
-            Toast.makeText(requireContext(), "구글로 가입하는데 실패했습니다", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "구글 회원가입에 실패했습니다", Toast.LENGTH_SHORT).show()
         }
     }
 
