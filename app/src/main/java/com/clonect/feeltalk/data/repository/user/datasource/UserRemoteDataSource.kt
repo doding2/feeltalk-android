@@ -11,7 +11,7 @@ interface UserRemoteDataSource {
     suspend fun breakUpCouple(accessToken: String): Response<StatusDto>
     suspend fun requestChangingPartnerEmotion(accessToken: String): Response<StatusDto>
 
-    suspend fun getUserProfileUrl(accessToken: String): Response<String>
+    suspend fun getUserProfileUrl(accessToken: String): Response<ProfileImageUrlDto>
 
     suspend fun getCoupleAnniversary(accessToken: String): Response<DDayDto>
 

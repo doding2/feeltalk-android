@@ -142,7 +142,7 @@ class UserRepositoryImpl(
                 return Resource.Success(it)
             }
 
-            val remote = remoteDataSource.getUserProfileUrl(accessToken).body()!!
+            val remote = remoteDataSource.getUserProfileUrl(accessToken).body()!!.url
             localDataSource.saveUserProfileUrl(remote)
             cacheDataSource.saveUserProfileUrl(remote)
             return Resource.Success(remote)
@@ -163,7 +163,7 @@ class UserRepositoryImpl(
             cache?.let { return Resource.Success(it) }
 
             val partnerAccessToken = remoteDataSource.getPartnerInfo(accessToken).body()!!.accessToken
-            val remote = remoteDataSource.getUserProfileUrl(partnerAccessToken).body()!!
+            val remote = remoteDataSource.getUserProfileUrl(partnerAccessToken).body()!!.url
             cacheDataSource.savePartnerProfileUrl(remote)
             return Resource.Success(remote)
         } catch (e: CancellationException) {

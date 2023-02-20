@@ -46,7 +46,7 @@ class UserRemoteDataSourceImpl(
         return response
     }
 
-    override suspend fun getUserProfileUrl(accessToken: String): Response<String> {
+    override suspend fun getUserProfileUrl(accessToken: String): Response<ProfileImageUrlDto> {
         val response = clonectService.getUserProfileUrl(accessToken)
         if (!response.isSuccessful) throw HttpException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")

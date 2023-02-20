@@ -85,7 +85,7 @@ interface ClonectService {
     @GET("/api/memberUrl/{accessToken}")
     suspend fun getUserProfileUrl(
         @Path("accessToken") accessToken: String
-    ): Response<String>
+    ): Response<ProfileImageUrlDto>
 
 
     /** Question **/

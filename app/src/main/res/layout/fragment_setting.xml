@@ -71,7 +71,7 @@
                         android:id="@+id/iv_my_profile"
                         android:layout_width="150dp"
                         android:layout_height="150dp"
-                        android:src="@drawable/ic_emotion_happy"/>
+                        android:src="@drawable/image_my_default_profile"/>
                 </androidx.cardview.widget.CardView>
 
                 <ImageView

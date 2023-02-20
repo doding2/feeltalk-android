@@ -118,10 +118,10 @@ class SettingFragment : Fragment() {
         }
     }
 
-
     private fun ImageView.setProfileImageUrl(url: String?) {
         Glide.with(this)
             .load(url)
+            .fallback(R.drawable.ic_clear)
             .into(this)
     }
 
