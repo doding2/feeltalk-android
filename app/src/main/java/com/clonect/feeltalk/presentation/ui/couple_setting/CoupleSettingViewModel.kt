@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.presentation.ui.couple_setting
 
+import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
@@ -21,6 +22,9 @@ class CoupleSettingViewModel @Inject constructor(
     private val getCoupleAnniversaryUseCase: GetCoupleAnniversaryUseCase,
     private val breakUpCoupleUseCase: BreakUpCoupleUseCase,
     private val clearCoupleInfoUseCase: ClearCoupleInfoUseCase,
+    private val updateProfileImageUseCase: UpdateProfileImageUseCase,
+    private val getMyProfileImageUrlUseCase: GetMyProfileImageUrlUseCase,
+    private val getPartnerProfileImageUrlUseCase: GetPartnerProfileImageUrlUseCase,
 ): ViewModel() {
 
     private val _userInfo = MutableStateFlow(UserInfo())
@@ -29,13 +33,44 @@ class CoupleSettingViewModel @Inject constructor(
     private val _partnerInfo = MutableStateFlow(UserInfo())
     val partnerInfo = _partnerInfo.asStateFlow()
 
+    private val _myProfileImageUrl = MutableStateFlow<String?>(null)
+    val myProfileImageUrl = _myProfileImageUrl.asStateFlow()
+
+    private val _partnerProfileImageUrl = MutableStateFlow<String?>(null)
+    val partnerProfileImageUrl = _partnerProfileImageUrl.asStateFlow()
+
     private val _coupleAnniversary = MutableStateFlow<String?>(null)
     val coupleAnniversary = _coupleAnniversary.asStateFlow()
+
+    private val _isLoading = MutableStateFlow<Boolean>(false)
+    val isLoading = _isLoading.asStateFlow()
 
     init {
         getUserInfo()
         getPartnerInfo()
+        getMyProfileImageUrl()
+        getPartnerProfileImageUrl()
         getCoupleAnniversary()
+    }
+
+
+    suspend fun updateProfileImage(image: Bitmap) = withContext(Dispatchers.IO) {
+        val result = updateProfileImageUseCase(image)
+        return@withContext when (result) {
+            is Resource.Success -> {
+                val profileUrl = result.data.url
+                _myProfileImageUrl.value = profileUrl
+                true
+            }
+            is Resource.Error -> {
+                infoLog("Fail to update profile image: ${result.throwable.localizedMessage}")
+                false
+            }
+            else -> {
+                infoLog("Fail to update profile image")
+                false
+            }
+        }
     }
 
     private fun getUserInfo() = viewModelScope.launch(Dispatchers.IO) {
@@ -52,6 +87,25 @@ class CoupleSettingViewModel @Inject constructor(
             is Resource.Success -> _partnerInfo.value = result.data
             is Resource.Error -> infoLog("Fail to get partner info: ${result.throwable.localizedMessage}")
             else -> infoLog("Fail to get partner info")
+        }
+    }
+
+    private fun getMyProfileImageUrl() = viewModelScope.launch(Dispatchers.IO) {
+        val result = getMyProfileImageUrlUseCase()
+        when (result) {
+            is Resource.Success -> { _myProfileImageUrl.value = result.data }
+            is Resource.Error -> infoLog("Fail to get my profile image url: ${result.throwable.localizedMessage}")
+            else -> infoLog("Fail to get my profile image url")
+        }
+    }
+
+
+    private fun getPartnerProfileImageUrl() = viewModelScope.launch(Dispatchers.IO) {
+        val result = getPartnerProfileImageUrlUseCase()
+        when (result) {
+            is Resource.Success -> { _partnerProfileImageUrl.value = result.data }
+            is Resource.Error -> infoLog("Fail to get partner profile image url: ${result.throwable.localizedMessage}")
+            else -> infoLog("Fail to get partner profile image url")
         }
     }
 
@@ -80,6 +134,11 @@ class CoupleSettingViewModel @Inject constructor(
             }
             else -> false
         }
+    }
+
+
+    fun setLoading(isLoading: Boolean) {
+        _isLoading.value = isLoading
     }
 
 }

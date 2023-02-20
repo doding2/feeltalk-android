@@ -1,10 +1,16 @@
 package com.clonect.feeltalk.data.repository.user.datasourceImpl
 
+import android.graphics.Bitmap
 import com.clonect.feeltalk.data.api.ClonectService
 import com.clonect.feeltalk.data.repository.user.datasource.UserRemoteDataSource
+import com.clonect.feeltalk.data.utils.BitmapRequestBody
 import com.clonect.feeltalk.domain.model.dto.common.StatusDto
 import com.clonect.feeltalk.domain.model.dto.user.*
+import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.gson.JsonObject
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.HttpException
 import retrofit2.Response
 
@@ -41,6 +47,20 @@ class UserRemoteDataSourceImpl(
             addProperty("accessToken", accessToken)
         }
         val response = clonectService.requestChangingPartnerEmotion(body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
+
+
+    override suspend fun updateUserProfileImage(accessToken: String, image: Bitmap): Response<ProfileImageUrlDto> {
+        infoLog("update user profile image accessToken: ${accessToken}")
+        val accessTokenRequestBody = accessToken.toRequestBody("text/plain".toMediaType())
+        val bitmapRequestBody = BitmapRequestBody(image)
+        val response = clonectService.updateMyProfileImage(
+            image = MultipartBody.Part.create(bitmapRequestBody),
+            accessToken = MultipartBody.Part.create(accessTokenRequestBody)
+        )
         if (!response.isSuccessful) throw HttpException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response

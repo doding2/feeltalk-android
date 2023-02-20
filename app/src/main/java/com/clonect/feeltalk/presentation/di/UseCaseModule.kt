@@ -294,4 +294,10 @@ class UseCaseModule {
         return CheckIsAppleLoggedInUseCase(userRepository)
     }
 
+    @Singleton
+    @Provides
+    fun providesUpdateProfileImageUseCase(userRepository: UserRepository): UpdateProfileImageUseCase {
+        return UpdateProfileImageUseCase(userRepository)
+    }
+
 }

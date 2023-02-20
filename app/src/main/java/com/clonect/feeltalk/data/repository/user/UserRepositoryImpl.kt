@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.data.repository.user
 
+import android.graphics.Bitmap
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.data.mapper.toEmotion
 import com.clonect.feeltalk.data.mapper.toUserInfo
@@ -8,10 +9,7 @@ import com.clonect.feeltalk.data.repository.user.datasource.UserLocalDataSource
 import com.clonect.feeltalk.data.repository.user.datasource.UserRemoteDataSource
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.model.dto.common.StatusDto
-import com.clonect.feeltalk.domain.model.dto.user.AccessTokenDto
-import com.clonect.feeltalk.domain.model.dto.user.CoupleCheckDto
-import com.clonect.feeltalk.domain.model.dto.user.PartnerCodeCheckDto
-import com.clonect.feeltalk.domain.model.dto.user.SignUpDto
+import com.clonect.feeltalk.domain.model.dto.user.*
 import com.clonect.feeltalk.domain.repository.UserRepository
 import kotlinx.coroutines.CancellationException
 
@@ -124,6 +122,24 @@ class UserRepositoryImpl(
             throw e
         } catch (e: Exception) {
             return Resource.Error(e)
+        }
+    }
+
+
+    override suspend fun updateMyProfileImage(image: Bitmap): Resource<ProfileImageUrlDto> {
+        return try {
+            val accessToken = cacheDataSource.getAccessToken()
+                ?: localDataSource.getAccessToken()
+                ?: throw NullPointerException("User is Not logged in.")
+
+            val remote = remoteDataSource.updateUserProfileImage(accessToken, image).body()!!
+            localDataSource.saveUserProfileUrl(remote.url)
+            cacheDataSource.saveUserProfileUrl(remote.url)
+            Resource.Success(remote)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
         }
     }
 

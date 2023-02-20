@@ -13,11 +13,9 @@ import com.clonect.feeltalk.domain.model.dto.question.SendQuestionDto
 import com.clonect.feeltalk.domain.model.dto.question.TodayQuestionDto
 import com.clonect.feeltalk.domain.model.dto.user.*
 import com.google.gson.JsonObject
+import okhttp3.MultipartBody
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface ClonectService {
 
@@ -85,6 +83,13 @@ interface ClonectService {
     @GET("/api/memberUrl/{accessToken}")
     suspend fun getUserProfileUrl(
         @Path("accessToken") accessToken: String
+    ): Response<ProfileImageUrlDto>
+
+    @Multipart
+    @POST("/api/member/image")
+    suspend fun updateMyProfileImage(
+        @Part image: MultipartBody.Part,
+        @Part accessToken: MultipartBody.Part
     ): Response<ProfileImageUrlDto>
 
 

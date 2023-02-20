@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.data.repository.user.datasource
 
+import android.graphics.Bitmap
 import com.clonect.feeltalk.domain.model.dto.common.StatusDto
 import com.clonect.feeltalk.domain.model.dto.user.*
 import com.google.gson.JsonObject
@@ -11,6 +12,7 @@ interface UserRemoteDataSource {
     suspend fun breakUpCouple(accessToken: String): Response<StatusDto>
     suspend fun requestChangingPartnerEmotion(accessToken: String): Response<StatusDto>
 
+    suspend fun updateUserProfileImage(accessToken: String, image: Bitmap): Response<ProfileImageUrlDto>
     suspend fun getUserProfileUrl(accessToken: String): Response<ProfileImageUrlDto>
 
     suspend fun getCoupleAnniversary(accessToken: String): Response<DDayDto>

@@ -1,25 +1,35 @@
 package com.clonect.feeltalk.presentation.ui.couple_setting
 
+import android.app.Activity
+import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.databinding.FragmentCoupleSettingBinding
+import com.clonect.feeltalk.presentation.utils.makeLoadingDialog
 import com.clonect.feeltalk.presentation.utils.showBreakUpCoupleDialog
+import com.clonect.feeltalk.presentation.utils.toBitmap
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.ceil
@@ -30,12 +40,14 @@ class CoupleSettingFragment : Fragment() {
     private lateinit var binding: FragmentCoupleSettingBinding
     private lateinit var onBackCallback: OnBackPressedCallback
     private val viewModel: CoupleSettingViewModel by viewModels()
+    private lateinit var loadingDialog: Dialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentCoupleSettingBinding.inflate(inflater, container, false)
+        loadingDialog = makeLoadingDialog()
         return binding.root
     }
 
@@ -44,10 +56,15 @@ class CoupleSettingFragment : Fragment() {
 
         collectUserInfo()
         collectPartnerInfo()
+        collectMyProfileImageUrl()
+        collectPartnerProfileImageUrl()
         collectCoupleAnniversary()
+        collectIsLoading()
 
         binding.apply {
             btnBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
+
+            ivMyProfile.setOnClickListener { updateProfileImage() }
             
             clPartnerProfile.setOnClickListener { 
                 showBreakUpCoupleDialog(
@@ -66,7 +83,6 @@ class CoupleSettingFragment : Fragment() {
                 )
             }
         }
-        
     }
 
     private fun collectUserInfo() = lifecycleScope.launch {
@@ -98,6 +114,46 @@ class CoupleSettingFragment : Fragment() {
         }
     }
 
+    private fun collectMyProfileImageUrl() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch {
+                viewModel.myProfileImageUrl.collectLatest {
+                    binding.ivMyProfile.setProfileImageUrl(it)
+                }
+            }
+        }
+    }
+
+    private fun collectPartnerProfileImageUrl() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch {
+                viewModel.partnerProfileImageUrl.collectLatest {
+                    binding.ivPartnerProfile.setProfileImageUrl(it)
+                }
+            }
+        }
+    }
+
+    private fun collectIsLoading() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.isLoading.collectLatest {
+                if (it) {
+                    loadingDialog.show()
+                } else {
+                    loadingDialog.dismiss()
+                }
+            }
+        }
+    }
+
+
+    private fun ImageView.setProfileImageUrl(url: String?) {
+        Glide.with(this)
+            .load(url)
+            .fallback(R.drawable.ic_clear)
+            .into(this)
+    }
+
     private fun calculateDDay(date: String): String {
         try {
             val format = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
@@ -110,10 +166,51 @@ class CoupleSettingFragment : Fragment() {
     }
 
 
+    private fun updateProfileImage() {
+        val mimeTypes = arrayOf("image/*")
+
+        val intent = Intent(Intent.ACTION_PICK).apply {
+            type = "image/*"
+            putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false)
+        }
+
+        imageLauncher.launch(intent)
+    }
+
+    private val imageLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (it.resultCode != Activity.RESULT_OK) return@registerForActivityResult
+        val intent = it.data ?: return@registerForActivityResult
+        handleImageIntent(intent)
+    }
+
+    private fun handleImageIntent(intent: Intent) = lifecycleScope.launch(Dispatchers.IO) {
+        val uri = intent.data ?: return@launch
+        viewModel.setLoading(true)
+
+        val image = uri.toBitmap(requireContext())
+        if (image == null) {
+            Toast.makeText(requireContext(), "프로필 이미지 로딩에 실패했습니다.", Toast.LENGTH_SHORT).show()
+            return@launch
+        }
+
+        val isSuccessful = viewModel.updateProfileImage(image)
+        if (!isSuccessful) {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(requireContext(), "프로필 이미지 변경에 실패했습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
+        viewModel.setLoading(false)
+    }
+
+
     private fun navigateToCoupleRegistrationPage() {
         findNavController()
             .navigate(R.id.action_coupleSettingFragment_to_coupleRegistrationFragment)
     }
+
 
 
     override fun onAttach(context: Context) {
