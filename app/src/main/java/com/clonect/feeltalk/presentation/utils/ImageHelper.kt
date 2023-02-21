@@ -12,25 +12,34 @@ fun Uri?.toBitmap(context: Context): Bitmap? {
     val uri = this ?: return null
     var bitmap: Bitmap? = null
     try {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(context.contentResolver, uri))
+        bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            ImageDecoder.decodeBitmap(ImageDecoder.createSource(context.contentResolver, uri))
         } else {
-            bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
+            MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
         }
     } catch (e: IOException) {
         e.printStackTrace()
     }
-    return bitmap
+    return bitmap?.resize()
 }
 
-val Uri?.fileName: String?
-    get() {
-        if (this == null) return null
-        var fileName: String? = null
-        val path = this.path
-        val cut = path!!.lastIndexOf('/')
-        if (cut != -1) {
-            fileName = path.substring(cut + 1)
+fun Bitmap.resize(size: Int = 512): Bitmap {
+    var image = this
+    if (size > 0) {
+        val width = image.width
+        val height = image.height
+        val ratioBitmap = width.toFloat() / height.toFloat()
+        val ratioMax = size.toFloat() / size.toFloat()
+
+        var finalWidth = size
+        var finalHeight = size
+        if (ratioMax > ratioBitmap) {
+            finalWidth = (size.toFloat() * ratioBitmap).toInt()
+        } else {
+            finalHeight = (size.toFloat() / ratioBitmap).toInt()
         }
-        return fileName
+        image = Bitmap.createScaledBitmap(image, finalWidth, finalHeight, true)
     }
+
+    return image
+}
