@@ -80,17 +80,32 @@ interface ClonectService {
         @Body body: JsonObject
     ): Response<StatusDto>
 
-    @GET("/api/memberUrl/{accessToken}")
+    @GET("api/memberUrl/{accessToken}")
     suspend fun getUserProfileUrl(
         @Path("accessToken") accessToken: String
     ): Response<ProfileImageUrlDto>
 
     @Multipart
-    @POST("/api/member/image")
+    @POST("api/member/image")
     suspend fun updateMyProfileImage(
         @Part image: MultipartBody.Part,
         @Part accessToken: MultipartBody.Part
     ): Response<ProfileImageUrlDto>
+
+    @POST("api/member/update/NickName")
+    suspend fun updateNickname(
+        @Body body: JsonObject,
+    ): Response<StatusDto>
+
+    @POST("api/member/update/birth")
+    suspend fun updateBirth(
+        @Body body: JsonObject,
+    ): Response<StatusDto>
+
+    @POST("api/couple/update/startedDating")
+    suspend fun updateCoupleAnniversary(
+        @Body body: JsonObject,
+    ): Response<StatusDto>
 
 
     /** Question **/

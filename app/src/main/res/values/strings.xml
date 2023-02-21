@@ -124,4 +124,5 @@
 
     <!--  fragment_couple_setting.xml  -->
     <string name="couple_setting_start_date_subtitle">우리의 첫 걸음</string>
+    <string name="couple_setting_default_birth">생일</string>
 </resources>

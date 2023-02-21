@@ -273,6 +273,15 @@ class SettingFragment : Fragment() {
     }
 
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.run {
+            getUserInfo()
+            getCoupleAnniversary()
+            getMyProfileImageUrl()
+        }
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         onBackCallback = object: OnBackPressedCallback(true) {

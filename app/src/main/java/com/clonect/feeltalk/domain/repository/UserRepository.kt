@@ -13,6 +13,10 @@ interface UserRepository {
     suspend fun getPartnerInfo(): Resource<UserInfo>
     suspend fun getCoupleAnniversary(): Resource<String>
 
+    suspend fun updateMyNickname(nickname: String): Resource<StatusDto>
+    suspend fun updateBirth(birth: String): Resource<StatusDto>
+    suspend fun updateCoupleAnniversary(coupleAnniversary: String): Resource<StatusDto>
+
     suspend fun updateMyProfileImage(image: Bitmap): Resource<ProfileImageUrlDto>
     suspend fun getMyProfileImageUrl(): Resource<String>
     suspend fun getPartnerProfileImageUrl(): Resource<String>

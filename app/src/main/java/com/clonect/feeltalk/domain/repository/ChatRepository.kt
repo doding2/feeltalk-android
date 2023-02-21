@@ -9,6 +9,8 @@ interface ChatRepository {
 
     fun getChatListByQuestion(accessToken: String, questionContent: String): Flow<Resource<List<Chat>>>
 
+    suspend fun reloadChatListOfQuestion(accessToken: String, questionContent: String): Resource<String>
+
     suspend fun sendChat(accessToken: String, chat: Chat): Resource<SendChatDto>
 
     /* Only For FCM Service */

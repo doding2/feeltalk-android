@@ -52,13 +52,7 @@ class SettingViewModel @Inject constructor(
     val isUsageInfoNotificationEnabled = _isUsageInfoNotificationEnabled.asStateFlow()
 
 
-    init {
-        getUserInfo()
-        getCoupleAnniversary()
-        getMyProfileImageUrl()
-    }
-
-    private fun getUserInfo() = viewModelScope.launch(Dispatchers.IO) {
+    fun getUserInfo() = viewModelScope.launch(Dispatchers.IO) {
         when (val result = getUserInfoUseCase()) {
             is Resource.Success -> _userInfo.value = result.data
             is Resource.Error -> infoLog("Fail to get user info: ${result.throwable.localizedMessage}")
@@ -66,7 +60,7 @@ class SettingViewModel @Inject constructor(
         }
     }
 
-    private fun getCoupleAnniversary() = viewModelScope.launch(Dispatchers.IO) {
+    fun getCoupleAnniversary() = viewModelScope.launch(Dispatchers.IO) {
         val result = getCoupleAnniversaryUseCase()
         when (result) {
             is Resource.Success -> { _coupleAnniversary.value = result.data }
@@ -75,7 +69,7 @@ class SettingViewModel @Inject constructor(
         }
     }
 
-    private fun getMyProfileImageUrl() = viewModelScope.launch(Dispatchers.IO) {
+    fun getMyProfileImageUrl() = viewModelScope.launch(Dispatchers.IO) {
         val result = getMyProfileImageUrlUseCase()
         when (result) {
             is Resource.Success -> { _myProfileImageUrl.value = result.data }

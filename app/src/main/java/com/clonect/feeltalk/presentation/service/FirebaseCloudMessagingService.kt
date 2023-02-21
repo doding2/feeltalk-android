@@ -22,6 +22,7 @@ import com.clonect.feeltalk.domain.usecase.question.SaveQuestionToDatabaseUseCas
 import com.clonect.feeltalk.domain.usecase.user.CheckUserIsSignedUpUseCase
 import com.clonect.feeltalk.presentation.service.notification_observer.CoupleRegistrationObserver
 import com.clonect.feeltalk.presentation.service.notification_observer.FcmNewChatObserver
+import com.clonect.feeltalk.presentation.service.notification_observer.QuestionAnswerObserver
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.presentation.ui.activity.MainActivity
 import com.clonect.feeltalk.presentation.utils.infoLog
@@ -150,11 +151,21 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     }
 
     private fun handlePartnerAnsweredData(data: Map<String, String>)  {
+        val questionContent = data["detail"] ?: return
+
+        val showingQuestionContent = FeeltalkApp.getQuestionIdOfShowingChatFragment()
+        val isAppShowing = FeeltalkApp.getAppRunning()
+
+        if (isAppShowing && showingQuestionContent == questionContent) {
+            QuestionAnswerObserver
+                .getInstance()
+                .setAnswerUpdated(true)
+        }
+
         // TODO DB에서 질문 가져와서 내가 대답 했는지 확인 후
         // 했으면 채팅으로
         // 안 했으면 질문으로 보내기
 
-        val questionContent = data["detail"] ?: return
 //        val newQuestion = Question(
 //            question = questionContent
 //        )

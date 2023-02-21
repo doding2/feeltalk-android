@@ -25,6 +25,9 @@ class CoupleSettingViewModel @Inject constructor(
     private val updateProfileImageUseCase: UpdateProfileImageUseCase,
     private val getMyProfileImageUrlUseCase: GetMyProfileImageUrlUseCase,
     private val getPartnerProfileImageUrlUseCase: GetPartnerProfileImageUrlUseCase,
+    private val updateNicknameUseCase: UpdateNicknameUseCase,
+    private val updateBirthUseCase: UpdateBirthUseCase,
+    private val updateCoupleAnniversaryUseCase: UpdateCoupleAnniversaryUseCase,
 ): ViewModel() {
 
     private val _userInfo = MutableStateFlow(UserInfo())
@@ -51,6 +54,49 @@ class CoupleSettingViewModel @Inject constructor(
         getMyProfileImageUrl()
         getPartnerProfileImageUrl()
         getCoupleAnniversary()
+    }
+
+
+    suspend fun updateNickname(nickname: String) = withContext(Dispatchers.IO) {
+        val result = updateNicknameUseCase(nickname)
+        return@withContext when (result) {
+            is Resource.Success -> {
+                _userInfo.value = _userInfo.value.copy(nickname = nickname)
+                true
+            }
+            else -> {
+                infoLog("Fail to update nickname")
+                false
+            }
+        }
+    }
+
+    suspend fun updateBirth(birth: String) = withContext(Dispatchers.IO) {
+        val result = updateBirthUseCase(birth)
+        return@withContext when (result) {
+            is Resource.Success -> {
+                _userInfo.value = _userInfo.value.copy(birth = birth)
+                true
+            }
+            else -> {
+                infoLog("Fail to update birth")
+                false
+            }
+        }
+    }
+
+    suspend fun updateCoupleAnniversary(coupleAnniversary: String) = withContext(Dispatchers.IO) {
+        val result = updateCoupleAnniversaryUseCase(coupleAnniversary)
+        return@withContext when (result) {
+            is Resource.Success -> {
+                _coupleAnniversary.value = coupleAnniversary
+                true
+            }
+            else -> {
+                infoLog("Fail to update nickname")
+                false
+            }
+        }
     }
 
 
@@ -112,7 +158,9 @@ class CoupleSettingViewModel @Inject constructor(
     private fun getCoupleAnniversary() = viewModelScope.launch(Dispatchers.IO) {
         val result = getCoupleAnniversaryUseCase()
         when (result) {
-            is Resource.Success -> { _coupleAnniversary.value = result.data }
+            is Resource.Success -> {
+                _coupleAnniversary.value = result.data
+            }
             is Resource.Error -> infoLog("Fail to get d day: ${result.throwable.localizedMessage}")
             else -> infoLog("Fail to get partner d day")
         }

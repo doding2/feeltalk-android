@@ -15,6 +15,9 @@ interface UserRemoteDataSource {
     suspend fun updateUserProfileImage(accessToken: String, image: Bitmap): Response<ProfileImageUrlDto>
     suspend fun getUserProfileUrl(accessToken: String): Response<ProfileImageUrlDto>
 
+    suspend fun updateNickname(accessToken: String, nickname: String): Response<StatusDto>
+    suspend fun updateBirth(accessToken: String, birth: String): Response<StatusDto>
+    suspend fun updateCoupleAnniversary(accessToken: String, coupleAnniversary: String): Response<StatusDto>
     suspend fun getCoupleAnniversary(accessToken: String): Response<DDayDto>
 
     suspend fun checkUserIsCouple(accessToken: String): Response<CoupleCheckDto>

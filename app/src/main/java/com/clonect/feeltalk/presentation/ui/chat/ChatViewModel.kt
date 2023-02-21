@@ -8,9 +8,11 @@ import com.clonect.feeltalk.domain.model.data.chat.Chat
 import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.usecase.chat.GetChatListUseCase
+import com.clonect.feeltalk.domain.usecase.chat.ReloadChatListUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SendChatUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetPartnerInfoUseCase
 import com.clonect.feeltalk.presentation.service.notification_observer.FcmNewChatObserver
+import com.clonect.feeltalk.presentation.service.notification_observer.QuestionAnswerObserver
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,6 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -28,6 +31,7 @@ class ChatViewModel @Inject constructor(
     private val getPartnerInfoUseCase: GetPartnerInfoUseCase,
     private val getChatListUseCase: GetChatListUseCase,
     private val sendChatUseCase: SendChatUseCase,
+    private val reloadChatListUseCase: ReloadChatListUseCase,
     savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
@@ -53,6 +57,18 @@ class ChatViewModel @Inject constructor(
         getPartnerInfo()
         collectChatList()
         collectFcmNewChat()
+        collectIsAnswerUpdated()
+    }
+
+    private fun collectIsAnswerUpdated() = viewModelScope.launch(Dispatchers.IO) {
+        QuestionAnswerObserver
+            .getInstance()
+            .isAnswerUpdated
+            .collectLatest { isUpdated ->
+                if (isUpdated) {
+                    reloadChatListUseCase(_question.value.question)
+                }
+            }
     }
 
     private fun collectFcmNewChat() = viewModelScope.launch(Dispatchers.IO) {
@@ -144,5 +160,6 @@ class ChatViewModel @Inject constructor(
         super.onCleared()
         FeeltalkApp.setQuestionIdOfShowingChatFragment(null)
         FcmNewChatObserver.onCleared()
+        QuestionAnswerObserver.onCleared()
     }
 }

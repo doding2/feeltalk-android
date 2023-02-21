@@ -167,15 +167,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setQuestionLetterText(question: Question?) = binding.apply {
-        if (question == null) {
-            textLetterTitle.visibility = View.GONE
-            textLetterMessage.visibility = View.GONE
-        } else {
-            textLetterTitle.visibility = View.VISIBLE
-            textLetterMessage.visibility = View.VISIBLE
-        }
-
-        if (question?.question == "") {
+        if (question?.question.isNullOrBlank()) {
             textLetterTitle.text = "질문이 준비되지 않았습니다."
             textLetterMessage.text = "조금만 기다려주세요"
             return@apply
@@ -210,7 +202,7 @@ class HomeFragment : Fragment() {
 
     private fun navigateByQuestion() {
         val question = viewModel.todayQuestion.value ?: return
-        if (question.question == "") return
+        if (question.question.isBlank()) return
 
         if (question.myAnswer == null) {
             navigateToTodayQuestionPage()

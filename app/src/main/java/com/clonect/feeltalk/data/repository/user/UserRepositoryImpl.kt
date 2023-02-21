@@ -109,19 +109,92 @@ class UserRepositoryImpl(
             val cache = cacheDataSource.getCoupleAnniversary()
             cache?.let { return Resource.Success(cache) }
 
-            val local = localDataSource.getCoupleAnniversary()
-            local?.let { return Resource.Success(local) }
+            val remote = remoteDataSource.getCoupleAnniversary(accessToken).body()!!
+            val anniversaryDate = StringBuilder(remote.date).run {
+                insert(4 , '/')
+                insert(7 , '/')
+                toString()
+            }
 
-            val remote = remoteDataSource.getCoupleAnniversary(accessToken)
-                .body()!!.date.replace(". ", "/")
-
-            localDataSource.saveCoupleAnniversary(remote)
-            cacheDataSource.saveCoupleAnniversary(remote)
-            return Resource.Success(remote)
+            cacheDataSource.saveCoupleAnniversary(anniversaryDate)
+            return Resource.Success(anniversaryDate)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
             return Resource.Error(e)
+        }
+    }
+
+    override suspend fun updateMyNickname(nickname: String): Resource<StatusDto> {
+        return try {
+            val accessToken = cacheDataSource.getAccessToken()
+                ?: localDataSource.getAccessToken()
+                ?: throw NullPointerException("User is Not logged in.")
+
+            val remote = remoteDataSource.updateNickname(accessToken, nickname).body()!!
+
+            val localUserInfo = localDataSource.getUserInfo()
+            if (localUserInfo != null) {
+                localUserInfo.nickname = nickname
+                localDataSource.saveUserInfo(localUserInfo)
+            }
+
+            val cacheUserInfo = cacheDataSource.getUserInfo()
+            if (cacheUserInfo != null) {
+                cacheUserInfo.nickname = nickname
+                cacheDataSource.saveUserInfoToCache(cacheUserInfo)
+            }
+
+            Resource.Success(remote)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun updateBirth(birth: String): Resource<StatusDto> {
+        return try {
+            val accessToken = cacheDataSource.getAccessToken()
+                ?: localDataSource.getAccessToken()
+                ?: throw NullPointerException("User is Not logged in.")
+
+            val remote = remoteDataSource.updateBirth(accessToken, birth).body()!!
+
+            val localUserInfo = localDataSource.getUserInfo()
+            if (localUserInfo != null) {
+                localUserInfo.birth = birth
+                localDataSource.saveUserInfo(localUserInfo)
+            }
+
+            val cacheUserInfo = cacheDataSource.getUserInfo()
+            if (cacheUserInfo != null) {
+                cacheUserInfo.birth = birth
+                cacheDataSource.saveUserInfoToCache(cacheUserInfo)
+            }
+
+            Resource.Success(remote)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun updateCoupleAnniversary(coupleAnniversary: String): Resource<StatusDto> {
+        return try {
+            val accessToken = cacheDataSource.getAccessToken()
+                ?: localDataSource.getAccessToken()
+                ?: throw NullPointerException("User is Not logged in.")
+
+            val remote = remoteDataSource.updateCoupleAnniversary(accessToken, coupleAnniversary).body()!!
+            cacheDataSource.saveCoupleAnniversary(coupleAnniversary)
+
+            Resource.Success(remote)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
         }
     }
 

@@ -68,6 +68,45 @@ class UserRemoteDataSourceImpl(
         return response
     }
 
+    override suspend fun updateNickname(
+        accessToken: String,
+        nickname: String,
+    ): Response<StatusDto> {
+        val body = JsonObject().apply {
+            addProperty("accessToken", accessToken)
+            addProperty("nickName", nickname)
+        }
+        val response = clonectService.updateNickname(body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
+
+    override suspend fun updateBirth(accessToken: String, birth: String): Response<StatusDto> {
+        val body = JsonObject().apply {
+            addProperty("accessToken", accessToken)
+            addProperty("birth", birth)
+        }
+        val response = clonectService.updateBirth(body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
+
+    override suspend fun updateCoupleAnniversary(
+        accessToken: String,
+        coupleAnniversary: String,
+    ): Response<StatusDto> {
+        val body = JsonObject().apply {
+            addProperty("accessToken", accessToken)
+            addProperty("createAt", coupleAnniversary)
+        }
+        val response = clonectService.updateCoupleAnniversary(body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
+
 
     override suspend fun getCoupleAnniversary(accessToken: String): Response<DDayDto> {
         val response = clonectService.getDDay(accessToken)

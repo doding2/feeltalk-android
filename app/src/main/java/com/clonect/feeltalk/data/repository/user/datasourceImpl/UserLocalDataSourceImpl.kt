@@ -68,25 +68,6 @@ class UserLocalDataSourceImpl(
     }
 
 
-    override suspend fun getCoupleAnniversary(): String? {
-        val file = File(context.filesDir, "couple_anniversary.txt")
-        if (!file.exists()) return null
-        val coupleAnniversary = file.bufferedReader().use {
-            val encrypted = it.readLine()
-            appLevelEncryptHelper.decrypt("coupleAnniversary", encrypted)
-        }
-        return coupleAnniversary
-    }
-
-    override suspend fun saveCoupleAnniversary(date: String) {
-        val file = File(context.filesDir, "couple_anniversary.txt")
-        file.bufferedWriter().use {
-            val encrypted = appLevelEncryptHelper.encrypt("coupleAnniversary", date)
-            it.write(encrypted)
-        }
-    }
-
-
     override suspend fun getCoupleRegistrationCode(): String? {
         val file = File(context.filesDir, "couple_registration_code.txt")
         if (!file.exists() || !file.canRead())
@@ -169,20 +150,15 @@ class UserLocalDataSourceImpl(
         val isAppleLoggedInFile = File(context.filesDir, "is_apple_logged_in.txt")
         val accessTokenFile = File(context.filesDir, "access_token.txt")
         val registrationCodeFile = File(context.filesDir, "couple_registration_code.txt")
-        val coupleAnniversaryFile = File(context.filesDir, "couple_anniversary.txt")
         val userInfoFile = File(context.filesDir, "user_info.dat")
 
         feeltalkDatabase.clearAllTables()
         context.deleteDatabase("feeltalkDatabase.db")
-//        val databasesDir = File(context.applicationInfo.dataDir + "/databases/")
-//        val databaseFile = File(databasesDir, "feeltalkDatabase.db")
 
         return idTokenFile.delete()
                 && isAppleLoggedInFile.delete()
                 && accessTokenFile.delete()
                 && registrationCodeFile.delete()
-                && coupleAnniversaryFile.delete()
                 && userInfoFile.delete()
-//                && databasesDir.deleteRecursively()
     }
 }

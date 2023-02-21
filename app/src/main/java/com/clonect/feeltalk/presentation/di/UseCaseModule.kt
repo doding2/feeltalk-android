@@ -8,6 +8,7 @@ import com.clonect.feeltalk.domain.usecase.*
 import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.chat.GetChatListUseCase
+import com.clonect.feeltalk.domain.usecase.chat.ReloadChatListUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SaveChatUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SendChatUseCase
 import com.clonect.feeltalk.domain.usecase.encryption.*
@@ -298,6 +299,30 @@ class UseCaseModule {
     @Provides
     fun providesUpdateProfileImageUseCase(userRepository: UserRepository): UpdateProfileImageUseCase {
         return UpdateProfileImageUseCase(userRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesUpdateNicknameUseCase(userRepository: UserRepository): UpdateNicknameUseCase {
+        return UpdateNicknameUseCase(userRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesUpdateBirthUseCase(userRepository: UserRepository): UpdateBirthUseCase {
+        return UpdateBirthUseCase(userRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesUpdateCoupleAnniversaryUseCase(userRepository: UserRepository): UpdateCoupleAnniversaryUseCase {
+        return UpdateCoupleAnniversaryUseCase(userRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesReloadChatListUseCase(userRepository: UserRepository, chatRepository: ChatRepository): ReloadChatListUseCase {
+        return ReloadChatListUseCase(userRepository, chatRepository)
     }
 
 }

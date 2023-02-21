@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -34,6 +36,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.ceil
 
+
 @AndroidEntryPoint
 class CoupleSettingFragment : Fragment() {
 
@@ -53,6 +56,8 @@ class CoupleSettingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        initEditTexts()
 
         collectUserInfo()
         collectPartnerInfo()
@@ -88,8 +93,8 @@ class CoupleSettingFragment : Fragment() {
     private fun collectUserInfo() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.userInfo.collectLatest {
-                binding.textMyName.text = it.nickname
-                binding.textMyBirthDate.text = it.birth
+                binding.etMyName.setText(it.nickname)
+                binding.metMyBirthDate.setText(it.birth)
             }
         }
     }
@@ -97,7 +102,7 @@ class CoupleSettingFragment : Fragment() {
     private fun collectPartnerInfo() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.partnerInfo.collectLatest {
-                binding.textPartnerName.text = it.nickname
+                binding.textPartnerName.setText(it.nickname)
                 binding.textPartnerBirthDate.text = it.birth
             }
         }
@@ -106,9 +111,12 @@ class CoupleSettingFragment : Fragment() {
     private fun collectCoupleAnniversary() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.coupleAnniversary.collectLatest {
-                binding.textCoupleAnniversary.text = it?.replace("/", ". ")
-                it?.let {
+                binding.metCoupleAnniversary.setText(it?.replace("/", ". "))
+                if (it != null) {
                     binding.textDDayValue.text = calculateDDay(it)
+                }
+                if (it.isNullOrBlank()) {
+                    binding.metCoupleAnniversary.setText("0000/00/00")
                 }
             }
         }
@@ -144,6 +152,84 @@ class CoupleSettingFragment : Fragment() {
                 }
             }
         }
+    }
+
+
+    private fun initEditTexts() = binding.apply {
+        val dateFormat = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+        dateFormat.isLenient = false
+
+        etMyName.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE && !etMyName.text.isNullOrBlank()) {
+                lifecycleScope.launch {
+                    val isSuccessful = viewModel.updateNickname(etMyName.text.toString())
+                    if (isSuccessful) {
+                        etMyName.clearFocus()
+                        etMyName.hideKeyboard()
+                        Toast.makeText(requireContext(), "닉네임을 변경했습니다", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireContext(), "닉네임 변경에 실패했습니다", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                return@setOnEditorActionListener true
+            }
+            false
+        }
+
+        metMyBirthDate.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE && !metMyBirthDate.text.isNullOrBlank()) {
+                lifecycleScope.launch {
+                    val dateString = metMyBirthDate.masked.replace(". ", "/")
+                    try {
+                        dateFormat.parse(dateString)
+                    } catch (e: Exception) {
+                        Toast.makeText(requireContext(), "존재하지 않는 날짜입니다", Toast.LENGTH_SHORT).show()
+                        return@launch
+                    }
+
+                    val isSuccessful = viewModel.updateBirth(dateString)
+                    if (isSuccessful) {
+                        metMyBirthDate.clearFocus()
+                        metMyBirthDate.hideKeyboard()
+                        Toast.makeText(requireContext(), "생일을 변경했습니다", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireContext(), "생일 변경에 실패했습니다", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                return@setOnEditorActionListener true
+            }
+            false
+        }
+
+        metCoupleAnniversary.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE && !metCoupleAnniversary.text.isNullOrBlank()) {
+                lifecycleScope.launch {
+                    val dateString = metCoupleAnniversary.masked.replace(". ", "/")
+                    try {
+                        dateFormat.parse(dateString)
+                    } catch (e: Exception) {
+                        Toast.makeText(requireContext(), "존재하지 않는 날짜입니다", Toast.LENGTH_SHORT).show()
+                        return@launch
+                    }
+
+                    val isSuccessful = viewModel.updateCoupleAnniversary(dateString)
+                    if (isSuccessful) {
+                        metCoupleAnniversary.clearFocus()
+                        metCoupleAnniversary.hideKeyboard()
+                        Toast.makeText(requireContext(), "사귄 첫 날을 변경했습니다", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireContext(), "사귄 첫 날 변경에 실패했습니다", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                return@setOnEditorActionListener true
+            }
+            false
+        }
+    }
+
+    private fun View.hideKeyboard() {
+        val imm: InputMethodManager? = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+        imm?.hideSoftInputFromWindow(this.windowToken, 0)
     }
 
 

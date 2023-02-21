@@ -57,6 +57,26 @@ class ChatRepositoryImpl(
         return flowOf(cacheFlow, localFlow, remoteFlow).flattenMerge()
     }
 
+    override suspend fun reloadChatListOfQuestion(
+        accessToken: String,
+        questionContent: String,
+    ): Resource<String> {
+        val remote = getChatListFromServer(accessToken, questionContent)
+        if (remote is Resource.Success) {
+            val newChatList = remote.data.toChatList(
+                accessToken = accessToken,
+                questionString = questionContent,
+                userLevelEncryptHelper = userLevelEncryptHelper,
+            )
+
+            localDataSource.insertOrUpdate(questionContent, newChatList)
+            cacheDataSource.saveChatListToCacheByQuestion(questionContent, newChatList)
+            return Resource.Success("Success to reload chat list: $questionContent")
+        }
+
+        return Resource.Error(Exception("Fail to reload chat list: $questionContent"))
+    }
+
     override suspend fun sendChat(accessToken: String, chat: Chat): Resource<SendChatDto> {
         return try {
             val encryptedChat = chat.copy(message = userLevelEncryptHelper.encryptMyText(chat.message))
