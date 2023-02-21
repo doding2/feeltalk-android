@@ -3,9 +3,12 @@ package com.clonect.feeltalk.presentation.ui.chat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.ItemChatMineBinding
 import com.clonect.feeltalk.databinding.ItemChatPartnerBinding
 import com.clonect.feeltalk.domain.model.data.chat.Chat
@@ -32,6 +35,8 @@ class ChatAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var onItemClickListener: ((Chat) -> Unit)? = null
 
     private var partnerNickname: String? = null
+    private var partnerProfileUrl: String? = null
+    private var myProfileUrl: String? = null
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -70,14 +75,34 @@ class ChatAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
 
+    fun setMyProfileUrl(url: String?) {
+        myProfileUrl = url
+    }
+
+    fun setPartnerProfileUrl(url: String?) {
+        partnerProfileUrl = url
+    }
+
+    private fun ImageView.setProfileImageUrl(url: String?) {
+        Glide.with(this)
+            .load(url)
+            .circleCrop()
+            .fallback(R.drawable.image_my_default_profile)
+            .error(R.drawable.image_my_default_profile)
+            .into(this)
+    }
+
+
     inner class ChatMineViewHolder(
         val binding: ItemChatMineBinding
     ): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(chat: Chat) {
             binding.apply {
-                if (chat.isAnswer)
+                if (chat.isAnswer) {
                     layoutChatOwner.visibility = View.VISIBLE
+                    binding.ivMyProfile.setProfileImageUrl(myProfileUrl)
+                }
                 else
                     layoutChatOwner.visibility = View.GONE
 
@@ -100,6 +125,7 @@ class ChatAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 if (chat.isAnswer) {
                     textPartnerName.text = partnerNickname
                     layoutChatOwner.visibility = View.VISIBLE
+                    binding.ivMyProfile.setProfileImageUrl(partnerProfileUrl)
                 }
                 else
                     layoutChatOwner.visibility = View.GONE

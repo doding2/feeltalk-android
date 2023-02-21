@@ -145,7 +145,6 @@ class CoupleSettingViewModel @Inject constructor(
         }
     }
 
-
     private fun getPartnerProfileImageUrl() = viewModelScope.launch(Dispatchers.IO) {
         val result = getPartnerProfileImageUrlUseCase()
         when (result) {

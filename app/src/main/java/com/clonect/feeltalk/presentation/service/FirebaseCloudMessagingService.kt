@@ -160,6 +160,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             QuestionAnswerObserver
                 .getInstance()
                 .setAnswerUpdated(true)
+            return
         }
 
         // TODO DB에서 질문 가져와서 내가 대답 했는지 확인 후

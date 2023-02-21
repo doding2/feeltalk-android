@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -16,6 +17,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentChatBinding
 import com.clonect.feeltalk.domain.model.data.question.Question
@@ -54,6 +56,8 @@ class ChatFragment : Fragment() {
         collectQuestion()
         collectChatList()
         collectScrollPosition()
+        collectMyProfileImageUrl()
+        collectPartnerProfileImageUrl()
 
         binding.btnSendChat.setOnClickListener { sendChat() }
 
@@ -108,6 +112,27 @@ class ChatFragment : Fragment() {
         }
     }
 
+    private fun collectMyProfileImageUrl() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch {
+                viewModel.myProfileImageUrl.collectLatest {
+                    adapter.setMyProfileUrl(it)
+                }
+            }
+        }
+    }
+
+    private fun collectPartnerProfileImageUrl() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch {
+                viewModel.partnerProfileImageUrl.collectLatest {
+                    adapter.setPartnerProfileUrl(it)
+                    binding.ivPartnerProfile.setProfileImageUrl(it)
+                }
+            }
+        }
+    }
+
     private fun collectScrollPosition() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.scrollPositionState.collectLatest {
@@ -115,6 +140,7 @@ class ChatFragment : Fragment() {
             }
         }
     }
+
 
 
     private fun initActionBar() = binding.apply {
@@ -145,6 +171,17 @@ class ChatFragment : Fragment() {
             binding.rvChat.scrollBy(0, rangeMoved)
         }
     }
+
+
+    private fun ImageView.setProfileImageUrl(url: String?) {
+        Glide.with(this)
+            .load(url)
+            .circleCrop()
+            .fallback(R.drawable.image_my_default_profile)
+            .error(R.drawable.image_my_default_profile)
+            .into(this)
+    }
+
 
     private fun computeRemainScrollHeight(): Int {
         return binding.rvChat.run {

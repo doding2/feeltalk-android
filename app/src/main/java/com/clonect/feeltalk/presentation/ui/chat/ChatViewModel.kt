@@ -10,7 +10,9 @@ import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.usecase.chat.GetChatListUseCase
 import com.clonect.feeltalk.domain.usecase.chat.ReloadChatListUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SendChatUseCase
+import com.clonect.feeltalk.domain.usecase.user.GetMyProfileImageUrlUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetPartnerInfoUseCase
+import com.clonect.feeltalk.domain.usecase.user.GetPartnerProfileImageUrlUseCase
 import com.clonect.feeltalk.presentation.service.notification_observer.FcmNewChatObserver
 import com.clonect.feeltalk.presentation.service.notification_observer.QuestionAnswerObserver
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
@@ -32,6 +34,8 @@ class ChatViewModel @Inject constructor(
     private val getChatListUseCase: GetChatListUseCase,
     private val sendChatUseCase: SendChatUseCase,
     private val reloadChatListUseCase: ReloadChatListUseCase,
+    private val getMyProfileImageUrlUseCase: GetMyProfileImageUrlUseCase,
+    private val getPartnerProfileImageUrlUseCase: GetPartnerProfileImageUrlUseCase,
     savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
@@ -44,6 +48,13 @@ class ChatViewModel @Inject constructor(
     private val _chatList = MutableStateFlow<List<Chat>>(emptyList())
     val chatList = _chatList.asStateFlow()
 
+    private val _myProfileImageUrl = MutableStateFlow<String?>(null)
+    val myProfileImageUrl = _myProfileImageUrl.asStateFlow()
+
+    private val _partnerProfileImageUrl = MutableStateFlow<String?>(null)
+    val partnerProfileImageUrl = _partnerProfileImageUrl.asStateFlow()
+
+
     private val _scrollPositionState = MutableStateFlow(0)
     val scrollPositionState = _scrollPositionState.asStateFlow()
 
@@ -55,6 +66,8 @@ class ChatViewModel @Inject constructor(
             infoLog("Chat Room Entered: $it")
         }
         getPartnerInfo()
+        getMyProfileImageUrl()
+        getPartnerProfileImageUrl()
         collectChatList()
         collectFcmNewChat()
         collectIsAnswerUpdated()
@@ -100,6 +113,24 @@ class ChatViewModel @Inject constructor(
                     infoLog("Fail to get chat list")
                 }
             }
+        }
+    }
+
+    private fun getMyProfileImageUrl() = viewModelScope.launch(Dispatchers.IO) {
+        val result = getMyProfileImageUrlUseCase()
+        when (result) {
+            is Resource.Success -> { _myProfileImageUrl.value = result.data }
+            is Resource.Error -> infoLog("Fail to get my profile image url: ${result.throwable.localizedMessage}")
+            else -> infoLog("Fail to get my profile image url")
+        }
+    }
+
+    private fun getPartnerProfileImageUrl() = viewModelScope.launch(Dispatchers.IO) {
+        val result = getPartnerProfileImageUrlUseCase()
+        when (result) {
+            is Resource.Success -> { _partnerProfileImageUrl.value = result.data }
+            is Resource.Error -> infoLog("Fail to get partner profile image url: ${result.throwable.localizedMessage}")
+            else -> infoLog("Fail to get partner profile image url")
         }
     }
 

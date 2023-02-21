@@ -25,6 +25,9 @@ class MainViewModel @Inject constructor(
     private val checkUserIsCoupleUseCase: CheckUserIsCoupleUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val getPartnerInfoUseCase: GetPartnerInfoUseCase,
+    private val getAnniversaryUseCase: GetCoupleAnniversaryUseCase,
+    private val getMyProfileImageUrlUseCase: GetMyProfileImageUrlUseCase,
+    private val getPartnerProfileImageUrlUseCase: GetPartnerProfileImageUrlUseCase,
 ) : ViewModel() {
 
     private val _isReady = MutableStateFlow(false)
@@ -122,23 +125,36 @@ class MainViewModel @Inject constructor(
 
     private suspend fun getUserInfo() {
         val result = getUserInfoUseCase()
-        if (result is Resource.Success) {
-            infoLog("Success to get user info: ${result.data}")
-        }
+
         if (result is Resource.Error) {
             sendToast("내 정보를 불러오는데 실패했습니다")
             infoLog("Fail to get user info: ${result.throwable}")
         }
     }
 
-    private suspend fun getPartnerInfo() {
-        val result = getPartnerInfoUseCase()
-        if (result is Resource.Success) {
-            infoLog("Success to get partner info: ${result.data}")
-        }
-        if (result is Resource.Error) {
+    private suspend fun getCoupleInfo() {
+        val infoResult = getPartnerInfoUseCase()
+        if (infoResult is Resource.Error) {
             sendToast("애인의 정보를 불러오는데 실패했습니다")
-            infoLog("Fail to get partner info: ${result.throwable}")
+            infoLog("Fail to get partner info: ${infoResult.throwable}")
+        }
+
+        val myMyProfileResult = getMyProfileImageUrlUseCase()
+        if (myMyProfileResult is Resource.Error) {
+            sendToast("내 프로필 이미지를 불러오는데 실패했습니다")
+            infoLog("Fail to get my profile url: ${myMyProfileResult.throwable}")
+        }
+
+        val partnerProfileResult = getPartnerProfileImageUrlUseCase()
+        if (partnerProfileResult is Resource.Error) {
+            sendToast("애인의 프로필 이미지를 불러오는데 실패했습니다")
+            infoLog("Fail to get partner profile url: ${partnerProfileResult.throwable}")
+        }
+
+        val anniversaryResult = getAnniversaryUseCase()
+        if (anniversaryResult is Resource.Error) {
+            sendToast("사귄 첫날 정보를 불러오는데 실패했습니다")
+            infoLog("Fail to get partner profile url: ${anniversaryResult.throwable}")
         }
     }
 
@@ -183,7 +199,7 @@ class MainViewModel @Inject constructor(
         _isUserCouple.value = isUserCouple
 
         if (isUserCouple) {
-            getPartnerInfo()
+            getCoupleInfo()
         }
         setReady()
     }
