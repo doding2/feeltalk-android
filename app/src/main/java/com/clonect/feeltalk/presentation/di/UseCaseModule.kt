@@ -325,4 +325,22 @@ class UseCaseModule {
         return ReloadChatListUseCase(userRepository, chatRepository)
     }
 
+    @Singleton
+    @Provides
+    fun providesGetQuestionAnswersUseCase(userRepository: UserRepository, questionRepository: QuestionRepository): GetQuestionAnswersUseCase {
+        return GetQuestionAnswersUseCase(userRepository, questionRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesRestoreKeysUseCase(userRepository: UserRepository, encryptionRepository: EncryptionRepository): RestoreKeysUseCase {
+        return RestoreKeysUseCase(userRepository, encryptionRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesHelpToRestoreKeysUseCase(userRepository: UserRepository, encryptionRepository: EncryptionRepository): HelpToRestoreKeysUseCase {
+        return HelpToRestoreKeysUseCase(userRepository, encryptionRepository)
+    }
+
 }

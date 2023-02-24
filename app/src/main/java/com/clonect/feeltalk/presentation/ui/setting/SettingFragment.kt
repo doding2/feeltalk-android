@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -70,6 +71,18 @@ class SettingFragment : Fragment() {
             llDDay.setOnClickListener { navigateToCoupleSettingPage() }
 
             llLogOut.setOnClickListener { logOut() }
+            
+            btnAnotherSetting.setOnClickListener { 
+                lifecycleScope.launch {
+                    Toast.makeText(requireContext(), "키 복구 시작", Toast.LENGTH_SHORT).show()
+                    val isSuccessful = viewModel.restoreKeys()
+                    if (isSuccessful) {
+                        Toast.makeText(requireContext(), "성공", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireContext(), "실패", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
     }
 

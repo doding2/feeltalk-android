@@ -2,8 +2,10 @@ package com.clonect.feeltalk.presentation.ui.today_question
 
 import android.app.Dialog
 import android.content.Context
+import android.graphics.Typeface
 import android.os.Bundle
 import android.text.SpannableString
+import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.View
@@ -53,6 +55,8 @@ class TodayQuestionFragment : Fragment() {
         initMyAnswerEditText()
         collectQuestion()
         collectIsLoading()
+        collectPartnerInfo()
+        collectPartnerAnswer()
 
         binding.apply {
             btnBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
@@ -136,7 +140,6 @@ class TodayQuestionFragment : Fragment() {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.questionStateFlow.collectLatest {
                 reassembleQuestionTitle(it)
-                changePartnerStateTextView(it)
 
                 if (viewModel.myAnswerStateFlow.value != "")
                     enableEnterAnswerButton(true)
@@ -144,27 +147,50 @@ class TodayQuestionFragment : Fragment() {
         }
     }
 
-
-    private fun changePartnerStateTextView(question: Question) = binding.apply {
-        if (!question.partnerAnswer.isNullOrBlank()) {
-            textPartnerStatePrefix.setText(R.string.today_question_partner_state_not_done_prefix)
-            val stateText = getString(R.string.today_question_partner_state_not_done)
-            val stateUnderLine = SpannableString(stateText).apply {
-                setSpan(UnderlineSpan(), 0, this.length, 0)
+    private fun collectPartnerInfo() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.partnerInfo.collectLatest {
+                binding.tvPartnerNickname.text = it?.nickname ?: ""
             }
-            textPartnerState.text = stateUnderLine
-            textPartnerStateEmoji.setText(R.string.today_question_partner_state_not_done_emoji)
-            return@apply
         }
-
-        textPartnerStatePrefix.setText(R.string.today_question_partner_state_already_done_prefix)
-        val stateText = getString(R.string.today_question_partner_state_already_done)
-        val stateUnderLine = SpannableString(stateText).apply {
-            setSpan(UnderlineSpan(), 0, this.length, 0)
-        }
-        textPartnerState.text = stateUnderLine
-        textPartnerStateEmoji.setText(R.string.today_question_partner_state_already_done_emoji)
     }
+
+    private fun collectPartnerAnswer() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.partnerAnswer.collectLatest {
+                // not loaded
+                if (it == null) return@collectLatest
+
+                // partner not entered
+                if (it == "") {
+                    val partner = getString(R.string.today_question_partner_state_not_done_prefix)
+                    val answer = getString(R.string.today_question_partner_state_not_done)
+                    val emoji = getString(R.string.today_question_partner_state_not_done_emoji)
+                    val fullString = partner + answer + emoji
+                    val hint = SpannableString(fullString).apply {
+                        setSpan(StyleSpan(Typeface.BOLD), fullString.indexOf(answer), fullString.length, 0)
+                        setSpan(UnderlineSpan(), fullString.indexOf(answer), fullString.indexOf(emoji), 0)
+                    }
+                    binding.etPartnerAnswer.hint = hint
+                    return@collectLatest
+                }
+
+                // partner entered
+                val partner = getString(R.string.today_question_partner_state_already_done_prefix)
+                val answer = getString(R.string.today_question_partner_state_already_done)
+                val emoji = getString(R.string.today_question_partner_state_already_done_emoji)
+                val secondLine = getString(R.string.today_question_partner_state_already_done_second_line)
+                val fullString = partner + answer + emoji + secondLine
+                val hint = SpannableString(fullString).apply {
+                    setSpan(StyleSpan(Typeface.BOLD), fullString.indexOf(answer), fullString.length, 0)
+                    setSpan(UnderlineSpan(), fullString.indexOf(answer), fullString.indexOf(emoji), 0)
+                }
+                binding.etPartnerAnswer.hint = hint
+            }
+        }
+    }
+
+
 
     private fun reassembleQuestionTitle(question: Question) {
         binding.layoutQuestionContent.removeAllViewsInLayout()

@@ -18,6 +18,8 @@ import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SaveChatUseCase
+import com.clonect.feeltalk.domain.usecase.encryption.HelpToRestoreKeysUseCase
+import com.clonect.feeltalk.domain.usecase.question.GetQuestionAnswersUseCase
 import com.clonect.feeltalk.domain.usecase.question.SaveQuestionToDatabaseUseCase
 import com.clonect.feeltalk.domain.usecase.user.CheckUserIsSignedUpUseCase
 import com.clonect.feeltalk.presentation.service.notification_observer.CoupleRegistrationObserver
@@ -53,6 +55,8 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     // User Level Encryptor
     @Inject
     lateinit var userLevelEncryptHelper: UserLevelEncryptHelper
+    @Inject
+    lateinit var helpToRestoreKeysUseCase: HelpToRestoreKeysUseCase
 
     // Chat
     @Inject
@@ -61,6 +65,8 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     // Question
     @Inject
     lateinit var saveQuestionToDatabaseUseCase: SaveQuestionToDatabaseUseCase
+    @Inject
+    lateinit var getQuestionAnswersUseCase: GetQuestionAnswersUseCase
 
 
     companion object {
@@ -70,13 +76,14 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         const val CHAT_CHANNEL_ID ="feeltalk_chat_notification"
         const val COUPLE_REGISTRATION_CHANNEL_ID ="feeltalk_couple_registration_completed_notification"
         const val ADVERTISING_CHANNEL_ID ="feeltalk_advertising_notification"
+        const val REQUEST_KEY_RESTORING_CHANNEL_ID ="feeltalk_request_key_restoring_notification"
 
         const val TYPE_CHAT = "chat"
         const val TYPE_COUPLE_REGISTRATION = "커플매칭성공"
         const val TYPE_TODAY_QUESTION = "newQuestion"
         const val TYPE_PARTNER_ANSWERED = "isAnswer"
         const val TYPE_REQUEST_EMOTION_CHANGE = "emotionRequest"
-
+        const val TYPE_REQUEST_KEY_RESTORING = "KeyTrade"
     }
 
     override fun onNewToken(newToken: String) {
@@ -119,6 +126,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 TYPE_REQUEST_EMOTION_CHANGE -> handleRequestEmotionChangeData(data)
                 TYPE_CHAT -> handleChatData(data)
                 TYPE_COUPLE_REGISTRATION -> handleCoupleRegistrationData(data)
+                TYPE_REQUEST_KEY_RESTORING -> handleRequestKeyRestoringData(data)
                 else -> handleOtherCases(data)
             }
         }
@@ -150,8 +158,8 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         )
     }
 
-    private fun handlePartnerAnsweredData(data: Map<String, String>)  {
-        val questionContent = data["detail"] ?: return
+    private fun handlePartnerAnsweredData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+        val questionContent = data["detail"] ?: return@launch
 
         val showingQuestionContent = FeeltalkApp.getQuestionIdOfShowingChatFragment()
         val isAppShowing = FeeltalkApp.getAppRunning()
@@ -160,29 +168,41 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             QuestionAnswerObserver
                 .getInstance()
                 .setAnswerUpdated(true)
-            return
+            return@launch
         }
 
-        // TODO DB에서 질문 가져와서 내가 대답 했는지 확인 후
-        // 했으면 채팅으로
-        // 안 했으면 질문으로 보내기
+        val answers = (getQuestionAnswersUseCase(questionContent) as? Resource.Success)?.data
 
-//        val newQuestion = Question(
-//            question = questionContent
-//        )
-//
-//        val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
-//            .setGraph(R.navigation.overall_nav_graph)
-//            .setDestination(R.id.todayQuestionFragment)
-//            .setArguments(bundleOf("selectedQuestion" to newQuestion))
-//            .createPendingIntent()
+        val pendingIntent = if (answers == null) {
+            val intent = Intent(this@FirebaseCloudMessagingService, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent: PendingIntent? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE)
+            val pendingIntent: PendingIntent? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                PendingIntent.getActivity(this@FirebaseCloudMessagingService, 0, intent, PendingIntent.FLAG_MUTABLE)
+            } else {
+                PendingIntent.getActivity(this@FirebaseCloudMessagingService, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+            }
+            pendingIntent
+        } else if (answers.self == null) {
+            val newQuestion = Question(
+                question = questionContent
+            )
+            val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
+                .setGraph(R.navigation.overall_nav_graph)
+                .setDestination(R.id.todayQuestionFragment)
+                .setArguments(bundleOf("selectedQuestion" to newQuestion))
+                .createPendingIntent()
+            deepLinkPendingIntent
         } else {
-            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+            val newQuestion = Question(
+                question = questionContent
+            )
+            val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
+                .setGraph(R.navigation.overall_nav_graph)
+                .setDestination(R.id.chatFragment)
+                .setArguments(bundleOf("selectedQuestion" to newQuestion))
+                .createPendingIntent()
+            deepLinkPendingIntent
         }
 
         showNotification(
@@ -288,6 +308,34 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         }
     }
 
+    private fun handleRequestKeyRestoringData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+        val intent = Intent(this@FirebaseCloudMessagingService, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val pendingIntent: PendingIntent? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getActivity(this@FirebaseCloudMessagingService, 0, intent, PendingIntent.FLAG_MUTABLE)
+        } else {
+            PendingIntent.getActivity(this@FirebaseCloudMessagingService, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+        }
+
+        val result = helpToRestoreKeysUseCase()
+        if (result is Resource.Success) {
+            infoLog("Success to restore keys")
+        } else {
+            infoLog("Fail to restore keys")
+        }
+
+
+        val title = data["title"] ?: ""
+        val message = data["message"] ?: ""
+
+        showNotification(
+            title = title,
+            message = message,
+            channelID = ADVERTISING_CHANNEL_ID,
+            pendingIntent = pendingIntent
+        )
+    }
+
     private fun handleOtherCases(data: Map<String, String>) {
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -376,6 +424,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         CHAT_CHANNEL_ID -> "채팅"
         ADVERTISING_CHANNEL_ID -> "광고"
         COUPLE_REGISTRATION_CHANNEL_ID -> "커플 등록"
+        REQUEST_KEY_RESTORING_CHANNEL_ID -> "키 복구 요청"
         else -> ""
     }
 
@@ -386,6 +435,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         CHAT_CHANNEL_ID -> "채팅"
         ADVERTISING_CHANNEL_ID -> "광고"
         COUPLE_REGISTRATION_CHANNEL_ID -> "커플 등록"
+        REQUEST_KEY_RESTORING_CHANNEL_ID -> "키 복구 요청"
         else -> ""
     }
 }

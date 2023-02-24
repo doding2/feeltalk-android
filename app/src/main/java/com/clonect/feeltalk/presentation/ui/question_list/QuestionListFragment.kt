@@ -69,7 +69,7 @@ class QuestionListFragment : Fragment() {
     }
 
     private fun clickQuestionItem(question: Question) {
-        if (question.myAnswer.isNullOrEmpty()) {
+        if (question.myAnswer == null) {
             navigateToTodayQuestionPage(question)
             return
         }

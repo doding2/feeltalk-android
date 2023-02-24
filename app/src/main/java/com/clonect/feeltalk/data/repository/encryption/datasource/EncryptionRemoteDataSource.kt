@@ -4,6 +4,8 @@ import com.clonect.feeltalk.domain.model.data.encryption.LoadPartnerPrivateKeyDt
 import com.clonect.feeltalk.domain.model.data.encryption.LoadPartnerPublicKeyDto
 import com.clonect.feeltalk.domain.model.dto.common.StatusDto
 import com.clonect.feeltalk.domain.model.dto.encryption.AppLevelAesKeyDto
+import com.clonect.feeltalk.domain.model.dto.encryption.RestorePrivateKeysDto
+import com.clonect.feeltalk.domain.model.dto.encryption.TempPublicKeyDto
 import retrofit2.Response
 
 interface EncryptionRemoteDataSource {
@@ -16,5 +18,14 @@ interface EncryptionRemoteDataSource {
     suspend fun loadPartnerPrivateKey(accessToken: String): Response<LoadPartnerPrivateKeyDto>
 
 
-    suspend fun sendMyPrivateKeyRecoveryRequest(accessToken: String): Response<String>
+    /** Restore Receiver **/
+    suspend fun requestKeyRestoring(accessToken: String): Response<StatusDto>
+    suspend fun loadMyPublicKey(accessToken: String): Response<LoadPartnerPublicKeyDto>
+    suspend fun uploadTempKey(accessToken: String, tempPublicKey: String): Response<StatusDto>
+    suspend fun restorePrivateKeys(accessToken: String): Response<RestorePrivateKeysDto>
+
+
+    /** Restore Sender **/
+    suspend fun loadTempKey(accessToken: String): Response<TempPublicKeyDto>
+    suspend fun uploadTempEncryptedPrivateKey(accessToken: String, privateKey: String): Response<StatusDto>
 }

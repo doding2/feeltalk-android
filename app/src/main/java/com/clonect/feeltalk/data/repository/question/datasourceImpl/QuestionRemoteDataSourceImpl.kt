@@ -2,10 +2,7 @@ package com.clonect.feeltalk.data.repository.question.datasourceImpl
 
 import com.clonect.feeltalk.data.api.ClonectService
 import com.clonect.feeltalk.data.repository.question.datasource.QuestionRemoteDataSource
-import com.clonect.feeltalk.domain.model.dto.question.QuestionAnswersDto
-import com.clonect.feeltalk.domain.model.dto.question.QuestionListDto
-import com.clonect.feeltalk.domain.model.dto.question.SendQuestionDto
-import com.clonect.feeltalk.domain.model.dto.question.TodayQuestionDto
+import com.clonect.feeltalk.domain.model.dto.question.*
 import com.google.gson.JsonObject
 import retrofit2.HttpException
 import retrofit2.Response
@@ -46,11 +43,25 @@ class QuestionRemoteDataSourceImpl(
         return response
     }
 
-    override suspend fun getTodayQuestionAnswers(accessToken: String): Response<QuestionAnswersDto> {
+    override suspend fun getTodayQuestionAnswers(accessToken: String): Response<TodayQuestionAnswersDto> {
         val body = JsonObject().apply {
             addProperty("accessToken", accessToken)
         }
         val response = clonectService.getTodayQuestionAnswers(body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
+
+    override suspend fun getQuestionAnswers(
+        accessToken: String,
+        question: String,
+    ): Response<QuestionAnswersDto> {
+        val body = JsonObject().apply {
+            addProperty("accessToken", accessToken)
+            addProperty("title", question)
+        }
+        val response = clonectService.getQuestionAnswers(body)
         if (!response.isSuccessful) throw HttpException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response

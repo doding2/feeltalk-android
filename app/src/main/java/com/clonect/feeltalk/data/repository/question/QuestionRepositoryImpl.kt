@@ -10,6 +10,7 @@ import com.clonect.feeltalk.data.utils.UserLevelEncryptHelper
 import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.model.dto.question.QuestionAnswersDto
 import com.clonect.feeltalk.domain.model.dto.question.SendQuestionDto
+import com.clonect.feeltalk.domain.model.dto.question.TodayQuestionAnswersDto
 import com.clonect.feeltalk.domain.repository.QuestionRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.FlowPreview
@@ -123,10 +124,7 @@ class QuestionRepositoryImpl(
                     accessToken = accessToken
                 )
                 val dto = response.body()!!
-                val questionList = dto.toQuestionList().map { question ->
-                    val decrypted = question.myAnswer?.let { userLevelEncryptHelper.decryptMyText(it) }
-                    question.copy(myAnswer = decrypted)
-                }
+                val questionList = dto.toQuestionList()
 
                 localDataSource.saveQuestionList(questionList)
                 cacheDataSource.saveQuestionList(questionList)
@@ -154,6 +152,20 @@ class QuestionRepositoryImpl(
         }
     }
 
+    override suspend fun getQuestionAnswers(
+        accessToken: String,
+        question: String,
+    ): Resource<QuestionAnswersDto> {
+        return try {
+            val remote = remoteDataSource.getQuestionAnswers(accessToken, question).body()!!
+            Resource.Success(remote)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
 
     override suspend fun saveQuestionToDatabase(question: Question): Resource<Long> {
         return try {
@@ -167,7 +179,7 @@ class QuestionRepositoryImpl(
     }
 
 
-    override suspend fun getTodayQuestionAnswersFromServer(accessToken: String): Resource<QuestionAnswersDto> {
+    override suspend fun getTodayQuestionAnswersFromServer(accessToken: String): Resource<TodayQuestionAnswersDto> {
         return try {
             val format = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
             val date = format.format(Date())

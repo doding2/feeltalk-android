@@ -1,6 +1,6 @@
 package com.clonect.feeltalk.domain.model.dto.question
 
 data class QuestionAnswersDto(
-    val myAnswer: String?,
-    val partnerAnswer: String?
+    val self: String?,
+    var partner: String?
 )

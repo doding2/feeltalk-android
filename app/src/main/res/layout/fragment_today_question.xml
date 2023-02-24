@@ -86,49 +86,11 @@
             </com.google.android.flexbox.FlexboxLayout>
 
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="10dp"
-                android:layout_marginHorizontal="21dp">
-
-                <TextView
-                    android:id="@+id/text_partner_state_prefix"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/today_question_partner_state_already_done_prefix"
-                    android:textColor="@color/today_question_partner_state_color"
-                    android:textSize="14sp"
-                    android:fontFamily="@font/pretendard_regular"
-                    android:lineSpacingExtra="5sp"/>
-
-                <TextView
-                    android:id="@+id/text_partner_state"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/today_question_partner_state_already_done"
-                    android:textColor="@color/today_question_partner_state_color"
-                    android:textSize="14sp"
-                    android:fontFamily="@font/pretendard_semi_bold"
-                    android:lineSpacingExtra="5sp"/>
-
-                <TextView
-                    android:id="@+id/text_partner_state_emoji"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/today_question_partner_state_already_done_emoji"
-                    android:textColor="@color/today_question_partner_state_color"
-                    android:textSize="14sp"
-                    android:fontFamily="@font/pretendard_regular"
-                    android:lineSpacingExtra="5sp"/>
-            </LinearLayout>
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="21dp"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="72dp"
                 android:layout_marginBottom="5dp"
                 android:text="@string/today_question_my_answer_title"
                 android:textColor="@color/today_question_my_answer_title_color"
@@ -141,8 +103,48 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="21dp"
+                android:textSize="16sp"
                 android:textColor="@color/today_question_my_answer_text_color"
                 android:hint="@string/today_question_my_answer_hint"
+                android:textColorHint="@color/today_question_my_answer_hint_color"/>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="63dp"
+                android:layout_marginBottom="3dp"
+                android:layout_marginStart="21dp">
+
+                <TextView
+                    android:id="@+id/tv_partner_nickname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textColor="@color/today_question_my_answer_title_color"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/pretendard_bold"
+                    android:lineSpacingExtra="-5sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/today_question_partner_nickname_suffix"
+                    android:textColor="@color/today_question_my_answer_title_color"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:lineSpacingExtra="-5sp"/>
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/et_partner_answer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="21dp"
+                android:enabled="false"
+                android:textSize="14sp"
+                android:textColor="@color/today_question_my_answer_text_color"
                 android:textColorHint="@color/today_question_my_answer_hint_color"/>
 
             <View

@@ -11,6 +11,7 @@ import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionCach
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionLocalDataSource
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionRemoteDataSource
 import com.clonect.feeltalk.data.utils.MessageEncryptHelper
+import com.clonect.feeltalk.domain.model.dto.common.StatusDto
 import com.clonect.feeltalk.domain.repository.EncryptionRepository
 import com.clonect.feeltalk.presentation.utils.infoLog
 import kotlinx.coroutines.CancellationException
@@ -171,8 +172,113 @@ class EncryptionRepositoryImpl(
         }
     }
 
-    
-    
+
+
+
+    /** Key Restoring Receiver **/
+    override suspend fun restoreKeys(accessToken: String): Resource<StatusDto> {
+        return try {
+            // request
+            val requestResult = remoteSource.requestKeyRestoring(accessToken).body()!!
+            val keyFactory = KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_RSA)
+
+            // upload temp key
+            val tempKey = getRandomAESKey()
+            val tempKeyString = Base64.encodeToString(tempKey, Base64.NO_WRAP)
+            val uploadResult = remoteSource.uploadTempKey(accessToken, tempKeyString).body()!!
+
+            // my public key
+            val myPublicKeyResult = remoteSource.loadMyPublicKey(accessToken).body()!!
+            val myPublicKeyBytes = Base64.decode(myPublicKeyResult.publicKey, Base64.NO_WRAP)
+            val myPublicKeySpec = X509EncodedKeySpec(myPublicKeyBytes)
+            val myPublicKey = keyFactory.generatePublic(myPublicKeySpec)
+
+            // partner public key
+            val partnerPublicKeyResult = remoteSource.loadPartnerPublicKey(accessToken).body()!!
+            val partnerPublicKeyBytes = Base64.decode(partnerPublicKeyResult.publicKey, Base64.NO_WRAP)
+            val partnerPublicKeySpec = X509EncodedKeySpec(partnerPublicKeyBytes)
+            val partnerPublicKey = keyFactory.generatePublic(partnerPublicKeySpec)
+
+            // restore private keys
+            // my private key
+            var restoreResult = remoteSource.restorePrivateKeys(accessToken).body()!!
+            while (restoreResult.partnerPrivateKeyEncodeBySelfPublicKey == null || restoreResult.selfPrivateKeyEncodeByTempPublicKey == null) {
+                if (tryCount >= 10) {
+                    throw NullPointerException("Private keys are null that send from server.")
+                }
+                tryCount++
+                delay(Constants.EXCHANGE_KEY_WAIT_DELAY)
+                restoreResult = remoteSource.restorePrivateKeys(accessToken).body()!!
+            }
+            tryCount = 0
+
+            val tempEncryptedMyPrivateKeyString = restoreResult.selfPrivateKeyEncodeByTempPublicKey!!
+            val myPrivateKeyString = messageEncryptHelper.decryptAESBase64(
+                tempKey,
+                Base64.decode(tempEncryptedMyPrivateKeyString, Base64.NO_WRAP)
+            )
+            val myPrivateKeyBytes = Base64.decode(myPrivateKeyString, Base64.NO_WRAP)
+            val myPrivateKeySpec = PKCS8EncodedKeySpec(myPrivateKeyBytes)
+            val myPrivateKey = keyFactory.generatePrivate(myPrivateKeySpec)
+
+            // partner private key
+            val encryptedPartnerPrivateKeyString = restoreResult.partnerPrivateKeyEncodeBySelfPublicKey!!
+            val partnerPrivateKeyString = decrypt(myPrivateKey, encryptedPartnerPrivateKeyString)
+            val partnerPrivateKeyBytes = Base64.decode(partnerPrivateKeyString, Base64.NO_WRAP)
+            val partnerPrivateKeySpec = PKCS8EncodedKeySpec(partnerPrivateKeyBytes)
+            val partnerPrivateKey = keyFactory.generatePrivate(partnerPrivateKeySpec)
+
+            localDataSource.saveMyPublicKeyToDatabase(myPublicKey)
+            localDataSource.savePartnerPublicKeyToDatabase(partnerPublicKey)
+            cacheDataSource.saveMyPublicKeyToCache(myPublicKey)
+            cacheDataSource.savePartnerPublicKeyToCache(partnerPublicKey)
+
+            localDataSource.saveMyPrivateKeyToDatabase(myPrivateKey)
+            localDataSource.savePartnerPrivateKeyToDatabase(partnerPrivateKey)
+            cacheDataSource.saveMyPrivateKeyToCache(myPrivateKey)
+            cacheDataSource.savePartnerPrivateKeyToCache(partnerPrivateKey)
+
+            Resource.Success(requestResult)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Error(e)
+        }
+    }
+
+
+
+    /** Key Restoring Sender **/
+    override suspend fun helpToRestoreKeys(accessToken: String): Resource<StatusDto> {
+        return try {
+            val tempKeyResult = remoteSource.loadTempKey(accessToken).body()!!
+            val tempKey = Base64.decode(tempKeyResult.tempPublicKey, Base64.NO_WRAP)
+
+
+            val partnerPrivateKey = getPartnerPrivateKey()
+            val encryptedPartnerPrivateKeyBytes = messageEncryptHelper.encryptAESBase64(
+                tempKey,
+                Base64.encodeToString(partnerPrivateKey.encoded, Base64.NO_WRAP)
+            )
+            val partnerPrivateKeyString = Base64.encodeToString(encryptedPartnerPrivateKeyBytes, Base64.NO_WRAP)
+            val uploadResult = remoteSource.uploadTempEncryptedPrivateKey(accessToken, partnerPrivateKeyString).body()!!
+
+
+            Resource.Success(uploadResult)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Error(e)
+        }
+    }
+
+
+
+
+
+
     override suspend fun encryptMyText(message: String): Resource<String> {
         return try {
             val publicKey = getMyPublicKey()

@@ -86,17 +86,20 @@
     <string name="today_question_content">가장 좋아하는 스킨십</string>
     <string name="today_question_content_suffix">은 ?</string>
 
-    <string name="today_question_partner_state_already_done_prefix">상대방은 아직&#160;</string>
-    <string name="today_question_partner_state_already_done">답변을 등록하지 않았어요</string>
-    <string name="today_question_partner_state_already_done_emoji">😢</string>
+    <string name="today_question_partner_state_not_done_prefix">상대방은 아직&#160;</string>
+    <string name="today_question_partner_state_not_done">답변을 등록하지 않았어요</string>
+    <string name="today_question_partner_state_not_done_emoji">😢</string>
 
-    <string name="today_question_partner_state_not_done_prefix">상대방이 먼저&#160;</string>
-    <string name="today_question_partner_state_not_done">답변을 등록했어요</string>
-    <string name="today_question_partner_state_not_done_emoji">😄</string>
+    <string name="today_question_partner_state_already_done_prefix">상대방이 먼저&#160;</string>
+    <string name="today_question_partner_state_already_done">답변을 등록했어요</string>
+    <string name="today_question_partner_state_already_done_emoji">😄</string>
+    <string name="today_question_partner_state_already_done_second_line">\n답변 후 그의 답을 볼 수 있어요</string>
 
     <string name="today_question_my_answer_title">나의 답변</string>
     <string name="today_question_my_answer_hint">나의 답변을 입력해 주세요.</string>
     <string name="today_question_enter_answer_button">답변완료</string>
+
+    <string name="today_question_partner_nickname_suffix">의 답변</string>
 
     <!--  TodayQuestionFragment.kt  -->
     <string name="dialog_partner_done_title">답변 저장</string>
