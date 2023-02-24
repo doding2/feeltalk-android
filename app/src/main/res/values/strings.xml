@@ -107,8 +107,8 @@
     <string name="dialog_partner_done_confirm">저장하기</string>
 
     <!--  fragment_chat.xml  -->
-    <string name="chat_text_field_hint">메시지를 입력하세요...</string>
-    <string name="chat_text_field_hint_waiting">상대의 답변을 기다려주세요...</string>
+    <string name="chat_text_field_enabled_hint">서로를 더 알아가 보세요 !</string>
+    <string name="chat_text_field_disabled_hint">상대방이 답변하면 채팅창이 활성화 돼요 !</string>
 
     <!--  item_chat_mine.xml && item_chat_partner.xml -->
     <string name="item_chat_owner_mine">나의 답변</string>

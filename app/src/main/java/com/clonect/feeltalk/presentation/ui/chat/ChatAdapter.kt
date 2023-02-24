@@ -1,5 +1,9 @@
 package com.clonect.feeltalk.presentation.ui.chat
 
+import android.graphics.Typeface
+import android.text.SpannableString
+import android.text.style.StyleSpan
+import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -130,8 +134,26 @@ class ChatAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 else
                     layoutChatOwner.visibility = View.GONE
 
-                textChat.text = chat.message
+
                 textDate.text = chat.date
+
+
+                val isWaitingChat = chat.run {
+                    id == -1L  && message == "" && date == "" && isAnswer
+                }
+                if (isWaitingChat) {
+                    val partner = binding.root.context.getString(R.string.today_question_partner_state_not_done_prefix)
+                    val answer = binding.root.context.getString(R.string.today_question_partner_state_not_done)
+                    val emoji = binding.root.context.getString(R.string.today_question_partner_state_not_done_emoji)
+                    val waitingMessage = "\n   $partner$answer$emoji   \n"
+                    val body = SpannableString(waitingMessage).apply {
+                        setSpan(StyleSpan(Typeface.BOLD), waitingMessage.indexOf(answer), waitingMessage.length, 0)
+                        setSpan(UnderlineSpan(), waitingMessage.indexOf(answer), waitingMessage.indexOf(emoji), 0)
+                    }
+                    textChat.text = body
+                } else {
+                    textChat.text = chat.message
+                }
 
                 root.setOnClickListener { _ ->
                     onItemClickListener?.let { it(chat) }

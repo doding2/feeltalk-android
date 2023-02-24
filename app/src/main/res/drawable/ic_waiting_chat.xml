@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@drawable/ic_waiting_chat_background"
+        android:width="40dp"
+        android:height="40dp"/>
+
+    <item android:drawable="@drawable/ic_waiting_chat_foreground"
+        android:width="14.67dp"
+        android:height="19.25dp"
+        android:top="9.92dp"
+        android:bottom="10.83dp"
+        android:start="12.67dp"
+        android:end="12.67dp" />
+</layer-list>

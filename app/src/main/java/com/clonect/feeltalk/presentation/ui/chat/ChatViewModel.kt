@@ -54,6 +54,9 @@ class ChatViewModel @Inject constructor(
     private val _partnerProfileImageUrl = MutableStateFlow<String?>(null)
     val partnerProfileImageUrl = _partnerProfileImageUrl.asStateFlow()
 
+    private val _isPartnerAnswered = MutableStateFlow(false)
+    val isPartnerAnswered = _isPartnerAnswered.asStateFlow()
+
 
     private val _scrollPositionState = MutableStateFlow(0)
     val scrollPositionState = _scrollPositionState.asStateFlow()
@@ -147,11 +150,21 @@ class ChatViewModel @Inject constructor(
         val newList = mutableListOf<Chat>()
         newList.addAll(chatList)
         newList.sortBy { it.id }
-        _chatList.value = newList
-    }
 
-    fun isPartnerAnswered(): Boolean {
-        return _chatList.value.any { it.owner == "partner" }
+        _isPartnerAnswered.value = newList.any { it.owner == "partner" }
+        if (!isPartnerAnswered.value) {
+            val waitingChat = Chat(
+                id = -1,
+                question = _question.value.question,
+                owner = "partner",
+                message = "",
+                date = "",
+                isAnswer = true
+            )
+            newList.add(waitingChat)
+        }
+
+        _chatList.value = newList
     }
 
 

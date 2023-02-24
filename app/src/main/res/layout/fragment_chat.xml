@@ -162,7 +162,7 @@
                 android:paddingStart="21dp"
                 android:paddingEnd="10dp"
                 android:background="@null"
-                android:hint="@string/chat_text_field_hint"
+                android:hint="@string/chat_text_field_enabled_hint"
                 android:textSize="13sp"
                 android:textColorHint="@color/chat_field_hint_color"
                 android:fontFamily="@font/pretendard_light"

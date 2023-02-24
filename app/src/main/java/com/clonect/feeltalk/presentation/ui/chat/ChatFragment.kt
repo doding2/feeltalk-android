@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
@@ -58,6 +57,7 @@ class ChatFragment : Fragment() {
         collectScrollPosition()
         collectMyProfileImageUrl()
         collectPartnerProfileImageUrl()
+        collectIsPartnerAnswered()
 
         binding.btnSendChat.setOnClickListener { sendChat() }
 
@@ -70,11 +70,6 @@ class ChatFragment : Fragment() {
 
 
     private fun sendChat() {
-        if (!viewModel.isPartnerAnswered()) {
-            Toast.makeText(requireContext(), "상대가 질문에 답하기 전에는 채팅을 이용할 수 없습니다.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
         binding.etChat.text.toString()
             .takeIf { it.isNotEmpty() }
             ?.let {
@@ -128,6 +123,25 @@ class ChatFragment : Fragment() {
                 viewModel.partnerProfileImageUrl.collectLatest {
                     adapter.setPartnerProfileUrl(it)
                     binding.ivPartnerProfile.setProfileImageUrl(it)
+                }
+            }
+        }
+    }
+
+    private fun collectIsPartnerAnswered() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.isPartnerAnswered.collectLatest { isAnswered ->
+                binding.apply {
+                    btnSendChat.isEnabled = isAnswered
+                    etChat.isEnabled = isAnswered
+
+                    if (isAnswered) {
+                        btnSendChat.setImageResource(R.drawable.ic_send_chat)
+                        etChat.setHint(R.string.chat_text_field_enabled_hint)
+                    } else {
+                        btnSendChat.setImageResource(R.drawable.ic_waiting_chat)
+                        etChat.setHint(R.string.chat_text_field_disabled_hint)
+                    }
                 }
             }
         }
