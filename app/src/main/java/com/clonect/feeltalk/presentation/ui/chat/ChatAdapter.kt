@@ -16,6 +16,8 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.ItemChatMineBinding
 import com.clonect.feeltalk.databinding.ItemChatPartnerBinding
 import com.clonect.feeltalk.domain.model.data.chat.Chat
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ChatAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -66,7 +68,7 @@ class ChatAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun getItemViewType(position: Int): Int {
         val question = differ.currentList[position]
-        return if (question.owner == "mine") TYPE_MINE     // TODO 내 이메일 바꾸기
+        return if (question.owner == "mine") TYPE_MINE
         else TYPE_PARTNER
     }
 
@@ -111,7 +113,7 @@ class ChatAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     layoutChatOwner.visibility = View.GONE
 
                 textChat.text = chat.message
-                textDate.text = chat.date
+                textDate.text = formattedDate(chat.date)
 
                 root.setOnClickListener { _ ->
                     onItemClickListener?.let { it(chat) }
@@ -135,7 +137,7 @@ class ChatAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     layoutChatOwner.visibility = View.GONE
 
 
-                textDate.text = chat.date
+                textDate.text = formattedDate(chat.date)
 
 
                 val isWaitingChat = chat.run {
@@ -145,20 +147,54 @@ class ChatAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     val partner = binding.root.context.getString(R.string.today_question_partner_state_not_done_prefix)
                     val answer = binding.root.context.getString(R.string.today_question_partner_state_not_done)
                     val emoji = binding.root.context.getString(R.string.today_question_partner_state_not_done_emoji)
-                    val waitingMessage = "\n   $partner$answer$emoji   \n"
+                    val waitingMessage = "\n\n   $partner$answer$emoji   \n\n"
                     val body = SpannableString(waitingMessage).apply {
                         setSpan(StyleSpan(Typeface.BOLD), waitingMessage.indexOf(answer), waitingMessage.length, 0)
                         setSpan(UnderlineSpan(), waitingMessage.indexOf(answer), waitingMessage.indexOf(emoji), 0)
                     }
                     textChat.text = body
+                    textChat.setTextColor(binding.root.context.getColor(R.color.item_chat_partner_waiting_text_color))
                 } else {
                     textChat.text = chat.message
+                    textChat.setTextColor(binding.root.context.getColor(R.color.item_chat_partner_text_color))
                 }
 
                 root.setOnClickListener { _ ->
                     onItemClickListener?.let { it(chat) }
                 }
             }
+        }
+    }
+
+
+    private val chatFormat = SimpleDateFormat("yyyy년 M월 d일 aa h시 m분", Locale.getDefault())
+    private val dataFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    private val nowDateString = getNowDate()
+
+    private fun getNowDate(): String {
+        val dateFormat = SimpleDateFormat("yyyy년 M월 d일", Locale.getDefault())
+        return dateFormat.format(Date())
+    }
+
+    fun formattedDate(dateString: String): String {
+        try {
+            val dataDate = dataFormat.parse(dateString) ?: return dateString
+            val chatDateString = chatFormat.format(dataDate)
+
+            if (chatDateString.startsWith(nowDateString)) {
+                return chatDateString.substringAfter(" ")
+                    .substringAfter(" ")
+                    .substringAfter(" ")
+            }
+
+            val nowYear = nowDateString.substringBefore(" ")
+            if (chatDateString.startsWith(nowYear)) {
+                return chatDateString.substringAfter(" ")
+            }
+
+            return chatDateString
+        } catch (e: Exception) {
+            return dateString
         }
     }
 

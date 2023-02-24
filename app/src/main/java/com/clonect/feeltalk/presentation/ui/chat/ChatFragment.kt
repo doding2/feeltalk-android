@@ -159,8 +159,6 @@ class ChatFragment : Fragment() {
 
     private fun initActionBar() = binding.apply {
         tvTitle.text = viewModel.partnerInfo.value.nickname
-        // TODO 파트너 프로필 사진
-//        ivPartnerProfile.setImageBitmap()
     }
 
     private fun initRecyclerView() {

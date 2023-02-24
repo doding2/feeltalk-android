@@ -93,7 +93,7 @@
     <string name="today_question_partner_state_already_done_prefix">상대방이 먼저&#160;</string>
     <string name="today_question_partner_state_already_done">답변을 등록했어요</string>
     <string name="today_question_partner_state_already_done_emoji">😄</string>
-    <string name="today_question_partner_state_already_done_second_line">\n답변 후 그의 답을 볼 수 있어요</string>
+    <string name="today_question_partner_state_already_done_second_line">\n답변 후 그의 답을 볼 수 있어요 !</string>
 
     <string name="today_question_my_answer_title">나의 답변</string>
     <string name="today_question_my_answer_hint">나의 답변을 입력해 주세요.</string>

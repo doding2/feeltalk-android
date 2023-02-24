@@ -59,13 +59,13 @@
         android:id="@+id/text_chat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:maxWidth="220dp"
+        android:background="@drawable/background_item_chat_partner"
+        android:fontFamily="@font/pretendard_regular"
+        android:maxWidth="260dp"
         android:padding="10dp"
         android:text="@string/item_chat_default_text"
         android:textColor="@color/item_chat_partner_text_color"
-        android:textSize="13sp"
-        android:fontFamily="@font/pretendard_regular"
-        android:background="@drawable/background_item_chat_partner"/>
+        android:textSize="13sp" />
 
     <TextView
         android:id="@+id/text_date"
