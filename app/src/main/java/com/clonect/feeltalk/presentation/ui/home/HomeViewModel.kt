@@ -15,10 +15,7 @@ import com.clonect.feeltalk.presentation.utils.AppSettings
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -28,7 +25,7 @@ import kotlin.math.ceil
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getUserInfoUseCase: GetUserInfoUseCase,
-    private val getPartnerInfoUseCase: GetPartnerInfoUseCase,
+    private val getPartnerInfoFlowUseCase: GetPartnerInfoFlowUseCase,
     private val updateMyEmotionUseCase: UpdateMyEmotionUseCase,
     private val getTodayQuestionUseCase: GetTodayQuestionUseCase,
     private val getTodayQuestionAnswersFromServer: GetTodayQuestionAnswersFromServer,
@@ -122,11 +119,12 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getPartnerInfo() = viewModelScope.launch(Dispatchers.IO) {
-        val result = getPartnerInfoUseCase()
-        when (result) {
-            is Resource.Success -> _partnerInfo.value = result.data
-            is Resource.Error -> infoLog("Fail to get partner info: ${result.throwable.localizedMessage}")
-            else -> infoLog("Fail to get partner info")
+        getPartnerInfoFlowUseCase().collectLatest { result ->
+            when (result) {
+                is Resource.Success -> _partnerInfo.value = result.data
+                is Resource.Error -> infoLog("Fail to get partner info: ${result.throwable.localizedMessage}")
+                else -> infoLog("Fail to get partner info")
+            }
         }
     }
 

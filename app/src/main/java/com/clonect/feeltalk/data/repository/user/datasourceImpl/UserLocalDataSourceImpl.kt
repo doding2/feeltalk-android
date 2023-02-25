@@ -154,11 +154,14 @@ class UserLocalDataSourceImpl(
 
         feeltalkDatabase.clearAllTables()
         context.deleteDatabase("feeltalkDatabase.db")
+        val databasesDir = File(context.applicationInfo.dataDir + "/databases/")
+        val databaseFile = File(databasesDir, "feeltalkDatabase.db")
 
         return idTokenFile.delete()
                 && isAppleLoggedInFile.delete()
                 && accessTokenFile.delete()
                 && registrationCodeFile.delete()
                 && userInfoFile.delete()
+                && databaseFile.deleteRecursively()
     }
 }

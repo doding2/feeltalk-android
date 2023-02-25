@@ -26,6 +26,7 @@
             app:layout_constraintEnd_toEndOf="parent"/>
 
         <ImageView
+            android:alpha="0"
             android:id="@+id/btn_another_setting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -5,12 +5,14 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.model.dto.common.StatusDto
 import com.clonect.feeltalk.domain.model.dto.user.*
+import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
 
     suspend fun getAccessToken(): Resource<String>
     suspend fun getUserInfo(): Resource<UserInfo>
     suspend fun getPartnerInfo(): Resource<UserInfo>
+    suspend fun getPartnerInfoFlow(): Flow<Resource<UserInfo>>
     suspend fun getCoupleAnniversary(): Resource<String>
 
     suspend fun updateMyNickname(nickname: String): Resource<StatusDto>

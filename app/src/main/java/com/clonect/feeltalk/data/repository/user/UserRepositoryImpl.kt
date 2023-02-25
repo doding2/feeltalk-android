@@ -12,6 +12,11 @@ import com.clonect.feeltalk.domain.model.dto.common.StatusDto
 import com.clonect.feeltalk.domain.model.dto.user.*
 import com.clonect.feeltalk.domain.repository.UserRepository
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.flattenMerge
+import kotlinx.coroutines.flow.flowOf
 
 class UserRepositoryImpl(
     private val remoteDataSource: UserRemoteDataSource,
@@ -69,6 +74,37 @@ class UserRepositoryImpl(
             return Resource.Error(e)
         }
     }
+
+    @OptIn(FlowPreview::class)
+    override suspend fun getPartnerInfoFlow(): Flow<Resource<UserInfo>> {
+        val cacheFlow = channelFlow<Resource<UserInfo>> {
+            val cache = cacheDataSource.getPartnerInfo()
+            if (cache != null) {
+                send(Resource.Success(cache))
+            }
+        }
+
+        val remoteFlow = channelFlow {
+            try {
+                val accessToken = cacheDataSource.getAccessToken()
+                    ?: localDataSource.getAccessToken()
+                    ?: throw NullPointerException("User is Not logged in.")
+
+                val partnerAccessToken = remoteDataSource.getPartnerInfo(accessToken).body()!!.accessToken
+                val partnerInfo = remoteDataSource.getUserInfo(partnerAccessToken).body()!!.toUserInfo()
+                cacheDataSource.savePartnerInfoToCache(partnerInfo)
+
+                send(Resource.Success(partnerInfo))
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                send(Resource.Error(e))
+            }
+        }
+
+        return flowOf(cacheFlow, remoteFlow).flattenMerge()
+    }
+
 
     override suspend fun breakUpCouple(): Resource<StatusDto> {
         return try {

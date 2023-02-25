@@ -361,4 +361,10 @@ class UseCaseModule {
         return CheckKeyPairsWorkWellUseCase(encryptionRepository)
     }
 
+    @Singleton
+    @Provides
+    fun providesGetPartnerInfoFlowUseCase(userRepository: UserRepository): GetPartnerInfoFlowUseCase {
+        return GetPartnerInfoFlowUseCase(userRepository)
+    }
+
 }
