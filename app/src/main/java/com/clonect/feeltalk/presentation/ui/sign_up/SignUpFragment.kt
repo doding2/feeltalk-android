@@ -112,7 +112,7 @@ class SignUpFragment : Fragment() {
 
     private fun navigateToCoupleRegistrationPage() {
         viewModel.setLoading(false)
-        findNavController().navigate(R.id.action_signUpFragment_to_coupleRegistrationFragment)
+        findNavController().navigate(R.id.action_signUpFragment_to_guideFragment)
     }
 
 

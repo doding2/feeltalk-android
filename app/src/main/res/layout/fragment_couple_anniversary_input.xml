@@ -147,6 +147,7 @@
                     android:layout_marginBottom="14dp"
                     android:layout_gravity="center"
                     android:text="@string/couple_anniversary_input_next_button"
+                    android:textSize="16sp"
                     android:textColor="@color/today_question_enter_answer_button_text_color"
                     android:fontFamily="@font/pretendard_bold"/>
             </com.google.android.material.card.MaterialCardView>

@@ -1,6 +1,7 @@
 package com.clonect.feeltalk.presentation.di
 
 import com.clonect.feeltalk.presentation.ui.chat.ChatAdapter
+import com.clonect.feeltalk.presentation.ui.guide.GuideAdapter
 import com.clonect.feeltalk.presentation.ui.news.NewsAdapter
 import com.clonect.feeltalk.presentation.ui.question_list.QuestionListAdapter
 import dagger.Module
@@ -28,5 +29,11 @@ class AdapterModule {
     @Provides
     fun providesNewsAdapter(): NewsAdapter {
         return NewsAdapter()
+    }
+
+    @Singleton
+    @Provides
+    fun providesGuideAdapter(): GuideAdapter {
+        return GuideAdapter(emptyList())
     }
 }

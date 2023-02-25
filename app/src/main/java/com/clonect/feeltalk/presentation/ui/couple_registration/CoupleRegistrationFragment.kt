@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.ClipData
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -11,7 +12,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.annotation.ColorInt
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -40,6 +43,8 @@ class CoupleRegistrationFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentCoupleRegistrationBinding.inflate(inflater, container, false)
+        setStatusBarColor(Color.WHITE, true)
+        setNavigationBarColor(Color.WHITE, true)
         loadingDialog = makeLoadingDialog()
         return binding.root
     }
@@ -175,11 +180,38 @@ class CoupleRegistrationFragment : Fragment() {
         isEnabled = enabled
     }
 
+
+
+    private fun setStatusBarColor(
+        @ColorInt color: Int,
+        isLight: Boolean
+    ) {
+        activity?.window?.apply {
+            statusBarColor = color
+            WindowInsetsControllerCompat(this, binding.root).apply {
+                isAppearanceLightStatusBars = isLight
+            }
+        }
+    }
+
+    private fun setNavigationBarColor(
+        @ColorInt color: Int,
+        isLight: Boolean
+    ) {
+        activity?.window?.apply {
+            navigationBarColor = color
+            WindowInsetsControllerCompat(this, binding.root).apply {
+                isAppearanceLightNavigationBars = isLight
+            }
+        }
+    }
+
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         onBackCallback = object: OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                requireActivity().finish()
+                findNavController().popBackStack()
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, onBackCallback)

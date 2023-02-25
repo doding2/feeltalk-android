@@ -20,8 +20,8 @@
             app:popUpTo="@id/signUpFragment"
             app:popUpToInclusive="true"/>
         <action
-            android:id="@+id/action_signUpFragment_to_coupleRegistrationFragment"
-            app:destination="@id/coupleRegistrationFragment"
+            android:id="@+id/action_signUpFragment_to_guideFragment"
+            app:destination="@id/guideFragment"
             app:enterAnim="@anim/slide_from_bottom"
             app:exitAnim="@anim/do_noting"
             app:popEnterAnim="@anim/do_noting"
@@ -173,12 +173,12 @@
         android:label="fragment_couple_anniversary_input"
         tools:layout="@layout/fragment_couple_anniversary_input" >
         <action
-            android:id="@+id/action_coupleAnniversaryInputFragment_to_coupleRegistrationFragment"
-            app:destination="@id/coupleRegistrationFragment"
-            app:enterAnim="@anim/slide_from_right"
+            android:id="@+id/action_coupleAnniversaryInputFragment_to_guideFragment"
+            app:destination="@id/guideFragment"
+            app:enterAnim="@anim/slide_from_bottom"
             app:exitAnim="@anim/do_noting"
             app:popEnterAnim="@anim/do_noting"
-            app:popExitAnim="@anim/slide_to_right" />
+            app:popExitAnim="@anim/slide_to_bottom" />
     </fragment>
     <fragment
         android:id="@+id/coupleRegistrationDoneFragment"
@@ -194,5 +194,18 @@
             app:exitAnim="@anim/do_noting"
             app:popEnterAnim="@anim/do_noting"
             app:popExitAnim="@anim/slide_to_bottom"/>
+    </fragment>
+    <fragment
+        android:id="@+id/guideFragment"
+        android:name="com.clonect.feeltalk.presentation.ui.guide.GuideFragment"
+        android:label="fragment_guide"
+        tools:layout="@layout/fragment_guide" >
+        <action
+            android:id="@+id/action_guideFragment_to_coupleRegistrationFragment"
+            app:destination="@id/coupleRegistrationFragment"
+            app:enterAnim="@anim/slide_from_bottom"
+            app:exitAnim="@anim/slide_to_bottom"
+            app:popEnterAnim="@anim/slide_from_bottom"
+            app:popExitAnim="@anim/slide_to_bottom" />
     </fragment>
 </navigation>

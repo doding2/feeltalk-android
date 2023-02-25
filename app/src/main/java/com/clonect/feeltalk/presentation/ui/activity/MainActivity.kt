@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
             else if (!isUserInfoEntered.value)
                 R.id.userNicknameInputFragment
             else if (!isUserCouple.value)
-                R.id.coupleRegistrationFragment
+                R.id.guideFragment
             else
                 R.id.bottomNavigationFragment
         }

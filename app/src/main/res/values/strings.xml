@@ -129,6 +129,9 @@
     <string name="couple_setting_start_date_subtitle">우리의 첫 걸음</string>
     <string name="couple_setting_default_birth">생일</string>
 
+    <!--  fragment_guide.xml  -->
+    <string name="guide_button_text">시작하기</string>
+
 
     <!--  nickname input warnings  -->
     <string name="warning_long_nickname">닉네임은 최대 20글자까지입니다.</string>

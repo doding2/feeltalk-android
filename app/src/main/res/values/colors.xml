@@ -144,6 +144,13 @@
     <!--  fragment_couple_setting.xml  -->
     <color name="couple_setting_start_date_subtitle_color">#1A1A1A</color>
 
+    <!--  fragment_guide.xml  -->
+    <color name="guide_background">#FCFAFB</color>
+    <color name="guide_indicator_unselected_color">@color/guide_background</color>
+    <color name="guide_indicator_selected_color">@color/main</color>
+    <color name="guide_indicator_enabled_button_color">@color/main</color>
+    <color name="guide_indicator_disabled_button_color">#DDDDDD</color>
+
 
 
 </resources>

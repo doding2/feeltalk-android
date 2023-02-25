@@ -79,6 +79,8 @@ dependencies {
     implementation "androidx.core:core-splashscreen:1.0.0"
     // masked edit text
     implementation 'com.github.santalu:maskara:1.0.0'
+    // custom image indicator
+    implementation 'com.github.martinstamenkovski:ARIndicatorView:2.0.0'
 
 
     // coroutines

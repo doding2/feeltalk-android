@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="30dp"
+    android:background="@color/fragment_background_color"
     tools:context=".presentation.ui.setting.SettingFragment">
 
     <!--  App Logo and Another setting button  -->

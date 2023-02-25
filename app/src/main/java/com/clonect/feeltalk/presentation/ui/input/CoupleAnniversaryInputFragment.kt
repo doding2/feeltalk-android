@@ -70,7 +70,7 @@ class CoupleAnniversaryInputFragment : Fragment() {
     }
 
     private fun navigateToCoupleRegistrationPage() {
-        findNavController().navigate(R.id.action_coupleAnniversaryInputFragment_to_coupleRegistrationFragment)
+        findNavController().navigate(R.id.action_coupleAnniversaryInputFragment_to_guideFragment)
     }
 
 
