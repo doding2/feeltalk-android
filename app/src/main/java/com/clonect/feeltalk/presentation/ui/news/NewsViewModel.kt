@@ -4,8 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.news.News
+import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
+import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.news.GetNewsListUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetPartnerProfileImageUrlUseCase
+import com.clonect.feeltalk.presentation.utils.AppSettings
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +21,8 @@ import javax.inject.Inject
 class NewsViewModel @Inject constructor(
     private val getNewsListUseCase: GetNewsListUseCase,
     private val getPartnerProfileImageUrlUseCase: GetPartnerProfileImageUrlUseCase,
+    private val getAppSettingsUseCase: GetAppSettingsUseCase,
+    private val saveAppSettingsUseCase: SaveAppSettingsUseCase,
 ) : ViewModel() {
 
     private val _newsList = MutableStateFlow<List<News>>(emptyList())
@@ -47,5 +52,12 @@ class NewsViewModel @Inject constructor(
             is Resource.Error -> { infoLog("Fail to get partner profile url: ${result.throwable.localizedMessage}") }
             is Resource.Loading -> { infoLog("Fail to get partner profile url") }
         }
+    }
+
+
+    fun getAppSettings() = getAppSettingsUseCase()
+
+    fun saveAppSettings(appSettings: AppSettings) = viewModelScope.launch(Dispatchers.IO) {
+        saveAppSettingsUseCase(appSettings)
     }
 }

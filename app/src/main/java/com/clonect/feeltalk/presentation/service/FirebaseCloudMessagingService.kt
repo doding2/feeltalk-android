@@ -120,6 +120,12 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 return@launch
             }
 
+
+            val appSettings = getAppSettingsUseCase().apply {
+                isNotificationUpdated = true
+            }
+            saveAppSettingsUseCase(appSettings)
+
             when (data["type"]) {
                 TYPE_TODAY_QUESTION -> handleTodayQuestionData(data)
                 TYPE_PARTNER_ANSWERED -> handlePartnerAnsweredData(data)

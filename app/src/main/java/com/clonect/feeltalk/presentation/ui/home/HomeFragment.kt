@@ -56,6 +56,7 @@ class HomeFragment : Fragment() {
         collectPartnerInfo()
         collectPartnerClickCount()
         collectToast()
+        collectAppSettings()
 
         binding.apply {
 
@@ -81,6 +82,17 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun collectAppSettings() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.appSettings.collectLatest {
+                if (it.isNotificationUpdated) {
+                    binding.btnNews.setImageResource(R.drawable.ic_notification_unread)
+                } else {
+                    binding.btnNews.setImageResource(R.drawable.ic_notification)
+                }
+            }
+        }
+    }
 
     private fun collectToast() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -138,6 +150,7 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
 
     private fun ImageView.setEmotion(emotion: Emotion) {
         val emotionId = when (emotion) {
@@ -242,6 +255,10 @@ class HomeFragment : Fragment() {
     }
 
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.getAppSettings()
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

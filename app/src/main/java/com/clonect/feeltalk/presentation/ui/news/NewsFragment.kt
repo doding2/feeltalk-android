@@ -36,10 +36,18 @@ class NewsFragment : Fragment() {
         collectPartnerProfileUrl()
         collectNewsList()
         initRecyclerView()
+        updateHomeNotificationIconState()
 
         binding.btnBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
 
         return binding.root
+    }
+
+    private fun updateHomeNotificationIconState() {
+        val appSettings = viewModel.getAppSettings().apply {
+            isNotificationUpdated = false
+        }
+        viewModel.saveAppSettings(appSettings)
     }
 
     private fun initRecyclerView() {

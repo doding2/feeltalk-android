@@ -23,6 +23,10 @@ class GetAppSettingsUseCase(
                     "isUsageInfoNotificationEnabled",
                     false,
                 ),
+                isNotificationUpdated = getBoolean(
+                    "isNotificationUpdated",
+                    false
+                ),
                 fcmToken = getString(
                     "fcmToken",
                     null,

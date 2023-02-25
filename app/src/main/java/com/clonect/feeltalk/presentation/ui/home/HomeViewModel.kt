@@ -7,9 +7,11 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.model.data.user.Emotion
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
+import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionAnswersFromServer
 import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionUseCase
 import com.clonect.feeltalk.domain.usecase.user.*
+import com.clonect.feeltalk.presentation.utils.AppSettings
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -32,6 +34,7 @@ class HomeViewModel @Inject constructor(
     private val getTodayQuestionAnswersFromServer: GetTodayQuestionAnswersFromServer,
     private val getCoupleAnniversaryUseCase: GetCoupleAnniversaryUseCase,
     private val requestChangingPartnerEmotionUseCase: RequestChangingPartnerEmotionUseCase,
+    private val getAppSettingsUseCase: GetAppSettingsUseCase,
 ): ViewModel() {
 
     private val _userInfo = MutableStateFlow(UserInfo())
@@ -49,6 +52,9 @@ class HomeViewModel @Inject constructor(
     private val _partnerClickCount = MutableStateFlow(0)
     val partnerClickCount = _partnerClickCount.asStateFlow()
 
+    private val _appSettings = MutableStateFlow(AppSettings())
+    val appSettings = _appSettings.asStateFlow()
+
     private val _toast = MutableSharedFlow<String>()
     val toast = _toast.asSharedFlow()
 
@@ -58,6 +64,7 @@ class HomeViewModel @Inject constructor(
         getPartnerInfo()
         getTodayQuestion()
         getCoupleAnniversary()
+        getAppSettings()
     }
 
 
@@ -172,6 +179,10 @@ class HomeViewModel @Inject constructor(
                 infoLog("Fail to load today question answers")
             }
         }
+    }
+
+    fun getAppSettings() {
+        _appSettings.value = getAppSettingsUseCase()
     }
 
 

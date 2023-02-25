@@ -32,6 +32,7 @@ class SaveAppSettingsUseCase(
                 putBoolean("isAppSettingsNotChanged", false)
                 putBoolean("isPushNotificationEnabled", isPushNotificationEnabled)
                 putBoolean("isUsageInfoNotificationEnabled", isUsageInfoNotificationEnabled)
+                putBoolean("isNotificationUpdated", isNotificationUpdated)
                 putString("fcmToken", appSettings.fcmToken?.let { appLevelEncryptHelper.encrypt("fcmToken", it) })
             }
         }
