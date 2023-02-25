@@ -68,6 +68,8 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
 
     companion object {
+        const val NOTIFICATION_GROUP_ID = 20000414
+        
         const val TODAY_QUESTION_CHANNEL_ID ="feeltalk_today_question_notification"
         const val PARTNER_ANSWERED_CHANNEL_ID ="feeltalk_partner_question_answer_notification"
         const val REQUEST_EMOTION_CHANGE_CHANNEL_ID ="feeltalk_emotion_change_notification"
@@ -159,6 +161,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         showNotification(
             title = data["title"] ?: "",
             message = data["message"] ?: "",
+            notificationID = TODAY_QUESTION_CHANNEL_ID.toBytesInt(),
             channelID = TODAY_QUESTION_CHANNEL_ID,
             pendingIntent = deepLinkPendingIntent
         )
@@ -214,6 +217,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         showNotification(
             title = data["title"] ?: "",
             message = data["message"] ?: "",
+            notificationID = questionContent.toBytesInt(),
             channelID = PARTNER_ANSWERED_CHANNEL_ID,
             pendingIntent = pendingIntent
         )
@@ -231,6 +235,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         showNotification(
             title = data["title"] ?: "",
             message = data["message"] ?: "",
+            notificationID = REQUEST_EMOTION_CHANGE_CHANNEL_ID.toBytesInt(),
             channelID = REQUEST_EMOTION_CHANGE_CHANNEL_ID,
             pendingIntent = pendingIntent
         )
@@ -282,6 +287,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         showNotification(
             title = data["title"].toString(),
             message = data["message"].toString(),
+            notificationID = questionContent.toBytesInt(),
             channelID = CHAT_CHANNEL_ID,
             pendingIntent = pendingIntent
         )
@@ -308,6 +314,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             showNotification(
                 title = "커플 등록 요청",
                 message = "상대방으로부터 커플 등록 요청이 왔습니다.",
+                notificationID = COUPLE_REGISTRATION_CHANNEL_ID.toBytesInt(),
                 channelID = COUPLE_REGISTRATION_CHANNEL_ID,
                 pendingIntent = pendingIntent
             )
@@ -326,6 +333,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         showNotification(
             title = "암호화 열쇠 복구 요청",
             message = "연인이 암호화 열쇠 복구 요청을 보냈습니다.",
+            notificationID = REQUEST_KEY_RESTORING_CHANNEL_ID.toBytesInt(),
             channelID = REQUEST_KEY_RESTORING_CHANNEL_ID,
             pendingIntent = pendingIntent
         )
@@ -393,11 +401,13 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             .setColor(ContextCompat.getColor(applicationContext, R.color.white))
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
-            .setGroup(channelID)
+            .setGroup(notificationID.toString())
+            .setGroupSummary(true)
             .build()
 
         notificationManager.notify(notificationID, notification)
     }
+
 
     private fun createNotificationChannel(
         notificationManager: NotificationManager,
