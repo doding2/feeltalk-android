@@ -2,6 +2,8 @@ package com.clonect.feeltalk.presentation.ui.setting
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,6 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.clonect.feeltalk.BuildConfig
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.databinding.FragmentSettingBinding
@@ -69,7 +72,10 @@ class SettingFragment : Fragment() {
             flProfile.setOnClickListener { navigateToCoupleSettingPage() }
             llDDay.setOnClickListener { navigateToCoupleSettingPage() }
 
-            llLogOut.setOnClickListener { logOut() }
+            llCustomerQuestionService.setOnClickListener { sendQuestionEmail() }
+            llCustomerFeedbackService.setOnClickListener { sendFeedbackEmail() }
+
+//            llLogOut.setOnClickListener { logOut() }
             
             llRequestKeyRestoring.setOnClickListener {
                 navigateToKeyRestoringRequestPage()
@@ -98,6 +104,26 @@ class SettingFragment : Fragment() {
             .findNavController()
             .navigate(R.id.action_bottomNavigationFragment_to_keyRestoringRequestFragment)
     }
+
+
+    private fun sendQuestionEmail() {
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:")
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(BuildConfig.FEEDBACK_EMAIL))
+            putExtra(Intent.EXTRA_SUBJECT, "[필로우톡] 이런 질문도 받고싶어요 !")
+        }
+        startActivity(Intent.createChooser(intent, null))
+    }
+
+    private fun sendFeedbackEmail() {
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:")
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(BuildConfig.FEEDBACK_EMAIL))
+            putExtra(Intent.EXTRA_SUBJECT, "[필로우톡] 이런 점이 아쉬워요 !")
+        }
+        startActivity(Intent.createChooser(intent, null))
+    }
+
 
 
     private fun collectUserInfo() = lifecycleScope.launch {

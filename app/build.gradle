@@ -19,6 +19,8 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
+        buildConfigField("String", "FEEDBACK_EMAIL", FEEDBACK_EMAIL)
+
         buildConfigField("String", "CLONECT_BASE_URL", CLONECT_BASE_URL)
 
         buildConfigField("String", "APP_LEVEL_KEY_PROVIDER", APP_LEVEL_KEY_PROVIDER)

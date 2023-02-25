@@ -345,7 +345,7 @@
                 android:fontFamily="@font/pretendard_bold"/>
 
             <LinearLayout
-                android:id="@+id/layout_customer_question_service"
+                android:id="@+id/ll_customer_question_service"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -376,7 +376,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/layout_customer_feedback_service"
+                android:id="@+id/ll_customer_feedback_service"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
