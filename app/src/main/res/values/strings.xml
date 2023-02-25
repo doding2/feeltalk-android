@@ -128,4 +128,11 @@
     <!--  fragment_couple_setting.xml  -->
     <string name="couple_setting_start_date_subtitle">우리의 첫 걸음</string>
     <string name="couple_setting_default_birth">생일</string>
+
+
+    <!--  nickname input warnings  -->
+    <string name="warning_long_nickname">닉네임은 최대 20글자까지입니다.</string>
+    <string name="warning_special_character_nickname">닉네임에 특수문자는 쓸 수 없습니다.</string>
+    <string name="warning_invalid_date_format">yyyy/MM/dd</string>
+    <string name="warning_no_such_date">존재하지 않는 날짜입니다.</string>
 </resources>

@@ -28,6 +28,8 @@
     <color name="emotion_puzzling_color">#fff9ba</color>
     <color name="emotion_bad_color">#DFDEFF</color>
     <color name="emotion_angry_color">#FFB6B3</color>
+
+    <color name="dialog_disabled_button_color">#DDDDDD</color>
     
     <!--  dialog_couple_divorce.xml  -->
     <color name="divorce_partner_name_text_color">#C8C8C8</color>

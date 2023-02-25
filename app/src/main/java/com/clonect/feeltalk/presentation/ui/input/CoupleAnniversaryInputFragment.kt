@@ -108,14 +108,14 @@ class CoupleAnniversaryInputFragment : Fragment() {
                 }
 
                 if (!binding.metCoupleAnniversary.isDone) {
-                    viewModel.setInvalidCoupleAnniversaryWarning("yyyy/MM/dd")
+                    viewModel.setInvalidCoupleAnniversaryWarning(getString(R.string.warning_invalid_date_format))
                     binding.metCoupleAnniversary.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0)
                     enableNextButton(false)
                     return@collectLatest
                 }
 
                 if (!viewModel.checkValidDate(anniversaryDate)) {
-                    viewModel.setInvalidCoupleAnniversaryWarning("존재하지 않는 날짜입니다.")
+                    viewModel.setInvalidCoupleAnniversaryWarning(getString(R.string.warning_no_such_date))
                     binding.metCoupleAnniversary.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0)
                     enableNextButton(false)
                     return@collectLatest

@@ -3,7 +3,6 @@ package com.clonect.feeltalk.presentation.ui.input
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -12,6 +11,7 @@ import android.view.inputmethod.EditorInfo
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -72,14 +72,14 @@ class UserNicknameInputFragment : Fragment() {
                 }
 
                 if (nickname.length >= 20) {
-                    viewModel.setInvalidNicknameWarning("닉네임은 최대 20글자까지입니다.")
+                    viewModel.setInvalidNicknameWarning(getString(R.string.warning_long_nickname))
                     binding.etUserNickname.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0)
                     enableNextButton(false)
                     return@collectLatest
                 }
 
                 if (!viewModel.checkValidNickname(nickname)) {
-                    viewModel.setInvalidNicknameWarning("닉네임에 특수문자는 쓸 수 없습니다.")
+                    viewModel.setInvalidNicknameWarning(getString(R.string.warning_special_character_nickname))
                     binding.etUserNickname.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0)
                     enableNextButton(false)
                     return@collectLatest

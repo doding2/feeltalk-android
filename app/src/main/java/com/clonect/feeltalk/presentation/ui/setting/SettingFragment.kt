@@ -111,12 +111,17 @@ class SettingFragment : Fragment() {
     }
 
     private fun collectCoupleAnniversary() = lifecycleScope.launch {
+        val dataFormat = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+        val anniversaryFormat = SimpleDateFormat("yyyy. M. d", Locale.getDefault())
+
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.coupleAnniversary.collectLatest {
-                binding.textCoupleAnniversary.text = it?.replace("/", ". ")
-                it?.let {
-                    binding.textDDayValue.text = calculateDDay(it)
-                }
+                val date = it ?: "0000/00/00"
+                val formattedDate = dataFormat.parse(date) ?: "0000. 0. 0"
+                val anniversary = anniversaryFormat.format(formattedDate)
+
+                binding.textCoupleAnniversary.text = anniversary
+                binding.textDDayValue.text = calculateDDay(date)
             }
         }
     }

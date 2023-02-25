@@ -3,16 +3,15 @@ package com.clonect.feeltalk.presentation.ui.input
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -73,14 +72,14 @@ class UserBirthInputFragment : Fragment() {
                 }
 
                 if (!binding.metUserBirth.isDone) {
-                    viewModel.setInvalidBirthWarning("yyyy/MM/dd")
+                    viewModel.setInvalidBirthWarning(getString(R.string.warning_invalid_date_format))
                     binding.metUserBirth.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0)
                     enableNextButton(false)
                     return@collectLatest
                 }
 
                 if (!viewModel.checkValidDate(birthDate)) {
-                    viewModel.setInvalidBirthWarning("존재하지 않는 날짜입니다.")
+                    viewModel.setInvalidBirthWarning(getString(R.string.warning_no_such_date))
                     binding.metUserBirth.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_clear, 0)
                     enableNextButton(false)
                     return@collectLatest

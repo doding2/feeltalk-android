@@ -58,6 +58,8 @@ class CoupleSettingViewModel @Inject constructor(
 
 
     suspend fun updateNickname(nickname: String) = withContext(Dispatchers.IO) {
+        if (nickname == _userInfo.value.nickname) return@withContext true
+
         val result = updateNicknameUseCase(nickname)
         return@withContext when (result) {
             is Resource.Success -> {
@@ -72,6 +74,8 @@ class CoupleSettingViewModel @Inject constructor(
     }
 
     suspend fun updateBirth(birth: String) = withContext(Dispatchers.IO) {
+        if (birth == _userInfo.value.birth) return@withContext true
+
         val result = updateBirthUseCase(birth)
         return@withContext when (result) {
             is Resource.Success -> {
@@ -86,6 +90,8 @@ class CoupleSettingViewModel @Inject constructor(
     }
 
     suspend fun updateCoupleAnniversary(coupleAnniversary: String) = withContext(Dispatchers.IO) {
+        if (coupleAnniversary == _coupleAnniversary.value) return@withContext true
+
         val result = updateCoupleAnniversaryUseCase(coupleAnniversary)
         return@withContext when (result) {
             is Resource.Success -> {

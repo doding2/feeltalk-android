@@ -8,8 +8,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -24,9 +22,7 @@ import com.bumptech.glide.Glide
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.databinding.FragmentCoupleSettingBinding
-import com.clonect.feeltalk.presentation.utils.makeLoadingDialog
-import com.clonect.feeltalk.presentation.utils.showBreakUpCoupleDialog
-import com.clonect.feeltalk.presentation.utils.toBitmap
+import com.clonect.feeltalk.presentation.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -57,7 +53,7 @@ class CoupleSettingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initEditTexts()
+        initEditInfoDialogs()
 
         collectUserInfo()
         collectPartnerInfo()
@@ -93,8 +89,8 @@ class CoupleSettingFragment : Fragment() {
     private fun collectUserInfo() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.userInfo.collectLatest {
-                binding.etMyName.setText(it.nickname)
-                binding.metMyBirthDate.setText(it.birth)
+                binding.tvMyName.setText(it.nickname)
+                binding.tvMyBirthDate.setText(it.birth)
             }
         }
     }
@@ -109,15 +105,17 @@ class CoupleSettingFragment : Fragment() {
     }
 
     private fun collectCoupleAnniversary() = lifecycleScope.launch {
+        val dataFormat = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+        val anniversaryFormat = SimpleDateFormat("yyyy. M. d", Locale.getDefault())
+
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.coupleAnniversary.collectLatest {
-                binding.metCoupleAnniversary.setText(it?.replace("/", ". "))
-                if (it != null) {
-                    binding.textDDayValue.text = calculateDDay(it)
-                }
-                if (it.isNullOrBlank()) {
-                    binding.metCoupleAnniversary.setText("0000/00/00")
-                }
+                val date = it ?: "0000/00/00"
+                val formattedDate = dataFormat.parse(date) ?: "0000. 0. 0"
+                val anniversary = anniversaryFormat.format(formattedDate)
+
+                binding.tvCoupleAnniversary.text = anniversary
+                binding.textDDayValue.text = calculateDDay(date)
             }
         }
     }
@@ -155,81 +153,48 @@ class CoupleSettingFragment : Fragment() {
     }
 
 
-    private fun initEditTexts() = binding.apply {
-        val dateFormat = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
-        dateFormat.isLenient = false
-
-        etMyName.setOnEditorActionListener { v, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_DONE && !etMyName.text.isNullOrBlank()) {
+    private fun initEditInfoDialogs() = binding.apply {
+        tvMyName.setOnClickListener {
+            showEditNicknameDialog { nickname, dialog ->
                 lifecycleScope.launch {
-                    val isSuccessful = viewModel.updateNickname(etMyName.text.toString())
+                    val isSuccessful = viewModel.updateNickname(nickname)
                     if (isSuccessful) {
-                        etMyName.clearFocus()
-                        etMyName.hideKeyboard()
+                        dialog.dismiss()
                         Toast.makeText(requireContext(), "닉네임을 변경했습니다", Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(requireContext(), "닉네임 변경에 실패했습니다", Toast.LENGTH_SHORT).show()
                     }
                 }
-                return@setOnEditorActionListener true
             }
-            false
         }
 
-        metMyBirthDate.setOnEditorActionListener { v, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_DONE && !metMyBirthDate.text.isNullOrBlank()) {
+        tvMyBirthDate.setOnClickListener {
+            showEditBirthDialog { birth, dialog ->
                 lifecycleScope.launch {
-                    val dateString = metMyBirthDate.masked.replace(". ", "/")
-                    try {
-                        dateFormat.parse(dateString)
-                    } catch (e: Exception) {
-                        Toast.makeText(requireContext(), "존재하지 않는 날짜입니다", Toast.LENGTH_SHORT).show()
-                        return@launch
-                    }
-
-                    val isSuccessful = viewModel.updateBirth(dateString)
+                    val isSuccessful = viewModel.updateBirth(birth)
                     if (isSuccessful) {
-                        metMyBirthDate.clearFocus()
-                        metMyBirthDate.hideKeyboard()
+                        dialog.dismiss()
                         Toast.makeText(requireContext(), "생일을 변경했습니다", Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(requireContext(), "생일 변경에 실패했습니다", Toast.LENGTH_SHORT).show()
                     }
                 }
-                return@setOnEditorActionListener true
             }
-            false
         }
 
-        metCoupleAnniversary.setOnEditorActionListener { v, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_DONE && !metCoupleAnniversary.text.isNullOrBlank()) {
+        tvCoupleAnniversary.setOnClickListener {
+            showEditCoupleAnniversaryDialog { birth, dialog ->
                 lifecycleScope.launch {
-                    val dateString = metCoupleAnniversary.masked.replace(". ", "/")
-                    try {
-                        dateFormat.parse(dateString)
-                    } catch (e: Exception) {
-                        Toast.makeText(requireContext(), "존재하지 않는 날짜입니다", Toast.LENGTH_SHORT).show()
-                        return@launch
-                    }
-
-                    val isSuccessful = viewModel.updateCoupleAnniversary(dateString)
+                    val isSuccessful = viewModel.updateCoupleAnniversary(birth)
                     if (isSuccessful) {
-                        metCoupleAnniversary.clearFocus()
-                        metCoupleAnniversary.hideKeyboard()
-                        Toast.makeText(requireContext(), "사귄 첫 날을 변경했습니다", Toast.LENGTH_SHORT).show()
+                        dialog.dismiss()
+                        Toast.makeText(requireContext(), "사귄 첫날을 변경했습니다", Toast.LENGTH_SHORT).show()
                     } else {
-                        Toast.makeText(requireContext(), "사귄 첫 날 변경에 실패했습니다", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "사귄 첫날 변경에 실패했습니다", Toast.LENGTH_SHORT).show()
                     }
                 }
-                return@setOnEditorActionListener true
             }
-            false
         }
-    }
-
-    private fun View.hideKeyboard() {
-        val imm: InputMethodManager? = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-        imm?.hideSoftInputFromWindow(this.windowToken, 0)
     }
 
 
