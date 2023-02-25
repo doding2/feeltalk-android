@@ -105,8 +105,17 @@ class EncryptionRemoteDataSourceImpl(
     }
 
 
-
     /** Restore Sender **/
+    override suspend fun acceptKeyRestoring(accessToken: String): Response<StatusDto> {
+        val body = JsonObject().apply {
+            addProperty("accessToken", accessToken)
+        }
+        val response = clonectService.acceptKeyRestoring(body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
+
     override suspend fun loadTempKey(accessToken: String): Response<TempPublicKeyDto> {
         val response = clonectService.loadTempKey(accessToken)
         if (!response.isSuccessful) throw HttpException(response)

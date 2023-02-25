@@ -78,6 +78,20 @@
             app:popExitAnim="@anim/do_noting"
             app:popUpTo="@id/bottomNavigationFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_bottomNavigationFragment_to_keyRestoringRequestFragment"
+            app:destination="@id/keyRestoringRequestFragment"
+            app:enterAnim="@anim/slide_from_bottom"
+            app:exitAnim="@anim/do_noting"
+            app:popEnterAnim="@anim/do_noting"
+            app:popExitAnim="@anim/slide_to_bottom" />
+        <action
+            android:id="@+id/action_bottomNavigationFragment_to_keyRestoringAcceptFragment"
+            app:destination="@id/keyRestoringAcceptFragment"
+            app:enterAnim="@anim/slide_from_bottom"
+            app:exitAnim="@anim/do_noting"
+            app:popEnterAnim="@anim/do_noting"
+            app:popExitAnim="@anim/slide_to_bottom" />
     </fragment>
     <fragment
         android:id="@+id/todayQuestionFragment"
@@ -208,4 +222,14 @@
             app:popEnterAnim="@anim/slide_from_bottom"
             app:popExitAnim="@anim/slide_to_bottom" />
     </fragment>
+    <fragment
+        android:id="@+id/keyRestoringAcceptFragment"
+        android:name="com.clonect.feeltalk.presentation.ui.key_restoring_accept.KeyRestoringAcceptFragment"
+        android:label="fragment_key_restoring_accept"
+        tools:layout="@layout/fragment_key_restoring_accept" />
+    <fragment
+        android:id="@+id/keyRestoringRequestFragment"
+        android:name="com.clonect.feeltalk.presentation.ui.key_restoring_request.KeyRestoringRequestFragment"
+        android:label="fragment_key_restoring_request"
+        tools:layout="@layout/fragment_key_restoring_request" />
 </navigation>

@@ -12,11 +12,18 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentBottomNavigationBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class BottomNavigationFragment : Fragment() {
@@ -38,16 +45,17 @@ class BottomNavigationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.btnHome.setOnClickListener {
-            navigateToHomePage()
+        binding.apply {
+            btnHome.setOnClickListener {
+                navigateToHomePage()
+            }
+            btnQuestionList.setOnClickListener {
+                navigateToQuestionListPage()
+            }
+            btnSetting.setOnClickListener {
+                navigateToSettingPage()
+            }
         }
-        binding.btnQuestionList.setOnClickListener {
-            navigateToQuestionListPage()
-        }
-        binding.btnSetting.setOnClickListener {
-            navigateToSettingPage()
-        }
-
 
         checkPostNotificationsPermission { isGranted ->
             viewModel.run {
@@ -57,7 +65,27 @@ class BottomNavigationFragment : Fragment() {
                 }
             }
         }
+
+        collectIsKeyPairsExist()
     }
+
+    private fun navigateToKeyRestoringRequestPage() {
+        requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_bottomNavigationFragment_to_keyRestoringRequestFragment)
+    }
+
+    private fun collectIsKeyPairsExist() = CoroutineScope(Dispatchers.Main).launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.isKeyPairsExist.collectLatest { exist ->
+                if (!exist) {
+                    viewModel.disableKeyPairsExist()
+                    navigateToKeyRestoringRequestPage()
+                }
+            }
+        }
+    }
+
 
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()

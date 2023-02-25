@@ -75,6 +75,8 @@
     <string name="setting_notification_header_title">알림 설정</string>
     <string name="setting_push_notification">푸쉬 알림 설정</string>
     <string name="setting_usage_info_notification">이용 정보 알림 설정</string>
+    <string name="setting_security_title">보안</string>
+    <string name="setting_request_key_pairs_restoring">암호화 열쇠 복구 요청</string>
     <string name="setting_customer_service_header_title">고객센터</string>
     <string name="setting_customer_question_service">필톡 질문방</string>
     <string name="setting_customer_feedback_service">필톡 피드백방</string>
@@ -132,6 +134,21 @@
     <!--  fragment_guide.xml  -->
     <string name="guide_button_text">시작하기</string>
 
+    <!--  fragment_key_restoring_request.xml  -->
+    <string name="key_restoring_title">암호화 열쇠 복구하기</string>
+    <string name="key_restoring_request_button">연인에게 복구 요청 보내기</string>
+    <string name="key_restoring_state_message_loading">암호화 열쇠 점검 중...</string>
+    <string name="key_restoring_state_message_normal">암호화 열쇠가 정상입니다.</string>
+    <string name="key_restoring_state_message_missing">암호화 열쇠가 존재하지 않습니다.</string>
+    <string name="key_restoring_state_message_corrupted">암호화 열쇠가 변질되었습니다.</string>
+    <string name="key_restoring_state_message_waiting">연인의 수락을 기다리고 있습니다...</string>
+    <string name="key_restoring_state_message_restored">암호화 열쇠 복구에 성공했습니다.</string>
+
+    <!--  fragment_key_restoring_accept.xml  -->
+    <string name="key_restoring_accept_title">암호화 열쇠 보내주기</string>
+    <string name="key_restoring_accept_button">수락하기</string>
+    <string name="key_restoring_accept_request">연인에게서 암호화 열쇠 복구 요청을 받았습니다.\n수락해 주시겠습니까?</string>
+    <string name="key_restoring_accept_success">연인이 암호화 열쇠 복구에 성공했습니다.</string>
 
     <!--  nickname input warnings  -->
     <string name="warning_long_nickname">닉네임은 최대 20글자까지입니다.</string>

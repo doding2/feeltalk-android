@@ -151,6 +151,8 @@
     <color name="guide_indicator_enabled_button_color">@color/main</color>
     <color name="guide_indicator_disabled_button_color">#DDDDDD</color>
 
+    <!--  fragment_key_restoring_request.xml  -->
+    <color name="key_restoring_message_color">@color/black</color>
 
 
 </resources>

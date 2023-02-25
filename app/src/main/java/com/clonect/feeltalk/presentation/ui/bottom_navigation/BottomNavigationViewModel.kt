@@ -3,9 +3,11 @@ package com.clonect.feeltalk.presentation.ui.bottom_navigation
 import android.os.Parcelable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.notification.Topics
 import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
+import com.clonect.feeltalk.domain.usecase.encryption.CheckKeyPairsExistUseCase
 import com.clonect.feeltalk.presentation.utils.AppSettings
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessaging
@@ -18,8 +20,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BottomNavigationViewModel @Inject constructor(
+    private val checkKeyPairsExistUseCase: CheckKeyPairsExistUseCase,
     private val getAppSettingsUseCase: GetAppSettingsUseCase,
-    private val saveAppSettingsUseCase: SaveAppSettingsUseCase
+    private val saveAppSettingsUseCase: SaveAppSettingsUseCase,
 ): ViewModel() {
 
     var appSettings = getAppSettingsUseCase()
@@ -33,8 +36,12 @@ class BottomNavigationViewModel @Inject constructor(
     private val _settingScrollState = MutableStateFlow<Int?>(null)
     val settingScrollState = _settingScrollState.asStateFlow()
 
+    private val _isKeyPairsExist = MutableStateFlow(true)
+    val isKeyPairsExist = _isKeyPairsExist.asStateFlow()
+
     init {
         initFirebase()
+        checkKeyPairsExist()
     }
 
     private fun initFirebase() {
@@ -43,6 +50,27 @@ class BottomNavigationViewModel @Inject constructor(
             enableUsageInfoNotification(isUsageInfoNotificationEnabled)
         }
     }
+
+    private fun checkKeyPairsExist() = viewModelScope.launch(Dispatchers.IO) {
+        val result = checkKeyPairsExistUseCase()
+        when (result) {
+            is Resource.Success -> {
+                _isKeyPairsExist.value = result.data
+            }
+            is Resource.Error -> {
+                infoLog("Fail to check key pairs exist: ${result.throwable.localizedMessage}")
+            }
+            else -> {
+                infoLog("Fail to check key pairs exist")
+            }
+        }
+    }
+
+    fun disableKeyPairsExist() {
+        _isKeyPairsExist.value = true
+    }
+
+
 
     fun getAppSettingsNotChanged(): Boolean {
         return getAppSettingsUseCase().isAppSettingsNotChanged

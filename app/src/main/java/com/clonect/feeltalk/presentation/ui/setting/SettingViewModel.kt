@@ -7,7 +7,6 @@ import com.clonect.feeltalk.domain.model.data.notification.Topics
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
-import com.clonect.feeltalk.domain.usecase.encryption.RestoreKeysUseCase
 import com.clonect.feeltalk.domain.usecase.user.ClearAllExceptKeysUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetCoupleAnniversaryUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetMyProfileImageUrlUseCase
@@ -20,7 +19,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,8 +28,7 @@ class SettingViewModel @Inject constructor(
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val getCoupleAnniversaryUseCase: GetCoupleAnniversaryUseCase,
     private val clearAllExceptKeysUseCase: ClearAllExceptKeysUseCase,
-    private val getMyProfileImageUrlUseCase: GetMyProfileImageUrlUseCase,
-    private val restoreKeysUseCase: RestoreKeysUseCase,
+    private val getMyProfileImageUrlUseCase: GetMyProfileImageUrlUseCase
 ): ViewModel() {
 
     private val appSettings = getAppSettingsUseCase()
@@ -123,26 +120,5 @@ class SettingViewModel @Inject constructor(
     suspend fun clearAllExceptKeys(): Boolean {
         val clearResult = clearAllExceptKeysUseCase()
         return (clearResult is Resource.Success)
-    }
-
-
-
-
-    suspend fun restoreKeys() = withContext(Dispatchers.IO) {
-        val result = restoreKeysUseCase()
-        return@withContext when (result) {
-            is Resource.Success -> {
-                infoLog("Success to restore keys")
-                true
-            }
-            is Resource.Error -> {
-                infoLog("Fail to restore keys: ${result.throwable}")
-                false
-            }
-            else -> {
-                infoLog("Fail to restore keys")
-                false
-            }
-        }
     }
 }

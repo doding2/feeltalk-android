@@ -258,6 +258,11 @@ interface ClonectService {
 
 
     /** Send Encryption Keys for Restoring **/
+    @POST("api/fcm/KeyTradeOk")
+    suspend fun acceptKeyRestoring(
+        @Body body: JsonObject
+    ): Response<StatusDto>
+
     @GET("api/member/partnerTempPublicKey/{accessToken}")
     suspend fun loadTempKey(
         @Path("accessToken") accessToken: String,
@@ -267,6 +272,5 @@ interface ClonectService {
     suspend fun uploadTempEncryptedPrivateKey(
         @Body body: JsonObject,
     ): Response<StatusDto>
-
 
 }

@@ -26,6 +26,7 @@ interface EncryptionRemoteDataSource {
 
 
     /** Restore Sender **/
+    suspend fun acceptKeyRestoring(accessToken: String): Response<StatusDto>
     suspend fun loadTempKey(accessToken: String): Response<TempPublicKeyDto>
     suspend fun uploadTempEncryptedPrivateKey(accessToken: String, privateKey: String): Response<StatusDto>
 }

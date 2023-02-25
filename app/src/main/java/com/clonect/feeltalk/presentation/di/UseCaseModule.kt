@@ -343,4 +343,22 @@ class UseCaseModule {
         return HelpToRestoreKeysUseCase(userRepository, encryptionRepository)
     }
 
+    @Singleton
+    @Provides
+    fun providesRequestToRestoreKeysUseCase(userRepository: UserRepository, encryptionRepository: EncryptionRepository): RequestToRestoreKeysUseCase {
+        return RequestToRestoreKeysUseCase(userRepository, encryptionRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesCheckKeyPairsExistUseCase(encryptionRepository: EncryptionRepository): CheckKeyPairsExistUseCase {
+        return CheckKeyPairsExistUseCase(encryptionRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesCheckKeyPairsWorkWellUseCase(encryptionRepository: EncryptionRepository): CheckKeyPairsWorkWellUseCase {
+        return CheckKeyPairsWorkWellUseCase(encryptionRepository)
+    }
+
 }

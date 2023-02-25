@@ -12,6 +12,7 @@ import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionLoca
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionRemoteDataSource
 import com.clonect.feeltalk.data.utils.MessageEncryptHelper
 import com.clonect.feeltalk.domain.model.dto.common.StatusDto
+import com.clonect.feeltalk.domain.model.dto.encryption.RestorePrivateKeysDto
 import com.clonect.feeltalk.domain.repository.EncryptionRepository
 import com.clonect.feeltalk.presentation.utils.infoLog
 import kotlinx.coroutines.CancellationException
@@ -49,16 +50,54 @@ class EncryptionRepositoryImpl(
     }
 
 
-    override suspend fun checkKeyPairsExist(): Boolean {
+    override suspend fun checkKeyPairsExist(): Resource<Boolean> {
         return try {
             val isExist = localDataSource.checkKeyPairsExist()
-            isExist
+            Resource.Success(isExist)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            false
+            Resource.Error(e)
         }
     }
+
+    override suspend fun checkKeyPairsWorkWell(): Resource<Boolean> {
+        return try {
+            val message = "최종근 &\n& Choi Jong Geun ~\n~ ちょぃぞんぐん"
+
+            val encrypted = when (val result = encryptMyText(message)) {
+                is Resource.Success -> result.data
+                else -> throw Exception("Can't encrypt message with my public key")
+            }
+            val decrypted = when (val result = decryptMyText(encrypted)) {
+                is Resource.Success -> result.data
+                else -> throw Exception("Can't decrypt digest with my private key")
+            }
+            if (message != decrypted) {
+                throw Exception("The original text and the decrypted text do not match")
+            }
+
+            val pEncrypted = when (val result = encryptPartnerText(message)) {
+                is Resource.Success -> result.data
+                else -> throw Exception("Can't encrypt message with partner's public key")
+            }
+            val pDecrypted = when (val result = decryptPartnerText(pEncrypted)) {
+                is Resource.Success -> result.data
+                else -> throw Exception("Can't decrypt digest with partner's private key")
+            }
+            if (message != pDecrypted) {
+                throw Exception("The original text and the decrypted text do not match")
+            }
+
+            Resource.Success(true)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+
 
     override suspend fun uploadMyPublicKey(accessToken: String): Resource<String> {
         return try {
@@ -176,10 +215,20 @@ class EncryptionRepositoryImpl(
 
 
     /** Key Restoring Receiver **/
-    override suspend fun restoreKeys(accessToken: String): Resource<StatusDto> {
+    override suspend fun requestToRestoreKeys(accessToken: String): Resource<StatusDto> {
         return try {
-            // request
             val requestResult = remoteSource.requestKeyRestoring(accessToken).body()!!
+            Resource.Success(requestResult)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun restoreKeys(accessToken: String): Resource<RestorePrivateKeysDto> {
+        return try {
             val keyFactory = KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_RSA)
 
             // upload temp key
@@ -204,7 +253,7 @@ class EncryptionRepositoryImpl(
             var restoreResult = remoteSource.restorePrivateKeys(accessToken).body()!!
             while (restoreResult.partnerPrivateKeyEncodeBySelfPublicKey == null || restoreResult.selfPrivateKeyEncodeByTempPublicKey == null) {
                 if (tryCount >= 10) {
-                    throw NullPointerException("Private keys are null that send from server.")
+                    throw NullPointerException("Private keys sent from server are null")
                 }
                 tryCount++
                 delay(Constants.EXCHANGE_KEY_WAIT_DELAY)
@@ -238,7 +287,7 @@ class EncryptionRepositoryImpl(
             cacheDataSource.saveMyPrivateKeyToCache(myPrivateKey)
             cacheDataSource.savePartnerPrivateKeyToCache(partnerPrivateKey)
 
-            Resource.Success(requestResult)
+            Resource.Success(restoreResult)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -252,9 +301,21 @@ class EncryptionRepositoryImpl(
     /** Key Restoring Sender **/
     override suspend fun helpToRestoreKeys(accessToken: String): Resource<StatusDto> {
         return try {
-            val tempKeyResult = remoteSource.loadTempKey(accessToken).body()!!
-            val tempKey = Base64.decode(tempKeyResult.tempPublicKey, Base64.NO_WRAP)
+            val status = remoteSource.acceptKeyRestoring(accessToken)
 
+            delay(Constants.EXCHANGE_KEY_WAIT_DELAY)
+
+            var tempKeyResult = remoteSource.loadTempKey(accessToken).body()!!
+            while (tempKeyResult.tempPublicKey == null) {
+                if (tryCount >= 10) {
+                    throw NullPointerException("Temp key sent from server is null")
+                }
+                tryCount++
+                delay(Constants.EXCHANGE_KEY_WAIT_DELAY)
+                tempKeyResult = remoteSource.loadTempKey(accessToken).body()!!
+            }
+            tryCount = 0
+            val tempKey = Base64.decode(tempKeyResult.tempPublicKey, Base64.NO_WRAP)
 
             val partnerPrivateKey = getPartnerPrivateKey()
             val encryptedPartnerPrivateKeyBytes = messageEncryptHelper.encryptAESBase64(
@@ -263,7 +324,6 @@ class EncryptionRepositoryImpl(
             )
             val partnerPrivateKeyString = Base64.encodeToString(encryptedPartnerPrivateKeyBytes, Base64.NO_WRAP)
             val uploadResult = remoteSource.uploadTempEncryptedPrivateKey(accessToken, partnerPrivateKeyString).body()!!
-
 
             Resource.Success(uploadResult)
         } catch (e: CancellationException) {
@@ -335,7 +395,6 @@ class EncryptionRepositoryImpl(
         }
     }
 
-    
 
     /** Note: RSA, AES 모두 이용한 암호화
      *

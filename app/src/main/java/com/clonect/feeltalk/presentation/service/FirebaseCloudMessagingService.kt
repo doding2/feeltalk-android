@@ -18,10 +18,10 @@ import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SaveChatUseCase
-import com.clonect.feeltalk.domain.usecase.encryption.HelpToRestoreKeysUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetQuestionAnswersUseCase
 import com.clonect.feeltalk.domain.usecase.question.SaveQuestionToDatabaseUseCase
 import com.clonect.feeltalk.domain.usecase.user.CheckUserIsSignedUpUseCase
+import com.clonect.feeltalk.presentation.service.notification_observer.AcceptRestoringKeysRequestObserver
 import com.clonect.feeltalk.presentation.service.notification_observer.CoupleRegistrationObserver
 import com.clonect.feeltalk.presentation.service.notification_observer.FcmNewChatObserver
 import com.clonect.feeltalk.presentation.service.notification_observer.QuestionAnswerObserver
@@ -55,8 +55,6 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     // User Level Encryptor
     @Inject
     lateinit var userLevelEncryptHelper: UserLevelEncryptHelper
-    @Inject
-    lateinit var helpToRestoreKeysUseCase: HelpToRestoreKeysUseCase
 
     // Chat
     @Inject
@@ -77,6 +75,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         const val COUPLE_REGISTRATION_CHANNEL_ID ="feeltalk_couple_registration_completed_notification"
         const val ADVERTISING_CHANNEL_ID ="feeltalk_advertising_notification"
         const val REQUEST_KEY_RESTORING_CHANNEL_ID ="feeltalk_request_key_restoring_notification"
+        const val ACCEPT_KEY_RESTORING_CHANNEL_ID = "feeltalk_accept_key_restoring_notification"
 
         const val TYPE_CHAT = "chat"
         const val TYPE_COUPLE_REGISTRATION = "커플매칭성공"
@@ -84,6 +83,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         const val TYPE_PARTNER_ANSWERED = "isAnswer"
         const val TYPE_REQUEST_EMOTION_CHANGE = "emotionRequest"
         const val TYPE_REQUEST_KEY_RESTORING = "KeyTrade"
+        const val TYPE_ACCEPT_KEY_RESTORING = "KeyTradeOk"
     }
 
     override fun onNewToken(newToken: String) {
@@ -120,7 +120,6 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 return@launch
             }
 
-
             val appSettings = getAppSettingsUseCase().apply {
                 isNotificationUpdated = true
             }
@@ -133,6 +132,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 TYPE_CHAT -> handleChatData(data)
                 TYPE_COUPLE_REGISTRATION -> handleCoupleRegistrationData(data)
                 TYPE_REQUEST_KEY_RESTORING -> handleRequestKeyRestoringData(data)
+                TYPE_ACCEPT_KEY_RESTORING -> handleAcceptRequestKeyRestoringData(data)
                 else -> handleOtherCases(data)
             }
         }
@@ -315,31 +315,26 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     }
 
     private fun handleRequestKeyRestoringData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
-        val intent = Intent(this@FirebaseCloudMessagingService, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent: PendingIntent? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.getActivity(this@FirebaseCloudMessagingService, 0, intent, PendingIntent.FLAG_MUTABLE)
-        } else {
-            PendingIntent.getActivity(this@FirebaseCloudMessagingService, 0, intent, PendingIntent.FLAG_ONE_SHOT)
-        }
+        val pendingIntent = NavDeepLinkBuilder(applicationContext)
+            .setGraph(R.navigation.overall_nav_graph)
+            .setDestination(R.id.keyRestoringAcceptFragment)
+            .createPendingIntent()
 
-        val result = helpToRestoreKeysUseCase()
-        if (result is Resource.Success) {
-            infoLog("Success to restore keys")
-        } else {
-            infoLog("Fail to restore keys")
-        }
-
-
-        val title = data["title"] ?: ""
-        val message = data["message"] ?: ""
+        val title = data["title"]
+        val message = data["message"]
 
         showNotification(
-            title = title,
-            message = message,
-            channelID = ADVERTISING_CHANNEL_ID,
+            title = "암호화 열쇠 복구 요청",
+            message = "연인이 암호화 열쇠 복구 요청을 보냈습니다.",
+            channelID = REQUEST_KEY_RESTORING_CHANNEL_ID,
             pendingIntent = pendingIntent
         )
+    }
+
+    private fun handleAcceptRequestKeyRestoringData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+        AcceptRestoringKeysRequestObserver
+            .getInstance()
+            .setPartnerAccepted(true)
     }
 
     private fun handleOtherCases(data: Map<String, String>) {
@@ -431,6 +426,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         ADVERTISING_CHANNEL_ID -> "광고"
         COUPLE_REGISTRATION_CHANNEL_ID -> "커플 등록"
         REQUEST_KEY_RESTORING_CHANNEL_ID -> "키 복구 요청"
+        ACCEPT_KEY_RESTORING_CHANNEL_ID -> "키 복구 요청 수락"
         else -> ""
     }
 
@@ -442,6 +438,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         ADVERTISING_CHANNEL_ID -> "광고"
         COUPLE_REGISTRATION_CHANNEL_ID -> "커플 등록"
         REQUEST_KEY_RESTORING_CHANNEL_ID -> "키 복구 요청"
+        ACCEPT_KEY_RESTORING_CHANNEL_ID -> "키 복구 요청 수락"
         else -> ""
     }
 }
