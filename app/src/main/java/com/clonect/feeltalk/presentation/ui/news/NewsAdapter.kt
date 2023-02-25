@@ -3,15 +3,14 @@ package com.clonect.feeltalk.presentation.ui.news
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.text.bold
+import android.widget.ImageView
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.ItemNewsBinding
 import com.clonect.feeltalk.domain.model.data.news.News
-import com.clonect.feeltalk.domain.model.data.news.NewsType
-import com.clonect.feeltalk.domain.model.data.news.NewsType.Official.toNewsType
 import kotlin.random.Random
 
 class NewsAdapter: RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
@@ -29,6 +28,7 @@ class NewsAdapter: RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
     val differ = AsyncListDiffer(this, callback)
 
     private var onItemClickListener: ((News) -> Unit)? = null
+    private var partnerProfileUrl: String? = null
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
@@ -49,6 +49,20 @@ class NewsAdapter: RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
     }
 
 
+    fun setPartnerProfileUrl(url: String?) {
+        partnerProfileUrl = url
+    }
+
+    private fun ImageView.setProfileImageUrl(url: String?) {
+        Glide.with(this)
+            .load(url)
+            .circleCrop()
+            .fallback(R.drawable.image_my_default_profile)
+            .error(R.drawable.image_my_default_profile)
+            .into(this)
+    }
+
+
     inner class NewsViewHolder(
         val binding: ItemNewsBinding
     ): RecyclerView.ViewHolder(binding.root) {
@@ -58,7 +72,7 @@ class NewsAdapter: RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
                 textDate.text = news.date
 
                 val contentSpan = SpannableStringBuilder()
-                    .bold { append(news.target) }
+//                    .bold { append(news.target) }
                     .append(news.content)
                 textContent.text = contentSpan
 
@@ -71,12 +85,14 @@ class NewsAdapter: RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
 
                 binding.clRoot.setBackgroundResource(backgroundId)
 
-                val profileId: Int = when (news.type.toNewsType()) {
-                    is NewsType.News -> R.drawable.image_my_default_profile
-                    is NewsType.Chat -> R.drawable.image_partner_default_profile
-                    is NewsType.Official -> R.drawable.image_official_default_profile
-                }
-                ivProfile.setImageResource(profileId)
+//                val profileId: Int = when (news.type.toNewsType()) {
+//                    is NewsType.News -> R.drawable.image_my_default_profile
+//                    is NewsType.Chat -> R.drawable.image_partner_default_profile
+//                    is NewsType.Official -> R.drawable.image_official_default_profile
+//                }
+//                ivProfile.setImageResource(profileId)
+
+                ivProfile.setProfileImageUrl(partnerProfileUrl)
 
                 root.setOnClickListener { _ ->
                     onItemClickListener?.let { it(news) }

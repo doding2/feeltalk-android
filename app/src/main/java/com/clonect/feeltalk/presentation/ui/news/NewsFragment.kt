@@ -33,8 +33,9 @@ class NewsFragment : Fragment() {
     ): View {
         binding = FragmentNewsBinding.inflate(inflater, container, false)
 
-        initRecyclerView()
+        collectPartnerProfileUrl()
         collectNewsList()
+        initRecyclerView()
 
         binding.btnBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
 
@@ -50,6 +51,14 @@ class NewsFragment : Fragment() {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.newsList.collectLatest {
                 adapter.differ.submitList(it)
+            }
+        }
+    }
+
+    private fun collectPartnerProfileUrl() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.partnerProfileUrl.collectLatest {
+                adapter.setPartnerProfileUrl(it)
             }
         }
     }

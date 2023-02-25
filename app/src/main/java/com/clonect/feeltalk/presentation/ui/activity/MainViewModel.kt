@@ -6,7 +6,9 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.usecase.user.*
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -123,7 +125,7 @@ class MainViewModel @Inject constructor(
     }
 
 
-    private suspend fun getUserInfo() {
+    private fun getUserInfo() = CoroutineScope(Dispatchers.IO).launch {
         val result = getUserInfoUseCase()
 
         if (result is Resource.Error) {
@@ -132,30 +134,43 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getCoupleInfo() {
-        val infoResult = getPartnerInfoUseCase()
-        if (infoResult is Resource.Error) {
-            sendToast("애인의 정보를 불러오는데 실패했습니다")
-            infoLog("Fail to get partner info: ${infoResult.throwable}")
+    private suspend fun getCoupleInfo() = CoroutineScope(Dispatchers.IO).launch {
+        val partnerInfo = async {
+            val infoResult = getPartnerInfoUseCase()
+            if (infoResult is Resource.Error) {
+                sendToast("애인의 정보를 불러오는데 실패했습니다")
+                infoLog("Fail to get partner info: ${infoResult.throwable}")
+            }
         }
 
-        val myMyProfileResult = getMyProfileImageUrlUseCase()
-        if (myMyProfileResult is Resource.Error) {
-            sendToast("내 프로필 이미지를 불러오는데 실패했습니다")
-            infoLog("Fail to get my profile url: ${myMyProfileResult.throwable}")
+        val myProfile = async {
+            val myMyProfileResult = getMyProfileImageUrlUseCase()
+            if (myMyProfileResult is Resource.Error) {
+                sendToast("내 프로필 이미지를 불러오는데 실패했습니다")
+                infoLog("Fail to get my profile url: ${myMyProfileResult.throwable}")
+            }
         }
 
-        val partnerProfileResult = getPartnerProfileImageUrlUseCase()
-        if (partnerProfileResult is Resource.Error) {
-            sendToast("애인의 프로필 이미지를 불러오는데 실패했습니다")
-            infoLog("Fail to get partner profile url: ${partnerProfileResult.throwable}")
+        val partnerProfile = async {
+            val partnerProfileResult = getPartnerProfileImageUrlUseCase()
+            if (partnerProfileResult is Resource.Error) {
+                sendToast("애인의 프로필 이미지를 불러오는데 실패했습니다")
+                infoLog("Fail to get partner profile url: ${partnerProfileResult.throwable}")
+            }
         }
 
-        val anniversaryResult = getAnniversaryUseCase()
-        if (anniversaryResult is Resource.Error) {
-            sendToast("사귄 첫날 정보를 불러오는데 실패했습니다")
-            infoLog("Fail to get partner profile url: ${anniversaryResult.throwable}")
+        val anniversary = async {
+            val anniversaryResult = getAnniversaryUseCase()
+            if (anniversaryResult is Resource.Error) {
+                sendToast("사귄 첫날 정보를 불러오는데 실패했습니다")
+                infoLog("Fail to get partner profile url: ${anniversaryResult.throwable}")
+            }
         }
+
+        partnerInfo.await()
+        myProfile.await()
+        partnerProfile.await()
+        anniversary.await()
     }
 
 

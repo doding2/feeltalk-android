@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.news.News
 import com.clonect.feeltalk.domain.usecase.news.GetNewsListUseCase
+import com.clonect.feeltalk.domain.usecase.user.GetPartnerProfileImageUrlUseCase
+import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,23 +16,36 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NewsViewModel @Inject constructor(
-    private val getNewsListUseCase: GetNewsListUseCase
+    private val getNewsListUseCase: GetNewsListUseCase,
+    private val getPartnerProfileImageUrlUseCase: GetPartnerProfileImageUrlUseCase,
 ) : ViewModel() {
 
     private val _newsList = MutableStateFlow<List<News>>(emptyList())
     val newsList = _newsList.asStateFlow()
 
+    private val _partnerProfileUrl = MutableStateFlow<String?>(null)
+    val partnerProfileUrl = _partnerProfileUrl.asStateFlow()
+
     init {
         getNewsList()
+        getPartnerProfileUrl()
     }
 
     private fun getNewsList() = viewModelScope.launch(Dispatchers.IO) {
         val result = getNewsListUseCase()
         when (result) {
             is Resource.Success -> _newsList.value = result.data
-            is Resource.Error -> { }
-            is Resource.Loading -> { }
+            is Resource.Error -> { infoLog("Fail to get news list: ${result.throwable.localizedMessage}") }
+            is Resource.Loading -> { infoLog("Fail to get news list") }
         }
+    }
 
+    private fun getPartnerProfileUrl() = viewModelScope.launch(Dispatchers.IO) {
+        val result = getPartnerProfileImageUrlUseCase()
+        when (result) {
+            is Resource.Success -> _partnerProfileUrl.value = result.data
+            is Resource.Error -> { infoLog("Fail to get partner profile url: ${result.throwable.localizedMessage}") }
+            is Resource.Loading -> { infoLog("Fail to get partner profile url") }
+        }
     }
 }
