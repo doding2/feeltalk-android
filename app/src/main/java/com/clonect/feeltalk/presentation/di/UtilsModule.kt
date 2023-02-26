@@ -2,6 +2,7 @@ package com.clonect.feeltalk.presentation.di
 
 import android.content.SharedPreferences
 import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
+import com.clonect.feeltalk.data.utils.DatabaseEncryptHelper
 import com.clonect.feeltalk.data.utils.MessageEncryptHelper
 import com.clonect.feeltalk.data.utils.UserLevelEncryptHelper
 import com.clonect.feeltalk.domain.repository.EncryptionRepository
@@ -34,4 +35,9 @@ class UtilsModule {
         return UserLevelEncryptHelper(encryptRepository)
     }
 
+    @Provides
+    @Singleton
+    fun providesDatabaseEncryptHelper(): DatabaseEncryptHelper {
+        return DatabaseEncryptHelper()
+    }
 }
