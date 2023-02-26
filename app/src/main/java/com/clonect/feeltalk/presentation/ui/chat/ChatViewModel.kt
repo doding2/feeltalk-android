@@ -58,7 +58,10 @@ class ChatViewModel @Inject constructor(
     val isPartnerAnswered = _isPartnerAnswered.asStateFlow()
 
 
-    private val _scrollPositionState = MutableStateFlow(0)
+    private val _isScrollBottom = MutableStateFlow(true)
+    val isScrollBottom = _isScrollBottom.asStateFlow()
+
+    private val _scrollPositionState = MutableStateFlow<Int?>(null)
     val scrollPositionState = _scrollPositionState.asStateFlow()
 
 
@@ -168,7 +171,7 @@ class ChatViewModel @Inject constructor(
     }
 
 
-    fun sendChat(content: String) = viewModelScope.launch(Dispatchers.IO) {
+    fun sendChat(content: String, onCompleted: () -> Unit) = viewModelScope.launch(Dispatchers.IO) {
         val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val date = format.format(Date())
         infoLog("날짜: ${date}")
@@ -184,6 +187,8 @@ class ChatViewModel @Inject constructor(
         when (result) {
             is Resource.Success -> {
                 infoLog("Success to send chat: ${result.data}")
+                setScrollBottom(true)
+                onCompleted()
             }
             is Resource.Error -> {
                 infoLog("Fail to send chat: ${result.throwable.localizedMessage}")
@@ -195,8 +200,12 @@ class ChatViewModel @Inject constructor(
     }
 
 
-    fun updateScrollPosition(position: Int) {
+    fun updateScrollPosition(position: Int?) {
         _scrollPositionState.value = position
+    }
+
+    fun setScrollBottom(isBottom: Boolean) {
+        _isScrollBottom.value = isBottom
     }
 
 

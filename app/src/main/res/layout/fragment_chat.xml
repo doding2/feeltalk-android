@@ -132,6 +132,22 @@
         android:layout_height="match_parent"
         android:clipChildren="false">
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_scroll_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_scroll_bottom"
+            app:fabSize="mini"
+            app:tint="@color/chat_scroll_bottom_button_icon_color"
+            app:maxImageSize="24dp"
+            app:elevation="0.01dp"
+            app:pressedTranslationZ="0dp"
+            app:backgroundTint="@color/chat_scroll_bottom_button_background"
+            app:rippleColor="@color/chat_scroll_bottom_button_pressed_background"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/layout_chat_field"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_chat"
             android:layout_width="match_parent"

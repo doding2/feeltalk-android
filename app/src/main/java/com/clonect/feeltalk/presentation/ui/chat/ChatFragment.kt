@@ -16,6 +16,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentChatBinding
@@ -58,10 +59,16 @@ class ChatFragment : Fragment() {
         collectMyProfileImageUrl()
         collectPartnerProfileImageUrl()
         collectIsPartnerAnswered()
+        collectIsScrollBottom()
 
         binding.btnSendChat.setOnClickListener { sendChat() }
 
         binding.btnBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
+
+        binding.fabScrollBottom.setOnClickListener {
+            scrollToBottom()
+            viewModel.setScrollBottom(true)
+        }
     }
 
     private fun preventScreenCapture() {
@@ -73,7 +80,9 @@ class ChatFragment : Fragment() {
         binding.etChat.text.toString()
             .takeIf { it.isNotEmpty() }
             ?.let {
-                viewModel.sendChat(it)
+                viewModel.sendChat(it) {
+                    scrollToBottom()
+                }
                 binding.etChat.setText("")
             }
     }
@@ -99,9 +108,9 @@ class ChatFragment : Fragment() {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.chatList.collectLatest {
                 adapter.differ.submitList(it) {
-                    scrollRemainHeight -= computeRemainScrollHeight()
-                    val position = adapter.itemCount - 1
-                    viewModel.updateScrollPosition(position)
+                    if (viewModel.isScrollBottom.value) {
+                        scrollToBottom()
+                    }
                 }
             }
         }
@@ -147,13 +156,28 @@ class ChatFragment : Fragment() {
         }
     }
 
-    private fun collectScrollPosition() = lifecycleScope.launch {
+    private fun collectIsScrollBottom() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.scrollPositionState.collectLatest {
-                binding.rvChat.scrollToPosition(it)
+            viewModel.isScrollBottom.collectLatest {
+                if (it) {
+                    binding.fabScrollBottom.hide()
+                } else {
+                    binding.fabScrollBottom.show()
+                }
             }
         }
     }
+
+    private fun collectScrollPosition() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.scrollPositionState.collectLatest {
+                if (it != null) {
+                    binding.rvChat.scrollToPosition(it)
+                }
+            }
+        }
+    }
+
 
 
 
@@ -182,6 +206,18 @@ class ChatFragment : Fragment() {
 
             binding.rvChat.scrollBy(0, rangeMoved)
         }
+
+        // detect scroll reaches bottom
+        binding.rvChat.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                val isScrollBottom = !recyclerView.canScrollVertically(10)
+                viewModel.setScrollBottom(isScrollBottom)
+                if (!isScrollBottom)
+                    viewModel.updateScrollPosition(null)
+            }
+        })
     }
 
 
@@ -200,6 +236,13 @@ class ChatFragment : Fragment() {
             computeVerticalScrollRange() - computeVerticalScrollOffset() - computeVerticalScrollExtent()
         }
     }
+
+    private fun scrollToBottom() {
+        scrollRemainHeight -= computeRemainScrollHeight()
+        val position = adapter.itemCount - 1
+        viewModel.updateScrollPosition(position)
+    }
+
 
     private fun reassembleQuestionTitle(question: Question) {
         binding.layoutQuestionContent.removeAllViewsInLayout()

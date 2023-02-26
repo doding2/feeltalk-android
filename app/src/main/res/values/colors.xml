@@ -126,6 +126,9 @@
     <color name="chat_border_color">#F1F1F1</color>
     <color name="chat_field_hint_color">#999999</color>
     <color name="chat_field_background_color">@color/white</color>
+    <color name="chat_scroll_bottom_button_background">#E6FFFFFF</color>
+    <color name="chat_scroll_bottom_button_pressed_background">#E6F1F1F1</color>
+    <color name="chat_scroll_bottom_button_icon_color">#991C1C1C</color>
 
     <!--  item_chat_mine.xml && item_chat_partner.xml -->
     <color name="item_chat_owner_text_color">@color/black</color>
