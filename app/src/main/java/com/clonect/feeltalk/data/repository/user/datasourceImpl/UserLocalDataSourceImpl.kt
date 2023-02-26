@@ -136,6 +136,7 @@ class UserLocalDataSourceImpl(
         val registrationCodeFile = File(context.filesDir, "couple_registration_code.txt")
         val coupleAnniversaryFile = File(context.filesDir, "couple_anniversary.txt")
         val userInfoFile = File(context.filesDir, "user_info.dat")
+        val userProfileUrlFile = File(context.filesDir, "user_profile_url.txt")
 
         feeltalkDatabase.clearAllTables()
         context.deleteDatabase("feeltalkDatabase.db")
@@ -143,6 +144,7 @@ class UserLocalDataSourceImpl(
         return registrationCodeFile.delete()
                 && coupleAnniversaryFile.delete()
                 && userInfoFile.delete()
+                && userProfileUrlFile.delete()
     }
 
     override suspend fun clearAllExceptKeys(): Boolean {
@@ -151,6 +153,7 @@ class UserLocalDataSourceImpl(
         val accessTokenFile = File(context.filesDir, "access_token.txt")
         val registrationCodeFile = File(context.filesDir, "couple_registration_code.txt")
         val userInfoFile = File(context.filesDir, "user_info.dat")
+        val userProfileUrlFile = File(context.filesDir, "user_profile_url.txt")
 
         feeltalkDatabase.clearAllTables()
         context.deleteDatabase("feeltalkDatabase.db")
@@ -162,6 +165,8 @@ class UserLocalDataSourceImpl(
                 && accessTokenFile.delete()
                 && registrationCodeFile.delete()
                 && userInfoFile.delete()
-                && databaseFile.deleteRecursively()
+                && userProfileUrlFile.delete()
+                && databasesDir.deleteRecursively()
+                && databaseFile.delete()
     }
 }

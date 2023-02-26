@@ -53,7 +53,7 @@ class QuestionRepositoryImpl(
             val yesterdayDate = format.format(yesterday)
             val yesterdayQuestion = localDataSource.getTodayQuestion(yesterdayDate)
 
-            if (yesterdayQuestion?.question == null) {
+            if (yesterdayQuestion == null) {
                 localDataSource.saveOneQuestion(remoteQuestion)
                 cacheDataSource.saveTodayQuestion(remoteQuestion)
                 return Resource.Success(remoteQuestion)
