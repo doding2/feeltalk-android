@@ -11,15 +11,15 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import net.sqlcipher.database.SupportFactory
-import javax.inject.Singleton
 import net.sqlcipher.database.*
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 class DatabaseModule {
 
     @Provides
+    @Singleton
     fun providesCipherSupportFactory(databaseEncryptHelper: DatabaseEncryptHelper): SupportFactory {
 //        val passPhrase = SQLiteDatabase.getBytes(BuildConfig.ROOM_DATABASE_PASS_PHRASE.toCharArray())
         return SupportFactory(databaseEncryptHelper.getKey().encoded)

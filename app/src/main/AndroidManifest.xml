@@ -8,7 +8,9 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
+        android:fullBackupOnly="false"
+        tools:replace="android:allowBackup, android:fullBackupOnly"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:usesCleartextTraffic="true"
