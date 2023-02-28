@@ -47,7 +47,7 @@ class ChatRepositoryImpl(
 
                 localDataSource.insertOrUpdate(questionContent, newChatList)
                 cacheDataSource.saveChatListToCacheByQuestion(questionContent, newChatList)
-                send(Resource.Success(newChatList))
+//                send(Resource.Success(newChatList))
             }
             if (remote is Resource.Error) {
                 send(Resource.Error(remote.throwable))

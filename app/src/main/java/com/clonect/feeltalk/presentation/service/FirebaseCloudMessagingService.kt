@@ -80,7 +80,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         const val ACCEPT_KEY_RESTORING_CHANNEL_ID = "feeltalk_accept_key_restoring_notification"
 
         const val TYPE_CHAT = "chat"
-        const val TYPE_COUPLE_REGISTRATION = "커플매칭성공"
+        const val TYPE_COUPLE_REGISTRATION = "coupleMatch"
         const val TYPE_TODAY_QUESTION = "newQuestion"
         const val TYPE_PARTNER_ANSWERED = "isAnswer"
         const val TYPE_REQUEST_EMOTION_CHANGE = "emotionRequest"
@@ -122,11 +122,6 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 return@launch
             }
 
-            val appSettings = getAppSettingsUseCase().apply {
-                isNotificationUpdated = true
-            }
-            saveAppSettingsUseCase(appSettings)
-
             when (data["type"]) {
                 TYPE_TODAY_QUESTION -> handleTodayQuestionData(data)
                 TYPE_PARTNER_ANSWERED -> handlePartnerAnsweredData(data)
@@ -157,6 +152,13 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             .setDestination(R.id.todayQuestionFragment)
             .setArguments(bundleOf("selectedQuestion" to newQuestion))
             .createPendingIntent()
+
+
+        val appSettings = getAppSettingsUseCase().apply {
+            isNotificationUpdated = true
+        }
+        saveAppSettingsUseCase(appSettings)
+
 
         showNotification(
             title = data["title"] ?: "",
@@ -213,6 +215,11 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 .createPendingIntent()
             deepLinkPendingIntent
         }
+
+        val appSettings = getAppSettingsUseCase().apply {
+            isNotificationUpdated = true
+        }
+        saveAppSettingsUseCase(appSettings)
 
         showNotification(
             title = data["title"] ?: "",
@@ -285,8 +292,8 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             .createPendingIntent()
 
         showNotification(
-            title = data["title"].toString(),
-            message = data["message"].toString(),
+            title = data["title"] ?: "",
+            message = data["message"] ?: "",
             notificationID = questionContent.toBytesInt(),
             channelID = CHAT_CHANNEL_ID,
             pendingIntent = pendingIntent
@@ -306,14 +313,21 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             .getInstance()
             .setCoupleRegistrationCompleted(true)
 
+        CoroutineScope(Dispatchers.IO).launch {
+            val appSettings = getAppSettingsUseCase().apply {
+                isNotificationUpdated = true
+            }
+            saveAppSettingsUseCase(appSettings)
+        }
+
         val title = data["title"] ?: ""
         val message = data["message"] ?: ""
 
         val isAppRunning = FeeltalkApp.getAppRunning()
         if (!isAppRunning) {
             showNotification(
-                title = "커플 등록 요청",
-                message = "상대방으로부터 커플 등록 요청이 왔습니다.",
+                title = title,
+                message = message,
                 notificationID = COUPLE_REGISTRATION_CHANNEL_ID.toBytesInt(),
                 channelID = COUPLE_REGISTRATION_CHANNEL_ID,
                 pendingIntent = pendingIntent
@@ -327,12 +341,12 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             .setDestination(R.id.keyRestoringAcceptFragment)
             .createPendingIntent()
 
-        val title = data["title"]
-        val message = data["message"]
+        val title = data["title"] ?: ""
+        val message = data["message"] ?: ""
 
         showNotification(
-            title = "암호화 열쇠 복구 요청",
-            message = "연인이 암호화 열쇠 복구 요청을 보냈습니다.",
+            title = title,
+            message = message,
             notificationID = REQUEST_KEY_RESTORING_CHANNEL_ID.toBytesInt(),
             channelID = REQUEST_KEY_RESTORING_CHANNEL_ID,
             pendingIntent = pendingIntent
@@ -343,6 +357,17 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         AcceptRestoringKeysRequestObserver
             .getInstance()
             .setPartnerAccepted(true)
+
+        val isAppRunning = FeeltalkApp.getAppRunning()
+        if (!isAppRunning) {
+            showNotification(
+                title = data["title"] ?: "",
+                message = data["message"] ?: "",
+                notificationID = ACCEPT_KEY_RESTORING_CHANNEL_ID.toBytesInt(),
+                channelID = ACCEPT_KEY_RESTORING_CHANNEL_ID,
+                pendingIntent = null
+            )
+        }
     }
 
     private fun handleOtherCases(data: Map<String, String>) {

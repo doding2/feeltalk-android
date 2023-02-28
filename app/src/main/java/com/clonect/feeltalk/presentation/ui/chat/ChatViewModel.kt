@@ -106,7 +106,7 @@ class ChatViewModel @Inject constructor(
         val questionContent = _question.value.question
         getChatListUseCase(questionContent)
             .catch { infoLog("collect chat list error: ${it.localizedMessage}") }
-            .collect { result ->
+            .collectLatest { result ->
             when (result) {
                 is Resource.Success -> {
                     updateChatList(result.data)
