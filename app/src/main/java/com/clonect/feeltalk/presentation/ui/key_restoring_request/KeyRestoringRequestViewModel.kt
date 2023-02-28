@@ -80,10 +80,18 @@ class KeyRestoringRequestViewModel @Inject constructor(
                 }
             }
             is Resource.Error -> {
+                _keyPairsStateMessage.value = KeyPairsState(
+                    message = context.getString(R.string.key_restoring_state_message_missing) + result.throwable.localizedMessage,
+                    state = Emotion.Puzzling
+                )
                 infoLog("Fail to check key pairs exist: ${result.throwable.localizedMessage}")
                 enableRequestButton(true)
             }
             else -> {
+                _keyPairsStateMessage.value = KeyPairsState(
+                    message = context.getString(R.string.key_restoring_state_message_missing),
+                    state = Emotion.Puzzling
+                )
                 infoLog("Fail to check key pairs exist")
                 enableRequestButton(true)
             }
@@ -111,6 +119,10 @@ class KeyRestoringRequestViewModel @Inject constructor(
             }
             else -> {
                 infoLog("Fail to check key pairs work well")
+                _keyPairsStateMessage.value = KeyPairsState(
+                    message = context.getString(R.string.key_restoring_state_message_corrupted),
+                    state = Emotion.Bad
+                )
                 enableRequestButton(true)
             }
         }

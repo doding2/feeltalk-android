@@ -59,9 +59,11 @@ class BottomNavigationViewModel @Inject constructor(
             }
             is Resource.Error -> {
                 infoLog("Fail to check key pairs exist: ${result.throwable.localizedMessage}")
+                _isKeyPairsExist.value = false
             }
             else -> {
                 infoLog("Fail to check key pairs exist")
+                _isKeyPairsExist.value = false
             }
         }
     }

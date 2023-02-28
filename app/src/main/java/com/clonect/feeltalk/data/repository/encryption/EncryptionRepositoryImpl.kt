@@ -53,6 +53,10 @@ class EncryptionRepositoryImpl(
     override suspend fun checkKeyPairsExist(): Resource<Boolean> {
         return try {
             val isExist = localDataSource.checkKeyPairsExist()
+            getMyPublicKey()
+            getMyPrivateKey()
+            getPartnerPublicKey()
+            getPartnerPrivateKey()
             Resource.Success(isExist)
         } catch (e: CancellationException) {
             throw e
@@ -494,7 +498,7 @@ class EncryptionRepositoryImpl(
 
         val local = localDataSource.getPartnerPrivateKey()
         if (local != null) {
-            localDataSource.savePartnerPrivateKeyToDatabase(local)
+            cacheDataSource.savePartnerPrivateKeyToCache(local)
             return local
         }
 
