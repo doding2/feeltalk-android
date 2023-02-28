@@ -72,8 +72,10 @@ class KeyRestoringRequestViewModel @Inject constructor(
                         state = Emotion.Puzzling
                     )
                     enableRequestButton(true)
+                    infoLog("Key Pair doesn't exist")
                 }
                 else {
+                    infoLog("Key Pair Exist")
                     checkKeyPairsWorkWell()
                 }
             }
@@ -97,6 +99,7 @@ class KeyRestoringRequestViewModel @Inject constructor(
                     state = if (workWell) Emotion.Happy else Emotion.Angry
                 )
                 enableRequestButton(workWell.not())
+                infoLog("No Problem At Key Pairs")
             }
             is Resource.Error -> {
                 infoLog("Fail to check key pairs work well: ${result.throwable.localizedMessage}")

@@ -146,7 +146,7 @@ class HomeViewModel @Inject constructor(
             is Resource.Success -> {
                 _todayQuestion.value = result.data
                 getTodayQuestionAnswer()
-                infoLog("Today Question: ${_todayQuestion.value}")
+                infoLog("Today Question: ${_todayQuestion.value?.question}")
             }
             is Resource.Error -> {
                 _todayQuestion.value = Question("")
