@@ -81,7 +81,7 @@ class HomeViewModel @Inject constructor(
             }
             else -> {
                 infoLog("Fail to update my emotion")
-                sendToast("감정 변경에 실패했습니다")
+                sendToast("내 감정 변경에 실패했습니다")
             }
         }
     }
@@ -90,15 +90,15 @@ class HomeViewModel @Inject constructor(
         val result = requestChangingPartnerEmotionUseCase()
         when (result) {
             is Resource.Success -> {
-                sendToast("연인에게 감정을 물어봤습니다")
+                sendToast("연인에게 시그널을 보냈어요 !")
                 infoLog("Success to request changing partner emotion")
             }
             is Resource.Error -> {
-                sendToast("연인에게 감정을 물어보는 것을 실패했습니다")
+                sendToast("실패했습니다")
                 infoLog("Fail to request changing partner emotion: ${result.throwable.localizedMessage}")
             }
             else -> {
-                sendToast("연인에게 감정을 물어보는 것을 실패했습니다")
+                sendToast("실패했습니다")
                 infoLog("Fail to request changing partner emotion")
             }
         }
@@ -144,8 +144,7 @@ class HomeViewModel @Inject constructor(
         val result = getTodayQuestionUseCase()
         when (result) {
             is Resource.Success -> {
-                _todayQuestion.value = result.data
-                getTodayQuestionAnswer()
+                getTodayQuestionAnswer(result.data)
                 infoLog("Today Question: ${_todayQuestion.value?.question}")
             }
             is Resource.Error -> {
@@ -159,21 +158,21 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getTodayQuestionAnswer() {
+    private suspend fun getTodayQuestionAnswer(question: Question) {
         val result = getTodayQuestionAnswersFromServer()
         when (result) {
             is Resource.Success -> {
-                _todayQuestion.value = _todayQuestion.value?.copy(
+                _todayQuestion.value = question.copy(
                     myAnswer = result.data.myAnswer,
                     partnerAnswer = result.data.partnerAnswer
                 )
             }
             is Resource.Error -> {
-                _todayQuestion.value = Question("")
+                _todayQuestion.value = question
                 infoLog("Fail to load today question answers: ${result.throwable.localizedMessage}")
             }
             is Resource.Loading -> {
-                _todayQuestion.value = Question("")
+                _todayQuestion.value = question
                 infoLog("Fail to load today question answers")
             }
         }

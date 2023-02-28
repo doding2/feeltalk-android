@@ -114,18 +114,18 @@ class KeyRestoringAcceptViewModel @Inject constructor(
         setLoading(false)
         when (result) {
             is Resource.Success -> {
-                toast("연인의 암호화 열쇠 복구에 성공했습니다.")
+                toast("연인의 암호화 열쇠 복구에 성공했습니다")
                 _partnerState.value = context.getString(R.string.key_restoring_accept_success)
                 enableAcceptButton(false)
             }
             is Resource.Error -> {
                 infoLog("Fail to help to restore keys: ${result.throwable.localizedMessage}")
-                toast("연인의 암호화 열쇠 복구에 실패했습니다.")
+                toast("연인의 암호화 열쇠 복구에 실패했습니다")
                 enableAcceptButton(true)
             }
             else -> {
                 infoLog("Fail to help to restore keys")
-                toast("연인의 암호화 열쇠 복구에 실패했습니다.")
+                toast("연인의 암호화 열쇠 복구에 실패했습니다")
                 enableAcceptButton(true)
             }
         }

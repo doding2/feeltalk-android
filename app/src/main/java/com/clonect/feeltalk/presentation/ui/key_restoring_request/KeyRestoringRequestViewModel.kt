@@ -135,7 +135,7 @@ class KeyRestoringRequestViewModel @Inject constructor(
         setLoading(false)
         when (result) {
             is Resource.Success -> {
-                toast("연인에게 복구 요청을 보냈습니다.")
+                toast("연인에게 복구 요청을 보냈습니다")
                 _keyPairsStateMessage.value = KeyPairsState(
                     message = context.getString(R.string.key_restoring_state_message_waiting),
                     state = Emotion.Puzzling
@@ -144,12 +144,12 @@ class KeyRestoringRequestViewModel @Inject constructor(
             }
             is Resource.Error -> {
                 infoLog("Fail to send request to restore keys: ${result.throwable.localizedMessage}")
-                toast("복구 요청에 실패했습니다.")
+                toast("복구 요청에 실패했습니다")
                 enableRequestButton(true)
             }
             else -> {
                 infoLog("Fail to send request to restore keys")
-                toast("복구 요청에 실패했습니다.")
+                toast("복구 요청에 실패했습니다")
                 enableRequestButton(true)
             }
         }

@@ -44,10 +44,10 @@
         <action
             android:id="@+id/action_bottomNavigationFragment_to_todayQuestionFragment"
             app:destination="@id/todayQuestionFragment"
-            app:enterAnim="@anim/slide_from_bottom"
+            app:enterAnim="@anim/slide_from_right"
             app:exitAnim="@anim/do_noting"
             app:popEnterAnim="@anim/do_noting"
-            app:popExitAnim="@anim/slide_to_bottom" />
+            app:popExitAnim="@anim/slide_to_right" />
         <action
             android:id="@+id/action_bottomNavigationFragment_to_chatFragment"
             app:destination="@id/chatFragment"
@@ -88,6 +88,13 @@
         <action
             android:id="@+id/action_bottomNavigationFragment_to_keyRestoringAcceptFragment"
             app:destination="@id/keyRestoringAcceptFragment"
+            app:enterAnim="@anim/slide_from_bottom"
+            app:exitAnim="@anim/do_noting"
+            app:popEnterAnim="@anim/do_noting"
+            app:popExitAnim="@anim/slide_to_bottom" />
+        <action
+            android:id="@+id/action_bottomNavigationFragment_to_privacyPolicyFragment"
+            app:destination="@id/privacyPolicyFragment"
             app:enterAnim="@anim/slide_from_bottom"
             app:exitAnim="@anim/do_noting"
             app:popEnterAnim="@anim/do_noting"
@@ -232,4 +239,9 @@
         android:name="com.clonect.feeltalk.presentation.ui.key_restoring_request.KeyRestoringRequestFragment"
         android:label="fragment_key_restoring_request"
         tools:layout="@layout/fragment_key_restoring_request" />
+    <fragment
+        android:id="@+id/privacyPolicyFragment"
+        android:name="com.clonect.feeltalk.presentation.ui.privacy_policy.PrivacyPolicyFragment"
+        android:label="fragment_privacy_policy"
+        tools:layout="@layout/fragment_privacy_policy" />
 </navigation>

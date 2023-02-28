@@ -180,15 +180,16 @@ class HomeFragment : Fragment() {
     }
 
     private fun setQuestionLetterText(question: Question?) = binding.apply {
-        if (question == null) {
+        if (question?.question == null) {
             llLetterContent.visibility = View.GONE
             llLetterContent.animate()
                 .alpha(0f)
                 .setDuration(0)
                 .start()
+            return@apply
         }
 
-        if (question?.question.isNullOrBlank()) {
+        if (question.question.isBlank()) {
             textLetterTitle.text = "질문이 준비되지 않았습니다."
             textLetterMessage.text = "조금만 기다려주세요"
             llLetterContent.animate()

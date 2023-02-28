@@ -72,14 +72,13 @@ class SettingFragment : Fragment() {
             flProfile.setOnClickListener { navigateToCoupleSettingPage() }
             llDDay.setOnClickListener { navigateToCoupleSettingPage() }
 
+            llRequestKeyRestoring.setOnClickListener { navigateToKeyRestoringRequestPage() }
+            llPrivacyPolicy.setOnClickListener { navigateToPrivacyPolicy() }
+
             llCustomerQuestionService.setOnClickListener { sendQuestionEmail() }
             llCustomerFeedbackService.setOnClickListener { sendFeedbackEmail() }
 
 //            llLogOut.setOnClickListener { logOut() }
-            
-            llRequestKeyRestoring.setOnClickListener {
-                navigateToKeyRestoringRequestPage()
-            }
         }
     }
 
@@ -103,6 +102,13 @@ class SettingFragment : Fragment() {
             .requireParentFragment()
             .findNavController()
             .navigate(R.id.action_bottomNavigationFragment_to_keyRestoringRequestFragment)
+    }
+
+    private fun navigateToPrivacyPolicy() {
+        requireParentFragment()
+            .requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_bottomNavigationFragment_to_privacyPolicyFragment)
     }
 
 

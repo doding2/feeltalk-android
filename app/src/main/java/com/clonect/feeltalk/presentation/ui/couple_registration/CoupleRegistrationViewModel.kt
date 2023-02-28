@@ -66,7 +66,7 @@ class CoupleRegistrationViewModel @Inject constructor(
             is Resource.Success -> _myCoupleCode.value = result.data
             is Resource.Error -> {
                 infoLog("Fail to get couple registration code: ${result.throwable.localizedMessage}")
-                sendToast("내 초대코드를 불러오는데 실패했습니다.")
+                sendToast("내 초대코드를 불러오는데 실패했습니다")
             } else -> { }
         }
     }
@@ -86,12 +86,12 @@ class CoupleRegistrationViewModel @Inject constructor(
                     removeCoupleRegistrationCodeUseCase()
                     exchangeKeyPair()
                 } else {
-                    sendToast("올바르지 않은 초대코드입니다.")
+                    sendToast("올바르지 않은 초대코드입니다")
                     _isLoading.value = false
                 }
             }
             is Resource.Error -> {
-                sendToast("초대코드 확인에 에러가 발생했습니다.")
+                sendToast("초대코드 확인에 에러가 발생했습니다")
                 infoLog("send partner code error: ${result.throwable.localizedMessage ?: "Unexpected error is occurred."}")
                 _isLoading.value = false
             }
