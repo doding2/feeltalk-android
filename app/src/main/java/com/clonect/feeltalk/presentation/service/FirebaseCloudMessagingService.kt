@@ -68,7 +68,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
 
     companion object {
-        const val NOTIFICATION_GROUP_ID = 20000414
+        const val NOTIFICATION_GROUP = "group"
         
         const val TODAY_QUESTION_CHANNEL_ID ="feeltalk_today_question_notification"
         const val PARTNER_ANSWERED_CHANNEL_ID ="feeltalk_partner_question_answer_notification"
@@ -426,11 +426,20 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             .setColor(ContextCompat.getColor(applicationContext, R.color.white))
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
-            .setGroup(notificationID.toString())
+            .setGroup(NOTIFICATION_GROUP)
+            .build()
+
+        val groupNotification = NotificationCompat.Builder(applicationContext, channelID)
+            .setSmallIcon(R.mipmap.ic_launcher_round)
+            .setColor(ContextCompat.getColor(applicationContext, R.color.white))
+            .setStyle(NotificationCompat.InboxStyle())
+            .setGroup(NOTIFICATION_GROUP)
             .setGroupSummary(true)
+            .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_ALL)
             .build()
 
         notificationManager.notify(notificationID, notification)
+        notificationManager.notify(NOTIFICATION_GROUP.toBytesInt(), groupNotification)
     }
 
 

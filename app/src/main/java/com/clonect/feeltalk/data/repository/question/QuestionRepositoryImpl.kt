@@ -12,7 +12,6 @@ import com.clonect.feeltalk.domain.model.dto.question.QuestionAnswersDto
 import com.clonect.feeltalk.domain.model.dto.question.SendQuestionDto
 import com.clonect.feeltalk.domain.model.dto.question.TodayQuestionAnswersDto
 import com.clonect.feeltalk.domain.repository.QuestionRepository
-import com.clonect.feeltalk.presentation.utils.infoLog
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -130,7 +129,7 @@ class QuestionRepositoryImpl(
                 localDataSource.saveQuestionList(questionList)
                 cacheDataSource.saveQuestionList(questionList)
 
-                send(Resource.Success(questionList))
+//                send(Resource.Success(questionList))
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {

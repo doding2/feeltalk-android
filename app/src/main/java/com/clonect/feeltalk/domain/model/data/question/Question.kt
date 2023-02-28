@@ -14,4 +14,11 @@ data class Question(
     var partnerAnswer: String? = null,
     val partnerAnswerDate: String? = null,
     val viewType: String = "item",
-): Serializable
+): Serializable {
+    override fun equals(other: Any?): Boolean {
+        if (other !is Question) return false
+        if (other === this) return true
+        return question == other.question
+                && viewType == other.viewType
+    }
+}

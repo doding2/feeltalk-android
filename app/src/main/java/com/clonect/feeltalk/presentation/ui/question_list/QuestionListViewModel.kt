@@ -31,7 +31,6 @@ class QuestionListViewModel @Inject constructor(
             when (result) {
                 is Resource.Success -> {
                     val newList = result.data.toMutableList()
-                    infoLog("List: ${newList.joinToString { it.questionDate + ": " + it.question }}")
                     newList.sortByDescending { it.questionDate }
                     newList.add(0, Question(
                         question = "",
