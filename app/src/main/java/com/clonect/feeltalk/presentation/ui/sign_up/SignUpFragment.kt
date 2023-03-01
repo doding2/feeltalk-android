@@ -2,7 +2,9 @@ package com.clonect.feeltalk.presentation.ui.sign_up
 
 import android.app.Activity.RESULT_OK
 import android.app.Dialog
+import android.content.Intent
 import android.graphics.Paint
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -95,9 +97,17 @@ class SignUpFragment : Fragment() {
     private fun initCustomerServiceText() = binding.tvCustomerService.apply {
         paintFlags = Paint.UNDERLINE_TEXT_FLAG
         setOnClickListener {
-            // TODO 문의하기로 넘어가기
-            navigateToHomePage()
+            sendFeedbackEmail()
         }
+    }
+
+    private fun sendFeedbackEmail() {
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:")
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(BuildConfig.FEEDBACK_EMAIL))
+            putExtra(Intent.EXTRA_SUBJECT, "[필로우톡] 이런 점이 아쉬워요 !")
+        }
+        startActivity(Intent.createChooser(intent, null))
     }
 
     private fun navigateToHomePage() {

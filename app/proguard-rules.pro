@@ -20,15 +20,17 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
+# SQL 암호화
 -keep class net.sqlcipher.** { *; }
 -keep class net.sqlcipher.database.* { *; }
 -keep class androidx.core.splashscreen.* { *; }
 
+# 카카오 Oauth
 -keep class com.kakao.sdk.**.model.* { <fields>; }
 -keep class * extends com.google.gson.TypeAdapter
 
 
-
+# 레트로핏
 # Retrofit does reflection on generic parameters. InnerClasses is required to use Signature and
 # EnclosingMethod is required to use InnerClasses.
 -keepattributes Signature, InnerClasses, EnclosingMethod
@@ -76,8 +78,18 @@
 -keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
 
 
+# Okhttp3
+-dontwarn okhttp3.**
+-dontwarn okio.**
+-dontnote okhttp3.**
 
 
+# Dto들
+-keep public class com.clonect.feeltalk.domain.model.*
+
+
+
+# GSON 제이슨 파서
 ##---------------Begin: proguard configuration for Gson  ----------
 # Gson uses generic type information stored in a class file when working with fields. Proguard
 # removes such information by default, so configure it to keep all of it.
@@ -112,7 +124,7 @@
 ##---------------End: proguard configuration for Gson  ----------
 
 
-
+# 글라이드
 -keep public class * implements com.bumptech.glide.module.GlideModule
 -keep class * extends com.bumptech.glide.module.AppGlideModule {
  <init>(...);
@@ -125,6 +137,24 @@
   *** rewind();
 }
 
+
+
+# 네이버 Oauth
+# To use naver login with proguard
+-keep public class com.navercorp.nid.oauth.** {*;}
+
+
+
+# 구글 Oauth
+-keepattributes Signature,RuntimeVisibleAnnotations,AnnotationDefault
+
+-keepclassmembers class * {
+  @com.google.api.client.util.Key <fields>;
+}
+
+# Needed by google-http-client-android when linking against an older platform version
+
+-dontwarn com.google.api.client.extensions.android.**
 
 
 
