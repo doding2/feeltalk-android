@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/total_nav_graph"
-    app:startDestination="@id/userNicknameInputFragment">
+    app:startDestination="@id/signUpFragment">
 
     <fragment
         android:id="@+id/signUpFragment"
@@ -105,10 +105,6 @@
         android:name="com.clonect.feeltalk.presentation.ui.today_question.TodayQuestionFragment"
         android:label="fragment_today_question"
         tools:layout="@layout/fragment_today_question" >
-        <argument
-            android:name="selectedQuestion"
-            app:argType="com.clonect.feeltalk.domain.model.data.question.Question"
-            app:nullable="true" />
         <action
             android:id="@+id/action_todayQuestionFragment_to_chatFragment"
             app:destination="@id/chatFragment"
@@ -124,10 +120,6 @@
         android:name="com.clonect.feeltalk.presentation.ui.chat.ChatFragment"
         android:label="fragment_chat"
         tools:layout="@layout/fragment_chat" >
-        <argument
-            android:name="selectedQuestion"
-            app:argType="com.clonect.feeltalk.domain.model.data.question.Question"
-            app:nullable="true" />
     </fragment>
     <fragment
         android:id="@+id/newsFragment"
