@@ -194,7 +194,7 @@ class HomeFragment : Fragment() {
             textLetterMessage.text = "조금만 기다려주세요"
             llLetterContent.animate()
                 .alphaBy(1f)
-                .setDuration(100)
+                .setDuration(200)
                 .withStartAction {
                     llLetterContent.visibility = View.VISIBLE
                 }.start()
@@ -205,7 +205,7 @@ class HomeFragment : Fragment() {
             textLetterMessage.text = getString(R.string.letter_paper_message)
             llLetterContent.animate()
                 .alphaBy(1f)
-                .setDuration(100)
+                .setDuration(200)
                 .withEndAction {
                     llLetterContent.visibility = View.VISIBLE
                 }.start()
@@ -216,7 +216,7 @@ class HomeFragment : Fragment() {
             textLetterMessage.text = "내 답변 확인하러 가기"
             llLetterContent.animate()
                 .alphaBy(1f)
-                .setDuration(100)
+                .setDuration(200)
                 .withStartAction {
                     llLetterContent.visibility = View.VISIBLE
                 }.start()
@@ -227,7 +227,7 @@ class HomeFragment : Fragment() {
         textLetterMessage.text = getString(R.string.letter_paper_message)
         llLetterContent.animate()
             .alphaBy(1f)
-            .setDuration(100)
+            .setDuration(200)
             .withStartAction {
                 llLetterContent.visibility = View.VISIBLE
             }.start()
