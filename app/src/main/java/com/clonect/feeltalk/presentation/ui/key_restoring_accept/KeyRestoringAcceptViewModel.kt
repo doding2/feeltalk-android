@@ -69,6 +69,10 @@ class KeyRestoringAcceptViewModel @Inject constructor(
             }
             is Resource.Error -> {
                 infoLog("Fail to check key pairs exist: ${result.throwable.localizedMessage}")
+                _keyPairsStateMessage.value = KeyPairsState(
+                    message = context.getString(R.string.key_restoring_state_message_missing),
+                    state = Emotion.Puzzling
+                )
                 enableAcceptButton(false)
             }
             else -> {

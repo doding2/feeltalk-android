@@ -47,7 +47,7 @@
 }
 
 # Ignore annotation used for build tooling.
-#-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
 
 # Ignore JSR 305 annotations for embedding nullability information.
 -dontwarn javax.annotation.**
@@ -79,9 +79,9 @@
 
 
 # Okhttp3
+-keep class okhttp3.** {*;}
+-keep interface okhttp3.** {*;}
 -dontwarn okhttp3.**
--dontwarn okio.**
--dontnote okhttp3.**
 
 
 # Dto들
@@ -156,5 +156,13 @@
 
 -dontwarn com.google.api.client.extensions.android.**
 
+-dontwarn org.apache.http.**
+-dontwarn com.google.android.gms.**
+-keep public class com.google.android.gms.** {
+   public *;}
 
 
+
+# 대거 힐트
+# Keep class names of Hilt injected ViewModels since their name are used as a multibinding map key.
+-keepnames @dagger.hilt.android.lifecycle.HiltViewModel class * extends androidx.lifecycle.ViewModel
