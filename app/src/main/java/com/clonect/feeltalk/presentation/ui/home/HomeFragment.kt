@@ -193,20 +193,20 @@ class HomeFragment : Fragment() {
             textLetterTitle.text = "질문이 준비되지 않았습니다."
             textLetterMessage.text = "조금만 기다려주세요"
             llLetterContent.animate()
-                .alphaBy(1f)
-                .setDuration(200)
+                .alpha(1f)
+                .setDuration(100)
                 .withStartAction {
                     llLetterContent.visibility = View.VISIBLE
                 }.start()
             return@apply
         }
-        if (question?.myAnswer == null) {
+        if (question.myAnswer == null) {
             textLetterTitle.text = getString(R.string.letter_paper_title_empty)
             textLetterMessage.text = getString(R.string.letter_paper_message)
             llLetterContent.animate()
-                .alphaBy(1f)
-                .setDuration(200)
-                .withEndAction {
+                .alpha(1f)
+                .setDuration(100)
+                .withStartAction {
                     llLetterContent.visibility = View.VISIBLE
                 }.start()
             return@apply
@@ -215,8 +215,8 @@ class HomeFragment : Fragment() {
             textLetterTitle.text = "내가 답변한 질문 !"
             textLetterMessage.text = "내 답변 확인하러 가기"
             llLetterContent.animate()
-                .alphaBy(1f)
-                .setDuration(200)
+                .alpha(1f)
+                .setDuration(100)
                 .withStartAction {
                     llLetterContent.visibility = View.VISIBLE
                 }.start()
@@ -226,8 +226,8 @@ class HomeFragment : Fragment() {
         textLetterTitle.text = getString(R.string.letter_paper_title_partner_written)
         textLetterMessage.text = getString(R.string.letter_paper_message)
         llLetterContent.animate()
-            .alphaBy(1f)
-            .setDuration(200)
+            .alpha(1f)
+            .setDuration(100)
             .withStartAction {
                 llLetterContent.visibility = View.VISIBLE
             }.start()

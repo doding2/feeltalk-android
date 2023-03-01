@@ -22,3 +22,7 @@
 
 -keep class net.sqlcipher.** { *; }
 -keep class net.sqlcipher.database.* { *; }
+-keep class androidx.core.splashscreen.* { *; }
+
+-keep class com.kakao.sdk.**.model.* { <fields>; }
+-keep class * extends com.google.gson.TypeAdapter
