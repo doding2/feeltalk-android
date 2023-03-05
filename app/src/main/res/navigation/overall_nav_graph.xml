@@ -27,8 +27,8 @@
             app:popEnterAnim="@anim/do_noting"
             app:popExitAnim="@anim/slide_to_bottom" />
         <action
-            android:id="@+id/action_signUpFragment_to_userNicknameInputFragment"
-            app:destination="@id/userNicknameInputFragment"
+            android:id="@+id/action_signUpFragment_to_userGenderInputFragment"
+            app:destination="@id/userGenderInputFragment"
             app:enterAnim="@anim/slide_from_bottom"
             app:exitAnim="@anim/do_noting"
             app:popEnterAnim="@anim/do_noting"
@@ -236,4 +236,17 @@
         android:name="com.clonect.feeltalk.presentation.ui.privacy_policy.PrivacyPolicyFragment"
         android:label="fragment_privacy_policy"
         tools:layout="@layout/fragment_privacy_policy" />
+    <fragment
+        android:id="@+id/userGenderInputFragment"
+        android:name="com.clonect.feeltalk.presentation.ui.input.UserGenderInputFragment"
+        android:label="fragment_user_gender_input"
+        tools:layout="@layout/fragment_user_gender_input" >
+        <action
+            android:id="@+id/action_userGenderInputFragment_to_userNicknameInputFragment"
+            app:destination="@id/userNicknameInputFragment"
+            app:enterAnim="@anim/slide_from_right"
+            app:exitAnim="@anim/do_noting"
+            app:popEnterAnim="@anim/do_noting"
+            app:popExitAnim="@anim/slide_to_right" />
+    </fragment>
 </navigation>

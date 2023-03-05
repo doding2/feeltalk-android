@@ -27,7 +27,7 @@ interface UserRepository {
     suspend fun requestChangingPartnerEmotion(): Resource<StatusDto>
 
     suspend fun checkUserInfoIsEntered(): Resource<Boolean>
-    suspend fun updateUserInfo(nickname: String, age: Long, birthDate: String, anniversary: String): Resource<StatusDto>
+    suspend fun updateUserInfo(gender: String, nickname: String, age: Long, birthDate: String, anniversary: String): Resource<StatusDto>
     suspend fun updateMyEmotion(emotion: String): Resource<StatusDto>
 
     suspend fun checkUserInCouple(): Resource<CoupleCheckDto>

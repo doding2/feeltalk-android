@@ -115,9 +115,9 @@ class SignUpFragment : Fragment() {
         findNavController().navigate(R.id.action_signUpFragment_to_bottomNavigationFragment)
     }
 
-    private fun navigateToUserNicknameInputPage() {
+    private fun navigateToUserGenderInputPage() {
         viewModel.setLoading(false)
-        findNavController().navigate(R.id.action_signUpFragment_to_userNicknameInputFragment)
+        findNavController().navigate(R.id.action_signUpFragment_to_userGenderInputFragment)
     }
 
     private fun navigateToCoupleRegistrationPage() {
@@ -151,7 +151,7 @@ class SignUpFragment : Fragment() {
             launch {
                 viewModel.isSignUpSuccessful.collectLatest {
                     if (it) {
-                        navigateToUserNicknameInputPage()
+                        navigateToUserGenderInputPage()
                         return@collectLatest
                     }
                 }
@@ -163,7 +163,7 @@ class SignUpFragment : Fragment() {
                         if (!it) { return@collectLatest }
 
                         if (!isUserInfoEntered.value) {
-                            navigateToUserNicknameInputPage()
+                            navigateToUserGenderInputPage()
                             return@collectLatest
                         }
 

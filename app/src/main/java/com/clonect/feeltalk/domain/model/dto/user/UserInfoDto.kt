@@ -1,6 +1,7 @@
 package com.clonect.feeltalk.domain.model.dto.user
 
 data class UserInfoDto(
+    val gender: String,
     val name: String,
     val nickname: String,
     val email: String,

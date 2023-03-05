@@ -40,4 +40,5 @@ class UtilsModule {
     fun providesDatabaseEncryptHelper(): DatabaseEncryptHelper {
         return DatabaseEncryptHelper()
     }
+
 }

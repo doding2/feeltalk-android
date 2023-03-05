@@ -46,6 +46,10 @@ android {
         buildConfigField("String", "APPLE_AUTH_CLIENT_ID", APPLE_AUTH_CLIENT_ID)
         buildConfigField("String", "APPLE_AUTH_REDIRECT_URI", APPLE_AUTH_REDIRECT_URI)
         buildConfigField("String", "APPLE_AUTH_BASE_URL", APPLE_AUTH_BASE_URL)
+
+
+        buildConfigField("String", "MIXPANEL_DEBUG_TOKEN", MIXPANEL_DEBUG_TOKEN)
+        buildConfigField("String", "MIXPANEL_RELEASE_TOKEN", MIXPANEL_RELEASE_TOKEN)
     }
 
     buildTypes {
@@ -83,6 +87,9 @@ dependencies {
     implementation 'com.github.santalu:maskara:1.0.0'
     // custom image indicator
     implementation 'com.github.martinstamenkovski:ARIndicatorView:2.0.0'
+
+    // 믹스패널 데이터 분석
+    implementation "com.mixpanel.android:mixpanel-android:7.+"
 
 
     // coroutines

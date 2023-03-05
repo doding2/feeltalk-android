@@ -366,5 +366,4 @@ class UseCaseModule {
     fun providesGetPartnerInfoFlowUseCase(userRepository: UserRepository): GetPartnerInfoFlowUseCase {
         return GetPartnerInfoFlowUseCase(userRepository)
     }
-
 }

@@ -3,6 +3,7 @@ package com.clonect.feeltalk.domain.model.data.user
 import java.io.Serializable
 
 data class UserInfo(
+    var gender: String? = null,
     var name: String? = null,
     var nickname: String = "",
     var email: String? = null,

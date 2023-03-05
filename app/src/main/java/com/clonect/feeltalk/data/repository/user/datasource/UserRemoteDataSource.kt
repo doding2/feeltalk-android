@@ -23,7 +23,7 @@ interface UserRemoteDataSource {
     suspend fun checkUserIsCouple(accessToken: String): Response<CoupleCheckDto>
     suspend fun checkUserInfoIsEntered(accessToken: String): Response<JsonObject>
 
-    suspend fun updateUserInfo(accessToken: String, nickname: String, age: Long, birthDate: String, anniversary: String): Response<StatusDto>
+    suspend fun updateUserInfo(accessToken: String, gender: String, nickname: String, age: Long, birthDate: String, anniversary: String): Response<StatusDto>
     suspend fun updateMyEmotion(accessToken: String, emotion: String): Response<StatusDto>
 
     suspend fun getCoupleRegistrationCode(accessToken: String): Response<CoupleRegistrationCodeDto>

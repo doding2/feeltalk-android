@@ -316,6 +316,7 @@ class UserRepositoryImpl(
     }
 
     override suspend fun updateUserInfo(
+        gender: String,
         nickname: String,
         age: Long,
         birthDate: String,
@@ -328,6 +329,7 @@ class UserRepositoryImpl(
 
             val response = remoteDataSource.updateUserInfo(
                 accessToken = accessToken,
+                gender = gender,
                 nickname = nickname,
                 age = age,
                 birthDate = birthDate,

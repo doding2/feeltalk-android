@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
             if (!isLoggedIn.value)
                 R.id.signUpFragment
             else if (!isUserInfoEntered.value)
-                R.id.userNicknameInputFragment
+                R.id.userGenderInputFragment
             else if (!isUserCouple.value)
                 R.id.guideFragment
             else

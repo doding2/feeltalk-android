@@ -132,6 +132,7 @@ class UserRemoteDataSourceImpl(
 
     override suspend fun updateUserInfo(
         accessToken: String,
+        gender: String,
         nickname: String,
         age: Long,
         birthDate: String,
@@ -139,6 +140,7 @@ class UserRemoteDataSourceImpl(
     ): Response<StatusDto> {
         val body = JsonObject().apply {
             addProperty("accessToken", accessToken)
+            addProperty("gender", gender)
             addProperty("nickname", nickname)
             addProperty("age", age)
             addProperty("birth", birthDate)

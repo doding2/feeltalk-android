@@ -150,7 +150,7 @@ class UserNicknameInputFragment : Fragment() {
         super.onAttach(context)
         onBackCallback = object: OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                requireActivity().finish()
+                findNavController().popBackStack()
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, onBackCallback)

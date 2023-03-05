@@ -6,6 +6,7 @@ import com.clonect.feeltalk.domain.model.dto.user.UserInfoDto
 fun UserInfoDto.toUserInfo(): UserInfo {
     val birth = this.birth.substringBefore("T").replace("-", "/")
     return UserInfo(
+        gender = gender,
         name = name,
         nickname = nickname,
         email = email,

@@ -19,6 +19,16 @@ class UserInputViewModel @Inject constructor(
     private val updateUserInfoUseCase: UpdateUserInfoUseCase,
 ): ViewModel() {
 
+    /** Gender **/
+    private val _gender = MutableStateFlow<String?>(null)
+    val gender = _gender.asStateFlow()
+
+    fun setGender(gender: String) {
+        _gender.value = gender
+    }
+
+
+
     /** Nickname **/
 
     private val _nickname = MutableStateFlow<String?>(null)
@@ -98,6 +108,7 @@ class UserInputViewModel @Inject constructor(
     fun updateUserInfo() = viewModelScope.launch(Dispatchers.IO) {
         _isLoading.value = true
         val result = updateUserInfoUseCase(
+            gender = _gender.value ?: "female",
             nickname = _nickname.value ?: "",
             birthDate = _birth.value ?: "0001/01/01",
             anniversary = _coupleAnniversary.value ?: "0001/01/01"
@@ -111,6 +122,7 @@ class UserInputViewModel @Inject constructor(
     }
 
     fun clear() {
+        _gender.value = null
         _nickname.value = null
         _invalidNicknameWarning.value = null
         _birth.value = null
