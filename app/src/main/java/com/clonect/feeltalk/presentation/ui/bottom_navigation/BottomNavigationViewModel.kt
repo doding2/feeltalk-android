@@ -8,6 +8,7 @@ import com.clonect.feeltalk.domain.model.data.notification.Topics
 import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.encryption.CheckKeyPairsExistUseCase
+import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.presentation.utils.AppSettings
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessaging
@@ -23,6 +24,7 @@ class BottomNavigationViewModel @Inject constructor(
     private val checkKeyPairsExistUseCase: CheckKeyPairsExistUseCase,
     private val getAppSettingsUseCase: GetAppSettingsUseCase,
     private val saveAppSettingsUseCase: SaveAppSettingsUseCase,
+    private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
 ): ViewModel() {
 
     var appSettings = getAppSettingsUseCase()
@@ -90,6 +92,7 @@ class BottomNavigationViewModel @Inject constructor(
                 appSettings.fcmToken = it
                 appSettings.isPushNotificationEnabled = enabled
                 saveAppSettings(appSettings)
+                enablePushNotificationMixpanel(enabled)
             }
         }
     }
@@ -126,5 +129,13 @@ class BottomNavigationViewModel @Inject constructor(
 
     fun setSettingScrollState(state: Int?) {
         _settingScrollState.value = state
+    }
+
+
+
+    private fun enablePushNotificationMixpanel(enabled: Boolean) {
+        val mixpanel = getMixpanelAPIUseCase()
+        mixpanel.track("Enable Push Notification")
+        mixpanel.people.set("isPushNotificationEnabled", enabled)
     }
 }

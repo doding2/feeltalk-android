@@ -3,10 +3,13 @@ package com.clonect.feeltalk.presentation.ui.sign_up
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.domain.model.data.user.UserInfo
+import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.user.*
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,6 +17,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -25,9 +29,11 @@ class SignUpViewModel @Inject constructor(
     private val signUpWithKakaoUseCase: SignUpWithKakaoUseCase,
     private val signUpWithNaverUseCase: SignUpWithNaverUseCase,
     private val signUpWithAppleUseCase: SignUpWithAppleUseCase,
+    private val getUserInfoUseCase: GetUserInfoUseCase,
     private val checkUserInfoIsEnteredUseCase: CheckUserInfoIsEnteredUseCase,
     private val checkUserIsCoupleUseCase: CheckUserIsCoupleUseCase,
     private val clearAllExceptKeysUseCase: ClearAllExceptKeysUseCase,
+    private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
 ): ViewModel() {
 
     private val _isSignUpSuccessful = MutableStateFlow(false)
@@ -59,11 +65,13 @@ class SignUpViewModel @Inject constructor(
                     setLoading(false)
                     _isSignUpSuccessful.value = true
                     infoLog("Success to sign up with google")
+                    getUserInfo(isSignUp = true)
                     return@withContext true
                 }
                 if (dto.annotation == "login" || dto.annotation == "login_noCouple") {
                     checkUserInfoIsEntered()
                     infoLog("Success to log in with google")
+                    getUserInfo(isSignUp = false)
                     return@withContext true
                 }
                 setLoading(false)
@@ -94,11 +102,13 @@ class SignUpViewModel @Inject constructor(
                     setLoading(false)
                     _isSignUpSuccessful.value = true
                     infoLog("Success to sign up with kakao")
+                    getUserInfo(isSignUp = true)
                     return@withContext true
                 }
                 if (dto.annotation == "login" || dto.annotation == "login_noCouple") {
                     checkUserInfoIsEntered()
                     infoLog("Success to log in with kakao")
+                    getUserInfo(isSignUp = false)
                     return@withContext true
                 }
                 setLoading(false)
@@ -129,11 +139,13 @@ class SignUpViewModel @Inject constructor(
                     setLoading(false)
                     _isSignUpSuccessful.value = true
                     infoLog("Success to sign up with naver")
+                    getUserInfo(isSignUp = true)
                     return@withContext true
                 }
                 if (dto.annotation == "login" || dto.annotation == "login_noCouple") {
                     checkUserInfoIsEntered()
                     infoLog("Success to log in with naver")
+                    getUserInfo(isSignUp = false)
                     return@withContext true
                 }
                 setLoading(false)
@@ -164,11 +176,13 @@ class SignUpViewModel @Inject constructor(
                     setLoading(false)
                     _isSignUpSuccessful.value = true
                     infoLog("Success to sign up with apple")
+                    getUserInfo(isSignUp = true)
                     return@withContext true
                 }
                 if (dto.annotation == "login" || dto.annotation == "login_noCouple") {
                     checkUserInfoIsEntered()
                     infoLog("Success to log in with apple")
+                    getUserInfo(isSignUp = false)
                     return@withContext true
                 }
                 setLoading(false)
@@ -245,10 +259,20 @@ class SignUpViewModel @Inject constructor(
     }
 
 
+    private suspend fun deleteFcmToken(): Boolean = suspendCoroutine { continuation ->
+        FirebaseMessaging.getInstance().deleteToken()
+            .addOnSuccessListener {
+                continuation.resume(true)
+            }.addOnFailureListener {
+                continuation.resume(false)
+            }
+    }
+
     suspend fun clearAllExceptKeys(): Boolean {
         val clearResult = clearAllExceptKeysUseCase()
-        return (clearResult is Resource.Success)
+        return deleteFcmToken() && (clearResult is Resource.Success)
     }
+
 
     fun sendToast(message: String) = viewModelScope.launch {
         _toast.emit(message)
@@ -257,5 +281,30 @@ class SignUpViewModel @Inject constructor(
     fun setLoading(isLoading: Boolean) {
         _isLoading.value = isLoading
     }
+
+
+
+    private fun getUserInfo(isSignUp: Boolean) = CoroutineScope(Dispatchers.IO).launch {
+        val result = getUserInfoUseCase()
+        when (result) {
+            is Resource.Success -> {
+                if (!isSignUp) {
+                    logInMixpanel(result.data)
+                }
+            }
+            is Resource.Error -> infoLog("Fail to get user info: ${result.throwable.localizedMessage}")
+            else -> infoLog("Fail to get user info")
+        }
+    }
+
+
+    private fun logInMixpanel(userInfo: UserInfo) {
+        val mixpanel = getMixpanelAPIUseCase()
+        mixpanel.identify(userInfo.email, true)
+        mixpanel.registerSuperProperties(JSONObject().apply {
+            put("gender", userInfo.gender)
+        })
+    }
+
 
 }

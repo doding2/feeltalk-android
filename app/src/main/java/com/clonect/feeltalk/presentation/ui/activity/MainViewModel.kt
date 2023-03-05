@@ -3,6 +3,8 @@ package com.clonect.feeltalk.presentation.ui.activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.domain.model.data.user.UserInfo
+import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.user.*
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +32,7 @@ class MainViewModel @Inject constructor(
     private val getAnniversaryUseCase: GetCoupleAnniversaryUseCase,
     private val getMyProfileImageUrlUseCase: GetMyProfileImageUrlUseCase,
     private val getPartnerProfileImageUrlUseCase: GetPartnerProfileImageUrlUseCase,
+    private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
 ) : ViewModel() {
 
     private val _isReady = MutableStateFlow(false)
@@ -128,6 +131,9 @@ class MainViewModel @Inject constructor(
     private fun getUserInfo() = CoroutineScope(Dispatchers.IO).launch {
         val result = getUserInfoUseCase()
 
+        if (result is Resource.Success) {
+            logInMixpanel(result.data)
+        }
         if (result is Resource.Error) {
             sendToast("내 정보를 불러오는데 실패했습니다")
             infoLog("Fail to get user info: ${result.throwable}")
@@ -190,8 +196,8 @@ class MainViewModel @Inject constructor(
         }
         _isUserInfoEntered.value = isEntered
 
+        getUserInfo()
         if (isEntered) {
-            getUserInfo()
             checkUserIsCouple()
         } else {
             setReady()
@@ -228,4 +234,9 @@ class MainViewModel @Inject constructor(
         _toast.emit(message)
     }
 
+
+    private fun logInMixpanel(userInfo: UserInfo) {
+        val mixpanel = getMixpanelAPIUseCase()
+        mixpanel.identify(userInfo.email, true)
+    }
 }

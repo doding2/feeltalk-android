@@ -14,6 +14,7 @@ data class Question(
     var partnerAnswer: String? = null,
     val partnerAnswerDate: String? = null,
     val viewType: String = "item",
+    var isFirstOpen: Boolean = true,
 ): Serializable {
     override fun equals(other: Any?): Boolean {
         if (other !is Question) return false

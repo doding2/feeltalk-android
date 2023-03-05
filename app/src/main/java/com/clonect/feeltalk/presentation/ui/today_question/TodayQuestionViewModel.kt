@@ -6,17 +6,23 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
+import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetQuestionAnswersUseCase
+import com.clonect.feeltalk.domain.usecase.question.SaveQuestionToDatabaseUseCase
 import com.clonect.feeltalk.domain.usecase.question.SendQuestionAnswerUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetPartnerInfoUseCase
+import com.clonect.feeltalk.domain.usecase.user.GetUserIsActiveUseCase
+import com.clonect.feeltalk.domain.usecase.user.SetUserIsActiveUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -26,6 +32,10 @@ class TodayQuestionViewModel @Inject constructor(
     private val sendQuestionAnswerUseCase: SendQuestionAnswerUseCase,
     private val getQuestionAnswersUseCase: GetQuestionAnswersUseCase,
     private val getPartnerInfoUseCase: GetPartnerInfoUseCase,
+    private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
+    private val saveQuestionToDatabaseUseCase: SaveQuestionToDatabaseUseCase,
+    private val getUserIsActiveUseCase: GetUserIsActiveUseCase,
+    private val setUserIsActiveUseCase: SetUserIsActiveUseCase,
     savedStateHandle: SavedStateHandle,
 ): ViewModel() {
 
@@ -53,6 +63,7 @@ class TodayQuestionViewModel @Inject constructor(
         }
         getQuestionAnswers()
         getPartnerInfo()
+        openQuestionFirsTimeMixpanel()
     }
 
     private fun getQuestionAnswers() = viewModelScope.launch(Dispatchers.IO) {
@@ -112,6 +123,7 @@ class TodayQuestionViewModel @Inject constructor(
                     myAnswer = question.myAnswer
                     myAnswerDate = question.myAnswerDate
                 }
+                answerQuestionMixpanel()
                 true
             }
             is Resource.Error -> {
@@ -120,6 +132,43 @@ class TodayQuestionViewModel @Inject constructor(
             }
             else -> false
         }
+    }
+
+
+
+
+    private fun openQuestionFirsTimeMixpanel() = CoroutineScope(Dispatchers.IO).launch {
+        if (!_questionStateFlow.value.isFirstOpen) return@launch
+
+        val feeltalkDateFormat = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+        val mixpanelDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val questionFeeltalkDate = _questionStateFlow.value.questionDate?.let { feeltalkDateFormat.parse(it) }
+        val questionMixpanelDate = questionFeeltalkDate?.let { mixpanelDateFormat.format(it) }
+
+        val mixpanel = getMixpanelAPIUseCase()
+        mixpanel.track("Open Question First Time", JSONObject().apply {
+            put("openDate", mixpanelDateFormat.format(Date()))
+            put("questionDate", questionMixpanelDate)
+        })
+
+        _questionStateFlow.value.isFirstOpen = false
+        saveQuestionToDatabaseUseCase(_questionStateFlow.value)
+    }
+
+    private fun answerQuestionMixpanel() = CoroutineScope(Dispatchers.IO).launch {
+        val feeltalkDateFormat = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+        val mixpanelDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val questionFeeltalkDate = _questionStateFlow.value.questionDate?.let { feeltalkDateFormat.parse(it) }
+        val questionMixpanelDate = questionFeeltalkDate?.let { mixpanelDateFormat.format(it) }
+
+        val mixpanel = getMixpanelAPIUseCase()
+        mixpanel.track("Open Question First Time", JSONObject().apply {
+            put("openDate", mixpanelDateFormat.format(Date()))
+            put("questionDate", questionMixpanelDate)
+            put("isActive", true)
+        })
+
+        setUserIsActiveUseCase()
     }
 
 }

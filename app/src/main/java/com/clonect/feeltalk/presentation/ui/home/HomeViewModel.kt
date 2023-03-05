@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.data.mapper.toStringLowercase
 import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.model.data.user.Emotion
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
+import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionAnswersFromServer
 import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionUseCase
 import com.clonect.feeltalk.domain.usecase.user.*
@@ -17,6 +19,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -32,6 +35,7 @@ class HomeViewModel @Inject constructor(
     private val getCoupleAnniversaryUseCase: GetCoupleAnniversaryUseCase,
     private val requestChangingPartnerEmotionUseCase: RequestChangingPartnerEmotionUseCase,
     private val getAppSettingsUseCase: GetAppSettingsUseCase,
+    private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
 ): ViewModel() {
 
     private val _userInfo = MutableStateFlow(UserInfo())
@@ -78,6 +82,7 @@ class HomeViewModel @Inject constructor(
             is Resource.Success -> {
                 _userInfo.value = _userInfo.value.copy(emotion = emotion)
                 infoLog("update my emotion")
+                changeEmotionMixpanel(emotion)
             }
             else -> {
                 infoLog("Fail to update my emotion")
@@ -92,6 +97,7 @@ class HomeViewModel @Inject constructor(
             is Resource.Success -> {
                 sendToast("연인에게 시그널을 보냈어요 !")
                 infoLog("Success to request changing partner emotion")
+                sendSignalMixpanel()
             }
             is Resource.Error -> {
                 sendToast("실패했습니다")
@@ -194,5 +200,25 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+
+    private fun changeEmotionMixpanel(changedEmotion: Emotion) {
+        val mixpanelDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+
+        val mixpanel = getMixpanelAPIUseCase()
+        mixpanel.track("Change Emotion", JSONObject().apply {
+            put("changedEmotion", changedEmotion.toStringLowercase())
+            put("changeDate", mixpanelDateFormat.format(Date()))
+        })
+        mixpanel.people.set("emotion", changedEmotion.toStringLowercase())
+    }
+
+    private fun sendSignalMixpanel() {
+        val mixpanelDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+
+        val mixpanel = getMixpanelAPIUseCase()
+        mixpanel.track("Send Signal", JSONObject().apply {
+            put("sendDate", mixpanelDateFormat.format(Date()))
+        })
+    }
 
 }

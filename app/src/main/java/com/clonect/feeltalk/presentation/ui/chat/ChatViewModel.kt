@@ -10,20 +10,24 @@ import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.usecase.chat.GetChatListUseCase
 import com.clonect.feeltalk.domain.usecase.chat.ReloadChatListUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SendChatUseCase
+import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetMyProfileImageUrlUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetPartnerInfoUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetPartnerProfileImageUrlUseCase
+import com.clonect.feeltalk.domain.usecase.user.GetUserIsActiveUseCase
 import com.clonect.feeltalk.presentation.service.notification_observer.FcmNewChatObserver
 import com.clonect.feeltalk.presentation.service.notification_observer.QuestionAnswerObserver
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -36,6 +40,8 @@ class ChatViewModel @Inject constructor(
     private val reloadChatListUseCase: ReloadChatListUseCase,
     private val getMyProfileImageUrlUseCase: GetMyProfileImageUrlUseCase,
     private val getPartnerProfileImageUrlUseCase: GetPartnerProfileImageUrlUseCase,
+    private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
+    private val getUserIsActiveUseCase: GetUserIsActiveUseCase,
     savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
@@ -187,6 +193,7 @@ class ChatViewModel @Inject constructor(
         when (result) {
             is Resource.Success -> {
                 infoLog("Success to send chat: ${result.data}")
+                sendChatMixpanel()
                 setScrollBottom(true)
                 onCompleted()
             }
@@ -206,6 +213,22 @@ class ChatViewModel @Inject constructor(
 
     fun setScrollBottom(isBottom: Boolean) {
         _isScrollBottom.value = isBottom
+    }
+
+
+
+    private fun sendChatMixpanel() = CoroutineScope(Dispatchers.IO).launch {
+        val feeltalkDateFormat = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+        val mixpanelDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val questionFeeltalkDate = _question.value.questionDate?.let { feeltalkDateFormat.parse(it) }
+        val questionMixpanelDate = questionFeeltalkDate?.let { mixpanelDateFormat.format(it) }
+
+        val mixpanel = getMixpanelAPIUseCase()
+        mixpanel.track("Send Chat", JSONObject().apply {
+            put("isActive", getUserIsActiveUseCase())
+            put("questionDate", questionMixpanelDate)
+            put("chatDate", mixpanelDateFormat.format(Date()))
+        })
     }
 
 

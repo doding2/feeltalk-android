@@ -3,17 +3,19 @@ package com.clonect.feeltalk.presentation.ui.couple_registration
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.domain.usecase.encryption.LoadPartnerPrivateKeyUseCase
-import com.clonect.feeltalk.domain.usecase.encryption.LoadPartnerPublicKeyUseCase
-import com.clonect.feeltalk.domain.usecase.encryption.UploadMyPrivateKeyUseCase
-import com.clonect.feeltalk.domain.usecase.encryption.UploadMyPublicKeyUseCase
+import com.clonect.feeltalk.domain.usecase.encryption.*
+import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.user.*
 import com.clonect.feeltalk.presentation.service.notification_observer.CoupleRegistrationObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,8 +27,12 @@ class CoupleRegistrationViewModel @Inject constructor(
     private val loadPartnerPublicKeyUseCase: LoadPartnerPublicKeyUseCase,
     private val uploadMyPrivateKeyUseCase: UploadMyPrivateKeyUseCase,
     private val loadPartnerPrivateKeyUseCase: LoadPartnerPrivateKeyUseCase,
+    private val checkKeyPairsExistUseCase: CheckKeyPairsExistUseCase,
+    private val checkKeyPairsWorkWellUseCase: CheckKeyPairsWorkWellUseCase,
     private val getPartnerInfoUseCase: GetPartnerInfoUseCase,
     private val breakUpCoupleUseCase: BreakUpCoupleUseCase,
+    private val getUserInfoUseCase: GetUserInfoUseCase,
+    private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
 ) : ViewModel() {
 
     private val _toastMessage = MutableSharedFlow<String>()
@@ -147,11 +153,35 @@ class CoupleRegistrationViewModel @Inject constructor(
             _isLoading.value = false
             return@launch
         }
+        
+        val keyPairsExist = checkKeyPairsExistUseCase()
+        if (keyPairsExist is Resource.Error) {
+            sendToast("실패했습니다. 상대방의 네트워크 상태를 확인해주세요.")
+            infoLog("Exchanged Key Pairs are not saved : ${keyPairsExist.throwable.localizedMessage}")
+            breakUpCouple()
+            reloadCoupleRegistrationCode()
+            CoupleRegistrationObserver.getInstance().setCoupleRegistrationCompleted(false)
+            _isLoading.value = false
+            return@launch
+        }
+
+        val keyPairsWorkWell = checkKeyPairsWorkWellUseCase()
+        if (keyPairsWorkWell is Resource.Error) {
+            sendToast("실패했습니다. 상대방의 네트워크 상태를 확인해주세요.")
+            infoLog("Exchanged Key Pairs are corrupted : ${keyPairsWorkWell.throwable.localizedMessage}")
+            breakUpCouple()
+            reloadCoupleRegistrationCode()
+            CoupleRegistrationObserver.getInstance().setCoupleRegistrationCompleted(false)
+            _isLoading.value = false
+            return@launch
+        }
 
         val partnerInfoResult = getPartnerInfoUseCase()
         if (partnerInfoResult is Resource.Error) {
             infoLog("Fail to get partner info: ${partnerInfoResult.throwable.localizedMessage}")
         }
+
+        registerNewUserMixpanel()
 
         _isLoading.value = false
         _isKeyPairExchangingCompleted.value = true
@@ -199,6 +229,31 @@ class CoupleRegistrationViewModel @Inject constructor(
     fun sendToast(message: String) = viewModelScope.launch {
         _toastMessage.emit(message)
     }
+
+
+
+    private fun registerNewUserMixpanel() = CoroutineScope(Dispatchers.IO).launch {
+        val userInfo = getUserInfoUseCase()
+        if (userInfo !is Resource.Success) return@launch
+
+        val feeltalkDateFormat = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+        val mixpanelDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val feeltalkBirthDate = feeltalkDateFormat.parse(userInfo.data.birth)
+        val mixpanelBirthDate = (feeltalkBirthDate ?: Date()).let { mixpanelDateFormat.format(it) }
+
+        val mixpanel = getMixpanelAPIUseCase()
+        mixpanel.track("Register New User", JSONObject().apply {
+            put("registrationDate", mixpanelDateFormat.format(Date()))
+        })
+        mixpanel.people.set(JSONObject().apply {
+            put("nickname", userInfo.data.nickname)
+            put("gender", userInfo.data.gender)
+            put("birth", mixpanelBirthDate)
+        })
+    }
+
+
+
 
     override fun onCleared() {
         super.onCleared()

@@ -7,6 +7,7 @@ import com.clonect.feeltalk.domain.model.data.notification.Topics
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
+import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.user.ClearAllExceptKeysUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetCoupleAnniversaryUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetMyProfileImageUrlUseCase
@@ -28,7 +29,8 @@ class SettingViewModel @Inject constructor(
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val getCoupleAnniversaryUseCase: GetCoupleAnniversaryUseCase,
     private val clearAllExceptKeysUseCase: ClearAllExceptKeysUseCase,
-    private val getMyProfileImageUrlUseCase: GetMyProfileImageUrlUseCase
+    private val getMyProfileImageUrlUseCase: GetMyProfileImageUrlUseCase,
+    private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase
 ): ViewModel() {
 
     private val appSettings = getAppSettingsUseCase()
@@ -91,6 +93,7 @@ class SettingViewModel @Inject constructor(
                 appSettings.isPushNotificationEnabled = enabled
                 saveAppSettings(appSettings)
                 _isPushNotificationEnabled.value = enabled
+                enablePushNotificationMixpanel(enabled)
             }
         }
 
@@ -114,6 +117,14 @@ class SettingViewModel @Inject constructor(
 
     fun saveAppSettings(appSettings: AppSettings) = viewModelScope.launch(Dispatchers.IO) {
         saveAppSettingsUseCase(appSettings)
+    }
+
+
+
+    private fun enablePushNotificationMixpanel(enabled: Boolean) {
+        val mixpanel = getMixpanelAPIUseCase()
+        mixpanel.track("Enable Push Notification")
+        mixpanel.people.set("isPushNotificationEnabled", enabled)
     }
 
 

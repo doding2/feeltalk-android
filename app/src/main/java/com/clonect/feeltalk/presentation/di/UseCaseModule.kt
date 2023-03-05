@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.presentation.di
 
+import android.content.Context
 import android.content.SharedPreferences
 import com.clonect.feeltalk.data.repository.notification.NotificationRepository
 import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
@@ -12,6 +13,7 @@ import com.clonect.feeltalk.domain.usecase.chat.ReloadChatListUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SaveChatUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SendChatUseCase
 import com.clonect.feeltalk.domain.usecase.encryption.*
+import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.news.GetNewsListUseCase
 import com.clonect.feeltalk.domain.usecase.notification.SendFcmUseCase
 import com.clonect.feeltalk.domain.usecase.question.*
@@ -19,6 +21,7 @@ import com.clonect.feeltalk.domain.usecase.user.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Named
 import javax.inject.Singleton
@@ -366,4 +369,24 @@ class UseCaseModule {
     fun providesGetPartnerInfoFlowUseCase(userRepository: UserRepository): GetPartnerInfoFlowUseCase {
         return GetPartnerInfoFlowUseCase(userRepository)
     }
+
+    @Singleton
+    @Provides
+    fun providesGetMixpanelAPIUseCase(@ApplicationContext context: Context): GetMixpanelAPIUseCase {
+        return GetMixpanelAPIUseCase(context)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetUserIsActiveUseCase(@Named("AppSettings") pref: SharedPreferences): GetUserIsActiveUseCase {
+        return GetUserIsActiveUseCase(pref)
+    }
+
+
+    @Singleton
+    @Provides
+    fun providesSetUserIsActiveUseCase(@Named("AppSettings") pref: SharedPreferences): SetUserIsActiveUseCase {
+        return SetUserIsActiveUseCase(pref)
+    }
+
 }
