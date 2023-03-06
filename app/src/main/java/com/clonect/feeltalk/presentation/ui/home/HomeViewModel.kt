@@ -16,6 +16,7 @@ import com.clonect.feeltalk.domain.usecase.user.*
 import com.clonect.feeltalk.presentation.utils.AppSettings
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -201,10 +202,17 @@ class HomeViewModel @Inject constructor(
     }
 
 
-    private fun changeEmotionMixpanel(changedEmotion: Emotion) {
-        val mixpanelDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+    private fun changeEmotionMixpanel(changedEmotion: Emotion) = CoroutineScope(Dispatchers.IO).launch {
+        val userInfo = getUserInfoUseCase()
+        if (userInfo !is Resource.Success) return@launch
 
         val mixpanel = getMixpanelAPIUseCase()
+        mixpanel.identify(userInfo.data.email, true)
+        mixpanel.registerSuperProperties(JSONObject().apply {
+            put("gender", userInfo.data.gender)
+        })
+
+        val mixpanelDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         mixpanel.track("Change Emotion", JSONObject().apply {
             put("changedEmotion", changedEmotion.toStringLowercase())
             put("changeDate", mixpanelDateFormat.format(Date()))
@@ -212,10 +220,16 @@ class HomeViewModel @Inject constructor(
         mixpanel.people.set("emotion", changedEmotion.toStringLowercase())
     }
 
-    private fun sendSignalMixpanel() {
-        val mixpanelDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+    private fun sendSignalMixpanel() = CoroutineScope(Dispatchers.IO).launch {val userInfo = getUserInfoUseCase()
+        if (userInfo !is Resource.Success) return@launch
 
         val mixpanel = getMixpanelAPIUseCase()
+        mixpanel.identify(userInfo.data.email, true)
+        mixpanel.registerSuperProperties(JSONObject().apply {
+            put("gender", userInfo.data.gender)
+        })
+
+        val mixpanelDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         mixpanel.track("Send Signal", JSONObject().apply {
             put("sendDate", mixpanelDateFormat.format(Date()))
         })

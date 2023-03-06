@@ -16,10 +16,12 @@ import com.clonect.feeltalk.presentation.utils.AppSettings
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import javax.inject.Inject
 
 @HiltViewModel
@@ -121,8 +123,16 @@ class SettingViewModel @Inject constructor(
 
 
 
-    private fun enablePushNotificationMixpanel(enabled: Boolean) {
+    private fun enablePushNotificationMixpanel(enabled: Boolean) = CoroutineScope(Dispatchers.IO).launch { 
+        val userInfo = getUserInfoUseCase()
+        if (userInfo !is Resource.Success) return@launch
+
         val mixpanel = getMixpanelAPIUseCase()
+        mixpanel.identify(userInfo.data.email, true)
+        mixpanel.registerSuperProperties(JSONObject().apply {
+            put("gender", userInfo.data.gender)
+        })
+
         mixpanel.track("Enable Push Notification")
         mixpanel.people.set("isPushNotificationEnabled", enabled)
     }

@@ -11,10 +11,7 @@ import com.clonect.feeltalk.domain.usecase.chat.GetChatListUseCase
 import com.clonect.feeltalk.domain.usecase.chat.ReloadChatListUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SendChatUseCase
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
-import com.clonect.feeltalk.domain.usecase.user.GetMyProfileImageUrlUseCase
-import com.clonect.feeltalk.domain.usecase.user.GetPartnerInfoUseCase
-import com.clonect.feeltalk.domain.usecase.user.GetPartnerProfileImageUrlUseCase
-import com.clonect.feeltalk.domain.usecase.user.GetUserIsActiveUseCase
+import com.clonect.feeltalk.domain.usecase.user.*
 import com.clonect.feeltalk.presentation.service.notification_observer.FcmNewChatObserver
 import com.clonect.feeltalk.presentation.service.notification_observer.QuestionAnswerObserver
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
@@ -40,6 +37,7 @@ class ChatViewModel @Inject constructor(
     private val reloadChatListUseCase: ReloadChatListUseCase,
     private val getMyProfileImageUrlUseCase: GetMyProfileImageUrlUseCase,
     private val getPartnerProfileImageUrlUseCase: GetPartnerProfileImageUrlUseCase,
+    private val getUserInfoUseCase: GetUserInfoUseCase,
     private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
     private val getUserIsActiveUseCase: GetUserIsActiveUseCase,
     savedStateHandle: SavedStateHandle
@@ -218,12 +216,20 @@ class ChatViewModel @Inject constructor(
 
 
     private fun sendChatMixpanel() = CoroutineScope(Dispatchers.IO).launch {
+        val userInfo = getUserInfoUseCase()
+        if (userInfo !is Resource.Success) return@launch
+
+        val mixpanel = getMixpanelAPIUseCase()
+        mixpanel.identify(userInfo.data.email, true)
+        mixpanel.registerSuperProperties(JSONObject().apply {
+            put("gender", userInfo.data.gender)
+        })
+
         val feeltalkDateFormat = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
         val mixpanelDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         val questionFeeltalkDate = _question.value.questionDate?.let { feeltalkDateFormat.parse(it) }
         val questionMixpanelDate = questionFeeltalkDate?.let { mixpanelDateFormat.format(it) }
 
-        val mixpanel = getMixpanelAPIUseCase()
         mixpanel.track("Send Chat", JSONObject().apply {
             put("isActive", getUserIsActiveUseCase())
             put("questionDate", questionMixpanelDate)

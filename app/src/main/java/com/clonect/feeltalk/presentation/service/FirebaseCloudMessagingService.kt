@@ -18,9 +18,13 @@ import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SaveChatUseCase
+import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetQuestionAnswersUseCase
 import com.clonect.feeltalk.domain.usecase.question.SaveQuestionToDatabaseUseCase
 import com.clonect.feeltalk.domain.usecase.user.CheckUserIsSignedUpUseCase
+import com.clonect.feeltalk.domain.usecase.user.GetUserInfoUseCase
+import com.clonect.feeltalk.domain.usecase.user.GetUserIsActiveUseCase
+import com.clonect.feeltalk.domain.usecase.user.SetUserIsActiveUseCase
 import com.clonect.feeltalk.presentation.service.notification_observer.AcceptRestoringKeysRequestObserver
 import com.clonect.feeltalk.presentation.service.notification_observer.CoupleRegistrationObserver
 import com.clonect.feeltalk.presentation.service.notification_observer.FcmNewChatObserver
@@ -35,6 +39,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -51,6 +56,8 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     // User
     @Inject
     lateinit var checkUserIsSignedUpUseCase: CheckUserIsSignedUpUseCase
+    @Inject
+    lateinit var getUserInfoUseCase: GetUserInfoUseCase
 
     // User Level Encryptor
     @Inject
@@ -65,6 +72,15 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     lateinit var saveQuestionToDatabaseUseCase: SaveQuestionToDatabaseUseCase
     @Inject
     lateinit var getQuestionAnswersUseCase: GetQuestionAnswersUseCase
+
+    // Mixpanel
+    @Inject
+    lateinit var getMixpanelAPIUseCase: GetMixpanelAPIUseCase
+    @Inject
+    lateinit var getUserIsActiveUseCase: GetUserIsActiveUseCase
+    @Inject
+    lateinit var setUserIsActiveUseCase: SetUserIsActiveUseCase
+
 
 
     companion object {
@@ -146,6 +162,25 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         ).also {
             saveQuestionToDatabaseUseCase(it)
         }
+
+        val isActive = getUserIsActiveUseCase()
+        if (!isActive) {
+            val result = getUserInfoUseCase()
+            if (result is Resource.Success) {
+                val userInfo = result.data
+                val mixpanel = getMixpanelAPIUseCase()
+                mixpanel.identify(userInfo.email, true)
+                mixpanel.registerSuperProperties(JSONObject().apply {
+                    put("gender", userInfo.gender)
+                })
+
+                mixpanel.track("Deactivate User")
+                mixpanel.people.set("isActive", false)
+
+                setUserIsActiveUseCase()
+            }
+        }
+
 
         val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
             .setGraph(R.navigation.overall_nav_graph)
