@@ -91,6 +91,7 @@ class CoupleSettingFragment : Fragment() {
             viewModel.userInfo.collectLatest {
                 binding.tvMyName.setText(it.nickname)
                 binding.tvMyBirthDate.setText(it.birth)
+                binding.tvMyEmail.setText(it.email)
             }
         }
     }
@@ -100,6 +101,7 @@ class CoupleSettingFragment : Fragment() {
             viewModel.partnerInfo.collectLatest {
                 binding.textPartnerName.setText(it.nickname)
                 binding.textPartnerBirthDate.text = it.birth
+                binding.tvPartnerEmail.setText(it.email)
             }
         }
     }

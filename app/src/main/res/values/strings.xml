@@ -131,6 +131,7 @@
     <!--  item_news.xml  -->
     <string name="news_default_partner_name">상대방 이름</string>
     <string name="news_default_my_name">내 이름</string>
+    <string name="news_default_email">email@gmail.com</string>
     <string name="news_default_date">5시간 전</string>
 
     <!--  fragment_couple_setting.xml  -->
