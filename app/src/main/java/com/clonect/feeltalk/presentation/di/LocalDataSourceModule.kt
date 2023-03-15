@@ -2,7 +2,6 @@ package com.clonect.feeltalk.presentation.di
 
 import android.content.Context
 import com.clonect.feeltalk.data.db.ChatDao
-import com.clonect.feeltalk.data.db.FeeltalkDatabase
 import com.clonect.feeltalk.data.db.QuestionDao
 import com.clonect.feeltalk.data.repository.chat.datasource.ChatLocalDataSource
 import com.clonect.feeltalk.data.repository.chat.datasourceImpl.ChatLocalDataSourceImpl
@@ -46,9 +45,10 @@ class LocalDataSourceModule {
     fun providesUserLocalDataSource(
         @ApplicationContext context: Context,
         appLevelEncryptHelper: AppLevelEncryptHelper,
-        feeltalkDatabase: FeeltalkDatabase,
+        chatDao: ChatDao,
+        questionDao: QuestionDao
     ): UserLocalDataSource {
-        return UserLocalDataSourceImpl(context, appLevelEncryptHelper, feeltalkDatabase)
+        return UserLocalDataSourceImpl(context, appLevelEncryptHelper, chatDao, questionDao)
     }
 
     @Singleton

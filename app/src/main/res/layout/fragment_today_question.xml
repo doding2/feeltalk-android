@@ -57,7 +57,6 @@
                 android:id="@+id/text_content_decoration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/today_question_content_decoration"
                 android:textColor="@color/today_question_content_decoration_color"
                 android:textSize="24sp"
                 android:fontFamily="@font/pretendard_thin"

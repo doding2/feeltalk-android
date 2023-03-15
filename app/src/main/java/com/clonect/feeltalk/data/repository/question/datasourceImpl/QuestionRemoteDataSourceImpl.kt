@@ -66,4 +66,18 @@ class QuestionRemoteDataSourceImpl(
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
+
+    override suspend fun getQuestionDetail(
+        accessToken: String,
+        question: String,
+    ): Response<QuestionDetailDto> {
+        val body = JsonObject().apply {
+            addProperty("accessToken", accessToken)
+            addProperty("title", question)
+        }
+        val response = clonectService.getQuestionDetail(body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
 }

@@ -9,6 +9,7 @@ import com.clonect.feeltalk.data.repository.question.datasource.QuestionRemoteDa
 import com.clonect.feeltalk.data.utils.UserLevelEncryptHelper
 import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.model.dto.question.QuestionAnswersDto
+import com.clonect.feeltalk.domain.model.dto.question.QuestionDetailDto
 import com.clonect.feeltalk.domain.model.dto.question.SendQuestionDto
 import com.clonect.feeltalk.domain.model.dto.question.TodayQuestionAnswersDto
 import com.clonect.feeltalk.domain.repository.QuestionRepository
@@ -201,6 +202,20 @@ class QuestionRepositoryImpl(
                 cacheDataSource.saveTodayQuestion(question)
             }
 
+            Resource.Success(remote)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun getQuestionDetail(
+        accessToken: String,
+        question: String,
+    ): Resource<QuestionDetailDto> {
+        return try {
+            val remote = remoteDataSource.getQuestionDetail(accessToken, question).body()!!
             Resource.Success(remote)
         } catch (e: CancellationException) {
             throw e

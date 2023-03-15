@@ -382,11 +382,15 @@ class UseCaseModule {
         return GetUserIsActiveUseCase(pref)
     }
 
-
     @Singleton
     @Provides
     fun providesSetUserIsActiveUseCase(@Named("AppSettings") pref: SharedPreferences): SetUserIsActiveUseCase {
         return SetUserIsActiveUseCase(pref)
     }
 
+    @Singleton
+    @Provides
+    fun providesGetQuestionDetailUseCase(userRepository: UserRepository, questionRepository: QuestionRepository): GetQuestionDetailUseCase {
+        return GetQuestionDetailUseCase(userRepository, questionRepository)
+    }
 }

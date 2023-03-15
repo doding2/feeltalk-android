@@ -128,11 +128,10 @@ interface ClonectService {
         @Body body: JsonObject,
     ): Response<QuestionAnswersDto>
 
-    // fcm
-    @POST("/api/fcm/answerRequest")
-    suspend fun requestQuestionAnswerToPartner(
-        @Body body: JsonObject,
-    ): Response<String>
+    @POST("/api/question/detail")
+    suspend fun getQuestionDetail(
+        @Body body: JsonObject
+    ): Response<QuestionDetailDto>
 
 
     /** Chat **/

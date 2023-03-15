@@ -1,7 +1,8 @@
 package com.clonect.feeltalk.data.repository.user.datasourceImpl
 
 import android.content.Context
-import com.clonect.feeltalk.data.db.FeeltalkDatabase
+import com.clonect.feeltalk.data.db.ChatDao
+import com.clonect.feeltalk.data.db.QuestionDao
 import com.clonect.feeltalk.data.repository.user.datasource.UserLocalDataSource
 import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
@@ -11,7 +12,8 @@ import java.io.File
 class UserLocalDataSourceImpl(
     private val context: Context,
     private val appLevelEncryptHelper: AppLevelEncryptHelper,
-    private val feeltalkDatabase: FeeltalkDatabase,
+    private val chatDao: ChatDao,
+    private val questionDao: QuestionDao
 ): UserLocalDataSource {
 
     override suspend fun getAccessToken(): String? {
@@ -138,8 +140,8 @@ class UserLocalDataSourceImpl(
         val userInfoFile = File(context.filesDir, "user_info.dat")
         val userProfileUrlFile = File(context.filesDir, "user_profile_url.txt")
 
-        feeltalkDatabase.clearAllTables()
-        context.deleteDatabase("feeltalkDatabase.db")
+        chatDao.deleteAll()
+        questionDao.deleteAll()
 
         return registrationCodeFile.delete()
                 && coupleAnniversaryFile.delete()
@@ -155,10 +157,8 @@ class UserLocalDataSourceImpl(
         val userInfoFile = File(context.filesDir, "user_info.dat")
         val userProfileUrlFile = File(context.filesDir, "user_profile_url.txt")
 
-        feeltalkDatabase.clearAllTables()
-        context.deleteDatabase("feeltalkDatabase.db")
-        val databasesDir = File(context.applicationInfo.dataDir + "/databases/")
-        val databaseFile = File(databasesDir, "feeltalkDatabase.db")
+        chatDao.deleteAll()
+        questionDao.deleteAll()
 
         return idTokenFile.delete()
                 && isAppleLoggedInFile.delete()
@@ -166,7 +166,5 @@ class UserLocalDataSourceImpl(
                 && registrationCodeFile.delete()
                 && userInfoFile.delete()
                 && userProfileUrlFile.delete()
-                && databasesDir.deleteRecursively()
-                && databaseFile.delete()
     }
 }

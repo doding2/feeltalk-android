@@ -54,6 +54,7 @@ class TodayQuestionFragment : Fragment() {
 
         initMyAnswerEditText()
         collectQuestion()
+        collectQuestionDetail()
         collectIsLoading()
         collectPartnerInfo()
         collectPartnerAnswer()
@@ -147,6 +148,16 @@ class TodayQuestionFragment : Fragment() {
         }
     }
 
+    private fun collectQuestionDetail() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.questionDetail.collectLatest {
+                if (it == null) return@collectLatest
+
+                binding.textContentDecoration.text = it.header
+            }
+        }
+    }
+
     private fun collectPartnerInfo() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.partnerInfo.collectLatest {
@@ -196,8 +207,10 @@ class TodayQuestionFragment : Fragment() {
         binding.layoutQuestionContent.removeAllViewsInLayout()
 
 //        question.contentPrefix.reassembleTextView(R.layout.text_view_question_content_prefix)
-        question.question.reassembleTextView(R.layout.text_view_question_content)
+//        question.question.reassembleTextView(R.layout.text_view_question_content)
 //        question.contentSuffix.reassembleTextView(R.layout.text_view_question_content_suffix)
+
+        question.question.reassembleTextView(R.layout.text_view_question_content_prefix)
     }
 
     private fun String.reassembleTextView(@LayoutRes resource: Int) {

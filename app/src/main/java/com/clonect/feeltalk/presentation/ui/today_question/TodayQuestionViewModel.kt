@@ -6,8 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
+import com.clonect.feeltalk.domain.model.dto.question.QuestionDetailDto
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetQuestionAnswersUseCase
+import com.clonect.feeltalk.domain.usecase.question.GetQuestionDetailUseCase
 import com.clonect.feeltalk.domain.usecase.question.SaveQuestionToDatabaseUseCase
 import com.clonect.feeltalk.domain.usecase.question.SendQuestionAnswerUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetPartnerInfoUseCase
@@ -29,6 +31,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TodayQuestionViewModel @Inject constructor(
+    private val getQuestionDetailUseCase: GetQuestionDetailUseCase,
     private val sendQuestionAnswerUseCase: SendQuestionAnswerUseCase,
     private val getQuestionAnswersUseCase: GetQuestionAnswersUseCase,
     private val getPartnerInfoUseCase: GetPartnerInfoUseCase,
@@ -43,6 +46,9 @@ class TodayQuestionViewModel @Inject constructor(
 
     private val _questionStateFlow = MutableStateFlow(Question(""))
     val questionStateFlow = _questionStateFlow.asStateFlow()
+
+    private val _questionDetail = MutableStateFlow<QuestionDetailDto?>(null)
+    val questionDetail = _questionDetail.asStateFlow()
 
     private val _myAnswerStateFlow = MutableStateFlow("")
     val myAnswerStateFlow: StateFlow<String> = _myAnswerStateFlow.asStateFlow()
@@ -61,9 +67,28 @@ class TodayQuestionViewModel @Inject constructor(
             setQuestion(it.copy())
             homeQuestionReference.value = it
         }
+        getQuestionDetail()
         getQuestionAnswers()
         getPartnerInfo()
         openQuestionFirsTimeMixpanel()
+    }
+
+    private fun getQuestionDetail() = viewModelScope.launch(Dispatchers.IO) {
+        val result = getQuestionDetailUseCase(_questionStateFlow.value.question)
+        when (result) {
+            is Resource.Success -> {
+                _questionDetail.value = result.data
+                infoLog("header: ${result.data.header}, body: ${result.data.body}")
+            }
+            is Resource.Error -> {
+                infoLog("Fail to get question detail: ${_questionStateFlow.value.question}, error: ${result.throwable.localizedMessage}")
+                _questionDetail.value = null
+            }
+            else -> {
+                infoLog("Fail to get question detail")
+                _questionDetail.value = null
+            }
+        }
     }
 
     private fun getQuestionAnswers() = viewModelScope.launch(Dispatchers.IO) {

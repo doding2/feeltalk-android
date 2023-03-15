@@ -25,4 +25,6 @@ interface QuestionDao {
     @Query("SELECT * FROM QuestionTable WHERE question == :content")
     suspend fun getQuestionListByContent(content: String): List<Question>
 
+    @Query("DELETE FROM QuestionTable")
+    suspend fun deleteAll()
 }

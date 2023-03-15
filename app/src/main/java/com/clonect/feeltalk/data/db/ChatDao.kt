@@ -24,4 +24,7 @@ interface ChatDao {
 
     @Query("DELETE FROM ChatTable WHERE question == :questionContent")
     suspend fun deleteByQuestion(questionContent: String)
+
+    @Query("DELETE FROM ChatTable")
+    suspend fun deleteAll()
 }

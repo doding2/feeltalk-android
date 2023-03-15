@@ -11,4 +11,5 @@ interface QuestionRemoteDataSource {
     suspend fun getTodayQuestionAnswers(accessToken: String): Response<TodayQuestionAnswersDto>
 
     suspend fun getQuestionAnswers(accessToken: String, question: String): Response<QuestionAnswersDto>
+    suspend fun getQuestionDetail(accessToken: String, question: String): Response<QuestionDetailDto>
 }
