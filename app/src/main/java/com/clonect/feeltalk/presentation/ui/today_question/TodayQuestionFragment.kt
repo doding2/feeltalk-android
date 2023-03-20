@@ -140,7 +140,7 @@ class TodayQuestionFragment : Fragment() {
     private fun collectQuestion() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.questionStateFlow.collectLatest {
-                reassembleQuestionTitle(it)
+//                reassembleQuestionTitle(it)
 
                 if (viewModel.myAnswerStateFlow.value != "")
                     enableEnterAnswerButton(true)
@@ -154,6 +154,7 @@ class TodayQuestionFragment : Fragment() {
                 if (it == null) return@collectLatest
 
                 binding.textContentDecoration.text = it.header
+                it.body.reassembleTextView(R.layout.text_view_question_content_prefix)
             }
         }
     }
@@ -207,10 +208,8 @@ class TodayQuestionFragment : Fragment() {
         binding.layoutQuestionContent.removeAllViewsInLayout()
 
 //        question.contentPrefix.reassembleTextView(R.layout.text_view_question_content_prefix)
-//        question.question.reassembleTextView(R.layout.text_view_question_content)
+        question.question.reassembleTextView(R.layout.text_view_question_content)
 //        question.contentSuffix.reassembleTextView(R.layout.text_view_question_content_suffix)
-
-        question.question.reassembleTextView(R.layout.text_view_question_content_prefix)
     }
 
     private fun String.reassembleTextView(@LayoutRes resource: Int) {
