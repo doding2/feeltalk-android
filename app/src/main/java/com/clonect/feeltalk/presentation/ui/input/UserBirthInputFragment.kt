@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class UserBirthInputFragment : Fragment() {
+class   UserBirthInputFragment : Fragment() {
 
     private lateinit var binding: FragmentUserBirthInputBinding
     private val viewModel: UserInputViewModel by activityViewModels()

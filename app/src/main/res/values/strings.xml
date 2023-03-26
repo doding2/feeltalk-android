@@ -84,8 +84,8 @@
     <string name="setting_request_key_pairs_restoring">암호화 열쇠 복구 요청</string>
     <string name="setting_privacy_policy">개인정보처리방침</string>
     <string name="setting_customer_service_header_title">고객센터</string>
-    <string name="setting_customer_question_service">필톡 질문방</string>
-    <string name="setting_customer_feedback_service">필톡 피드백방</string>
+    <string name="setting_customer_question_service">필로우톡 질문방</string>
+    <string name="setting_customer_feedback_service">필로우톡 피드백방</string>
 
     <!--  fragment_today_question.xml  -->
     <string name="today_question_title">오늘의 질문</string>
