@@ -52,6 +52,7 @@ class ChatFragment : Fragment() {
         initActionBar()
         initRecyclerView()
 
+        collectQuestionDetail()
         collectPartnerInfo()
         collectQuestion()
         collectChatList()
@@ -88,6 +89,17 @@ class ChatFragment : Fragment() {
     }
 
 
+    private fun collectQuestionDetail() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.questionDetail.collectLatest {
+                if (it == null) return@collectLatest
+
+                binding.layoutQuestionContent.removeAllViewsInLayout()
+                binding.textContentDecoration.text = it.header
+                it?.body?.reassembleTextView(R.layout.text_view_question_content)
+            }
+        }
+    }
     private fun collectPartnerInfo() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.partnerInfo.collectLatest {
@@ -99,7 +111,7 @@ class ChatFragment : Fragment() {
     private fun collectQuestion() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.question.collectLatest {
-                reassembleQuestionTitle(it)
+//                reassembleQuestionTitle(it)
             }
         }
     }

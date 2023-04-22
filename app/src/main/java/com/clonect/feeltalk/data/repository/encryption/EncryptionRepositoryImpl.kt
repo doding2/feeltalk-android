@@ -508,6 +508,8 @@ class EncryptionRepositoryImpl(
 
     private suspend fun generateUserLevelKeyPair(): KeyPair {
         val keyPair = initUserLevelKeyStore()
+        infoLog("public key format: ${keyPair.public.format}")
+        infoLog("public key format: ${keyPair.private.format}")
         localDataSource.saveMyPublicKeyToDatabase(keyPair.public)
         localDataSource.saveMyPrivateKeyToDatabase(keyPair.private)
         cacheDataSource.saveMyPublicKeyToCache(keyPair.public)

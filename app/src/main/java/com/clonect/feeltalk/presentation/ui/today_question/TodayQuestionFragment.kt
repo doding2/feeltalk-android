@@ -153,6 +153,7 @@ class TodayQuestionFragment : Fragment() {
             viewModel.questionDetail.collectLatest {
                 if (it == null) return@collectLatest
 
+                binding.layoutQuestionContent.removeAllViewsInLayout()
                 binding.textContentDecoration.text = it.header
                 it.body.reassembleTextView(R.layout.text_view_question_content_prefix)
             }

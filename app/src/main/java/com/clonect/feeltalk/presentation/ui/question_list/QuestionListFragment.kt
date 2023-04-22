@@ -18,6 +18,7 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentQuestionListBinding
 import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.presentation.ui.bottom_navigation.BottomNavigationViewModel
+import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -69,7 +70,8 @@ class QuestionListFragment : Fragment() {
     }
 
     private fun clickQuestionItem(question: Question) {
-        if (question.myAnswer == null) {
+        infoLog("클릭한 질문: $question")
+        if (question.myAnswer == null || question.myAnswer?.trim().isNullOrBlank()) {
             navigateToTodayQuestionPage(question)
             return
         }

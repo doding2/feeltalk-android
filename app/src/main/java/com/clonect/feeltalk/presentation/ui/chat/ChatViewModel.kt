@@ -7,10 +7,12 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.chat.Chat
 import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
+import com.clonect.feeltalk.domain.model.dto.question.QuestionDetailDto
 import com.clonect.feeltalk.domain.usecase.chat.GetChatListUseCase
 import com.clonect.feeltalk.domain.usecase.chat.ReloadChatListUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SendChatUseCase
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
+import com.clonect.feeltalk.domain.usecase.question.GetQuestionDetailUseCase
 import com.clonect.feeltalk.domain.usecase.user.*
 import com.clonect.feeltalk.presentation.service.notification_observer.FcmNewChatObserver
 import com.clonect.feeltalk.presentation.service.notification_observer.QuestionAnswerObserver
@@ -31,6 +33,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
+    private val getQuestionDetailUseCase: GetQuestionDetailUseCase,
     private val getPartnerInfoUseCase: GetPartnerInfoUseCase,
     private val getChatListUseCase: GetChatListUseCase,
     private val sendChatUseCase: SendChatUseCase,
@@ -48,6 +51,9 @@ class ChatViewModel @Inject constructor(
 
     private val _question = MutableStateFlow(Question(""))
     val question = _question.asStateFlow()
+
+    private val _questionDetail = MutableStateFlow<QuestionDetailDto?>(null)
+    val questionDetail = _questionDetail.asStateFlow()
 
     private val _chatList = MutableStateFlow<List<Chat>>(emptyList())
     val chatList = _chatList.asStateFlow()
@@ -75,12 +81,32 @@ class ChatViewModel @Inject constructor(
             FeeltalkApp.setQuestionIdOfShowingChatFragment(it.question)
             infoLog("Chat Room Entered: $it")
         }
+        getQuestionDetail()
         getPartnerInfo()
         getMyProfileImageUrl()
         getPartnerProfileImageUrl()
         collectChatList()
         collectFcmNewChat()
         collectIsAnswerUpdated()
+    }
+
+
+    private fun getQuestionDetail() = viewModelScope.launch(Dispatchers.IO) {
+        val result = getQuestionDetailUseCase(_question.value.question)
+        when (result) {
+            is Resource.Success -> {
+                _questionDetail.value = result.data
+                infoLog("header: ${result.data.header}, body: ${result.data.body}")
+            }
+            is Resource.Error -> {
+                infoLog("Fail to get question detail: ${_question.value.question}, error: ${result.throwable.localizedMessage}")
+                _questionDetail.value = null
+            }
+            else -> {
+                infoLog("Fail to get question detail")
+                _questionDetail.value = null
+            }
+        }
     }
 
     private fun collectIsAnswerUpdated() = viewModelScope.launch(Dispatchers.IO) {

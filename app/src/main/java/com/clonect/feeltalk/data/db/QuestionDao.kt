@@ -13,10 +13,10 @@ interface QuestionDao {
     @Query("SELECT * FROM QuestionTable")
     fun getQuestionListFlow(): Flow<List<Question>>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertQuestion(question: Question): Long
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertQuestionList(questionList: List<Question>): List<Long>
 
     @Query("SELECT * FROM QuestionTable WHERE questionDate == :date")

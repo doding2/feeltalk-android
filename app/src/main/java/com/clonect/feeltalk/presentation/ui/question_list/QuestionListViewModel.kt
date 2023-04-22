@@ -32,6 +32,7 @@ class QuestionListViewModel @Inject constructor(
                 is Resource.Success -> {
                     val newList = result.data.toMutableList()
                     newList.sortByDescending { it.questionDate }
+                    newList.sortByDescending { it.question }
                     newList.add(0, Question(
                         question = "",
                         viewType = "header"
