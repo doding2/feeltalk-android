@@ -147,7 +147,7 @@
     <string name="key_restoring_state_message_loading">암호화 열쇠 점검 중...</string>
     <string name="key_restoring_state_message_normal">암호화 열쇠가 정상입니다.</string>
     <string name="key_restoring_state_message_missing">암호화 열쇠 불러오기에 실패했습니다.</string>
-    <string name="key_restoring_state_message_corrupted">암호화 열쇠가 변질되었습니다.</string>
+    <string name="key_restoring_state_message_corrupted">암호화 열쇠가 비정상적입니다.</string>
     <string name="key_restoring_state_message_waiting">연인의 수락을 기다리고 있습니다...</string>
     <string name="key_restoring_state_message_restored">암호화 열쇠 복구에 성공했습니다.</string>
 

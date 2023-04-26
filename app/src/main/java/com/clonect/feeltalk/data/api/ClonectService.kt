@@ -167,6 +167,11 @@ interface ClonectService {
     ): Response<SignUpDto>
 
     @POST("api/login")
+    suspend fun autoLogIn(
+        @Body body: JsonObject,
+    ): Response<StatusDto>
+
+    @POST("api/login")
     suspend fun autoLogInWithGoogle(
         @Body body: JsonObject,
     ): Response<AccessTokenDto>

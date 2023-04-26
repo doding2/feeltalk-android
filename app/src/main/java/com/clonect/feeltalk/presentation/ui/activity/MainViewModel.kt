@@ -20,6 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
+    private val autoLogInUseCase: AutoLogInUseCase,
     private val autoLogInWithGoogleUseCase: AutoLogInWithGoogleUseCase,
     private val autoLogInWithKakaoUseCase: AutoLogInWithKakaoUseCase,
     private val autoLogInWithNaverUseCase: AutoLogInWithNaverUseCase,
@@ -56,7 +57,7 @@ class MainViewModel @Inject constructor(
 
 
     fun autoGoogleLogIn() = viewModelScope.launch(Dispatchers.IO) {
-        when (autoLogInWithGoogleUseCase()) {
+        when (autoLogInUseCase()) {
             is Resource.Success -> {
                 _isLoggedIn.value = true
                 checkUserInfoIsEntered()
@@ -72,7 +73,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun autoKakaoLogIn() = viewModelScope.launch(Dispatchers.IO) {
-        when (autoLogInWithKakaoUseCase()) {
+        when (autoLogInUseCase()) {
             is Resource.Success -> {
                 _isLoggedIn.value = true
                 checkUserInfoIsEntered()
@@ -88,7 +89,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun autoNaverLogIn() = viewModelScope.launch(Dispatchers.IO) {
-        when (autoLogInWithNaverUseCase()) {
+        when (autoLogInUseCase()) {
             is Resource.Success -> {
                 _isLoggedIn.value = true
                 checkUserInfoIsEntered()
@@ -104,7 +105,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun autoAppleLogIn() = viewModelScope.launch(Dispatchers.IO) {
-        when (autoLogInWithAppleUseCase()) {
+        when (autoLogInUseCase()) {
             is Resource.Success -> {
                 _isLoggedIn.value = true
                 checkUserInfoIsEntered()

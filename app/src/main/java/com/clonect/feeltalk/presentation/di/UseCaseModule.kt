@@ -393,4 +393,10 @@ class UseCaseModule {
     fun providesGetQuestionDetailUseCase(userRepository: UserRepository, questionRepository: QuestionRepository): GetQuestionDetailUseCase {
         return GetQuestionDetailUseCase(userRepository, questionRepository)
     }
+
+    @Singleton
+    @Provides
+    fun providesAutoLogInUseCase(userRepository: UserRepository): AutoLogInUseCase {
+        return AutoLogInUseCase(userRepository)
+    }
 }

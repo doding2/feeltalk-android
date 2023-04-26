@@ -30,6 +30,8 @@ interface UserRemoteDataSource {
     suspend fun sendPartnerCoupleRegistrationCode(accessToken: String, partnerCode: String): Response<PartnerCodeCheckDto>
     suspend fun updateFcmToken(accessToken: String, fcmToken: String): Response<StatusDto>
 
+    suspend fun autoLogIn(accessToken: String): Response<StatusDto>
+
     suspend fun signUpWithGoogle(idToken: String, serverAuthCode: String, fcmToken: String): Response<SignUpDto>
     suspend fun autoLogInWithGoogle(idToken: String): Response<AccessTokenDto>
 

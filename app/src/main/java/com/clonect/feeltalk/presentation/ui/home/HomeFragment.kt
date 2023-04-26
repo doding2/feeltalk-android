@@ -190,7 +190,7 @@ class HomeFragment : Fragment() {
         }
 
         if (question.question.isBlank()) {
-            textLetterTitle.text = "질문이 준비되지 않았습니다."
+            textLetterTitle.text = "질문이 준비되지 않았습니다"
             textLetterMessage.text = "조금만 기다려주세요"
             llLetterContent.animate()
                 .alpha(1f)

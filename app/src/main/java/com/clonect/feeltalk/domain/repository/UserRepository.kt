@@ -36,6 +36,8 @@ interface UserRepository {
     suspend fun sendPartnerCoupleRegistrationCode(partnerCode: String): Resource<PartnerCodeCheckDto>
     suspend fun updateFcmToken(fcmToken: String): Resource<StatusDto>
 
+    suspend fun autoLogIn(): Resource<StatusDto>
+
     suspend fun signUpWithGoogle(idToken: String, serverAuthCode: String, fcmToken: String): Resource<SignUpDto>
     suspend fun autoLogInWithGoogle(): Resource<AccessTokenDto>
 

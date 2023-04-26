@@ -219,6 +219,16 @@ class UserRemoteDataSourceImpl(
         return response
     }
 
+    override suspend fun autoLogIn(accessToken: String): Response<StatusDto> {
+        val body = JsonObject().apply {
+            addProperty("accessToken", accessToken)
+        }
+        val response = clonectService.autoLogIn(body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
+
     override suspend fun autoLogInWithGoogle(idToken: String): Response<AccessTokenDto> {
         val body = JsonObject().apply {
             addProperty("idToken", idToken)
