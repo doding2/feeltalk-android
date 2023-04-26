@@ -99,7 +99,7 @@ class KeyRestoringAcceptViewModel @Inject constructor(
             is Resource.Error -> {
                 infoLog("Fail to check key pairs work well: ${result.throwable.localizedMessage}")
                 _keyPairsStateMessage.value = KeyPairsState(
-                    message = context.getString(R.string.key_restoring_state_message_corrupted) + "\n${result.throwable.localizedMessage}",
+                    message = context.getString(R.string.key_restoring_state_message_corrupted),
                     state = Emotion.Bad
                 )
                 enableAcceptButton(false)
@@ -126,6 +126,7 @@ class KeyRestoringAcceptViewModel @Inject constructor(
                 infoLog("Fail to help to restore keys: ${result.throwable.localizedMessage}")
                 toast("연인의 암호화 열쇠 복구에 실패했습니다")
                 enableAcceptButton(true)
+
             }
             else -> {
                 infoLog("Fail to help to restore keys")

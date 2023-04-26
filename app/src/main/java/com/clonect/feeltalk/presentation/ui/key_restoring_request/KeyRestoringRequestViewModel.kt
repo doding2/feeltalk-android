@@ -81,7 +81,7 @@ class KeyRestoringRequestViewModel @Inject constructor(
             }
             is Resource.Error -> {
                 _keyPairsStateMessage.value = KeyPairsState(
-                    message = context.getString(R.string.key_restoring_state_message_missing) + result.throwable.localizedMessage,
+                    message = context.getString(R.string.key_restoring_state_message_missing),
                     state = Emotion.Puzzling
                 )
                 infoLog("Fail to check key pairs exist: ${result.throwable.localizedMessage}")
@@ -112,7 +112,7 @@ class KeyRestoringRequestViewModel @Inject constructor(
             is Resource.Error -> {
                 infoLog("Fail to check key pairs work well: ${result.throwable.localizedMessage}")
                 _keyPairsStateMessage.value = KeyPairsState(
-                    message = context.getString(R.string.key_restoring_state_message_corrupted) + "\n${result.throwable.localizedMessage}",
+                    message = context.getString(R.string.key_restoring_state_message_corrupted),
                     state = Emotion.Bad
                 )
                 enableRequestButton(true)
@@ -167,10 +167,12 @@ class KeyRestoringRequestViewModel @Inject constructor(
             is Resource.Error -> {
                 toast("암호화 열쇠 복구에 실패했습니다.")
                 infoLog("Fail to restore key pairs: ${result.throwable.localizedMessage}")
+                AcceptRestoringKeysRequestObserver.getInstance().setPartnerAccepted(false)
             }
             else -> {
                 toast("암호화 열쇠 복구에 실패했습니다.")
                 infoLog("Fail to restore key pairs")
+                AcceptRestoringKeysRequestObserver.getInstance().setPartnerAccepted(false)
             }
         }
         checkKeyPairsExist()

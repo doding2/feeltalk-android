@@ -254,6 +254,7 @@ class EncryptionRepositoryImpl(
 
             // restore private keys
             // my private key
+            delay(Constants.EXCHANGE_KEY_WAIT_DELAY * 5)
             var restoreResult = remoteSource.restorePrivateKeys(accessToken).body()!!
             while (restoreResult.partnerPrivateKeyEncodeBySelfPublicKey == null || restoreResult.selfPrivateKeyEncodeByTempPublicKey == null) {
                 if (tryCount >= 10) {
