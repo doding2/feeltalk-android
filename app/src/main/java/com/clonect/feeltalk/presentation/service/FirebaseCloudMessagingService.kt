@@ -459,6 +459,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             .setContentText(message)
             .setSmallIcon(R.mipmap.ic_launcher_round)
             .setColor(ContextCompat.getColor(applicationContext, R.color.white))
+            .setOngoing(false)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
             .setGroup(NOTIFICATION_GROUP)
