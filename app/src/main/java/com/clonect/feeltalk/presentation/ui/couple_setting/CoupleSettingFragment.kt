@@ -67,22 +67,22 @@ class CoupleSettingFragment : Fragment() {
 
             ivMyProfile.setOnClickListener { updateProfileImage() }
             
-            clPartnerProfile.setOnClickListener { 
-                showBreakUpCoupleDialog(
-                    partnerNickname = viewModel.partnerInfo.value.nickname,
-                    onConfirm = {
-                        lifecycleScope.launch {
-                            val isSuccessful = viewModel.breakUpCouple()
-                            if (isSuccessful) {
-                                Toast.makeText(requireContext(), "커플이 해제되었습니다", Toast.LENGTH_SHORT).show()
-                                navigateToCoupleRegistrationPage()
-                            } else {
-                                Toast.makeText(requireContext(), "실패했습니다", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    }
-                )
-            }
+//            clPartnerProfile.setOnClickListener {
+//                showBreakUpCoupleDialog(
+//                    partnerNickname = viewModel.partnerInfo.value.nickname,
+//                    onConfirm = {
+//                        lifecycleScope.launch {
+//                            val isSuccessful = viewModel.breakUpCouple()
+//                            if (isSuccessful) {
+//                                Toast.makeText(requireContext(), "커플이 해제되었습니다", Toast.LENGTH_SHORT).show()
+//                                navigateToCoupleRegistrationPage()
+//                            } else {
+//                                Toast.makeText(requireContext(), "실패했습니다", Toast.LENGTH_SHORT).show()
+//                            }
+//                        }
+//                    }
+//                )
+//            }
         }
     }
 
