@@ -90,7 +90,7 @@ class CoupleSettingFragment : Fragment() {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.userInfo.collectLatest {
                 binding.tvMyName.setText(it.nickname)
-                binding.tvMyBirthDate.setText(it.birth)
+                binding.tvMyBirthDate.setText(if (it.birth == "") "(생일 미등록)" else it.birth)
                 binding.tvMyEmail.setText(it.email)
             }
         }
@@ -100,7 +100,7 @@ class CoupleSettingFragment : Fragment() {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.partnerInfo.collectLatest {
                 binding.textPartnerName.setText(it.nickname)
-                binding.textPartnerBirthDate.text = it.birth
+                binding.textPartnerBirthDate.text = if (it.birth == "") "(생일 미등록)" else it.birth
                 binding.tvPartnerEmail.setText(it.email)
             }
         }
