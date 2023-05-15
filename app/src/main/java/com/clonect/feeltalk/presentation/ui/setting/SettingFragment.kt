@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -26,6 +27,7 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.databinding.FragmentSettingBinding
 import com.clonect.feeltalk.presentation.ui.bottom_navigation.BottomNavigationViewModel
+import com.clonect.feeltalk.presentation.utils.showAlertDialog
 import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -79,6 +81,8 @@ class SettingFragment : Fragment() {
             llCustomerFeedbackService.setOnClickListener { sendFeedbackEmail() }
 
 //            llLogOut.setOnClickListener { logOut() }
+            
+            btnLeaveFeeltalk.setOnClickListener { leaveFeeltalk() }
         }
     }
 
@@ -130,6 +134,24 @@ class SettingFragment : Fragment() {
         startActivity(Intent.createChooser(intent, null))
     }
 
+    private fun leaveFeeltalk() {
+        showAlertDialog(
+            title = "필로우톡 회원 탈퇴",
+            message = "정말 탈퇴하시겠습니까?",
+            confirmButtonText = "확 인",
+            onConfirmClick = {
+                lifecycleScope.launch {
+                    val succeed = viewModel.leaveFeeltalk()
+                    if (succeed) {
+                        logOut()
+                    } else {
+                        Toast.makeText(requireContext(), "탈퇴에 실패했습니다", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        )
+    }
+    
 
 
     private fun collectUserInfo() = lifecycleScope.launch {

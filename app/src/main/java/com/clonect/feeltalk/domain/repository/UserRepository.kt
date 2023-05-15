@@ -53,4 +53,6 @@ interface UserRepository {
 
     suspend fun clearCoupleInfo(): Resource<Boolean>
     suspend fun clearAllExceptKeys(): Resource<Boolean>
+
+    suspend fun leaveFeeltalk(): Resource<Boolean>
 }

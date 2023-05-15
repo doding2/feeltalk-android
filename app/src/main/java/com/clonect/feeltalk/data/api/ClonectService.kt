@@ -211,6 +211,11 @@ interface ClonectService {
         @Path("uuid") uuid: String,
     ): Response<AccessTokenDto>
 
+    @DELETE("api/member-one/{accessToken}")
+    suspend fun leaveFeeltalk(
+        @Path("accessToken") accessToken: String
+    ): Response<StatusCodeDto>
+
 
     /** Encryption **/
     @POST("api/member/clientAESKey")

@@ -8,10 +8,7 @@ import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
-import com.clonect.feeltalk.domain.usecase.user.ClearAllExceptKeysUseCase
-import com.clonect.feeltalk.domain.usecase.user.GetCoupleAnniversaryUseCase
-import com.clonect.feeltalk.domain.usecase.user.GetMyProfileImageUrlUseCase
-import com.clonect.feeltalk.domain.usecase.user.GetUserInfoUseCase
+import com.clonect.feeltalk.domain.usecase.user.*
 import com.clonect.feeltalk.presentation.utils.AppSettings
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessaging
@@ -21,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import javax.inject.Inject
 
@@ -32,7 +30,8 @@ class SettingViewModel @Inject constructor(
     private val getCoupleAnniversaryUseCase: GetCoupleAnniversaryUseCase,
     private val clearAllExceptKeysUseCase: ClearAllExceptKeysUseCase,
     private val getMyProfileImageUrlUseCase: GetMyProfileImageUrlUseCase,
-    private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase
+    private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
+    private val leaveFeeltalkUseCase: LeaveFeeltalkUseCase
 ): ViewModel() {
 
     private val appSettings = getAppSettingsUseCase()
@@ -79,6 +78,23 @@ class SettingViewModel @Inject constructor(
             is Resource.Success -> { _myProfileImageUrl.value = result.data }
             is Resource.Error -> infoLog("Fail to get my profile image url: ${result.throwable.localizedMessage}")
             else -> infoLog("Fail to get my profile image url")
+        }
+    }
+
+    suspend fun leaveFeeltalk() = withContext(Dispatchers.IO) {
+        val result = leaveFeeltalkUseCase()
+        when (result) {
+            is Resource.Success -> {
+                result.data
+            }
+            is Resource.Error -> {
+                infoLog("Fail to leave feeltalk: ${result.throwable.localizedMessage}")
+                false
+            }
+            else -> {
+                infoLog("Fail to leave feeltalk")
+                false
+            }
         }
     }
 

@@ -44,4 +44,6 @@ interface UserRemoteDataSource {
     suspend fun signUpWithApple(accessToken: String, fcmToken: String): Response<SignUpDto>
     suspend fun autoLogInWithApple(accessToken: String): Response<AccessTokenDto>
     suspend fun getAppleAccessToken(uuid: String): Response<AccessTokenDto>
+
+    suspend fun leaveFeeltalk(accessToken: String): Response<StatusCodeDto>
 }
