@@ -28,6 +28,7 @@ class CoupleSettingViewModel @Inject constructor(
     private val updateNicknameUseCase: UpdateNicknameUseCase,
     private val updateBirthUseCase: UpdateBirthUseCase,
     private val updateCoupleAnniversaryUseCase: UpdateCoupleAnniversaryUseCase,
+    private val leaveFeeltalkUseCase: LeaveFeeltalkUseCase
 ): ViewModel() {
 
     private val _userInfo = MutableStateFlow(UserInfo())
@@ -168,6 +169,24 @@ class CoupleSettingViewModel @Inject constructor(
             }
             is Resource.Error -> infoLog("Fail to get d day: ${result.throwable.localizedMessage}")
             else -> infoLog("Fail to get partner d day")
+        }
+    }
+
+
+    suspend fun leaveFeeltalk() = withContext(Dispatchers.IO) {
+        val result = leaveFeeltalkUseCase()
+        when (result) {
+            is Resource.Success -> {
+                result.data
+            }
+            is Resource.Error -> {
+                infoLog("Fail to leave feeltalk: ${result.throwable.localizedMessage}")
+                false
+            }
+            else -> {
+                infoLog("Fail to leave feeltalk")
+                false
+            }
         }
     }
 

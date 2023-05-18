@@ -23,6 +23,10 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.databinding.FragmentCoupleSettingBinding
 import com.clonect.feeltalk.presentation.utils.*
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.kakao.sdk.user.UserApiClient
+import com.navercorp.nid.NaverIdLoginSDK
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -30,6 +34,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import kotlin.math.ceil
 
 
@@ -83,8 +89,74 @@ class CoupleSettingFragment : Fragment() {
 //                    }
 //                )
 //            }
+
+            binding.llLeaveFeeltalk.setOnClickListener { leaveFeeltalk() }
         }
     }
+
+    private fun leaveFeeltalk() {
+        showAlertDialog(
+            title = "필로우톡 회원 탈퇴",
+            message = "정말 탈퇴하시겠습니까?",
+            confirmButtonText = "확 인",
+            onConfirmClick = {
+                lifecycleScope.launch {
+                    val succeed = viewModel.leaveFeeltalk()
+                    if (succeed) {
+                        logOut()
+                    } else {
+                        Toast.makeText(requireContext(), "탈퇴에 실패했습니다", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        )
+    }
+
+    private fun logOut() = lifecycleScope.launch {
+        tryGoogleLogOut()
+        tryKakaoLogOut()
+        tryNaverLogOut()
+        restartApplication()
+    }
+
+    private suspend fun tryKakaoLogOut() = suspendCoroutine { continuation ->
+        UserApiClient.instance.logout { error ->
+            if (error == null) {
+                continuation.resume(true)
+            } else {
+                continuation.resume(false)
+            }
+        }
+    }
+
+    private fun tryNaverLogOut(): Boolean {
+        NaverIdLoginSDK.logout()
+        return true
+    }
+
+    private suspend fun tryGoogleLogOut() = suspendCoroutine { continuation ->
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .build()
+        val mGoogleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
+        mGoogleSignInClient.signOut()
+            .addOnSuccessListener {
+                continuation.resume(true)
+            }
+            .addOnFailureListener {
+                continuation.resume(false)
+            }
+    }
+
+    private fun restartApplication() {
+        val pm = requireContext().packageManager
+        val intent = pm.getLaunchIntentForPackage(requireContext().packageName)
+        val componentName = intent?.component
+        val mainIntent = Intent.makeRestartActivityTask(componentName)
+        requireContext().startActivity(mainIntent)
+        Runtime.getRuntime().exit(0)
+    }
+
+
 
     private fun collectUserInfo() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {

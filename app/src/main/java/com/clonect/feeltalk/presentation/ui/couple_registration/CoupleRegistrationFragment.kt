@@ -79,7 +79,7 @@ class CoupleRegistrationFragment : Fragment() {
                 copyCodeToClipBoard()
             }
 
-            btnLeaveFeeltalk.setOnClickListener { leaveFeeltalk() }
+            llLeaveFeeltalk.setOnClickListener { leaveFeeltalk() }
         }
 
         initPartnerCodeEditText()

@@ -41,6 +41,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fillViewport="true"
         android:scrollbars="none">
 
         <LinearLayout
@@ -51,19 +52,19 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
+                android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="12dp"
-                android:layout_marginHorizontal="20dp">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/pretendard_bold"
                     android:text="@string/couple_setting_start_date_subtitle"
-                    android:textSize="18sp"
                     android:textColor="@color/couple_setting_start_date_subtitle_color"
-                    android:fontFamily="@font/pretendard_bold"/>
+                    android:textSize="18sp" />
 
                 <View
                     android:layout_width="0dp"
@@ -73,53 +74,53 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginHorizontal="21dp">
+                    android:layout_marginHorizontal="21dp"
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_gravity="center_horizontal">
+                        android:layout_gravity="center_horizontal"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/tv_couple_anniversary"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@null"
-                            android:textSize="14sp"
-                            android:textColor="@color/start_date_color"
                             android:fontFamily="@font/pretendard_medium"
-                            android:inputType="date"
                             android:imeOptions="actionDone"
+                            android:inputType="date"
+                            android:textColor="@color/start_date_color"
+                            android:textSize="14sp"
                             app:mask="____. __. __"
                             app:maskCharacter="_"
-                            app:maskStyle="normal"/>
+                            app:maskStyle="normal" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/setting_d_day_prefix"
-                            android:textSize="14sp"
-                            android:textColor="@color/main"
+                            android:layout_marginStart="3dp"
                             android:fontFamily="@font/pretendard_light"
-                            android:layout_marginStart="3dp"/>
+                            android:text="@string/setting_d_day_prefix"
+                            android:textColor="@color/main"
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/text_d_day_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="14sp"
+                            android:fontFamily="@font/pretendard_light"
                             android:textColor="@color/main"
-                            android:fontFamily="@font/pretendard_light"/>
+                            android:textSize="14sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/pretendard_light"
                             android:text="@string/setting_d_day_suffix"
-                            android:textSize="14sp"
                             android:textColor="@color/main"
-                            android:fontFamily="@font/pretendard_light"/>
+                            android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -127,8 +128,8 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:orientation="vertical">
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cv_my_profile"
@@ -136,18 +137,18 @@
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="20dp"
                     android:layout_marginStart="21dp"
-                    app:cardElevation="0dp"
-                    app:cardCornerRadius="157dp"
                     app:cardBackgroundColor="@android:color/transparent"
+                    app:cardCornerRadius="157dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent">
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <ImageView
                         android:id="@+id/iv_my_profile"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:src="@drawable/image_my_default_profile"/>
+                        android:src="@drawable/image_my_default_profile" />
                 </androidx.cardview.widget.CardView>
 
                 <TextView
@@ -155,21 +156,21 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:layout_marginEnd="21dp"
                     android:layout_marginTop="18dp"
+                    android:layout_marginEnd="21dp"
                     android:background="@null"
-                    android:maxLines="2"
                     android:ellipsize="end"
+                    android:fontFamily="@font/pretendard_bold"
+                    android:lineSpacingExtra="2sp"
+                    android:maxLines="2"
                     android:text="@string/news_default_my_name"
                     android:textColor="@color/item_news_content_color"
                     android:textSize="20sp"
-                    android:fontFamily="@font/pretendard_bold"
-                    android:lineSpacingExtra="2sp"
-                    app:layout_constraintStart_toEndOf="@id/cv_my_profile"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constrainedWidth="true"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
-                    app:layout_constrainedWidth="true"/>
+                    app:layout_constraintStart_toEndOf="@id/cv_my_profile"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/tv_my_email"
@@ -177,46 +178,46 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:background="@null"
-                    android:maxLines="2"
                     android:ellipsize="end"
+                    android:fontFamily="@font/pretendard_light"
+                    android:lineSpacingExtra="2sp"
+                    android:maxLines="2"
                     android:text="@string/news_default_email"
                     android:textColor="@color/item_news_date_color"
                     android:textSize="12sp"
-                    android:fontFamily="@font/pretendard_light"
-                    android:lineSpacingExtra="2sp"
-                    app:layout_constraintStart_toEndOf="@id/cv_my_profile"
-                    app:layout_constraintTop_toBottomOf="@id/tv_my_name"
+                    app:layout_constrainedWidth="true"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
-                    app:layout_constrainedWidth="true"/>
+                    app:layout_constraintStart_toEndOf="@id/cv_my_profile"
+                    app:layout_constraintTop_toBottomOf="@id/tv_my_name" />
 
                 <TextView
                     android:id="@+id/tv_my_birth_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="21dp"
                     android:layout_marginTop="2dp"
+                    android:layout_marginEnd="21dp"
                     android:background="@null"
-                    android:maxLines="1"
                     android:ellipsize="end"
+                    android:fontFamily="@font/pretendard_light"
+                    android:maxLines="1"
                     android:text="@string/couple_setting_default_birth"
                     android:textColor="@color/item_news_date_color"
                     android:textSize="12sp"
-                    android:fontFamily="@font/pretendard_light"
-                    app:layout_constraintStart_toStartOf="@id/tv_my_email"
-                    app:layout_constraintTop_toBottomOf="@id/tv_my_email"
+                    app:layout_constrainedWidth="true"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
-                    app:layout_constrainedWidth="true"/>
+                    app:layout_constraintStart_toStartOf="@id/tv_my_email"
+                    app:layout_constraintTop_toBottomOf="@id/tv_my_email" />
 
                 <View
                     android:layout_width="0dp"
                     android:layout_height="1dp"
-                    android:background="@color/item_news_border_color"
                     android:layout_marginHorizontal="21dp"
-                    app:layout_constraintStart_toStartOf="parent"
+                    android:background="@color/item_news_border_color"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"/>
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -224,8 +225,8 @@
                 android:id="@+id/cl_partner_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:orientation="vertical">
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cv_partner_profile"
@@ -233,18 +234,18 @@
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="20dp"
                     android:layout_marginStart="21dp"
-                    app:cardElevation="0dp"
-                    app:cardCornerRadius="157dp"
                     app:cardBackgroundColor="@android:color/transparent"
+                    app:cardCornerRadius="157dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent">
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <ImageView
                         android:id="@+id/iv_partner_profile"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:src="@drawable/image_partner_default_profile"/>
+                        android:src="@drawable/image_partner_default_profile" />
                 </androidx.cardview.widget.CardView>
 
                 <TextView
@@ -252,20 +253,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:layout_marginEnd="21dp"
                     android:layout_marginTop="18dp"
-                    android:maxLines="2"
+                    android:layout_marginEnd="21dp"
                     android:ellipsize="end"
+                    android:fontFamily="@font/pretendard_bold"
+                    android:lineSpacingExtra="2sp"
+                    android:maxLines="2"
                     android:text="@string/news_default_partner_name"
                     android:textColor="@color/item_news_content_color"
                     android:textSize="20sp"
-                    android:fontFamily="@font/pretendard_bold"
-                    android:lineSpacingExtra="2sp"
-                    app:layout_constraintStart_toEndOf="@id/cv_partner_profile"
-                    app:layout_constraintTop_toTopOf="@id/cl_partner_profile"
+                    app:layout_constrainedWidth="true"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
-                    app:layout_constrainedWidth="true"/>
+                    app:layout_constraintStart_toEndOf="@id/cv_partner_profile"
+                    app:layout_constraintTop_toTopOf="@id/cl_partner_profile" />
 
                 <TextView
                     android:id="@+id/tv_partner_email"
@@ -273,46 +274,75 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:background="@null"
-                    android:maxLines="2"
                     android:ellipsize="end"
+                    android:fontFamily="@font/pretendard_light"
+                    android:lineSpacingExtra="2sp"
+                    android:maxLines="2"
                     android:text="@string/news_default_email"
                     android:textColor="@color/item_news_date_color"
                     android:textSize="12sp"
-                    android:fontFamily="@font/pretendard_light"
-                    android:lineSpacingExtra="2sp"
-                    app:layout_constraintStart_toEndOf="@id/cv_partner_profile"
-                    app:layout_constraintTop_toBottomOf="@id/text_partner_name"
+                    app:layout_constrainedWidth="true"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
-                    app:layout_constrainedWidth="true"/>
+                    app:layout_constraintStart_toEndOf="@id/cv_partner_profile"
+                    app:layout_constraintTop_toBottomOf="@id/text_partner_name" />
 
                 <TextView
                     android:id="@+id/text_partner_birth_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="21dp"
                     android:layout_marginTop="2dp"
-                    android:maxLines="1"
+                    android:layout_marginEnd="21dp"
                     android:ellipsize="end"
+                    android:fontFamily="@font/pretendard_light"
+                    android:maxLines="1"
                     android:text="@string/couple_setting_default_birth"
                     android:textColor="@color/item_news_date_color"
                     android:textSize="12sp"
-                    android:fontFamily="@font/pretendard_light"
-                    app:layout_constraintStart_toStartOf="@id/tv_partner_email"
-                    app:layout_constraintTop_toBottomOf="@id/tv_partner_email"
+                    app:layout_constrainedWidth="true"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
-                    app:layout_constrainedWidth="true"/>
+                    app:layout_constraintStart_toStartOf="@id/tv_partner_email"
+                    app:layout_constraintTop_toBottomOf="@id/tv_partner_email" />
 
                 <View
                     android:layout_width="0dp"
                     android:layout_height="1dp"
-                    android:background="@color/item_news_border_color"
                     android:layout_marginHorizontal="21dp"
-                    app:layout_constraintStart_toStartOf="parent"
+                    android:background="@color/item_news_border_color"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"/>
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <LinearLayout
+                android:id="@+id/ll_leave_feeltalk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="28dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/pretendard_regular"
+                    android:text="회원탈퇴"
+                    android:textColor="@color/couple_registration_code_description_color"
+                    android:textSize="14sp" />
+
+                <View
+                    android:layout_width="50dp"
+                    android:layout_height="1dp"
+                    android:layout_gravity="center"
+                    android:background="@color/couple_registration_code_description_color" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

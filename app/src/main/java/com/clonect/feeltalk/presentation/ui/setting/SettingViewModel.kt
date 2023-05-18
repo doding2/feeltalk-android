@@ -18,7 +18,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import javax.inject.Inject
 
@@ -31,7 +30,6 @@ class SettingViewModel @Inject constructor(
     private val clearAllExceptKeysUseCase: ClearAllExceptKeysUseCase,
     private val getMyProfileImageUrlUseCase: GetMyProfileImageUrlUseCase,
     private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
-    private val leaveFeeltalkUseCase: LeaveFeeltalkUseCase
 ): ViewModel() {
 
     private val appSettings = getAppSettingsUseCase()
@@ -78,23 +76,6 @@ class SettingViewModel @Inject constructor(
             is Resource.Success -> { _myProfileImageUrl.value = result.data }
             is Resource.Error -> infoLog("Fail to get my profile image url: ${result.throwable.localizedMessage}")
             else -> infoLog("Fail to get my profile image url")
-        }
-    }
-
-    suspend fun leaveFeeltalk() = withContext(Dispatchers.IO) {
-        val result = leaveFeeltalkUseCase()
-        when (result) {
-            is Resource.Success -> {
-                result.data
-            }
-            is Resource.Error -> {
-                infoLog("Fail to leave feeltalk: ${result.throwable.localizedMessage}")
-                false
-            }
-            else -> {
-                infoLog("Fail to leave feeltalk")
-                false
-            }
         }
     }
 
