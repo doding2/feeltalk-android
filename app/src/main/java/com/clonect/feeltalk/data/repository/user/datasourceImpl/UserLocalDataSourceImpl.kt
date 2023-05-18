@@ -167,4 +167,17 @@ class UserLocalDataSourceImpl(
                 && userInfoFile.delete()
                 && userProfileUrlFile.delete()
     }
+
+    override suspend fun clearAll(): Boolean {
+        val myPublicKeyFile = File(context.filesDir, "my_public_key.txt")
+        val myPrivateKeyFile = File(context.filesDir, "my_private_key.txt")
+        val partnerPublicKeyFile = File(context.filesDir, "partner_public_key.txt")
+        val partnerPrivateKeyFile = File(context.filesDir, "partner_private_key.txt")
+
+        return myPublicKeyFile.delete()
+                && myPrivateKeyFile.delete()
+                && partnerPublicKeyFile.delete()
+                && partnerPrivateKeyFile.delete()
+                && clearAllExceptKeys()
+    }
 }

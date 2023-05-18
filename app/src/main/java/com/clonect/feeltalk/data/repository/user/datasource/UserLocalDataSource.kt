@@ -25,4 +25,5 @@ interface UserLocalDataSource {
 
     suspend fun clearCoupleInfo(): Boolean
     suspend fun clearAllExceptKeys(): Boolean
+    suspend fun clearAll(): Boolean
 }

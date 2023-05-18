@@ -756,4 +756,28 @@ class UserRepositoryImpl(
             Resource.Error(e)
         }
     }
+
+    override suspend fun leaveFeeltalk(): Resource<Boolean> {
+        return try {
+            val accessToken = cacheDataSource.getAccessToken()
+                ?: localDataSource.getAccessToken()
+                ?: throw NullPointerException("User is Not logged in.")
+
+            val response = remoteDataSource.leaveFeeltalk(accessToken)
+
+            val statusCodeDto = response.body()!!
+            val isLeaveSucceed = statusCodeDto.statusCode == "200"
+            if (isLeaveSucceed) {
+                localDataSource.clearAll()
+                Resource.Success(true)
+            } else {
+                Resource.Success(false)
+            }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Error(e)
+        }
+    }
 }

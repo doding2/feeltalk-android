@@ -13,6 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
@@ -33,6 +34,7 @@ class CoupleRegistrationViewModel @Inject constructor(
     private val breakUpCoupleUseCase: BreakUpCoupleUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
+    private val leaveFeeltalkUseCase: LeaveFeeltalkUseCase
 ) : ViewModel() {
 
     private val _toastMessage = MutableSharedFlow<String>()
@@ -228,6 +230,23 @@ class CoupleRegistrationViewModel @Inject constructor(
 
     fun sendToast(message: String) = viewModelScope.launch {
         _toastMessage.emit(message)
+    }
+
+    suspend fun leaveFeeltalk() = withContext(Dispatchers.IO) {
+        val result = leaveFeeltalkUseCase()
+        when (result) {
+            is Resource.Success -> {
+                result.data
+            }
+            is Resource.Error -> {
+                infoLog("Fail to leave feeltalk: ${result.throwable.localizedMessage}")
+                false
+            }
+            else -> {
+                infoLog("Fail to leave feeltalk")
+                false
+            }
+        }
     }
 
 

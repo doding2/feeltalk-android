@@ -316,4 +316,11 @@ class UserRemoteDataSourceImpl(
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
+
+    override suspend fun leaveFeeltalk(accessToken: String): Response<StatusCodeDto> {
+        val response = clonectService.leaveFeeltalk(accessToken)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        return response
+    }
 }

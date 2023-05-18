@@ -399,4 +399,10 @@ class UseCaseModule {
     fun providesAutoLogInUseCase(userRepository: UserRepository): AutoLogInUseCase {
         return AutoLogInUseCase(userRepository)
     }
+
+    @Singleton
+    @Provides
+    fun providesLeaveFeeltalkUseCase(userRepository: UserRepository): LeaveFeeltalkUseCase {
+        return LeaveFeeltalkUseCase(userRepository)
+    }
 }
