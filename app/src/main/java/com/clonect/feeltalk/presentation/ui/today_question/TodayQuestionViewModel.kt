@@ -203,8 +203,8 @@ class TodayQuestionViewModel @Inject constructor(
         val questionFeeltalkDate = _questionStateFlow.value.questionDate?.let { feeltalkDateFormat.parse(it) }
         val questionMixpanelDate = questionFeeltalkDate?.let { mixpanelDateFormat.format(it) }
 
-        mixpanel.track("Open Question First Time", JSONObject().apply {
-            put("openDate", mixpanelDateFormat.format(Date()))
+        mixpanel.track("Answer Question", JSONObject().apply {
+            put("answerDate", mixpanelDateFormat.format(Date()))
             put("questionDate", questionMixpanelDate)
             put("isActive", true)
         })
