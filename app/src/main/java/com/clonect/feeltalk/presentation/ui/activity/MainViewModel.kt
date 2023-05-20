@@ -55,6 +55,27 @@ class MainViewModel @Inject constructor(
 
     }
 
+    fun autoLogIn() = viewModelScope.launch(Dispatchers.IO) {
+        when (val result = autoLogInUseCase()) {
+            is Resource.Success -> {
+                _isLoggedIn.value = true
+                checkUserInfoIsEntered()
+                infoLog("Success to auto log")
+            }
+            is Resource.Error -> {
+                _isLoggedIn.value = false
+                infoLog("Fail to auto log in: ${result.throwable.localizedMessage}")
+//                sendToast("로그인에 실패했습니다")
+                setReady()
+            }
+            else -> {
+                _isLoggedIn.value = false
+                infoLog("Fail to auto log in")
+//                sendToast("로그인에 실패했습니다")
+                setReady()
+            }
+        }
+    }
 
     fun autoGoogleLogIn() = viewModelScope.launch(Dispatchers.IO) {
         when (autoLogInUseCase()) {

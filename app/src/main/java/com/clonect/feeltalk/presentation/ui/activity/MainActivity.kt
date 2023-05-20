@@ -13,7 +13,6 @@ import androidx.navigation.fragment.NavHostFragment
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.ActivityMainBinding
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
-import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.kakao.sdk.auth.AuthApiClient
 import com.kakao.sdk.user.UserApiClient
@@ -92,13 +91,14 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun tryAutoLogIn() = lifecycleScope.launch {
-        if (tryGoogleAutoLogIn()) return@launch
-        if (tryKakaoAutoLogIn()) return@launch
-        if (tryNaverAutoLogIn()) return@launch
-        if (tryAppleAutoLogIn()) return@launch
-
-        viewModel.setReady()
-        infoLog("로그인 된 계정이 없음")
+        viewModel.autoLogIn()
+//        if (tryGoogleAutoLogIn()) return@launch
+//        if (tryKakaoAutoLogIn()) return@launch
+//        if (tryNaverAutoLogIn()) return@launch
+//        if (tryAppleAutoLogIn()) return@launch
+//
+//        viewModel.setReady()
+//        infoLog("로그인 된 계정이 없음")
     }
 
     private fun tryGoogleAutoLogIn(): Boolean {
