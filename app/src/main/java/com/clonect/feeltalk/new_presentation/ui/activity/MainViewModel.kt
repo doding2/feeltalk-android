@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.presentation.ui.activity
+package com.clonect.feeltalk.new_presentation.ui.activity
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

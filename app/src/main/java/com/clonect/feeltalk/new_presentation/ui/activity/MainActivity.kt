@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.presentation.ui.activity
+package com.clonect.feeltalk.new_presentation.ui.activity
 
 import android.os.Bundle
 import android.view.ViewTreeObserver
@@ -72,16 +72,17 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment) as NavHostFragment
         val navController = navHostFragment.navController
 
-        val navGraph = navController.navInflater.inflate(R.navigation.overall_nav_graph)
+        val navGraph = navController.navInflater.inflate(R.navigation.feeltalk_nav_graph)
         val startDestination = viewModel.run {
-            if (!isLoggedIn.value)
-                R.id.signUpFragment
-            else if (!isUserInfoEntered.value)
-                R.id.userGenderInputFragment
-            else if (!isUserCouple.value)
-                R.id.guideFragment
-            else
-                R.id.bottomNavigationFragment
+            R.id.signUpNavigationFragment
+//            if (!isLoggedIn.value)
+//                R.id.signUpFragment
+//            else if (!isUserInfoEntered.value)
+//                R.id.userGenderInputFragment
+//            else if (!isUserCouple.value)
+//                R.id.guideFragment
+//            else
+//                R.id.bottomNavigationFragment
         }
 
         navGraph.setStartDestination(startDestination)

@@ -8,14 +8,55 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!--  Main Color  -->
+    <!--  Old Main Color  -->
     <color name="main">#FF2C77</color>
     <color name="sub">#C8C5DB</color>
     <color name="gradient_start">#FF2BAA</color>
     <color name="gradient_end">#FF2B64</color>
 
+
+    <!--  New Main Color  -->
+    <color name="main_600">#E00C58</color>
+    <color name="main_500">#FF2C77</color>
+    <color name="main_400">#FFAECB</color>
+    <color name="main_300">#FFEBF2</color>
+    <color name="main_100">#FFF9FA</color>
+
+    <color name="gray_600">#A09EA3</color>
+    <color name="gray_500">#B5B3B7</color>
+    <color name="gray_400">#D7D5D9</color>
+    <color name="gray_300">#E6E4E8</color>
+    <color name="gray_200">#F6F4F9</color>
+    <color name="gray_100">#F8F7F9</color>
+
+    <color name="system_black">#FF000000</color>
+    <color name="system_white">#FFFFFFFF</color>
+    <color name="system_alert">#CC000000</color>
+    <color name="system_error">#F10000</color>
+
+
     <!--  Common  -->
     <color name="fragment_background_color">@color/white</color>
+    <color name="action_bar_title_color">#1C1C1C</color>
+    <color name="enabled_button">@color/main_500</color>
+    <color name="disabled_button">@color/main_400</color>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!--  old ui  -->
+
 
     <!--  Dialog  -->
     <color name="dialog_out_space_color">#666666</color>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sign_up_nav_raph"
+    app:startDestination="@id/agreementFragment">
+
+    <fragment
+        android:id="@+id/agreementFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.sign_up_navigation.agreement.AgreementFragment"
+        android:label="fragment_agreement"
+        tools:layout="@layout/fragment_agreement" >
+        <action
+            android:id="@+id/action_agreementFragment_to_nicknameFragment"
+            app:destination="@id/nicknameFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/nicknameFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.sign_up_navigation.nickname.NicknameFragment"
+        android:label="fragment_nickname"
+        tools:layout="@layout/fragment_nickname" >
+        <action
+            android:id="@+id/action_nicknameFragment_to_coupleCodeFragment"
+            app:destination="@id/coupleCodeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/coupleCodeFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.sign_up_navigation.couple_code.CoupleCodeFragment"
+        android:label="fragment_couple_code"
+        tools:layout="@layout/fragment_couple_code" />
+</navigation>

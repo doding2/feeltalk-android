@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/feeltalk_nav_graph"
+    app:startDestination="@id/signUpFragment">
+
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="com.clonect.feeltalk.presentation.ui.sign_up.SignUpFragment"
+        android:label="fragment_sign_up"
+        tools:layout="@layout/fragment_sign_up" >
+        <action
+            android:id="@+id/action_signUpFragment_to_signUpNavigationFragment"
+            app:destination="@id/signUpNavigationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/signUpNavigationFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.sign_up_navigation.SignUpNavigationFragment"
+        android:label="fragment_sign_up_navigation"
+        tools:layout="@layout/fragment_sign_up_navigation" />
+</navigation>

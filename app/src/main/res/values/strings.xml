@@ -3,6 +3,39 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="white_space">&#160;</string>
 
+
+    <!--  SignUpNavigation  -->
+    <string name="sign_up_title">회원가입</string>
+    <string name="sign_up_next_button">다음</string>
+
+    <!--  Agreement  -->
+    <string name="agreement_title">필로우톡을 시작해볼까요?</string>
+    <string name="agreement_sub_title">필로우톡을 이용하시려면 아래의 약관에 동의해주세요.</string>
+    <string name="agreement_sensitive_agree_button">민감정보 처리에 대한 동의</string>
+    <string name="agreement_more_sensitive_info">삼성 헬스의 기능을 제공하기 위해, 헬스 데이터를 수집하고 처리합니다. 상세 정보에서 헬스 데이터 수집항목, 수집방법, 동의철회방법을 확인하세요.\n헬스 데이터 처리에 대한 동의는 선택사항입니다.</string>
+    <string name="agreement_privacy_agree_button">개인정보수집에 대한 동의</string>
+    <string name="agreement_more_privacy_info">연결된 소셜 계정 정보가 삭제돼요</string>
+
+    <!--  Nickname  -->
+    <string name="nickname_title">닉네임을 입력해주세요</string>
+    <string name="nickname_sub_title">연인에게 보여줄 닉네임을 적어주세요.</string>
+    <string name="nickname_edit_text_label">닉네임</string>
+    <string name="nickname_edit_text_hint">닉네임을 입력해주세요</string>
+
+    <!--  CoupleCode  -->
+    <string name="couple_code_title">연인에게 보낼 초대장을 준비했어요</string>
+    <string name="couple_code_sub_title">상대방에게 코드를 공유해 기기를 연결해주세요</string>
+    <string name="couple_code_nickname_deco">님의 초대장</string>
+    <string name="couple_code_share">코드공유</string>
+    <string name="couple_code_show_sheet">상대방 코드를 직접 입력할게요</string>
+    <string name="couple_code_couple_connect_title">상대방의 코드를 입력해주세요</string>
+    <string name="couple_code_couple_connect_hint">연결코드 입력하기</string>
+    <string name="couple_code_couple_connect_button">연결하기</string>
+
+
+
+    <!--  old ui  -->
+
     <!--  dialog_couple_divorce.xml  -->
     <string name="divorce_confirm_button">연인 끊기</string>
     <string name="divorce_cancel_button">취 소</string>
