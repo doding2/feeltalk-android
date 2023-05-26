@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentAgreementBinding
 import com.clonect.feeltalk.new_presentation.ui.sign_up_navigation.SignUpNavigationViewModel
@@ -37,17 +38,28 @@ class AgreementFragment : Fragment() {
 
         binding.run {
             clAgreeSensitiveInfo.setOnClickListener { agreeSensitiveInfo() }
-            ivMoreSensitiveInfo.setOnClickListener {
-                // navigate to sensitive info fragment
-            }
+            ivMoreSensitiveInfo.setOnClickListener { navigateToSensitiveDetail() }
 
             clAgreePrivacyInfo.setOnClickListener { agreePrivacyInfo() }
-            ivMorePrivacyInfo.setOnClickListener {
-                // navigate to privacy info fragment
-            }
+            ivMorePrivacyInfo.setOnClickListener { navigateToPrivacyDetail() }
 
             mcvNext.setOnClickListener { navigateToNickname() }
         }
+    }
+
+
+    private fun navigateToSensitiveDetail() {
+        requireParentFragment()
+            .requireParentFragment()
+                .findNavController()
+                .navigate(R.id.action_signUpNavigationFragment_to_agreementSensitiveDetailFragment)
+    }
+
+    private fun navigateToPrivacyDetail() {
+        requireParentFragment()
+            .requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_signUpNavigationFragment_to_agreementPrivacyDetailFragment)
     }
 
 

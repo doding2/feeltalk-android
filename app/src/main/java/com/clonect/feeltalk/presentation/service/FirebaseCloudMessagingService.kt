@@ -25,12 +25,12 @@ import com.clonect.feeltalk.domain.usecase.user.CheckUserIsSignedUpUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetUserInfoUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetUserIsActiveUseCase
 import com.clonect.feeltalk.domain.usecase.user.SetUserIsActiveUseCase
+import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
 import com.clonect.feeltalk.presentation.service.notification_observer.AcceptRestoringKeysRequestObserver
 import com.clonect.feeltalk.presentation.service.notification_observer.CoupleRegistrationObserver
 import com.clonect.feeltalk.presentation.service.notification_observer.FcmNewChatObserver
 import com.clonect.feeltalk.presentation.service.notification_observer.QuestionAnswerObserver
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
-import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -183,7 +183,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
 
         val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
-            .setGraph(R.navigation.overall_nav_graph)
+//            .setGraph(R.navigation.overall_nav_graph)
             .setDestination(R.id.todayQuestionFragment)
             .setArguments(bundleOf("selectedQuestion" to newQuestion))
             .createPendingIntent()
@@ -234,7 +234,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 question = questionContent
             )
             val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
-                .setGraph(R.navigation.overall_nav_graph)
+//                .setGraph(R.navigation.overall_nav_graph)
                 .setDestination(R.id.todayQuestionFragment)
                 .setArguments(bundleOf("selectedQuestion" to newQuestion))
                 .createPendingIntent()
@@ -244,7 +244,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 question = questionContent
             )
             val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
-                .setGraph(R.navigation.overall_nav_graph)
+//                .setGraph(R.navigation.overall_nav_graph)
                 .setDestination(R.id.chatFragment)
                 .setArguments(bundleOf("selectedQuestion" to newQuestion))
                 .createPendingIntent()
@@ -319,7 +319,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         )
 
         val pendingIntent = NavDeepLinkBuilder(applicationContext)
-            .setGraph(R.navigation.overall_nav_graph)
+//            .setGraph(R.navigation.overall_nav_graph)
             .setDestination(R.id.chatFragment)
             .setArguments(
                 bundleOf("selectedQuestion" to question)
@@ -372,7 +372,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
     private fun handleRequestKeyRestoringData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
         val pendingIntent = NavDeepLinkBuilder(applicationContext)
-            .setGraph(R.navigation.overall_nav_graph)
+//            .setGraph(R.navigation.overall_nav_graph)
             .setDestination(R.id.keyRestoringAcceptFragment)
             .createPendingIntent()
 

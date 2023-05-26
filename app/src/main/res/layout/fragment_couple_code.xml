@@ -125,7 +125,7 @@
                         android:id="@+id/tv_couple_code"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="10dp"
+                        android:layout_marginHorizontal="16dp"
                         android:text=""
                         android:textSize="24sp"
                         android:textColor="@color/system_black"

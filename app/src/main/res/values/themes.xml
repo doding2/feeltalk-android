@@ -19,6 +19,7 @@
 
         <!-- Customize your theme here. -->
         <item name="editTextStyle">@style/GradientEditTextStyle</item>
+        <item name="bottomSheetDialogTheme">@style/RoundBottomSheetDialogTheme</item>
     </style>
 
 
@@ -40,8 +41,20 @@
     <style name="GradientEditTextStyle" parent="@android:style/Widget.EditText">
         <item name="android:textCursorDrawable">@drawable/edit_text_cursor</item>
         <item name="android:background">@drawable/edit_text_background</item>
-        <item name="android:paddingStart">12dp</item>
-        <item name="android:paddingEnd">12dp</item>
+    </style>
+
+    <!--  Custom Bottom Sheet  -->
+    <style name="RoundBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/RoundModalStyle</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/system_white</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+        <item name="editTextStyle">@style/GradientEditTextStyle</item>
+    </style>
+
+    <style name="RoundModalStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/bottom_sheet_rounded</item>
     </style>
 
 </resources>

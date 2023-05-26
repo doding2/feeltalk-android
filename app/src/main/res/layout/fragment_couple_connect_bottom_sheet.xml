@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".new_presentation.ui.sign_up_navigation.couple_code.CoupleConnectBottomSheetFragment">
+
+    <LinearLayout
+        android:id="@+id/ll_clear_focus_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="30dp"
+            android:layout_gravity="center"
+            android:src="@drawable/n_ic_bottom_sheet_handle"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:text="@string/couple_connect_title"
+            android:textSize="20sp"
+            android:textColor="@color/system_black"
+            android:fontFamily="@font/pretendard_medium"/>
+
+        <EditText
+            android:id="@+id/et_partner_couple_code"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="34dp"
+            android:layout_marginBottom="39dp"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:hint="@string/couple_connect_hint"
+            android:textColorHint="@color/gray_400"
+            android:lines="1"
+            android:inputType="textPersonName"
+            android:imeOptions="actionDone"/>
+    </LinearLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/mcv_connect"
+        android:layout_width="match_parent"
+        android:layout_height="59dp"
+        android:layout_marginHorizontal="20dp"
+        app:cardBackgroundColor="@color/main_400"
+        app:cardCornerRadius="500dp"
+        app:cardElevation="0dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/pretendard_medium"
+            android:text="@string/couple_connect_button"
+            android:textColor="@color/system_white"
+            android:textSize="18sp" />
+    </com.google.android.material.card.MaterialCardView>
+</LinearLayout>

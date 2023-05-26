@@ -13,9 +13,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.clonect.feeltalk.databinding.FragmentCoupleCodeBinding
 import com.clonect.feeltalk.new_presentation.ui.sign_up_navigation.SignUpNavigationViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class CoupleCodeFragment : Fragment() {
 
     private lateinit var binding: FragmentCoupleCodeBinding
@@ -43,7 +45,8 @@ class CoupleCodeFragment : Fragment() {
 
 
     private fun showCoupleConnectSheet() {
-
+        val bottomSheet = CoupleConnectBottomSheetFragment()
+        bottomSheet.show(requireActivity().supportFragmentManager, CoupleConnectBottomSheetFragment.TAG)
     }
 
     private fun copyCoupleCode() {

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/n_selector_home"
+        android:title="@string/main_navigation_home" />
+
+    <item
+        android:id="@+id/navigation_question"
+        android:icon="@drawable/n_selector_question"
+        android:title="@string/main_navigation_question" />
+
+    <item
+        android:id="@+id/navigation_chat"
+        android:icon="@drawable/n_selector_chat"
+        android:title="@string/main_navigation_chat" />
+
+    <item
+        android:id="@+id/navigation_bucket_list"
+        android:icon="@drawable/n_selector_bucket_list"
+        android:title="@string/main_navigation_bucket_list" />
+
+</menu>

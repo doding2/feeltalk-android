@@ -67,4 +67,22 @@ class SignUpNavigationViewModel @Inject constructor(
     private val _coupleCode = MutableStateFlow<String?>("COUPLECODE")
     val coupleCode = _coupleCode.asStateFlow()
 
+
+    // note: Couple Connect Bottom Sheet
+    private val _partnerCoupleCode = MutableStateFlow<String?>(null)
+    val partnerCoupleCode = _partnerCoupleCode.asStateFlow()
+
+    private val _isCoupleConnected = MutableSharedFlow<Boolean>()
+    val isCoupleConnected = _isCoupleConnected.asSharedFlow()
+
+    fun setPartnerCoupleCode(code: String) {
+        _partnerCoupleCode.value = code
+    }
+
+    // TODO
+    fun matchCoupleCode() = viewModelScope.launch {
+        val partnerCode = _partnerCoupleCode.value ?: return@launch
+
+        _isCoupleConnected.emit(true)
+    }
 }

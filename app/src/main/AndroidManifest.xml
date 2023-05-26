@@ -6,23 +6,24 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".presentation.ui.FeeltalkApp"
         android:allowBackup="false"
-        android:fullBackupOnly="false"
-        tools:replace="android:allowBackup, android:fullBackupOnly"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:usesCleartextTraffic="true"
+        android:fullBackupOnly="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:name=".presentation.ui.FeeltalkApp"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Feeltalk"
+        android:usesCleartextTraffic="true"
+        tools:replace="android:allowBackup, android:fullBackupOnly"
         tools:targetApi="31">
+
         <meta-data
             android:name="com.mixpanel.android.MPConfig.EnableDebugLogging"
             android:value="true" />
@@ -37,28 +38,31 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:host="oauth"
+                <data
+                    android:host="oauth"
                     android:scheme="kakaob2e92652651b8321288757cbb1f7ce8b" />
             </intent-filter>
         </activity>
 
-        <service android:name=".presentation.service.FirebaseCloudMessagingService"
-            android:permission="com.google.android.c2dm.permission.SEND"
+        <service
+            android:name=".presentation.service.FirebaseCloudMessagingService"
+            android:directBootAware="true"
             android:exported="true"
-            android:directBootAware="true">
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
     </application>
+
 </manifest>

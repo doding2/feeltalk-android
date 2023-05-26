@@ -30,8 +30,18 @@
     <string name="couple_code_show_sheet">상대방 코드를 직접 입력할게요</string>
     <string name="couple_code_couple_connect_title">상대방의 코드를 입력해주세요</string>
     <string name="couple_code_couple_connect_hint">연결코드 입력하기</string>
-    <string name="couple_code_couple_connect_button">연결하기</string>
 
+    <!--  CoupleConnect  -->
+    <string name="couple_connect_title">상대방의 코드를 입력해주세요</string>
+    <string name="couple_connect_hint">연결코드 입력하기</string>
+    <string name="couple_connect_button">연결하기</string>
+
+
+    <!--  MainNavigation  -->
+    <string name="main_navigation_home">홈</string>
+    <string name="main_navigation_question">질문</string>
+    <string name="main_navigation_chat">채팅</string>
+    <string name="main_navigation_bucket_list">버킷리스트</string>
 
 
     <!--  old ui  -->

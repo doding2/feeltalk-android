@@ -13,6 +13,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.ActivityMainBinding
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
+import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.kakao.sdk.auth.AuthApiClient
 import com.kakao.sdk.user.UserApiClient
@@ -74,7 +75,7 @@ class MainActivity : AppCompatActivity() {
 
         val navGraph = navController.navInflater.inflate(R.navigation.feeltalk_nav_graph)
         val startDestination = viewModel.run {
-            R.id.signUpNavigationFragment
+            R.id.mainNavigationFragment
 //            if (!isLoggedIn.value)
 //                R.id.signUpFragment
 //            else if (!isUserInfoEntered.value)
@@ -92,14 +93,14 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun tryAutoLogIn() = lifecycleScope.launch {
-        viewModel.autoLogIn()
+//        viewModel.autoLogIn()
 //        if (tryGoogleAutoLogIn()) return@launch
 //        if (tryKakaoAutoLogIn()) return@launch
 //        if (tryNaverAutoLogIn()) return@launch
 //        if (tryAppleAutoLogIn()) return@launch
 //
-//        viewModel.setReady()
-//        infoLog("로그인 된 계정이 없음")
+        viewModel.setReady()
+        infoLog("로그인 된 계정이 없음")
     }
 
     private fun tryGoogleAutoLogIn(): Boolean {

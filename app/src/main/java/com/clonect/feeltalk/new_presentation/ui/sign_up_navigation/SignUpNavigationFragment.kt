@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentSignUpNavigationBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -60,6 +61,12 @@ class SignUpNavigationFragment : Fragment() {
         navController.navigate(navigateFragmentId)
     }
 
+    private fun navigateToMain() {
+        requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_signUpNavigationFragment_to_mainNavigationFragment)
+    }
+
 
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -82,6 +89,15 @@ class SignUpNavigationFragment : Fragment() {
             launch {
                 viewModel.isNicknameProcessed.collectLatest { processed ->
                     if (processed) navigateToCoupleCode()
+                }
+            }
+
+            launch {
+                viewModel.isCoupleConnected.collectLatest { connected ->
+                    if (connected) {
+//                        Snackbar.make(binding.root, "연인과 연결되었어요 !", Snackbar.LENGTH_LONG).show()
+                        navigateToMain()
+                    }
                 }
             }
         }
