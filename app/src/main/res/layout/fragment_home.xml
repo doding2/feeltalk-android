@@ -6,21 +6,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/main_500"
     tools:context=".presentation.ui.home.HomeFragment">
 
-    <!--  App Logo and Notification button  -->
     <LinearLayout
+        android:id="@+id/ll_action_bar"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@color/main_500">
 
         <ImageView
             android:id="@+id/iv_logo"
-            android:layout_width="100dp"
-            android:layout_height="30dp"
-            android:layout_marginHorizontal="21dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
             android:layout_gravity="center_vertical"
-            android:src="@drawable/logo_feeltalk"/>
+            android:src="@drawable/n_logo_feeltalk"/>
 
         <View
             android:layout_width="0dp"
@@ -28,302 +30,284 @@
             android:layout_weight="1" />
 
         <ImageView
-            android:id="@+id/btn_news"
+            android:id="@+id/btn_notification"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingVertical="18dp"
-            android:paddingHorizontal="20dp"
-            android:src="@drawable/ic_notification"
+            android:padding="12dp"
+            android:src="@drawable/n_ic_notification"
+            android:layout_gravity="center_vertical"/>
+
+        <ImageView
+            android:id="@+id/btn_my_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:src="@drawable/n_ic_my_page"
             android:layout_gravity="center_vertical"/>
     </LinearLayout>
 
-    <!-- Content without logo -->
-    <ScrollView
-        android:id="@+id/scroll_view"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:scrollbars="none">
-        
-        <LinearLayout
-            android:id="@+id/ll_content_wrapper"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            android:orientation="vertical"
-            android:clipChildren="false">
+        android:layout_marginTop="20dp"
+        android:background="@color/white">
 
-            <View
-                android:id="@+id/spacer_top"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"/>
+        <FrameLayout
+            android:id="@+id/fl_top_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@drawable/n_background_home_top_rounded"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/ll_bottom_container">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="20dp">
 
-                <!--  D-day Text  -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginStart="21dp" >
-
-                    <TextView
-                        android:id="@+id/text_d_day_prefix"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/home_d_day_prefix"
-                        android:textSize="24sp"
-                        android:textColor="@color/d_day_text_color"
-                        android:fontFamily="@font/pretendard_thin"
-                        android:lineSpacingExtra="5dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/text_d_day_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="24sp"
-                        android:fontFamily="@font/pretendard_bold"
-                        android:lineSpacingExtra="5dp"
-                        app:layout_constraintStart_toEndOf="@id/text_d_day_prefix"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/text_d_day_unit"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/home_d_day_unit"
-                        android:textSize="24sp"
-                        android:fontFamily="@font/pretendard_bold"
-                        android:lineSpacingExtra="5dp"
-                        app:layout_constraintStart_toEndOf="@id/text_d_day_value"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/text_d_day_suffix"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/home_d_day_suffix"
-                        android:textSize="24sp"
-                        android:textColor="@color/d_day_text_color"
-                        android:fontFamily="@font/pretendard_thin"
-                        android:lineSpacingExtra="5dp"
-                        app:layout_constraintStart_toEndOf="@id/text_d_day_unit"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/text_d_day_suffix_second_line"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/home_d_day_suffix_second_line"
-                        android:textSize="24sp"
-                        android:textColor="@color/d_day_text_color"
-                        android:fontFamily="@font/pretendard_thin"
-                        android:lineSpacingExtra="5dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/text_d_day_prefix" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <!--  Emotion  -->
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="20dp"
-                    android:clipToPadding="false"
-                    android:clipChildren="false">
+                    android:orientation="horizontal">
 
-                    <!-- My Emotion -->
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/cv_my_emotion"
-                        android:layout_width="wrap_content"
+                    <FrameLayout
+                        android:layout_width="60dp"
                         android:layout_height="wrap_content"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/iv_emotion_heart"
-                        android:layout_marginEnd="-17dp"
-                        app:cardElevation="0dp"
-                        app:cardCornerRadius="100dp"
-                        app:cardBackgroundColor="@color/emotion_happy_color">
+                        android:layout_gravity="center_vertical">
 
-                        <ImageView
-                            android:id="@+id/iv_my_emotion"
-                            android:layout_width="150dp"
-                            android:layout_height="150dp"
-                            android:padding="10dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_emotion_happy"/>
-                    </androidx.cardview.widget.CardView>
+                        <include
+                            layout="@layout/image_view_profile"
+                            android:id="@+id/iv_my_profile"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"/>
 
-                    <!-- My Emotion Text -->
-                    <TextView
-                        android:id="@+id/text_my_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
-                        android:text="@string/home_my_default_name"
-                        android:textColor="@color/home_name_text_color"
-                        android:textSize="22sp"
-                        android:fontFamily="@font/pretendard_bold"
-                        android:lines="1"
-                        android:ellipsize="end"
-                        android:lineSpacingExtra="-2sp"
-                        android:shadowDy="15"
-                        android:shadowRadius="10"
-                        android:shadowColor="@color/home_name_shadow_color"
-                        app:layout_constrainedWidth="true"
-                        app:layout_constraintStart_toStartOf="@id/cv_my_emotion"
-                        app:layout_constraintEnd_toEndOf="@id/cv_my_emotion"
-                        app:layout_constraintTop_toBottomOf="@id/cv_my_emotion"/>
+                        <include
+                            layout="@layout/image_view_profile"
+                            android:id="@+id/iv_partner_profile"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start"/>
+                    </FrameLayout>
 
-                    <!-- Partner Emotion -->
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/cv_partner_emotion"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/iv_emotion_heart"
-                        android:layout_marginStart="-17dp"
-                        app:cardElevation="0dp"
-                        app:cardCornerRadius="100dp"
-                        app:cardBackgroundColor="@color/emotion_puzzling_color">
 
-                        <ImageView
-                            android:id="@+id/iv_partner_emotion"
-                            android:layout_width="150dp"
-                            android:layout_height="150dp"
-                            android:padding="10dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_emotion_puzzling"/>
-                    </androidx.cardview.widget.CardView>
-
-                    <!-- Partner Emotion Text -->
-                    <TextView
-                        android:id="@+id/text_partner_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
-                        android:text="@string/home_partner_default_name"
-                        android:textColor="@color/home_name_text_color"
-                        android:textSize="22sp"
-                        android:fontFamily="@font/pretendard_bold"
-                        android:lines="1"
-                        android:ellipsize="end"
-                        android:lineSpacingExtra="-2sp"
-                        android:shadowDy="15"
-                        android:shadowRadius="10"
-                        android:shadowColor="@color/home_name_shadow_color"
-                        app:layout_constrainedWidth="true"
-                        app:layout_constraintStart_toStartOf="@id/cv_partner_emotion"
-                        app:layout_constraintEnd_toEndOf="@id/cv_partner_emotion"
-                        app:layout_constraintTop_toBottomOf="@id/cv_partner_emotion"/>
-
-                    <!-- Emotion Heart -->
                     <ImageView
-                        android:id="@+id/iv_emotion_heart"
-                        android:layout_width="68dp"
-                        android:layout_height="68dp"
-                        android:src="@drawable/ic_emotion_heart"
-                        app:layout_constraintBottom_toBottomOf="@id/cv_my_emotion"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </LinearLayout>
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/n_ic_triangle"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="8dp"/>
 
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="-18dp"
+                        android:background="@drawable/n_ic_title_balloon"
+                        android:layout_gravity="center_vertical"
+                        app:cardBackgroundColor="@color/system_white"
+                        app:cardCornerRadius="8dp"
+                        app:cardElevation="0dp">
 
-            <!--  Today's Question  -->
-            <View
-                android:id="@+id/spacer_bottom"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
-
-            <LinearLayout
-                android:id="@+id/layout_today_question_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginStart="21dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="15dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="8dp"
+                            android:text="@string/home_answer_state_title_1"
+                            android:textColor="@color/system_black"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/pretendard_regular"
+                            android:layout_gravity="center"/>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/today_question_title_text"
-                    android:textSize="18sp"
-                    android:textColor="@color/home_name_text_color"
-                    android:fontFamily="@font/pretendard_bold"
-                    android:lineSpacingExtra="13dp"/>
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"/>
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_gradient_half_arrow_right"/>
-            </LinearLayout>
-
-            <FrameLayout
-                android:id="@+id/fl_letter_paper"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/iv_letter_paper"
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    android:src="@drawable/background_letter_paper"
-                    android:scaleType="fitXY"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="-80dp"/>
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="4dp"
+                    android:text="@string/home_sub_title"
+                    android:textColor="@color/system_white"
+                    android:textSize="24sp"
+                    android:fontFamily="@font/pretendard_regular"/>
 
                 <LinearLayout
-                    android:id="@+id/ll_letter_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tv_question_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1000"
+                        android:textColor="@color/system_white"
+                        android:textSize="28sp"
+                        android:fontFamily="@font/pretendard_bold"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/home_main_title_deco"
+                        android:textColor="@color/system_white"
+                        android:textSize="24sp"
+                        android:fontFamily="@font/pretendard_regular"/>
+                </LinearLayout>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/mcv_answer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@color/system_black"
+                    app:cardCornerRadius="500dp" >
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginVertical="12dp"
+                        android:layout_marginHorizontal="32dp"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/home_main_answer_button"
+                            android:textSize="18sp"
+                            android:textColor="@color/system_white"
+                            android:fontFamily="@font/pretendard_medium"/>
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginStart="4dp"
+                            android:src="@drawable/n_ic_next_2"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="250dp"
+                android:layout_height="230dp"
+                android:layout_gravity="bottom|end"
+                android:src="@drawable/n_image_note_paper"/>
+        </FrameLayout>
+
+
+        <LinearLayout
+            android:id="@+id/ll_bottom_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="12dp"
+                android:layout_marginHorizontal="20dp"
+                android:text="@string/home_signal_title"
+                android:textColor="@color/system_black"
+                android:textSize="20dp"
+                android:fontFamily="@font/pretendard_medium"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="18dp"
+                app:cardCornerRadius="16dp"
+                app:cardBackgroundColor="@color/gray_100"
+                app:cardElevation="0dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_gravity="bottom"
-                    android:layout_marginVertical="40dp">
+                    android:paddingHorizontal="33dp"
+                    android:layout_marginVertical="32dp"
+                    android:clipToPadding="false">
 
-                    <TextView
-                        android:id="@+id/text_letter_title"
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/mcv_my_emotion"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/letter_paper_title_empty"
-                        android:textSize="15sp"
-                        android:textColor="@color/letter_title_color"
-                        android:fontFamily="@font/pretendard_bold"
-                        android:lineSpacingExtra="5dp"
-                        android:layout_gravity="center"/>
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:cardElevation="0dp"
+                        app:cardCornerRadius="50dp"
+                        app:cardBackgroundColor="@color/emotion_happy_color">
+
+                        <ImageView
+                            android:id="@+id/iv_my_emotion"
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:layout_gravity="center"
+                            android:src="@color/gray_300"/>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <TextView
-                        android:id="@+id/text_letter_message"
+                        android:id="@+id/text_my_nickname"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/letter_paper_message"
-                        android:textSize="15sp"
-                        android:textColor="@color/letter_title_color"
+                        android:layout_marginTop="8dp"
+                        android:text="나"
+                        android:textColor="@color/system_black"
+                        android:textSize="16sp"
                         android:fontFamily="@font/pretendard_regular"
-                        android:lineSpacingExtra="5dp"
-                        android:layout_gravity="center"/>
+                        android:lines="1"
+                        android:ellipsize="marquee"
+                        android:maxEms="5"
+                        app:layout_constraintStart_toStartOf="@id/mcv_my_emotion"
+                        app:layout_constraintEnd_toEndOf="@id/mcv_my_emotion"
+                        app:layout_constraintTop_toBottomOf="@id/mcv_my_emotion"/>
 
-                    <ImageView
-                        android:id="@+id/btn_today_question"
+                    <!-- Partner Emotion -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/mcv_partner_emotion"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_question_navigate_button"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="20dp"/>
-                </LinearLayout>
-            </FrameLayout>
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:cardElevation="0dp"
+                        app:cardCornerRadius="50dp"
+                        app:cardBackgroundColor="@color/emotion_puzzling_color">
+
+                        <ImageView
+                            android:id="@+id/iv_partner_emotion"
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:layout_gravity="center"
+                            android:src="@color/gray_300"/>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <TextView
+                        android:id="@+id/text_partner_nickname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="안녕하세요 감사해요 잘있어요"
+                        android:textColor="@color/system_black"
+                        android:textSize="16sp"
+                        android:fontFamily="@font/pretendard_regular"
+                        android:lines="1"
+                        android:ellipsize="marquee"
+                        android:maxEms="5"
+                        app:layout_constraintStart_toStartOf="@id/mcv_partner_emotion"
+                        app:layout_constraintEnd_toEndOf="@id/mcv_partner_emotion"
+                        app:layout_constraintTop_toBottomOf="@id/mcv_partner_emotion"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
-    </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

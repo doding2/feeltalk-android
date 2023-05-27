@@ -67,7 +67,7 @@ class SettingFragment : Fragment() {
         initSwitch()
 
         binding.apply {
-            textMyName.setOnClickListener { navigateToCoupleSettingPage() }
+//            textMyName.setOnClickListener { navigateToCoupleSettingPage() }
             ivHalfArrowRight.setOnClickListener { navigateToCoupleSettingPage() }
             flProfile.setOnClickListener { navigateToCoupleSettingPage() }
             llDDay.setOnClickListener { navigateToCoupleSettingPage() }
@@ -135,7 +135,7 @@ class SettingFragment : Fragment() {
     private fun collectUserInfo() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.userInfo.collectLatest {
-                binding.textMyName.text = it.nickname
+//                binding.textMyName.text = it.nickname
             }
         }
     }

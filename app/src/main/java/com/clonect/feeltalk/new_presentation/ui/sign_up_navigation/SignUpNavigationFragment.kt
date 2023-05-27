@@ -61,10 +61,12 @@ class SignUpNavigationFragment : Fragment() {
         navController.navigate(navigateFragmentId)
     }
 
-    private fun navigateToMain() {
+    private fun navigateToMain() = runCatching {
         requireParentFragment()
             .findNavController()
             .navigate(R.id.action_signUpNavigationFragment_to_mainNavigationFragment)
+    }.onFailure {
+        it.printStackTrace()
     }
 
 

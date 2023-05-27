@@ -1,25 +1,27 @@
-package com.clonect.feeltalk.new_presentation.ui.main_navigation.question
+package com.clonect.feeltalk.new_presentation.ui.main_navigation.challenge
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.clonect.feeltalk.databinding.FragmentQuestionBinding
+import androidx.fragment.app.viewModels
+import com.clonect.feeltalk.databinding.FragmentChallengeBinding
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class QuestionFragment : Fragment() {
+class ChallengeFragment : Fragment() {
 
-    private lateinit var binding: FragmentQuestionBinding
+    private lateinit var binding: FragmentChallengeBinding
+    private val viewModel: ChallengeViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentQuestionBinding.inflate(inflater, container, false)
+        binding = FragmentChallengeBinding.inflate(inflater, container, false)
         binding.root.setPadding(0, getStatusBarHeight(), 0, 0)
         setLightStatusBars(true, activity, binding.root)
         return binding.root

@@ -120,13 +120,17 @@ class AgreementFragment : Fragment() {
 
                         if (agreed) {
                             ivPrivacyCheck.setImageResource(R.drawable.n_ic_processed_check)
-                            ivPrivacySubCheck.setImageResource(R.drawable.n_ic_processed_check)
+//                            ivPrivacySubCheck.setImageResource(R.drawable.n_ic_processed_check)
                             tvPrivacyAgree.setTextColor(resources.getColor(R.color.gray_500, null))
                             viewModel.setSignUpProcess(40)
                         } else {
                             ivPrivacyCheck.setImageResource(R.drawable.n_ic_disabled_check)
-                            ivPrivacySubCheck.setImageResource(R.drawable.n_ic_disabled_check)
+//                            ivPrivacySubCheck.setImageResource(R.drawable.n_ic_disabled_check)
                             tvPrivacyAgree.setTextColor(resources.getColor(R.color.system_black, null))
+
+                            if (viewModel.isSensitiveInfoAgreed.value) {
+                                viewModel.setSignUpProcess(20)
+                            }
                         }
                     }
                 }

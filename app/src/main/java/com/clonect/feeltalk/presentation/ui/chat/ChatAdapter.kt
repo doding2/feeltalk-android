@@ -129,7 +129,7 @@ class ChatAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         fun bind(chat: Chat) {
             binding.apply {
                 if (chat.isAnswer) {
-                    textPartnerName.text = partnerNickname
+//                    textPartnerName.text = partnerNickname
                     layoutChatOwner.visibility = View.VISIBLE
                     binding.ivMyProfile.setProfileImageUrl(partnerProfileUrl)
                 }

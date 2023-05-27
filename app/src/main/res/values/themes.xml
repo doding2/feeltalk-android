@@ -12,7 +12,8 @@
 
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar" >true</item>
+        <item name="android:windowLightStatusBar">true</item>
+
         <!-- Navigation bar color. -->
         <item name="android:navigationBarColor">@color/white</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
@@ -40,7 +41,7 @@
     <!--  Custom EditText  -->
     <style name="GradientEditTextStyle" parent="@android:style/Widget.EditText">
         <item name="android:textCursorDrawable">@drawable/edit_text_cursor</item>
-        <item name="android:background">@drawable/edit_text_background</item>
+        <item name="android:background">@drawable/n_background_edit_text</item>
     </style>
 
     <!--  Custom Bottom Sheet  -->
@@ -54,7 +55,7 @@
     </style>
 
     <style name="RoundModalStyle" parent="Widget.Design.BottomSheet.Modal">
-        <item name="android:background">@drawable/bottom_sheet_rounded</item>
+        <item name="android:background">@drawable/n_background_bottom_sheet_rounded</item>
     </style>
 
 </resources>

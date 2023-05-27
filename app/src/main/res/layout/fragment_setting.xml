@@ -94,11 +94,11 @@
                 android:clipToPadding="false">
 
                 <TextView
-                    android:id="@+id/text_my_name"
+                    android:id="@+id/text_my_nickname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="2dp"
-                    android:text="@string/home_my_default_name"
+                    android:text="string/home_my_default_name"
                     android:textColor="@color/home_name_text_color"
                     android:textSize="20sp"
                     android:fontFamily="@font/pretendard_bold"
@@ -118,7 +118,7 @@
                     android:src="@drawable/ic_gradient_half_arrow_right"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/text_my_name"
+                    app:layout_constraintStart_toEndOf="@id/text_my_nickname"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"/>
             </androidx.constraintlayout.widget.ConstraintLayout>

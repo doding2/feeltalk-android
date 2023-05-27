@@ -11,6 +11,10 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentMainNavigationBinding
+import com.clonect.feeltalk.new_presentation.ui.util.closeRootViewLayout
+import com.clonect.feeltalk.new_presentation.ui.util.extendRootViewLayout
+import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
+import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
 
 class MainNavigationFragment : Fragment() {
 
@@ -22,12 +26,23 @@ class MainNavigationFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentMainNavigationBinding.inflate(inflater, container, false)
+        extendRootViewLayout(activity?.window)
+        binding.root.setPadding(0, 0, 0, getNavigationBarHeight())
         setUpBottomNavigation()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+    }
+    
+    //TODO 다른 fragment로 이동할때 setLightStatusBars(true, activity, binding.root) 꼭 호출시키기
+
+    private fun navigateToChat() {
+        requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_mainNavigationFragment_to_chatFragment)
+        setLightStatusBars(true, activity, binding.root)
     }
 
 
@@ -42,14 +57,13 @@ class MainNavigationFragment : Fragment() {
         val navController = navHostFragment.navController
         bottomNav.setupWithMainNavController(
             navController = navController,
-            onClickChat = {
-                requireParentFragment()
-                    .findNavController()
-                    .navigate(R.id.action_mainNavigationFragment_to_chatFragment)
-            }
+            onClickChat = ::navigateToChat
         )
     }
 
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        closeRootViewLayout(activity?.window)
+    }
 
 }

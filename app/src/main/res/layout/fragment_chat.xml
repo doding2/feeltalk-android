@@ -39,7 +39,7 @@
             app:layout_constraintBottom_toBottomOf="parent">
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/cv_partner_emotion"
+                android:id="@+id/mcv_partner_emotion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
@@ -58,7 +58,7 @@
                 android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/home_partner_default_name"
+                android:text="home_partner_default_name"
                 android:textColor="@color/chat_title_name_color"
                 android:textSize="18sp"
                 android:lines="1"

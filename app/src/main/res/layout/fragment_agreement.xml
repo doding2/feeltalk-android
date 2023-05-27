@@ -75,7 +75,7 @@
                 android:id="@+id/iv_more_sensitive_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/n_ic_next"
+                android:src="@drawable/n_ic_next_1"
                 android:paddingStart="10dp"
                 android:paddingVertical="10dp"
                 app:layout_constraintTop_toTopOf="parent"
@@ -142,7 +142,7 @@
                 android:id="@+id/iv_more_privacy_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/n_ic_next"
+                android:src="@drawable/n_ic_next_1"
                 android:paddingStart="10dp"
                 android:paddingVertical="10dp"
                 app:layout_constraintTop_toTopOf="parent"
@@ -156,13 +156,77 @@
             android:background="@color/gray_400"
             android:layout_marginBottom="12dp" />
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:orientation="horizontal"
+            android:layout_marginBottom="4dp" >
 
             <ImageView
-                android:id="@+id/iv_privacy_sub_check"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/n_ic_disabled_check"
+                android:layout_marginEnd="8dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/agreement_more_privacy_info"
+                android:textSize="14sp"
+                android:textColor="@color/gray_600"
+                android:fontFamily="@font/pretendard_regular"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="4dp" >
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/n_ic_disabled_check"
+                android:layout_marginEnd="8dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/agreement_more_privacy_info"
+                android:textSize="14sp"
+                android:textColor="@color/gray_600"
+                android:fontFamily="@font/pretendard_regular"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="4dp" >
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/n_ic_disabled_check"
+                android:layout_marginEnd="8dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/agreement_more_privacy_info"
+                android:textSize="14sp"
+                android:textColor="@color/gray_600"
+                android:fontFamily="@font/pretendard_regular"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="4dp" >
+
+            <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:src="@drawable/n_ic_disabled_check"

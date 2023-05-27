@@ -171,7 +171,7 @@ class CoupleSettingFragment : Fragment() {
     private fun collectPartnerInfo() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.partnerInfo.collectLatest {
-                binding.textPartnerName.setText(it.nickname)
+//                binding.textPartnerName.setText(it.nickname)
                 binding.textPartnerBirthDate.text = if (it.birth == "") "(생일 미등록)" else it.birth
                 binding.tvPartnerEmail.setText(it.email)
             }
