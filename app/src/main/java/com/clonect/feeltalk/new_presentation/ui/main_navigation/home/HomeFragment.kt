@@ -112,7 +112,7 @@ class HomeFragment : Fragment() {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.questionCount.collectLatest(::changeQuestionCountTitle) }
             launch { viewModel.mySignal.collectLatest(::changeMySignalView) }
-            launch { viewModel.mySignal.collectLatest(::changePartnerSignalView) }
+            launch { viewModel.partnerSignal.collectLatest(::changePartnerSignalView) }
         }
     }
 }

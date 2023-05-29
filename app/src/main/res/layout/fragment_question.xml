@@ -5,12 +5,219 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/system_white"
+    android:background="@color/gray_100"
     tools:context=".new_presentation.ui.main_navigation.question.QuestionFragment">
 
-    <TextView
-        android:id="@+id/text_dashboard"
+    <LinearLayout
+        android:id="@+id/ll_action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:background="@color/gray_100"
+        android:elevation="2dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_gravity="center_vertical"
+            android:text="@string/question_title"
+            android:textColor="@color/system_black"
+            android:textSize="18sp"
+            android:fontFamily="@font/pretendard_medium"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/btn_notification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:src="@drawable/n_ic_notification"
+            android:layout_gravity="center_vertical"
+            app:tint="@color/gray_500"/>
+
+        <ImageView
+            android:id="@+id/btn_my_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:src="@drawable/n_ic_my_page"
+            android:layout_gravity="center_vertical"
+            app:tint="@color/gray_500"/>
+    </LinearLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/fl_top_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="question fragment" />
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="16dp"
+        app:cardBackgroundColor="@color/main_500"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="0dp">
+
+        <ImageView
+            android:layout_width="139dp"
+            android:layout_height="125dp"
+            android:layout_gravity="bottom|end"
+            android:src="@drawable/n_image_note_paper_2"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginHorizontal="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <FrameLayout
+                    android:layout_width="48dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="end"
+                        app:strokeColor="@color/system_white"
+                        app:strokeWidth="2dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardBackgroundColor="@android:color/transparent"
+                        app:cardElevation="0dp">
+
+                        <ImageView
+                            android:id="@+id/iv_my_profile"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@color/gray_300"/>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="start"
+                        app:strokeColor="@color/system_white"
+                        app:strokeWidth="2dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardBackgroundColor="@android:color/transparent"
+                        app:cardElevation="0dp">
+
+                        <ImageView
+                            android:id="@+id/iv_partner_profile"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@color/gray_300"/>
+                    </com.google.android.material.card.MaterialCardView>
+                </FrameLayout>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:id="@+id/tv_today_question_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="2023.05.16"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/pretendard_regular"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_today_question_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="난 이게 가장 좋더라!"
+                android:textColor="@color/system_white"
+                android:textSize="20sp"
+                android:fontFamily="@font/pretendard_medium"/>
+
+            <TextView
+                android:id="@+id/tv_today_question_body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="당신이 가장 좋아하는 스킨십은?"
+                android:textColor="@color/system_white"
+                android:textSize="20sp"
+                android:fontFamily="@font/pretendard_medium"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/mcv_answer_or_chat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/system_black"
+                app:cardCornerRadius="24dp" >
+
+                <TextView
+                    android:id="@+id/tv_answer_or_chat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="12dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:text="@string/question_today_button_answer"
+                    android:textSize="16sp"
+                    android:textColor="@color/system_white"
+                    android:fontFamily="@font/pretendard_regular"/>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="@string/question_list_title"
+            android:textColor="@color/system_black"
+            android:textSize="18sp"
+            android:fontFamily="@font/pretendard_medium"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_question"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="20dp"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+        <ImageView
+            android:id="@+id/iv_scroll_top"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="4dp"
+            android:src="@drawable/n_image_scroll_top"/>
+    </FrameLayout>
 </LinearLayout>

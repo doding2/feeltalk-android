@@ -104,10 +104,12 @@ class NicknameFragment : Fragment() {
             setCardBackgroundColor(resources.getColor(R.color.main_500, null))
             isClickable = true
             isFocusable = true
+            isEnabled = true
         } else {
             setCardBackgroundColor(resources.getColor(R.color.main_400, null))
             isClickable = false
             isFocusable = false
+            isEnabled = false
         }
     }
 

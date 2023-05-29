@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 
@@ -26,7 +27,7 @@ public class SoftKeyboardDetectorView extends View {
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        Activity activity = (Activity)getContext();
+        Activity activity = (Activity) getContext();
         Rect rect = new Rect();
         activity.getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
         int statusBarHeight = rect.top;
@@ -35,6 +36,7 @@ public class SoftKeyboardDetectorView extends View {
         defaultDisplay.getSize(size);
         int screenHeight = size.y;
         int diffHeight = (screenHeight - statusBarHeight) - h;
+        Log.d("FeeltalkInfo", "diffHeight: " + diffHeight);
         if (diffHeight > 100 && !mShownKeyboard) { // 모든 키보드는 100px보다 크다고 가정
             mShownKeyboard = true;
             onShownSoftKeyboard();

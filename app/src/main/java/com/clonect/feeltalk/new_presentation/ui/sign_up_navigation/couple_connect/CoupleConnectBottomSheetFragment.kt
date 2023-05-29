@@ -43,6 +43,7 @@ class CoupleConnectBottomSheetFragment : BottomSheetDialogFragment() {
         binding = FragmentCoupleConnectBottomSheetBinding.inflate(inflater, container, false)
         val behavior = (dialog as? BottomSheetDialog)?.behavior
         behavior?.state = BottomSheetBehavior.STATE_EXPANDED
+        behavior?.skipCollapsed = true
         return binding.root
     }
 
@@ -106,10 +107,12 @@ class CoupleConnectBottomSheetFragment : BottomSheetDialogFragment() {
             setCardBackgroundColor(resources.getColor(R.color.main_500, null))
             isClickable = true
             isFocusable = true
+            isEnabled = true
         } else {
             setCardBackgroundColor(resources.getColor(R.color.main_400, null))
             isClickable = false
             isFocusable = false
+            isEnabled = false
         }
     }
 
@@ -124,11 +127,7 @@ class CoupleConnectBottomSheetFragment : BottomSheetDialogFragment() {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch {
                 viewModel.partnerCoupleCode.collectLatest {
-                    if (validatePartnerCoupleCode(it)) {
-                        enableConnectButton(true)
-                    } else {
-                        enableConnectButton(false)
-                    }
+                    enableConnectButton(validatePartnerCoupleCode(it))
                 }
             }
         }

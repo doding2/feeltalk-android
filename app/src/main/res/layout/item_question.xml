@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="@color/system_white"
+    app:cardCornerRadius="8dp">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp">
+
+        <TextView
+            android:id="@+id/tv_question_index"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="000."
+            android:textSize="16sp"
+            android:textColor="#B5B3B7"
+            android:fontFamily="@font/pretendard_semi_bold"/>
+
+        <TextView
+            android:id="@+id/tv_question"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="연인이 가장 예뻐 보이는 순간은? 가장 예뻐 보이는 순간은?"
+            android:textColor="@color/system_black"
+            android:textSize="16sp"
+            android:fontFamily="@font/pretendard_regular"/>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

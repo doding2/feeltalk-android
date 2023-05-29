@@ -39,13 +39,14 @@ class SignalBottomSheetFragment(
         binding = FragmentSignalBottomSheetBinding.inflate(inflater, container, false)
         val behavior = (dialog as? BottomSheetDialog)?.behavior
         behavior?.state = BottomSheetBehavior.STATE_EXPANDED
+        behavior?.skipCollapsed = true
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        getCurrentSignal()
+        initCurrentSignal()
         collectViewModel()
 
         binding.run {
@@ -60,7 +61,7 @@ class SignalBottomSheetFragment(
         }
     }
 
-    private fun getCurrentSignal() {
+    private fun initCurrentSignal() {
         arguments?.getString("currentSignal")?.let {
             val currentSignal = Signal.valueOf(it)
             viewModel.setCurrentSignal(currentSignal)
@@ -102,10 +103,12 @@ class SignalBottomSheetFragment(
             setCardBackgroundColor(resources.getColor(R.color.main_500, null))
             isClickable = true
             isFocusable = true
+            isEnabled = true
         } else {
             setCardBackgroundColor(resources.getColor(R.color.main_400, null))
             isClickable = false
             isFocusable = false
+            isEnabled = false
         }
     }
 

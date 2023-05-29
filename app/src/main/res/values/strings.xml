@@ -63,6 +63,28 @@
     <string name="signal_nope">안돼</string>
     <string name="signal_tired">피곤</string>
 
+    <!--  Question  -->
+    <string name="question_title">질문</string>
+    <string name="question_today_button_answer">답변하기</string>
+    <string name="question_today_button_chat">필톡 나누기</string>
+    <string name="question_list_title">우리의 필로우톡</string>
+
+    <!--  Answer  -->
+    <string name="answer_my_answer_deco">나의 답변</string>
+    <string name="answer_my_answer_hint">질문에 대해 답변을 적어보세요 !</string>
+    <string name="answer_partner_answer_deco">연인의 답변</string>
+    <string name="answer_partner_answer_state_1">답변을 등록했어요 😍</string>
+    <string name="answer_partner_answer_state_2">쿡 찔러서 답변 요청하기</string>
+    <string name="answer_button_done">답변완료</string>
+    <string name="answer_button_modify">답변수정</string>
+    <string name="answer_poke_partner_snack_bar">상대방을 쿡 찔렀어요  👉</string>
+
+    <!--  AnswerConfirm  -->
+    <string name="answer_confirm_title">답변을 보내시겠어요?</string>
+    <string name="answer_confirm_message">작성한 답변을 상대방에게 보낼게요.\n보낸 후에는 답변을 수정할 수 없어요.</string>
+    <string name="answer_confirm_cancel">취소</string>
+    <string name="answer_confirm_confirm">보내기</string>
+
     <!--  old ui  -->
 
     <!--  dialog_couple_divorce.xml  -->
