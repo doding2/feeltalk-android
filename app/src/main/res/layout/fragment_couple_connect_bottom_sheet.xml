@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".new_presentation.ui.sign_up_navigation.couple_code.CoupleConnectBottomSheetFragment">
+    tools:context=".new_presentation.ui.sign_up_navigation.couple_connect.CoupleConnectBottomSheetFragment">
 
     <LinearLayout
         android:id="@+id/ll_clear_focus_area"
@@ -13,13 +13,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="30dp"
-            android:layout_gravity="center"
-            android:src="@drawable/n_ic_bottom_sheet_handle"/>
+        <include layout="@layout/image_view_bottom_sheet_handle" />
 
         <TextView
             android:layout_width="match_parent"

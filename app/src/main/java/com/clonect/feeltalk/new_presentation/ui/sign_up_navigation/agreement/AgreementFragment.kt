@@ -76,6 +76,7 @@ class AgreementFragment : Fragment() {
         viewModel.setPrivacyInfoAgreed(viewModel.isPrivacyInfoAgreed.value.not())
     }
 
+
     private fun setPrivacyInfoVisible(visible: Boolean) = binding.run {
         llPrivacyInfo.visibility = if (visible) View.VISIBLE else View.GONE
     }
@@ -92,47 +93,43 @@ class AgreementFragment : Fragment() {
         }
     }
 
+    private fun changeSensitiveInfoView(enabled: Boolean) = binding.run {
+        if (enabled) {
+            ivSensitiveCheck.setImageResource(R.drawable.n_ic_processed_check)
+            tvSensitiveAgree.setTextColor(resources.getColor(R.color.gray_500, null))
+            setPrivacyInfoVisible(true)
+            viewModel.setSignUpProcess(20)
+        } else {
+            ivSensitiveCheck.setImageResource(R.drawable.n_ic_disabled_check)
+            tvSensitiveAgree.setTextColor(resources.getColor(R.color.system_black, null))
+            setPrivacyInfoVisible(false)
+            viewModel.setSignUpProcess(0)
+        }
+    }
+
+    private fun changePrivacyInfoView(enabled: Boolean) = binding.run {
+        if (enabled) {
+            ivPrivacyCheck.setImageResource(R.drawable.n_ic_processed_check)
+            tvPrivacyAgree.setTextColor(resources.getColor(R.color.gray_500, null))
+            viewModel.setSignUpProcess(40)
+        } else {
+            ivPrivacyCheck.setImageResource(R.drawable.n_ic_disabled_check)
+            tvPrivacyAgree.setTextColor(resources.getColor(R.color.system_black, null))
+
+            if (viewModel.isSensitiveInfoAgreed.value) {
+                viewModel.setSignUpProcess(20)
+            }
+        }
+    }
+
 
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch { viewModel.isSensitiveInfoAgreed.collectLatest(::changeSensitiveInfoView) }
             launch {
-                viewModel.isSensitiveInfoAgreed.collectLatest { agreed ->
-                    binding.run {
-                        if (agreed) {
-                            ivSensitiveCheck.setImageResource(R.drawable.n_ic_processed_check)
-                            tvSensitiveAgree.setTextColor(resources.getColor(R.color.gray_500, null))
-                            setPrivacyInfoVisible(true)
-                            viewModel.setSignUpProcess(20)
-                        } else {
-                            ivSensitiveCheck.setImageResource(R.drawable.n_ic_disabled_check)
-                            tvSensitiveAgree.setTextColor(resources.getColor(R.color.system_black, null))
-                            setPrivacyInfoVisible(false)
-                            viewModel.setSignUpProcess(0)
-                        }
-                    }
-                }
-            }
-
-            launch {
-                viewModel.isPrivacyInfoAgreed.collectLatest { agreed ->
-                    binding.run {
-                        enableNextButton(agreed)
-
-                        if (agreed) {
-                            ivPrivacyCheck.setImageResource(R.drawable.n_ic_processed_check)
-//                            ivPrivacySubCheck.setImageResource(R.drawable.n_ic_processed_check)
-                            tvPrivacyAgree.setTextColor(resources.getColor(R.color.gray_500, null))
-                            viewModel.setSignUpProcess(40)
-                        } else {
-                            ivPrivacyCheck.setImageResource(R.drawable.n_ic_disabled_check)
-//                            ivPrivacySubCheck.setImageResource(R.drawable.n_ic_disabled_check)
-                            tvPrivacyAgree.setTextColor(resources.getColor(R.color.system_black, null))
-
-                            if (viewModel.isSensitiveInfoAgreed.value) {
-                                viewModel.setSignUpProcess(20)
-                            }
-                        }
-                    }
+                viewModel.isPrivacyInfoAgreed.collectLatest {
+                    changePrivacyInfoView(it)
+                    enableNextButton(it)
                 }
             }
         }

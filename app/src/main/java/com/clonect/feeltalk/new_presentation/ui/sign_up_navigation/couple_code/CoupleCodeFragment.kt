@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.clonect.feeltalk.databinding.FragmentCoupleCodeBinding
 import com.clonect.feeltalk.new_presentation.ui.sign_up_navigation.SignUpNavigationViewModel
+import com.clonect.feeltalk.new_presentation.ui.sign_up_navigation.couple_connect.CoupleConnectBottomSheetFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -61,15 +62,11 @@ class CoupleCodeFragment : Fragment() {
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch {
-                viewModel.coupleCode.collectLatest {
-                    binding.tvCoupleCode.text = it
-                }
+                viewModel.coupleCode.collectLatest(binding.tvCoupleCode::setText)
             }
 
             launch {
-                viewModel.nickname.collectLatest {
-                    binding.tvNickname.text = it
-                }
+                viewModel.nickname.collectLatest(binding.tvNickname::setText)
             }
         }
     }

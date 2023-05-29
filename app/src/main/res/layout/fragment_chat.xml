@@ -39,7 +39,7 @@
             app:layout_constraintBottom_toBottomOf="parent">
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/mcv_partner_emotion"
+                android:id="@+id/mcv_partner_signal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"

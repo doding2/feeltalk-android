@@ -62,6 +62,12 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/ll_bottom_container">
 
+            <ImageView
+                android:layout_width="250dp"
+                android:layout_height="230dp"
+                android:layout_gravity="bottom|end"
+                android:src="@drawable/n_image_note_paper"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -134,29 +140,13 @@
                     android:textSize="24sp"
                     android:fontFamily="@font/pretendard_regular"/>
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/tv_question_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center">
-
-                    <TextView
-                        android:id="@+id/tv_question_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="1000"
-                        android:textColor="@color/system_white"
-                        android:textSize="28sp"
-                        android:fontFamily="@font/pretendard_bold"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/home_main_title_deco"
-                        android:textColor="@color/system_white"
-                        android:textSize="24sp"
-                        android:fontFamily="@font/pretendard_regular"/>
-                </LinearLayout>
+                    android:text="@string/home_main_title_deco"
+                    android:textColor="@color/system_white"
+                    android:textSize="24sp"/>
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/mcv_answer"
@@ -191,12 +181,6 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
-
-            <ImageView
-                android:layout_width="250dp"
-                android:layout_height="230dp"
-                android:layout_gravity="bottom|end"
-                android:src="@drawable/n_image_note_paper"/>
         </FrameLayout>
 
 
@@ -238,25 +222,24 @@
                     android:clipToPadding="false">
 
                     <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/mcv_my_emotion"
+                        android:id="@+id/mcv_my_signal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:cardElevation="0dp"
                         app:cardCornerRadius="50dp"
-                        app:cardBackgroundColor="@color/emotion_happy_color">
+                        app:cardBackgroundColor="@color/gray_300">
 
                         <ImageView
-                            android:id="@+id/iv_my_emotion"
+                            android:id="@+id/iv_my_signal"
                             android:layout_width="64dp"
                             android:layout_height="64dp"
-                            android:layout_gravity="center"
-                            android:src="@color/gray_300"/>
+                            android:layout_gravity="center"/>
                     </com.google.android.material.card.MaterialCardView>
 
                     <TextView
-                        android:id="@+id/text_my_nickname"
+                        android:id="@+id/tv_my_nickname"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
@@ -267,44 +250,43 @@
                         android:lines="1"
                         android:ellipsize="marquee"
                         android:maxEms="5"
-                        app:layout_constraintStart_toStartOf="@id/mcv_my_emotion"
-                        app:layout_constraintEnd_toEndOf="@id/mcv_my_emotion"
-                        app:layout_constraintTop_toBottomOf="@id/mcv_my_emotion"/>
+                        app:layout_constraintStart_toStartOf="@id/mcv_my_signal"
+                        app:layout_constraintEnd_toEndOf="@id/mcv_my_signal"
+                        app:layout_constraintTop_toBottomOf="@id/mcv_my_signal"/>
 
                     <!-- Partner Emotion -->
                     <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/mcv_partner_emotion"
+                        android:id="@+id/mcv_partner_signal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:cardElevation="0dp"
                         app:cardCornerRadius="50dp"
-                        app:cardBackgroundColor="@color/emotion_puzzling_color">
+                        app:cardBackgroundColor="@color/gray_300">
 
                         <ImageView
-                            android:id="@+id/iv_partner_emotion"
+                            android:id="@+id/iv_partner_signal"
                             android:layout_width="64dp"
                             android:layout_height="64dp"
-                            android:layout_gravity="center"
-                            android:src="@color/gray_300"/>
+                            android:layout_gravity="center"/>
                     </com.google.android.material.card.MaterialCardView>
 
                     <TextView
-                        android:id="@+id/text_partner_nickname"
+                        android:id="@+id/tv_partner_nickname"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="안녕하세요 감사해요 잘있어요"
+                        android:text="너"
                         android:textColor="@color/system_black"
                         android:textSize="16sp"
                         android:fontFamily="@font/pretendard_regular"
                         android:lines="1"
                         android:ellipsize="marquee"
                         android:maxEms="5"
-                        app:layout_constraintStart_toStartOf="@id/mcv_partner_emotion"
-                        app:layout_constraintEnd_toEndOf="@id/mcv_partner_emotion"
-                        app:layout_constraintTop_toBottomOf="@id/mcv_partner_emotion"/>
+                        app:layout_constraintStart_toStartOf="@id/mcv_partner_signal"
+                        app:layout_constraintEnd_toEndOf="@id/mcv_partner_signal"
+                        app:layout_constraintTop_toBottomOf="@id/mcv_partner_signal"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>

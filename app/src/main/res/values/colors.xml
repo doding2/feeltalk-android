@@ -34,29 +34,18 @@
     <color name="system_alert">#CC000000</color>
     <color name="system_error">#F10000</color>
 
-
-    <!--  Common  -->
-    <color name="fragment_background_color">@color/white</color>
-    <color name="action_bar_title_color">#1C1C1C</color>
-    <color name="enabled_button">@color/main_500</color>
-    <color name="disabled_button">@color/main_400</color>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    <!--  Signal(임시)  -->
+    <color name="signal_seduce">#FFC0CB</color>
+    <color name="signal_passion">#FF0000</color>
+    <color name="signal_skinship">#00FF00</color>
+    <color name="signal_puzzling">#779cdb</color>
+    <color name="signal_nope">#000000</color>
+    <color name="signal_tired">#FFFF00</color>
 
     <!--  old ui  -->
 
+    <!--  Common  -->
+    <color name="fragment_background_color">@color/white</color>
 
     <!--  Dialog  -->
     <color name="dialog_out_space_color">#666666</color>

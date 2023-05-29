@@ -53,7 +53,15 @@
     <string name="home_main_answer_button">답변하기</string>
     <string name="home_signal_title">오늘의 시그널</string>
 
-    
+    <!--  SignalBottomSheet  -->
+    <string name="signal_title">오늘 내 기분을 연인에게 보내볼까요?</string>
+    <string name="signal_send_button">시그널보내기</string>
+    <string name="signal_seduce">유혹</string>
+    <string name="signal_passion">열정적임</string>
+    <string name="signal_skinship">스킨십</string>
+    <string name="signal_puzzling">나도모름</string>
+    <string name="signal_nope">안돼</string>
+    <string name="signal_tired">피곤</string>
 
     <!--  old ui  -->
 

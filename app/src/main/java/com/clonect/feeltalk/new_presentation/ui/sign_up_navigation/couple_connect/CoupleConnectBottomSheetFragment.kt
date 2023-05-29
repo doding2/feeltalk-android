@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.ui.sign_up_navigation.couple_code
+package com.clonect.feeltalk.new_presentation.ui.sign_up_navigation.couple_connect
 
 import android.content.Context
 import android.os.Bundle
