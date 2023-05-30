@@ -84,7 +84,7 @@ class NicknameFragment : Fragment() {
         keyboardListener.setOnHiddenKeyboard {
             etNickname.clearFocus()
             setNextButtonMargin((activity?.dpToPx(20f)?.toInt() ?: 0))
-            mcvNext.radius = 500f
+            mcvNext.radius = activity?.dpToPx(30f) ?: 500f
         }
     }
 

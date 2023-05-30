@@ -1,5 +1,7 @@
 package com.clonect.feeltalk.new_presentation.di
 
+import com.clonect.feeltalk.new_presentation.ui.main_navigation.challenge.completed.CompletedChallengeAdapter
+import com.clonect.feeltalk.new_presentation.ui.main_navigation.challenge.ongoing.OngoingChallengeAdapter
 import com.clonect.feeltalk.new_presentation.ui.main_navigation.question.QuestionAdapter
 import com.clonect.feeltalk.presentation.ui.chat.ChatAdapter
 import com.clonect.feeltalk.presentation.ui.guide.GuideAdapter
@@ -21,6 +23,17 @@ class AdapterModule {
         return QuestionAdapter()
     }
 
+    @Singleton
+    @Provides
+    fun providesOngoingChallengeAdapter(): OngoingChallengeAdapter {
+        return OngoingChallengeAdapter()
+    }
+
+    @Singleton
+    @Provides
+    fun providesCompletedChallengeAdapter(): CompletedChallengeAdapter {
+        return CompletedChallengeAdapter()
+    }
 
 
 

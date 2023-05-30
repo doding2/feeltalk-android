@@ -87,7 +87,7 @@ class CoupleConnectBottomSheetFragment : BottomSheetDialogFragment() {
         keyboardListener.setOnHiddenKeyboard {
             etPartnerCoupleCode.clearFocus()
             setConnectButtonMargin(activity?.dpToPx(20f)?.toInt() ?: 0)
-            mcvConnect.radius = 500f
+            mcvConnect.radius = activity?.dpToPx(30f) ?: 500f
         }
     }
 

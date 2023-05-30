@@ -9,7 +9,7 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.ItemQuestionBinding
 import com.clonect.feeltalk.new_domain.model.question.Question
 
-class QuestionAdapter(): RecyclerView.Adapter<QuestionAdapter.QuestionViewHolder>() {
+class QuestionAdapter: RecyclerView.Adapter<QuestionAdapter.QuestionViewHolder>() {
 
     private val callback = object: DiffUtil.ItemCallback<Question>() {
         override fun areItemsTheSame(oldItem: Question, newItem: Question): Boolean {

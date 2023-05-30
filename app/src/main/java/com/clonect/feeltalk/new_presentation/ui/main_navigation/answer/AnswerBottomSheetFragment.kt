@@ -194,8 +194,8 @@ class AnswerBottomSheetFragment(
             mcvDone.radius = 0f
         } else {
             etAnswer.clearFocus()
-            setDoneButtonMargin((activity?.dpToPx(20f)?.toInt() ?: 0))
-            mcvDone.radius = 500f
+            setDoneButtonMargin(activity?.dpToPx(20f)?.toInt() ?: 0)
+            mcvDone.radius = activity?.dpToPx(30f) ?: 500f
         }
     }
 

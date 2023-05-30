@@ -130,7 +130,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="2023.05.16"
+                    android:text=""
                     android:textColor="@color/white"
                     android:textSize="14sp"
                     android:fontFamily="@font/pretendard_regular"/>
@@ -141,7 +141,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="난 이게 가장 좋더라!"
+                android:text=""
                 android:textColor="@color/system_white"
                 android:textSize="20sp"
                 android:fontFamily="@font/pretendard_medium"/>
@@ -150,7 +150,7 @@
                 android:id="@+id/tv_today_question_body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="당신이 가장 좋아하는 스킨십은?"
+                android:text=""
                 android:textColor="@color/system_white"
                 android:textSize="20sp"
                 android:fontFamily="@font/pretendard_medium"/>
@@ -210,7 +210,8 @@
             android:layout_height="match_parent"
             android:layout_marginHorizontal="20dp"
             android:orientation="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_question"/>
 
         <ImageView
             android:id="@+id/iv_scroll_top"

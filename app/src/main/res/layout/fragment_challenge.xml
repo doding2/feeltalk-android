@@ -1,15 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/system_white"
+    android:background="@color/gray_100"
     tools:context=".new_presentation.ui.main_navigation.challenge.ChallengeFragment">
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/ll_action_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="challenge fragment" />
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:background="@color/gray_100"
+        android:elevation="2dp">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_gravity="center_vertical"
+            android:text="@string/challenge_title"
+            android:textColor="@color/system_black"
+            android:textSize="18sp"
+            android:fontFamily="@font/pretendard_medium"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/btn_notification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:src="@drawable/n_ic_notification"
+            android:layout_gravity="center_vertical"
+            app:tint="@color/gray_500"/>
+
+        <ImageView
+            android:id="@+id/btn_my_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:src="@drawable/n_ic_my_page"
+            android:layout_gravity="center_vertical"
+            app:tint="@color/gray_500"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginHorizontal="21dp"
+        android:text="@string/challenge_count_sub_title"
+        android:textSize="24sp"
+        android:textColor="@color/system_black"
+        android:fontFamily="@font/pretendard_regular"/>
+
+    <TextView
+        android:id="@+id/tv_count_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="21dp"
+        android:layout_marginBottom="28dp"
+        android:text="@string/challenge_count_title_deco"
+        android:textSize="24sp"
+        android:textColor="@color/system_black"
+        android:fontFamily="@font/pretendard_medium"/>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tb_challenge_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/gray_100"
+        app:tabRippleColor="@color/gray_400"
+
+        app:tabIndicator="@null"
+        app:tabIndicatorHeight="0dp"
+        app:tabPaddingBottom="0dp"
+        app:tabPaddingEnd="0dp"
+        app:tabPaddingStart="0dp"
+        app:tabPaddingTop="0dp"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/vp_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <ImageView
+            android:id="@+id/iv_scroll_top"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="4dp"
+            android:src="@drawable/n_image_scroll_top"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/mcv_add_challenge_wrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="17dp"
+            app:cardCornerRadius="26dp"
+            app:cardBackgroundColor="@color/main_500"
+            app:cardElevation="3dp">
+
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/efab_add_challenge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="22dp"
+                android:paddingEnd="22dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:text="@string/ongoing_add_challenge"
+                android:textColor="@color/system_white"
+                android:textSize="18sp"
+                android:fontFamily="@font/pretendard_medium"
+                android:stateListAnimator="@null"
+                app:icon="@drawable/n_ic_plus"
+                app:iconTint="@color/system_white"
+                app:iconSize="20dp"
+                app:iconPadding="4dp"
+                app:iconGravity="textEnd"/>
+        </com.google.android.material.card.MaterialCardView>
+    </FrameLayout>
 </LinearLayout>
