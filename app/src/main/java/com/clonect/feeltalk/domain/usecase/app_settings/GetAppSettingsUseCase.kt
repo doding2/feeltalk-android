@@ -1,7 +1,7 @@
 package com.clonect.feeltalk.domain.usecase.app_settings
 
 import android.content.SharedPreferences
-import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
+import com.clonect.feeltalk.new_data.util.AppLevelEncryptHelper
 import com.clonect.feeltalk.presentation.utils.AppSettings
 
 class GetAppSettingsUseCase(

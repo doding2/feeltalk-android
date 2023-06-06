@@ -1,6 +1,6 @@
 package com.clonect.feeltalk.data.repository.encryption.datasourceImpl
 
-import com.clonect.feeltalk.data.api.ClonectService
+import com.clonect.feeltalk.new_data.api.ClonectService
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionRemoteDataSource
 import com.clonect.feeltalk.domain.model.data.encryption.LoadPartnerPrivateKeyDto
 import com.clonect.feeltalk.domain.model.data.encryption.LoadPartnerPublicKeyDto

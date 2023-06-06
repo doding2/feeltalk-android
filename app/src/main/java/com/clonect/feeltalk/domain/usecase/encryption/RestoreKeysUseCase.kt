@@ -14,7 +14,6 @@ class RestoreKeysUseCase(
         return when (accessToken) {
             is Resource.Success -> encryptionRepository.restoreKeys(accessToken.data)
             is Resource.Error -> Resource.Error(accessToken.throwable)
-            is Resource.Loading -> Resource.Loading(accessToken.isLoading)
         }
     }
 }

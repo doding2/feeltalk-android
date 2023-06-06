@@ -14,7 +14,6 @@ class GetTodayQuestionAnswersFromServer(
         return when (result) {
             is Resource.Success -> questionRepository.getTodayQuestionAnswersFromServer(result.data)
             is Resource.Error -> Resource.Error(result.throwable)
-            is Resource.Loading -> Resource.Loading(result.isLoading)
         }
     }
 }

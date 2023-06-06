@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/gray_100"
-    tools:context=".new_presentation.ui.main_navigation.challenge.ChallengeFragment">
+    tools:context=".new_presentation.ui.mainNavigation.challenge.ChallengeFragment">
 
     <LinearLayout
         android:id="@+id/ll_action_bar"
@@ -129,7 +129,8 @@
                 app:iconTint="@color/system_white"
                 app:iconSize="20dp"
                 app:iconPadding="4dp"
-                app:iconGravity="textEnd"/>
+                app:iconGravity="textEnd"
+                app:rippleColor="@color/main_600"/>
         </com.google.android.material.card.MaterialCardView>
     </FrameLayout>
 </LinearLayout>

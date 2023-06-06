@@ -36,7 +36,6 @@ public class SoftKeyboardDetectorView extends View {
         defaultDisplay.getSize(size);
         int screenHeight = size.y;
         int diffHeight = (screenHeight - statusBarHeight) - h;
-        Log.d("FeeltalkInfo", "diffHeight: " + diffHeight);
         if (diffHeight > 100 && !mShownKeyboard) { // 모든 키보드는 100px보다 크다고 가정
             mShownKeyboard = true;
             onShownSoftKeyboard();

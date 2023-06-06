@@ -87,6 +87,8 @@ dependencies {
     implementation 'com.github.santalu:maskara:1.0.0'
     // custom image indicator
     implementation 'com.github.martinstamenkovski:ARIndicatorView:2.0.0'
+    // androidx brower
+    implementation 'androidx.browser:browser:1.5.0'
 
     // 믹스패널 데이터 분석
     implementation "com.mixpanel.android:mixpanel-android:7.+"

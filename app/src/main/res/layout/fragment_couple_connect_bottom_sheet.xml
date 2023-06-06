@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".new_presentation.ui.sign_up_navigation.couple_connect.CoupleConnectBottomSheetFragment">
+    tools:context=".new_presentation.ui.signUpNavigation.couple_connect.CoupleConnectBottomSheetFragment">
 
     <LinearLayout
         android:id="@+id/ll_clear_focus_area"
@@ -33,10 +33,11 @@
             android:layout_marginBottom="39dp"
             android:textSize="18sp"
             android:textColor="@color/black"
+            android:fontFamily="@font/pretendard_medium"
             android:hint="@string/couple_connect_hint"
             android:textColorHint="@color/gray_400"
             android:lines="1"
-            android:inputType="textPersonName"
+            android:inputType="text"
             android:imeOptions="actionDone"/>
     </LinearLayout>
 
@@ -47,7 +48,8 @@
         android:layout_marginHorizontal="20dp"
         app:cardBackgroundColor="@color/main_400"
         app:cardCornerRadius="30dp"
-        app:cardElevation="0dp">
+        app:cardElevation="0dp"
+        app:rippleColor="@color/main_600">
 
         <TextView
             android:layout_width="wrap_content"

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".new_presentation.ui.sign_up_navigation.nickname.NicknameFragment">
+    tools:context=".new_presentation.ui.signUpNavigation.nickname.NicknameFragment">
 
     <LinearLayout
         android:id="@+id/ll_clear_focus_area"
@@ -48,7 +48,6 @@
             android:id="@+id/et_nickname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:layout_marginHorizontal="20dp"
             android:textColor="@color/system_black"
             android:textSize="18sp"
@@ -56,8 +55,32 @@
             android:hint="@string/nickname_edit_text_hint"
             android:textColorHint="@color/gray_400"
             android:lines="1"
-            android:inputType="textPersonName"
+            android:inputType="text"
             android:imeOptions="actionDone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="12dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:layout_marginEnd="7dp"
+                android:src="@drawable/n_ic_alert"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="14dp"
+                android:text="@string/nickname_alert"
+                android:textSize="12sp"
+                android:textColor="@color/gray_600"
+                android:fontFamily="@font/pretendard_regular"/>
+        </LinearLayout>
     </LinearLayout>
 
 
@@ -76,7 +99,8 @@
         app:cardCornerRadius="30dp"
         app:cardElevation="0dp"
         android:clickable="false"
-        android:focusable="false">
+        android:focusable="false"
+        app:rippleColor="@color/main_600">
 
         <TextView
             android:layout_width="wrap_content"

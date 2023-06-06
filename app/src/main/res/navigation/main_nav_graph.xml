@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.clonect.feeltalk.new_presentation.ui.main_navigation.home.HomeFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.home.HomeFragment"
         android:label="@string/main_navigation_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_question"
-        android:name="com.clonect.feeltalk.new_presentation.ui.main_navigation.question.QuestionFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.question.QuestionFragment"
         android:label="@string/main_navigation_question"
         tools:layout="@layout/fragment_question" />
 
     <fragment
         android:id="@+id/navigation_bucket_list"
-        android:name="com.clonect.feeltalk.new_presentation.ui.main_navigation.challenge.ChallengeFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.ChallengeFragment"
         android:label="@string/main_navigation_bucket_list"
         tools:layout="@layout/fragment_challenge" />
 </navigation>

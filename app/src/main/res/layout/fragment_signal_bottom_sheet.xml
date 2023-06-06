@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context=".new_presentation.ui.main_navigation.signal.SignalBottomSheetFragment">
+    tools:context=".new_presentation.ui.mainNavigation.signal.SignalBottomSheetFragment">
 
     <include layout="@layout/image_view_bottom_sheet_handle" />
 
@@ -128,7 +128,8 @@
         android:layout_marginHorizontal="20dp"
         app:cardBackgroundColor="@color/main_400"
         app:cardCornerRadius="30dp"
-        app:cardElevation="0dp">
+        app:cardElevation="0dp"
+        app:rippleColor="@color/main_600">
 
         <TextView
             android:layout_width="wrap_content"

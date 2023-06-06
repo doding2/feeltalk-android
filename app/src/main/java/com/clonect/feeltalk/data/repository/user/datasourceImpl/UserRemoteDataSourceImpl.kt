@@ -1,7 +1,7 @@
 package com.clonect.feeltalk.data.repository.user.datasourceImpl
 
 import android.graphics.Bitmap
-import com.clonect.feeltalk.data.api.ClonectService
+import com.clonect.feeltalk.new_data.api.ClonectService
 import com.clonect.feeltalk.data.repository.user.datasource.UserRemoteDataSource
 import com.clonect.feeltalk.data.utils.BitmapRequestBody
 import com.clonect.feeltalk.domain.model.dto.common.StatusDto

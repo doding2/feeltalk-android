@@ -3,7 +3,7 @@ package com.clonect.feeltalk.domain.usecase.app_settings
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
+import com.clonect.feeltalk.new_data.util.AppLevelEncryptHelper
 import com.clonect.feeltalk.domain.repository.UserRepository
 import com.clonect.feeltalk.presentation.utils.AppSettings
 import com.clonect.feeltalk.presentation.utils.infoLog

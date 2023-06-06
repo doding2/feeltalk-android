@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".new_presentation.ui.agreement_privacy_detail.AgreementPrivacyDetailFragment">
+    tools:context=".new_presentation.ui.agreementPrivacyDetail.AgreementPrivacyDetailFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView

@@ -1,6 +1,6 @@
 package com.clonect.feeltalk.data.repository.question.datasourceImpl
 
-import com.clonect.feeltalk.data.api.ClonectService
+import com.clonect.feeltalk.new_data.api.ClonectService
 import com.clonect.feeltalk.data.repository.question.datasource.QuestionRemoteDataSource
 import com.clonect.feeltalk.domain.model.dto.question.*
 import com.google.gson.JsonObject

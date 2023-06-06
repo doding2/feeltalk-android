@@ -15,7 +15,6 @@ class GetTodayQuestionUseCase(
         return when (accessToken) {
             is Resource.Success -> questionRepository.getTodayQuestion(accessToken.data)
             is Resource.Error -> Resource.Error(accessToken.throwable)
-            is Resource.Loading -> Resource.Loading(accessToken.isLoading)
         }
     }
 

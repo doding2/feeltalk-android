@@ -161,7 +161,6 @@ class EncryptionRepositoryImpl(
             val encryptedPrivateKey = when (encryptedResource) {
                 is Resource.Success -> encryptedResource.data
                 is Resource.Error -> throw encryptedResource.throwable
-                is Resource.Loading -> return Resource.Loading(encryptedResource.isLoading)
             }
 
             val response = remoteSource.uploadMyPrivateKey(accessToken, encryptedPrivateKey)
@@ -195,7 +194,6 @@ class EncryptionRepositoryImpl(
             val decryptedPrivateKey = when (decryptedResource) {
                 is Resource.Success -> decryptedResource.data
                 is Resource.Error -> throw decryptedResource.throwable
-                is Resource.Loading -> return Resource.Loading(decryptedResource.isLoading)
             }
 
             val keyBytes = Base64.decode(decryptedPrivateKey, Base64.NO_WRAP)

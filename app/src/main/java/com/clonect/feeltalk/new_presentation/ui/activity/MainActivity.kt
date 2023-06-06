@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity() {
 
         tryAutoLogIn()
 
+
     }
 
     private fun collectToast() = lifecycleScope.launch {

@@ -14,7 +14,6 @@ class UploadMyPublicKeyUseCase(
         return when (accessToken) {
             is Resource.Success -> encryptionRepository.uploadMyPublicKey(accessToken.data)
             is Resource.Error -> Resource.Error(accessToken.throwable)
-            is Resource.Loading -> Resource.Loading(accessToken.isLoading)
         }
     }
 

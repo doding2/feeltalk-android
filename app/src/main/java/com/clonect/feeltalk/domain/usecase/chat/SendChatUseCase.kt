@@ -13,7 +13,6 @@ class SendChatUseCase(private val userRepository: UserRepository, private val ch
         return when (result) {
             is Resource.Success -> chatRepository.sendChat(result.data, chat)
             is Resource.Error -> Resource.Error(result.throwable)
-            is Resource.Loading -> Resource.Loading(result.isLoading)
         }
     }
 

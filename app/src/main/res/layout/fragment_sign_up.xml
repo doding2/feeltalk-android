@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:scrollbars="none"
     android:fillViewport="true"
-    tools:context=".presentation.ui.sign_up.SignUpFragment">
+    tools:context=".new_presentation.ui.signUp.SignUpFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

@@ -30,9 +30,9 @@
 
         <activity
             android:name=".new_presentation.ui.activity.MainActivity"
+            android:configChanges="orientation|keyboardHidden"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

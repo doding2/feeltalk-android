@@ -1,9 +1,9 @@
 package com.clonect.feeltalk.data.repository.news
 
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.data.api.ClonectService
 import com.clonect.feeltalk.domain.model.data.news.News
 import com.clonect.feeltalk.domain.repository.NewsRepository
+import com.clonect.feeltalk.new_data.api.ClonectService
 import com.google.gson.JsonObject
 import kotlinx.coroutines.CancellationException
 import retrofit2.HttpException

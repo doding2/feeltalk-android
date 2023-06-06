@@ -22,7 +22,14 @@ class FcmNewChatObserver {
         }
     }
 
-    private val _newChat = MutableStateFlow<Resource<Chat>>(Resource.Loading(true))
+    private val _newChat = MutableStateFlow<Resource<Chat>>(Resource.Success(Chat(
+        id = 0,
+        question = "",
+        owner = "",
+        message = "",
+        date = "",
+        isAnswer = false))
+    )
     val newChat = _newChat.asStateFlow()
 
     fun setNewChat(chat: Chat) {

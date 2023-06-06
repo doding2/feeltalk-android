@@ -1,6 +1,6 @@
 package com.clonect.feeltalk.data.repository.chat.datasourceImpl
 
-import com.clonect.feeltalk.data.api.ClonectService
+import com.clonect.feeltalk.new_data.api.ClonectService
 import com.clonect.feeltalk.data.repository.chat.datasource.ChatRemoteDataSource
 import com.clonect.feeltalk.domain.model.data.chat.Chat
 import com.clonect.feeltalk.domain.model.dto.chat.ChatListItemDto

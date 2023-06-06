@@ -4,7 +4,7 @@ import android.content.Context
 import android.security.keystore.KeyProperties
 import android.util.Base64
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionLocalDataSource
-import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
+import com.clonect.feeltalk.new_data.util.AppLevelEncryptHelper
 import com.clonect.feeltalk.data.utils.MessageEncryptHelper
 import java.io.File
 import java.security.KeyFactory

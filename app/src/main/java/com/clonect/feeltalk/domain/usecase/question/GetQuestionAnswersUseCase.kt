@@ -14,7 +14,6 @@ class GetQuestionAnswersUseCase(
         return when (result) {
             is Resource.Success -> questionRepository.getQuestionAnswers(result.data, question)
             is Resource.Error -> Resource.Error(result.throwable)
-            is Resource.Loading -> Resource.Loading(result.isLoading)
         }
     }
 }

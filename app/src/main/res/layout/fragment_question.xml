@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/gray_100"
-    tools:context=".new_presentation.ui.main_navigation.question.QuestionFragment">
+    tools:context=".new_presentation.ui.mainNavigation.question.QuestionFragment">
 
     <LinearLayout
         android:id="@+id/ll_action_bar"
@@ -162,7 +162,8 @@
                 android:layout_marginTop="16dp"
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/system_black"
-                app:cardCornerRadius="24dp" >
+                app:cardCornerRadius="24dp"
+                app:rippleColor="@color/system_alert">
 
                 <TextView
                     android:id="@+id/tv_answer_or_chat"
@@ -208,7 +209,7 @@
             android:id="@+id/rv_question"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginHorizontal="20dp"
+            android:paddingHorizontal="20dp"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/item_question"/>

@@ -41,7 +41,6 @@ class NewsViewModel @Inject constructor(
         when (result) {
             is Resource.Success -> _newsList.value = result.data
             is Resource.Error -> { infoLog("Fail to get news list: ${result.throwable.localizedMessage}") }
-            is Resource.Loading -> { infoLog("Fail to get news list") }
         }
     }
 
@@ -50,7 +49,6 @@ class NewsViewModel @Inject constructor(
         when (result) {
             is Resource.Success -> _partnerProfileUrl.value = result.data
             is Resource.Error -> { infoLog("Fail to get partner profile url: ${result.throwable.localizedMessage}") }
-            is Resource.Loading -> { infoLog("Fail to get partner profile url") }
         }
     }
 

@@ -145,9 +145,6 @@ class ChatViewModel @Inject constructor(
                 is Resource.Error -> {
                     infoLog("Fail to get chat list: ${result.throwable.localizedMessage}")
                 }
-                is Resource.Loading -> {
-                    infoLog("Fail to get chat list")
-                }
             }
         }
     }

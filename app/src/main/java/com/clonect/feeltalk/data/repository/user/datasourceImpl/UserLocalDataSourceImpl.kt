@@ -4,8 +4,8 @@ import android.content.Context
 import com.clonect.feeltalk.data.db.ChatDao
 import com.clonect.feeltalk.data.db.QuestionDao
 import com.clonect.feeltalk.data.repository.user.datasource.UserLocalDataSource
-import com.clonect.feeltalk.data.utils.AppLevelEncryptHelper
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
+import com.clonect.feeltalk.new_data.util.AppLevelEncryptHelper
 import okio.use
 import java.io.File
 

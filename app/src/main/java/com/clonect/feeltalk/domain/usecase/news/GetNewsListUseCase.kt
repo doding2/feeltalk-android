@@ -14,7 +14,6 @@ class GetNewsListUseCase(
         return when (result) {
             is Resource.Success -> newsRepository.getNewsList(result.data)
             is Resource.Error -> Resource.Error(result.throwable)
-            is Resource.Loading -> Resource.Loading(result.isLoading)
         }
     }
 }

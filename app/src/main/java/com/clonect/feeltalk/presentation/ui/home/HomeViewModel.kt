@@ -158,10 +158,6 @@ class HomeViewModel @Inject constructor(
                 _todayQuestion.value = Question("")
                 infoLog("Fail to load today question: ${result.throwable.localizedMessage}")
             }
-            is Resource.Loading -> {
-                _todayQuestion.value = Question("")
-                infoLog("Fail to load today question")
-            }
         }
     }
 
@@ -177,10 +173,6 @@ class HomeViewModel @Inject constructor(
             is Resource.Error -> {
                 _todayQuestion.value = question
                 infoLog("Fail to load today question answers: ${result.throwable.localizedMessage}")
-            }
-            is Resource.Loading -> {
-                _todayQuestion.value = question
-                infoLog("Fail to load today question answers")
             }
         }
     }

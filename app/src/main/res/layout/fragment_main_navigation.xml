@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".new_presentation.ui.main_navigation.MainNavigationFragment">
+    tools:context=".new_presentation.ui.mainNavigation.MainNavigationFragment">
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/mnv_bottom_navigation"

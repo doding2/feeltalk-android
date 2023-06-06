@@ -14,7 +14,6 @@ class UserLevelEncryptHelper(
                 return encrypted.data
             }
             is Resource.Error -> throw FeelTalkException.EncryptionFailureException()
-            is Resource.Loading -> throw IllegalStateException("Unexpected Error Occurred.")
         }
     }
 
@@ -25,7 +24,6 @@ class UserLevelEncryptHelper(
                 decrypted.data
             }
             is Resource.Error -> digest
-            is Resource.Loading -> throw IllegalStateException("Unexpected Error Occurred.")
         }
     }
 
@@ -36,7 +34,6 @@ class UserLevelEncryptHelper(
                 return encrypted.data
             }
             is Resource.Error -> throw FeelTalkException.EncryptionFailureException()
-            is Resource.Loading -> throw IllegalStateException("Unexpected Error Occurred.")
         }
     }
 
@@ -47,7 +44,6 @@ class UserLevelEncryptHelper(
                 decrypted.data
             }
             is Resource.Error -> digest
-            is Resource.Loading -> throw IllegalStateException("Unexpected Error Occurred.")
         }
     }
 

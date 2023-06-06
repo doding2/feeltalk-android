@@ -1,0 +1,32 @@
+package com.clonect.feeltalk.new_data.repository.token.dataSourceImpl
+
+import android.content.Context
+import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenLocalDataSource
+import com.clonect.feeltalk.new_data.util.AppLevelEncryptHelper
+import com.clonect.feeltalk.new_domain.model.token.TokenInfo
+import java.io.File
+
+class TokenLocalDataSourceImpl(
+    private val context: Context,
+    private val appLevelEncryptHelper: AppLevelEncryptHelper
+): TokenLocalDataSource {
+
+    override fun saveTokenInfo(tokenInfo: TokenInfo) {
+        val file = File(context.filesDir, "tokenInfo.dat")
+        val encrypted = appLevelEncryptHelper.encryptObject("tokenInfo", tokenInfo)
+        file.writeBytes(encrypted)
+    }
+
+    override fun getTokenInfo(): TokenInfo? {
+        val file = File(context.filesDir, "tokenInfo.dat")
+        if (!file.exists()) return null
+        val dataBytes = file.readBytes()
+        val decrypted = appLevelEncryptHelper.decryptObject<TokenInfo>("TokenInfo", dataBytes)
+        return decrypted as? TokenInfo
+    }
+
+    override fun deleteAll(): Boolean {
+        val tokenInfo = File(context.filesDir, "tokenInfo.dat")
+        return tokenInfo.delete()
+    }
+}

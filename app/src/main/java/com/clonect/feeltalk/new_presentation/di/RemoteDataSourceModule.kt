@@ -1,0 +1,74 @@
+package com.clonect.feeltalk.new_presentation.di
+
+import com.clonect.feeltalk.data.repository.chat.datasource.ChatRemoteDataSource
+import com.clonect.feeltalk.data.repository.chat.datasourceImpl.ChatRemoteDataSourceImpl
+import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionRemoteDataSource
+import com.clonect.feeltalk.data.repository.encryption.datasourceImpl.EncryptionRemoteDataSourceImpl
+import com.clonect.feeltalk.data.repository.question.datasource.QuestionRemoteDataSource
+import com.clonect.feeltalk.data.repository.question.datasourceImpl.QuestionRemoteDataSourceImpl
+import com.clonect.feeltalk.data.repository.user.datasource.UserRemoteDataSource
+import com.clonect.feeltalk.data.repository.user.datasourceImpl.UserRemoteDataSourceImpl
+import com.clonect.feeltalk.new_data.api.ClonectService
+import com.clonect.feeltalk.new_data.repository.signIn.dataSource.SignInRemoteDataSource
+import com.clonect.feeltalk.new_data.repository.signIn.dataSourceImpl.SignInRemoteDataSourceImpl
+import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenRemoteDataSource
+import com.clonect.feeltalk.new_data.repository.token.dataSourceImpl.TokenRemoteDataSourceImpl
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+class RemoteDataSourceModule {
+
+    @Singleton
+    @Provides
+    fun providesSignInRemoteDatasource(clonectService: ClonectService): SignInRemoteDataSource {
+        return SignInRemoteDataSourceImpl(clonectService)
+    }
+
+    @Singleton
+    @Provides
+    fun providesTokenRemoteDataSource(clonectService: ClonectService): TokenRemoteDataSource {
+        return TokenRemoteDataSourceImpl(clonectService)
+    }
+
+
+    /** old **/
+
+    @Singleton
+    @Provides
+    fun providesUserRemoteDataSource(
+        clonectService: ClonectService
+    ): UserRemoteDataSource {
+        return UserRemoteDataSourceImpl(clonectService)
+    }
+
+    @Singleton
+    @Provides
+    fun providesChatRemoteDataSource(
+        clonectService: ClonectService
+    ): ChatRemoteDataSource {
+        return ChatRemoteDataSourceImpl(clonectService)
+    }
+
+    @Singleton
+    @Provides
+    fun providesQuestionRemoteDataSource(
+        clonectService: ClonectService
+    ): QuestionRemoteDataSource {
+        return QuestionRemoteDataSourceImpl(clonectService)
+    }
+
+    @Singleton
+    @Provides
+    fun providesEncryptionRemoteDataSource(
+        clonectService: ClonectService
+    ): EncryptionRemoteDataSource {
+        return EncryptionRemoteDataSourceImpl(clonectService)
+    }
+
+
+}

@@ -7,24 +7,27 @@
 
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="com.clonect.feeltalk.presentation.ui.sign_up.SignUpFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.signUp.SignUpFragment"
         android:label="fragment_sign_up"
         tools:layout="@layout/fragment_sign_up" >
         <action
             android:id="@+id/action_signUpFragment_to_signUpNavigationFragment"
-            app:destination="@id/signUpNavigationFragment"
+            app:destination="@id/signUpNavigationFragment" />
+        <action
+            android:id="@+id/action_signUpFragment_to_mainNavigationFragment"
+            app:destination="@id/mainNavigationFragment"
             app:popUpTo="@id/signUpFragment"
             app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/signUpNavigationFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.sign_up_navigation.SignUpNavigationFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.signUpNavigation.SignUpNavigationFragment"
         android:label="fragment_sign_up_navigation"
         tools:layout="@layout/fragment_sign_up_navigation" >
         <action
             android:id="@+id/action_signUpNavigationFragment_to_mainNavigationFragment"
             app:destination="@id/mainNavigationFragment"
-            app:popUpTo="@id/signUpNavigationFragment"
+            app:popUpTo="@id/signUpFragment"
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_signUpNavigationFragment_to_agreementSensitiveDetailFragment"
@@ -35,12 +38,15 @@
     </fragment>
     <fragment
         android:id="@+id/mainNavigationFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.main_navigation.MainNavigationFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationFragment"
         android:label="fragment_main_navigation"
         tools:layout="@layout/fragment_main_navigation" >
         <action
             android:id="@+id/action_mainNavigationFragment_to_chatFragment"
             app:destination="@id/chatFragment" />
+        <action
+            android:id="@+id/action_mainNavigationFragment_to_addChallengeFragment"
+            app:destination="@id/addChallengeFragment" />
     </fragment>
     <fragment
         android:id="@+id/chatFragment"
@@ -49,12 +55,17 @@
         tools:layout="@layout/fragment_chat" />
     <fragment
         android:id="@+id/agreementPrivacyDetailFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.agreement_privacy_detail.AgreementPrivacyDetailFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.agreementPrivacyDetail.AgreementPrivacyDetailFragment"
         android:label="fragment_agreement_privacy_detail"
         tools:layout="@layout/fragment_agreement_privacy_detail" />
     <fragment
         android:id="@+id/agreementSensitiveDetailFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.agreement_sensitive_detail.AgreementSensitiveDetailFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.agreementSensitiveDetail.AgreementSensitiveDetailFragment"
         android:label="fragment_agreement_sensitive_detail"
         tools:layout="@layout/fragment_agreement_sensitive_detail" />
+    <fragment
+        android:id="@+id/addChallengeFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.addChallenge.AddChallengeFragment"
+        android:label="fragment_add_challenge"
+        tools:layout="@layout/fragment_add_challenge" />
 </navigation>

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="com.clonect.feeltalk.presentation.ui.sign_up.SignUpFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.signUp.SignUpFragment"
         android:label="fragment_sign_up"
         tools:layout="@layout/fragment_sign_up" >
         <action
