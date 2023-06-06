@@ -1,9 +1,9 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.addChallenge
 
 import androidx.lifecycle.ViewModel
+import com.clonect.feeltalk.common.plusDayBy
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.challenge.ChallengeCategory
-import com.clonect.feeltalk.new_presentation.ui.util.plusNowBy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,7 +24,7 @@ class AddChallengeViewModel @Inject constructor(
     private val _body = MutableStateFlow<String?>(null)
     val body = _body.asStateFlow()
 
-    private val _deadline = MutableStateFlow(plusNowBy(1))
+    private val _deadline = MutableStateFlow(Date().plusDayBy(1))
     val deadline = _deadline.asStateFlow()
 
 

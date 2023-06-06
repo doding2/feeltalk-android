@@ -2,8 +2,11 @@ package com.clonect.feeltalk.new_presentation.ui.signUpNavigation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.usecase.signIn.SignUpUseCase
+import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -20,8 +23,22 @@ class SignUpNavigationViewModel @Inject constructor(
     private val _signUpProcess = MutableStateFlow(0)
     val signUpProcess = _signUpProcess.asStateFlow()
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
+    private val _errorMessage = MutableSharedFlow<String>()
+    val errorMessage = _errorMessage.asSharedFlow()
+
     fun setSignUpProcess(process: Int) {
         _signUpProcess.value = process.coerceIn(0, 80)
+    }
+
+    fun setLoading(isLoading: Boolean) {
+        _isLoading.value = isLoading
+    }
+
+    fun sendErrorMessage(message: String) = viewModelScope.launch {
+        _errorMessage.emit(message)
     }
 
     fun clear() {
@@ -69,6 +86,21 @@ class SignUpNavigationViewModel @Inject constructor(
 
     fun setNicknameProcessed(processed: Boolean) = viewModelScope.launch {
         _isNicknameProcessed.emit(processed)
+    }
+
+    fun signUp() = viewModelScope.launch(Dispatchers.IO) {
+        setLoading(true)
+        when (val result = signUpUseCase(_nickname.value)) {
+            is Resource.Success -> {
+                setNicknameProcessed(true)
+            }
+            is Resource.Error -> {
+                setNicknameProcessed(false)
+                infoLog("회원가입 실패:${result.throwable.stackTrace.joinToString("\n")}")
+                result.throwable.localizedMessage?.let { sendErrorMessage(it) }
+            }
+        }
+        setLoading(false)
     }
 
 

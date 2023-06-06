@@ -65,7 +65,7 @@ class HomeFragment : Fragment() {
 
         val currentSignal = viewModel.mySignal.value
         val bundle = Bundle()
-        bundle.putString("currentSignal", currentSignal.toString())
+        bundle.putString("currentSignal", currentSignal.raw)
         bottomSheet.arguments = bundle
 
         bottomSheet.show(requireActivity().supportFragmentManager, SignalBottomSheetFragment.TAG)
@@ -80,9 +80,7 @@ class HomeFragment : Fragment() {
         val spanString = SpannableStringBuilder(title).apply {
             setSpan(CustomTypefaceSpan("", countFont), 0, count.toString().length, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
             setSpan(CustomTypefaceSpan("", decoFont), count.toString().length, title.length, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
-            activity?.dpToPx(28f)?.let {
-                setSpan(AbsoluteSizeSpan(it.toInt()), 0, count.toString().length, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
-            }
+            setSpan(AbsoluteSizeSpan(activity.dpToPx(28f).toInt()), 0, count.toString().length, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
             setSpan(CountCenterVerticalSpan(), 0, count.toString().length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
         binding.tvQuestionCount.text = spanString

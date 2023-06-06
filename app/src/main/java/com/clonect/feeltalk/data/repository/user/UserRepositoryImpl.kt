@@ -518,7 +518,7 @@ class UserRepositoryImpl(
         idToken: String,
         serverAuthCode: String,
         fcmToken: String
-    ): Resource<SignUpDto> {
+    ): Resource<OldSignUpDto> {
         return try {
             val response = remoteDataSource.signUpWithGoogle(idToken, serverAuthCode, fcmToken)
 
@@ -544,7 +544,7 @@ class UserRepositoryImpl(
 
     override suspend fun signUpWithKakao(
         accessToken: String, fcmToken: String
-    ): Resource<SignUpDto> {
+    ): Resource<OldSignUpDto> {
         return try {
             val response = remoteDataSource.signUpWithKakao(accessToken, fcmToken).body()!!
 
@@ -589,7 +589,7 @@ class UserRepositoryImpl(
     override suspend fun signUpWithNaver(
         accessToken: String,
         fcmToken: String,
-    ): Resource<SignUpDto> {
+    ): Resource<OldSignUpDto> {
         return try {
             val response = remoteDataSource.signUpWithNaver(accessToken, fcmToken).body()!!
 
@@ -630,7 +630,7 @@ class UserRepositoryImpl(
         }
     }
 
-    override suspend fun signUpWithApple(uuid: String, fcmToken: String): Resource<SignUpDto> {
+    override suspend fun signUpWithApple(uuid: String, fcmToken: String): Resource<OldSignUpDto> {
         return try {
             val appleAccessToken = remoteDataSource.getAppleAccessToken(uuid).body()!!.accessToken
             val response = remoteDataSource.signUpWithApple(appleAccessToken, fcmToken).body()!!

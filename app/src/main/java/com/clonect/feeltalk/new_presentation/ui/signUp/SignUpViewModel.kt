@@ -7,6 +7,7 @@ import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
 import com.clonect.feeltalk.new_domain.usecase.signIn.CheckMemberTypeUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.CacheSocialTokenUseCase
+import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -45,24 +46,25 @@ class SignUpViewModel @Inject constructor(
         when (val result = checkMemberTypeUseCase(socialToken)) {
             is Resource.Success -> {
                 setLoading(false)
-                when (result.data.type) {
+                when (result.data.type.lowercase()) {
                     "newbie" -> {
                         cacheSocialToken(socialToken)
                         _navigateToAgreement.emit(true)
                     }
                     "solo" -> {
                         // TODO 자동 로그인 하기
-//                        _navigateToCoupleCode.emit(true)
+                        _navigateToCoupleCode.emit(true)
                     }
                     "couple" -> {
                         // TODO 자동 로그인 하기
-//                        _navigateToMain.emit(true)
+                        _navigateToMain.emit(true)
                     }
                 }
             }
             is Resource.Error -> {
                 setLoading(false)
-                _errorMessage.emit(result.throwable.localizedMessage ?: "네트워크 연결을 확인해주세요.")
+                infoLog("회원 타입 체크 실패: ${result.throwable.stackTrace.joinToString("\n")}")
+                result.throwable.localizedMessage?.let { _errorMessage.emit(it) }
             }
         }
     }

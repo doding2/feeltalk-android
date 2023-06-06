@@ -1,6 +1,7 @@
 package com.clonect.feeltalk.new_data.repository.signIn
 
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.common.plusSecondsBy
 import com.clonect.feeltalk.new_data.repository.signIn.dataSource.SignInCacheDataSource
 import com.clonect.feeltalk.new_data.repository.signIn.dataSource.SignInLocalDataSource
 import com.clonect.feeltalk.new_data.repository.signIn.dataSource.SignInRemoteDataSource
@@ -8,6 +9,7 @@ import com.clonect.feeltalk.new_domain.model.signIn.CheckMemberTypeDto
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
 import com.clonect.feeltalk.new_domain.model.token.TokenInfo
 import com.clonect.feeltalk.new_domain.repository.signIn.SignInRepository
+import java.util.*
 import kotlin.coroutines.cancellation.CancellationException
 
 class SignInRepositoryImpl(
@@ -29,8 +31,15 @@ class SignInRepositoryImpl(
 
     override suspend fun signUp(socialToken: SocialToken, nickname: String): Resource<TokenInfo> {
         return try {
+            val now = Date()
             val result = remoteDataSource.signUp(socialToken, nickname)
-            Resource.Success(result)
+            val tokenInfo = TokenInfo(
+                accessToken = result.accessToken,
+                refreshToken = result.refreshToken,
+                expiresAt = now.plusSecondsBy(result.expiresIn),
+                snsType = socialToken.type
+            )
+            Resource.Success(tokenInfo)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {

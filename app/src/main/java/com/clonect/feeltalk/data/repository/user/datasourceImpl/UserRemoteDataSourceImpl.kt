@@ -207,7 +207,7 @@ class UserRemoteDataSourceImpl(
         idToken: String,
         serverAuthCode: String,
         fcmToken: String
-    ): Response<SignUpDto> {
+    ): Response<OldSignUpDto> {
         val body = JsonObject().apply {
             addProperty("idToken", idToken)
             addProperty("authCode", serverAuthCode)
@@ -243,7 +243,7 @@ class UserRemoteDataSourceImpl(
     override suspend fun signUpWithKakao(
         accessToken: String,
         fcmToken: String
-    ): Response<SignUpDto> {
+    ): Response<OldSignUpDto> {
         val body = JsonObject().apply {
             addProperty("accessToken", accessToken)
             addProperty("fcmToken", fcmToken)
@@ -268,7 +268,7 @@ class UserRemoteDataSourceImpl(
     override suspend fun signUpWithNaver(
         accessToken: String,
         fcmToken: String,
-    ): Response<SignUpDto> {
+    ): Response<OldSignUpDto> {
         val body = JsonObject().apply {
             addProperty("accessToken", accessToken)
             addProperty("fcmToken", fcmToken)
@@ -289,7 +289,7 @@ class UserRemoteDataSourceImpl(
         return response
     }
 
-    override suspend fun signUpWithApple(accessToken: String, fcmToken: String): Response<SignUpDto> {
+    override suspend fun signUpWithApple(accessToken: String, fcmToken: String): Response<OldSignUpDto> {
         val body = JsonObject().apply {
             addProperty("accessToken", accessToken)
             addProperty("fcmToken", fcmToken)

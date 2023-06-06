@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.new_presentation.ui.signUpNavigation
 
+import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,6 +20,7 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentSignUpNavigationBinding
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
+import com.clonect.feeltalk.presentation.utils.makeLoadingDialog
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -31,6 +33,7 @@ class SignUpNavigationFragment : Fragment() {
     private val viewModel: SignUpNavigationViewModel by activityViewModels()
     private lateinit var navController: NavController
     private lateinit var onBackCallback: OnBackPressedCallback
+    private lateinit var loadingDialog: Dialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,12 +42,18 @@ class SignUpNavigationFragment : Fragment() {
         binding = FragmentSignUpNavigationBinding.inflate(inflater, container, false)
         val navHostFragment = childFragmentManager.findFragmentById(R.id.fcv_fragment) as NavHostFragment
         navController = navHostFragment.navController
-        val startPage = requireArguments().getString("startPage", "agreement")
-        if (startPage == "coupleCode") {
-            navigateToCoupleCode()
-            navController.backQueue.clear()
+        val startPage = arguments?.getString("startPage", "agreement")
+        val startDestination = if (startPage == "coupleCode") {
+            R.id.coupleCodeFragment
+        } else {
+            R.id.agreementFragment
         }
+        val navGraph = navController.navInflater.inflate(R.navigation.sign_up_nav_graph)
+        navGraph.setStartDestination(startDestination)
+        navController.graph = navGraph
+
         viewModel.clear()
+        loadingDialog = makeLoadingDialog()
         return binding.root
     }
 
@@ -61,13 +70,13 @@ class SignUpNavigationFragment : Fragment() {
     private fun navigateToNickname() {
         val navigateFragmentId = R.id.nicknameFragment
         if (navController.currentDestination?.id == navigateFragmentId) return
-        navController.navigate(navigateFragmentId)
+        navController.navigate(R.id.action_agreementFragment_to_nicknameFragment)
     }
 
     private fun navigateToCoupleCode() {
         val navigateFragmentId = R.id.coupleCodeFragment
         if (navController.currentDestination?.id == navigateFragmentId) return
-        navController.navigate(navigateFragmentId)
+        navController.navigate(R.id.action_nicknameFragment_to_coupleCodeFragment)
     }
 
     private fun navigateToMain() = runCatching {
@@ -79,7 +88,7 @@ class SignUpNavigationFragment : Fragment() {
     }
 
 
-    private fun showSnackBar() {
+    private fun showCoupleConnectedSnackBar() {
         val decorView = activity?.window?.decorView ?: return
         Snackbar.make(
             decorView,
@@ -89,15 +98,40 @@ class SignUpNavigationFragment : Fragment() {
             val view = it.view
             view.setOnClickListener { _ -> it.dismiss() }
             val layoutParams = view.layoutParams as FrameLayout.LayoutParams
-            layoutParams.bottomMargin = getNavigationBarHeight() + requireActivity().dpToPx(56f).toInt()
+            layoutParams.bottomMargin = getNavigationBarHeight() + activity.dpToPx(56f).toInt()
             view.layoutParams = layoutParams
             it.show()
         }
+    }
 
+    private fun showErrorSnackBar(message: String) {
+        val decorView = activity?.window?.decorView ?: return
+        Snackbar.make(
+            decorView,
+            message,
+            Snackbar.LENGTH_LONG
+        ).also {
+            val view = it.view
+            view.setOnClickListener { _ -> it.dismiss() }
+            val layoutParams = view.layoutParams as FrameLayout.LayoutParams
+            layoutParams.bottomMargin = getNavigationBarHeight()
+            view.layoutParams = layoutParams
+            it.show()
+        }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            loadingDialog.show()
+        } else {
+            loadingDialog.dismiss()
+        }
     }
 
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch { viewModel.errorMessage.collectLatest(::showErrorSnackBar) }
+            launch { viewModel.isLoading.collectLatest(::showLoading) }
             launch {
                 viewModel.signUpProcess.collectLatest {
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -107,23 +141,20 @@ class SignUpNavigationFragment : Fragment() {
                     }
                 }
             }
-
             launch {
                 viewModel.isAgreementProcessed.collectLatest { processed ->
                     if (processed) navigateToNickname()
                 }
             }
-
             launch {
                 viewModel.isNicknameProcessed.collectLatest { processed ->
                     if (processed) navigateToCoupleCode()
                 }
             }
-
             launch {
                 viewModel.isCoupleConnected.collectLatest { connected ->
                     if (connected) {
-                        showSnackBar()
+                        showCoupleConnectedSnackBar()
                         navigateToMain()
                         viewModel.clear()
                     }

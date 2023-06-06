@@ -13,6 +13,7 @@ import com.clonect.feeltalk.domain.model.dto.news.NewsDto
 import com.clonect.feeltalk.domain.model.dto.question.*
 import com.clonect.feeltalk.domain.model.dto.user.*
 import com.clonect.feeltalk.new_domain.model.signIn.CheckMemberTypeDto
+import com.clonect.feeltalk.new_domain.model.signIn.SignUpDto
 import com.clonect.feeltalk.new_domain.model.token.TokenInfo
 import com.google.gson.JsonObject
 import okhttp3.MultipartBody
@@ -28,11 +29,10 @@ interface ClonectService {
         @Body body: JsonObject
     ): Response<ApiResponse<CheckMemberTypeDto>>
 
-    @POST("/api/v1/")
+    @POST("/api/v1/member")
     suspend fun signUp(
-        @Header("Authorization") token: String,
         @Body body: JsonObject
-    ): Response<ApiResponse<TokenInfo>>
+    ): Response<ApiResponse<SignUpDto>>
 
 
     /** Token **/
@@ -200,7 +200,7 @@ interface ClonectService {
     @POST("api/member")
     suspend fun signUpWithGoogle(
         @Body body: JsonObject,
-    ): Response<SignUpDto>
+    ): Response<OldSignUpDto>
 
     @POST("api/login")
     suspend fun autoLogIn(
@@ -215,7 +215,7 @@ interface ClonectService {
     @POST("/api/member/kakao")
     suspend fun signUpWithKakao(
         @Body body: JsonObject,
-    ): Response<SignUpDto>
+    ): Response<OldSignUpDto>
 
     @POST("/api/login/kakao")
     suspend fun autoLogInWithKakao(
@@ -225,7 +225,7 @@ interface ClonectService {
     @POST("/api/member/naver")
     suspend fun signUpWithNaver(
         @Body body: JsonObject,
-    ): Response<SignUpDto>
+    ): Response<OldSignUpDto>
 
     @POST("/api/login/naver")
     suspend fun autoLogInWithNaver(
@@ -235,7 +235,7 @@ interface ClonectService {
     @POST("/api/member/apple")
     suspend fun signUpWithApple(
         @Body body: JsonObject,
-    ): Response<SignUpDto>
+    ): Response<OldSignUpDto>
 
     @POST("/api/login/apple")
     suspend fun autoLogInWithApple(

@@ -4,6 +4,7 @@ import android.accounts.NetworkErrorException
 import com.clonect.feeltalk.new_data.api.ClonectService
 import com.clonect.feeltalk.new_data.repository.signIn.dataSource.SignInRemoteDataSource
 import com.clonect.feeltalk.new_domain.model.signIn.CheckMemberTypeDto
+import com.clonect.feeltalk.new_domain.model.signIn.SignUpDto
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
 import com.clonect.feeltalk.new_domain.model.token.TokenInfo
 import com.clonect.feeltalk.new_domain.model.user.SocialType
@@ -29,7 +30,7 @@ class SignInRemoteDataSourceImpl(
                     addProperty("authCode", socialToken.serverAuthCode)
                 }
                 SocialType.Apple -> {
-                    addProperty("code", socialToken.state)
+                    addProperty("state", socialToken.state)
                 }
             }
         }
@@ -40,8 +41,10 @@ class SignInRemoteDataSourceImpl(
         return response.body()!!.data
     }
 
-    override suspend fun signUp(socialToken: SocialToken, nickname: String): TokenInfo {
+    override suspend fun signUp(socialToken: SocialToken, nickname: String): SignUpDto {
         val body = JsonObject().apply {
+            addProperty("useTerm", true)
+            addProperty("sensitiveTerm", true)
             addProperty("nickName", nickname)
             addProperty("snsType", socialToken.type.toString().lowercase())
 
@@ -56,11 +59,11 @@ class SignInRemoteDataSourceImpl(
                     addProperty("authCode", socialToken.serverAuthCode)
                 }
                 SocialType.Apple -> {
-                    addProperty("code", socialToken.state)
+                    addProperty("state", socialToken.state)
                 }
             }
         }
-        val response = clonectService.signUp("Bearer ${socialToken.accessToken}", body)
+        val response = clonectService.signUp(body)
         if (!response.isSuccessful) throw HttpException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "failure") throw NetworkErrorException(response.body()?.message)

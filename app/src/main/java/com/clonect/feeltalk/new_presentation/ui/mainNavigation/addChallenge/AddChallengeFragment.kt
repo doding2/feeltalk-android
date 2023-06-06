@@ -82,13 +82,13 @@ class AddChallengeFragment : Fragment() {
         if (enabled) {
             dpDeadlinePicker.visibility = View.VISIBLE
             mcvDeadline.strokeColor = requireContext().getColor(R.color.main_500)
-            mcvDeadline.strokeWidth = activity?.dpToPx(2f)?.toInt() ?: 0
+            mcvDeadline.strokeWidth = activity.dpToPx(2f).toInt()
 
             hideKeyboard()
         } else {
             dpDeadlinePicker.visibility = View.GONE
             mcvDeadline.strokeColor = requireContext().getColor(R.color.gray_400)
-            mcvDeadline.strokeWidth = activity?.dpToPx(1f)?.toInt() ?: 0
+            mcvDeadline.strokeWidth = activity.dpToPx(1f).toInt()
         }
     }
 

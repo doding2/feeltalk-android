@@ -32,16 +32,16 @@ interface UserRemoteDataSource {
 
     suspend fun autoLogIn(accessToken: String): Response<StatusDto>
 
-    suspend fun signUpWithGoogle(idToken: String, serverAuthCode: String, fcmToken: String): Response<SignUpDto>
+    suspend fun signUpWithGoogle(idToken: String, serverAuthCode: String, fcmToken: String): Response<OldSignUpDto>
     suspend fun autoLogInWithGoogle(idToken: String): Response<AccessTokenDto>
 
-    suspend fun signUpWithKakao(accessToken: String, fcmToken: String): Response<SignUpDto>
+    suspend fun signUpWithKakao(accessToken: String, fcmToken: String): Response<OldSignUpDto>
     suspend fun autoLogInWithKakao(accessToken: String): Response<AccessTokenDto>
 
-    suspend fun signUpWithNaver(accessToken: String, fcmToken: String): Response<SignUpDto>
+    suspend fun signUpWithNaver(accessToken: String, fcmToken: String): Response<OldSignUpDto>
     suspend fun autoLogInWithNaver(accessToken: String): Response<AccessTokenDto>
 
-    suspend fun signUpWithApple(accessToken: String, fcmToken: String): Response<SignUpDto>
+    suspend fun signUpWithApple(accessToken: String, fcmToken: String): Response<OldSignUpDto>
     suspend fun autoLogInWithApple(accessToken: String): Response<AccessTokenDto>
     suspend fun getAppleAccessToken(uuid: String): Response<AccessTokenDto>
 

@@ -64,7 +64,7 @@ class CoupleCodeFragment : Fragment() {
 
     private fun scaleCodeLayout() = binding.run {
         val screenHeight = requireContext().getScreenHeight()
-        val originalHeight = requireActivity().dpToPx(812f)
+        val originalHeight = activity.dpToPx(812f)
         val ratio = screenHeight / originalHeight
         val reverseRatio = originalHeight / screenHeight
         clCodeLayout.apply {

@@ -161,7 +161,7 @@ class AnswerBottomSheetFragment(
                     mcvPartnerAnswerStateContainer.apply {
                         setCardBackgroundColor(requireContext().getColor(R.color.main_300))
                         strokeColor = requireContext().getColor(R.color.main_500)
-                        strokeWidth = requireActivity().dpToPx(1f).toInt()
+                        strokeWidth = activity.dpToPx(1f).toInt()
                         isFocusable = true
                         isClickable = true
                         isEnabled = true

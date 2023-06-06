@@ -21,7 +21,9 @@
         tools:layout="@layout/fragment_nickname" >
         <action
             android:id="@+id/action_nicknameFragment_to_coupleCodeFragment"
-            app:destination="@id/coupleCodeFragment" />
+            app:destination="@id/coupleCodeFragment"
+            app:popUpTo="@id/agreementFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/coupleCodeFragment"

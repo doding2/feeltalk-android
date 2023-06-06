@@ -209,7 +209,7 @@ class SignUpFragment : Fragment() {
     }
 
 
-    private fun setLoading(isLoading: Boolean) {
+    private fun showLoading(isLoading: Boolean) {
         if (isLoading) {
             loadingDialog.show()
         } else {
@@ -235,7 +235,7 @@ class SignUpFragment : Fragment() {
 
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-            launch { viewModel.isLoading.collectLatest(::setLoading) }
+            launch { viewModel.isLoading.collectLatest(::showLoading) }
             launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
             launch {
                 viewModel.navigateToAgreement.collectLatest {

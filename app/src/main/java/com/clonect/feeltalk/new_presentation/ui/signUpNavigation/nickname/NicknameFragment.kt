@@ -9,6 +9,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -30,6 +31,7 @@ class NicknameFragment : Fragment() {
 
     private lateinit var binding: FragmentNicknameBinding
     private val viewModel: SignUpNavigationViewModel by activityViewModels()
+    private lateinit var onBackCallback: OnBackPressedCallback
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,14 +55,14 @@ class NicknameFragment : Fragment() {
                 viewModel.setNickname(it?.toString() ?: "")
             }
 
-            mcvNext.setOnClickListener { navigateToCoupleCode() }
+            mcvNext.setOnClickListener { signUp() }
         }
     }
 
 
-    private fun navigateToCoupleCode() {
+    private fun signUp() {
         hideKeyboard()
-        viewModel.setNicknameProcessed(true)
+        viewModel.signUp()
     }
 
 
@@ -83,8 +85,8 @@ class NicknameFragment : Fragment() {
         }
         keyboardListener.setOnHiddenKeyboard {
             etNickname.clearFocus()
-            setNextButtonMargin((activity?.dpToPx(20f)?.toInt() ?: 0))
-            mcvNext.radius = activity?.dpToPx(30f) ?: 500f
+            setNextButtonMargin((activity.dpToPx(20f).toInt()))
+            mcvNext.radius = activity.dpToPx(30f)
         }
     }
 
@@ -138,5 +140,4 @@ class NicknameFragment : Fragment() {
             }
         }
     }
-
 }

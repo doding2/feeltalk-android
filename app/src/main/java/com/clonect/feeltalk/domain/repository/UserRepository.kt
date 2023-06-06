@@ -38,16 +38,16 @@ interface UserRepository {
 
     suspend fun autoLogIn(): Resource<StatusDto>
 
-    suspend fun signUpWithGoogle(idToken: String, serverAuthCode: String, fcmToken: String): Resource<SignUpDto>
+    suspend fun signUpWithGoogle(idToken: String, serverAuthCode: String, fcmToken: String): Resource<OldSignUpDto>
     suspend fun autoLogInWithGoogle(): Resource<AccessTokenDto>
 
-    suspend fun signUpWithKakao(accessToken: String, fcmToken: String): Resource<SignUpDto>
+    suspend fun signUpWithKakao(accessToken: String, fcmToken: String): Resource<OldSignUpDto>
     suspend fun autoLogInWithKakao(): Resource<AccessTokenDto>
 
-    suspend fun signUpWithNaver(accessToken: String, fcmToken: String): Resource<SignUpDto>
+    suspend fun signUpWithNaver(accessToken: String, fcmToken: String): Resource<OldSignUpDto>
     suspend fun autoLogInWithNaver(): Resource<AccessTokenDto>
 
-    suspend fun signUpWithApple(uuid: String, fcmToken: String): Resource<SignUpDto>
+    suspend fun signUpWithApple(uuid: String, fcmToken: String): Resource<OldSignUpDto>
     suspend fun autoLogInWithApple(): Resource<AccessTokenDto>
     suspend fun checkIsAppleLoggedIn(): Resource<Boolean>
 
