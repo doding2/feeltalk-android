@@ -42,17 +42,9 @@
         android:label="fragment_main_navigation"
         tools:layout="@layout/fragment_main_navigation" >
         <action
-            android:id="@+id/action_mainNavigationFragment_to_chatFragment"
-            app:destination="@id/chatFragment" />
-        <action
             android:id="@+id/action_mainNavigationFragment_to_addChallengeFragment"
             app:destination="@id/addChallengeFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/chatFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.chat.ChatFragment"
-        android:label="fragment_chat"
-        tools:layout="@layout/fragment_chat" />
     <fragment
         android:id="@+id/agreementPrivacyDetailFragment"
         android:name="com.clonect.feeltalk.new_presentation.ui.agreementPrivacyDetail.AgreementPrivacyDetailFragment"

@@ -52,7 +52,10 @@ class AddChallengeFragment : Fragment() {
             etTitle.addTextChangedListener { viewModel.setTitle(it?.toString()) }
             etBody.addTextChangedListener { viewModel.setBody(it?.toString()) }
 
-            mcvCategory.setOnClickListener { changeCategory() }
+            mcvCategory.setOnClickListener {
+                enableDeadlinePicker(false)
+                changeCategory()
+            }
 
             mcvDeadline.setOnClickListener { enableDeadlinePicker(true) }
 

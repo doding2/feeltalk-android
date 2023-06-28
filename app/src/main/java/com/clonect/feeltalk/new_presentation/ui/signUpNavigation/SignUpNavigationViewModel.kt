@@ -3,6 +3,7 @@ package com.clonect.feeltalk.new_presentation.ui.signUpNavigation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.new_domain.usecase.signIn.GetCoupleCodeUseCase
 import com.clonect.feeltalk.new_domain.usecase.signIn.SignUpUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,11 +13,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class SignUpNavigationViewModel @Inject constructor(
-    private val signUpUseCase: SignUpUseCase
+    private val signUpUseCase: SignUpUseCase,
+    private val getCoupleCodeUseCase: GetCoupleCodeUseCase,
 ) : ViewModel() {
 
     // note: Common
@@ -92,6 +95,7 @@ class SignUpNavigationViewModel @Inject constructor(
         setLoading(true)
         when (val result = signUpUseCase(_nickname.value)) {
             is Resource.Success -> {
+                getCoupleCode()
                 setNicknameProcessed(true)
             }
             is Resource.Error -> {
@@ -105,8 +109,21 @@ class SignUpNavigationViewModel @Inject constructor(
 
 
     // note: Couple Code Fragment
-    private val _coupleCode = MutableStateFlow<String?>("COUPLECODE")
+    private val _coupleCode = MutableStateFlow<String?>(null)
     val coupleCode = _coupleCode.asStateFlow()
+
+    private suspend fun getCoupleCode() = withContext(Dispatchers.IO) {
+        when (val result = getCoupleCodeUseCase()) {
+            is Resource.Success -> {
+                _coupleCode.value = result.data.generateCode
+            }
+            is Resource.Error -> {
+                _coupleCode.value = null
+                infoLog("커플코드 로딩 실패: ${result.throwable.stackTrace.joinToString("\n")}")
+                result.throwable.localizedMessage?.let { sendErrorMessage(it) }
+            }
+        }
+    }
 
 
     // note: Couple Connect Bottom Sheet

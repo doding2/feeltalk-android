@@ -1,6 +1,5 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation
 
-import android.os.Parcelable
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,10 +11,10 @@ class MainNavigationViewModel @Inject constructor(
 
 ): ViewModel() {
 
-    private val _questionFragmentScrollState = MutableStateFlow<Parcelable?>(null)
-    val questionFragmentScrollState = _questionFragmentScrollState.asStateFlow()
+    private val _showChatNavigation = MutableStateFlow(false)
+    val showChatNavigation = _showChatNavigation.asStateFlow()
 
-    fun setQuestionFragmentScrollState(state: Parcelable?) {
-        _questionFragmentScrollState.value = state
+    fun toggleShowChatNavigation() {
+        _showChatNavigation.value = _showChatNavigation.value.not()
     }
 }

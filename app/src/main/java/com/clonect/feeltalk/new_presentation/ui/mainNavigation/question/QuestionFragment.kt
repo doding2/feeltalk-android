@@ -11,13 +11,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentQuestionBinding
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.answer.AnswerBottomSheetFragment
-import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -39,8 +37,9 @@ class QuestionFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentQuestionBinding.inflate(inflater, container, false)
-        binding.root.setPadding(0, getStatusBarHeight(), 0, 0)
+//        binding.root.setPadding(0, getStatusBarHeight(), 0, 0)
         setLightStatusBars(true, activity, binding.root)
+        activity?.window?.statusBarColor = requireContext().getColor(R.color.gray_100)
         return binding.root
     }
 
@@ -57,10 +56,10 @@ class QuestionFragment : Fragment() {
 
 
     private fun navigateToChat() {
-        requireParentFragment()
-            .requireParentFragment()
-            .findNavController()
-            .navigate(R.id.action_mainNavigationFragment_to_chatFragment)
+//        requireParentFragment()
+//            .requireParentFragment()
+//            .findNavController()
+//            .navigate(R.id.action_mainNavigationFragment_to_chatFragment)
     }
 
     private fun showAnswerBottomSheet(question: Question) {
@@ -88,10 +87,6 @@ class QuestionFragment : Fragment() {
 
 
     private fun initRecyclerView() {
-        navViewModel.questionFragmentScrollState.value?.let {
-            binding.rvQuestion.layoutManager?.onRestoreInstanceState(it)
-            navViewModel.setQuestionFragmentScrollState(null)
-        }
         binding.rvQuestion.adapter = adapter
         adapter.setOnItemClickListener(::onQuestionClick)
     }
@@ -138,10 +133,5 @@ class QuestionFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        if (!::binding.isInitialized) return
-        val scrollState = binding.rvQuestion.layoutManager?.onSaveInstanceState()
-        scrollState?.let {
-            navViewModel.setQuestionFragmentScrollState(scrollState)
-        }
     }
 }

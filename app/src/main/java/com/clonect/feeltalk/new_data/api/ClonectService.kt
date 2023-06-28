@@ -13,6 +13,7 @@ import com.clonect.feeltalk.domain.model.dto.news.NewsDto
 import com.clonect.feeltalk.domain.model.dto.question.*
 import com.clonect.feeltalk.domain.model.dto.user.*
 import com.clonect.feeltalk.new_domain.model.signIn.CheckMemberTypeDto
+import com.clonect.feeltalk.new_domain.model.signIn.CoupleCodeDto
 import com.clonect.feeltalk.new_domain.model.signIn.SignUpDto
 import com.clonect.feeltalk.new_domain.model.token.TokenInfo
 import com.google.gson.JsonObject
@@ -33,6 +34,11 @@ interface ClonectService {
     suspend fun signUp(
         @Body body: JsonObject
     ): Response<ApiResponse<SignUpDto>>
+
+    @GET("/api/v1/sign-up/invitation")
+    suspend fun getCoupleCode(
+        @Header("Authorization") token: String
+    ): Response<ApiResponse<CoupleCodeDto>>
 
 
     /** Token **/

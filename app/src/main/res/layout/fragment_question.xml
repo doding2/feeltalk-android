@@ -25,29 +25,6 @@
             android:textColor="@color/system_black"
             android:textSize="18sp"
             android:fontFamily="@font/pretendard_medium"/>
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
-        <ImageView
-            android:id="@+id/btn_notification"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:src="@drawable/n_ic_notification"
-            android:layout_gravity="center_vertical"
-            app:tint="@color/gray_500"/>
-
-        <ImageView
-            android:id="@+id/btn_my_page"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:src="@drawable/n_ic_my_page"
-            android:layout_gravity="center_vertical"
-            app:tint="@color/gray_500"/>
     </LinearLayout>
 
     <com.google.android.material.card.MaterialCardView

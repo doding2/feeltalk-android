@@ -6,6 +6,7 @@ import com.clonect.feeltalk.new_data.repository.signIn.dataSource.SignInCacheDat
 import com.clonect.feeltalk.new_data.repository.signIn.dataSource.SignInLocalDataSource
 import com.clonect.feeltalk.new_data.repository.signIn.dataSource.SignInRemoteDataSource
 import com.clonect.feeltalk.new_domain.model.signIn.CheckMemberTypeDto
+import com.clonect.feeltalk.new_domain.model.signIn.CoupleCodeDto
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
 import com.clonect.feeltalk.new_domain.model.token.TokenInfo
 import com.clonect.feeltalk.new_domain.repository.signIn.SignInRepository
@@ -40,6 +41,17 @@ class SignInRepositoryImpl(
                 snsType = socialToken.type
             )
             Resource.Success(tokenInfo)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun getCoupleCode(accessToken: String): Resource<CoupleCodeDto> {
+        return try {
+            val result = remoteDataSource.getCoupleCode(accessToken)
+            Resource.Success(result)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {

@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.ui.chat
+package com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

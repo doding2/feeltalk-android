@@ -19,7 +19,6 @@ import com.clonect.feeltalk.databinding.FragmentChallengeBinding
 import com.clonect.feeltalk.databinding.TabItemCompletedBinding
 import com.clonect.feeltalk.databinding.TabItemOngoingBinding
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
-import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -38,8 +37,9 @@ class ChallengeFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentChallengeBinding.inflate(inflater, container, false)
-        binding.root.setPadding(0, getStatusBarHeight(), 0, 0)
+//        binding.root.setPadding(0, getStatusBarHeight(), 0, 0)
         setLightStatusBars(true, activity, binding.root)
+        activity?.window?.statusBarColor = requireContext().getColor(R.color.gray_100)
         return binding.root
     }
 

@@ -29,9 +29,8 @@ fun getNavigationBarHeight(): Int {
 
 fun extendRootViewLayout(window: Window?) {
     if (Build.VERSION.SDK_INT < 25) return
-
     window?.setFlags(
-        WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+        WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS ,
         WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
     )
 }

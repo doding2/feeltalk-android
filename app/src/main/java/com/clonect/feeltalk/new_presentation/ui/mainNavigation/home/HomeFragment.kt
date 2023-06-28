@@ -21,7 +21,6 @@ import com.clonect.feeltalk.new_domain.model.signal.Signal
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.signal.SignalBottomSheetFragment
 import com.clonect.feeltalk.new_presentation.ui.util.CustomTypefaceSpan
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
-import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -40,8 +39,9 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
-        binding.root.setPadding(0, getStatusBarHeight(), 0, 0)
+//        binding.root.setPadding(0, getStatusBarHeight(), 0, 0)
         setLightStatusBars(false, activity, binding.root)
+        activity?.window?.statusBarColor = requireContext().getColor(R.color.main_500)
         return binding.root
     }
 

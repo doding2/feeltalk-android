@@ -5,39 +5,28 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.annotation.IdRes
 import androidx.core.view.forEach
-import androidx.navigation.ActivityNavigator
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavOptions
 import androidx.navigation.ui.NavigationUI
-import com.clonect.feeltalk.R
 import com.google.android.material.navigation.NavigationBarView
 import java.lang.ref.WeakReference
 
-fun NavigationBarView.setupWithMainNavController(navController: NavController, onClickChat: () -> Unit) {
-    NavigationUI.setupWithMainNavController(this, navController, onClickChat)
+fun NavigationBarView.setupWithMainNavController(navController: NavController) {
+    NavigationUI.setupWithMainNavController(this, navController)
 }
 
 private fun NavigationUI.setupWithMainNavController(
     navigationBarView: NavigationBarView,
     navController: NavController,
-    onClickChat: () -> Unit
 ) {
     navigationBarView.setOnItemSelectedListener { item ->
-        when (item.itemId) {
-            R.id.navigation_chat -> {
-                onClickChat()
-                false
-            }
-            else -> {
-                onMainNavDestinationSelected(
-                    item,
-                    navController
-                )
-            }
-        }
+        onMainNavDestinationSelected(
+            item,
+            navController
+        )
     }
     val weakReference = WeakReference(navigationBarView)
     navController.addOnDestinationChangedListener(
@@ -66,20 +55,20 @@ private fun NavDestination.matchDestination(@IdRes destId: Int): Boolean =
 
 private fun onMainNavDestinationSelected(item: MenuItem, navController: NavController): Boolean {
     val builder = NavOptions.Builder().setLaunchSingleTop(true).setRestoreState(true)
-    if (
-        navController.currentDestination!!.parent!!.findNode(item.itemId)
-                is ActivityNavigator.Destination
-    ) {
-        builder.setEnterAnim(androidx.navigation.ui.R.anim.nav_default_enter_anim)
-            .setExitAnim(androidx.navigation.ui.R.anim.nav_default_exit_anim)
-            .setPopEnterAnim(androidx.navigation.ui.R.anim.nav_default_pop_enter_anim)
-            .setPopExitAnim(androidx.navigation.ui.R.anim.nav_default_pop_exit_anim)
-    } else {
-        builder.setEnterAnim(androidx.navigation.ui.R.animator.nav_default_enter_anim)
-            .setExitAnim(androidx.navigation.ui.R.animator.nav_default_exit_anim)
-            .setPopEnterAnim(androidx.navigation.ui.R.animator.nav_default_pop_enter_anim)
-            .setPopExitAnim(androidx.navigation.ui.R.animator.nav_default_pop_exit_anim)
-    }
+//    if (
+//        navController.currentDestination!!.parent!!.findNode(item.itemId)
+//                is ActivityNavigator.Destination
+//    ) {
+//        builder.setEnterAnim(androidx.navigation.ui.R.anim.nav_default_enter_anim)
+//            .setExitAnim(androidx.navigation.ui.R.anim.nav_default_exit_anim)
+//            .setPopEnterAnim(androidx.navigation.ui.R.anim.nav_default_pop_enter_anim)
+//            .setPopExitAnim(androidx.navigation.ui.R.anim.nav_default_pop_exit_anim)
+//    } else {
+//        builder.setEnterAnim(androidx.navigation.ui.R.animator.nav_default_enter_anim)
+//            .setExitAnim(androidx.navigation.ui.R.animator.nav_default_exit_anim)
+//            .setPopEnterAnim(androidx.navigation.ui.R.animator.nav_default_pop_enter_anim)
+//            .setPopExitAnim(androidx.navigation.ui.R.animator.nav_default_pop_exit_anim)
+//    }
     if (item.order and Menu.CATEGORY_SECONDARY == 0) {
         builder.setPopUpTo(
             navController.graph.findStartDestination().id,

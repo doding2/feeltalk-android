@@ -70,7 +70,7 @@ class CompletedFragment : Fragment() {
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch {
-                viewModel.ongoingFragmentScrollToTop.collectLatest {
+                viewModel.completedFragmentScrollToTop.collectLatest {
                     if (it) scrollToTop()
                 }
             }

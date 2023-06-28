@@ -19,6 +19,7 @@ import com.clonect.feeltalk.new_data.util.AppLevelEncryptHelper
 import com.clonect.feeltalk.new_domain.repository.signIn.SignInRepository
 import com.clonect.feeltalk.new_domain.repository.signIn.TokenRepository
 import com.clonect.feeltalk.new_domain.usecase.signIn.CheckMemberTypeUseCase
+import com.clonect.feeltalk.new_domain.usecase.signIn.GetCoupleCodeUseCase
 import com.clonect.feeltalk.new_domain.usecase.signIn.SignUpUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.CacheSocialTokenUseCase
 import dagger.Module
@@ -55,7 +56,11 @@ class UseCaseModule {
         return CheckMemberTypeUseCase(signInRepository)
     }
 
-
+    @Singleton
+    @Provides
+    fun providesGetCoupleCodeUseCase(tokenRepository: TokenRepository, signInRepository: SignInRepository): GetCoupleCodeUseCase {
+        return GetCoupleCodeUseCase(tokenRepository, signInRepository)
+    }
 
 
 
