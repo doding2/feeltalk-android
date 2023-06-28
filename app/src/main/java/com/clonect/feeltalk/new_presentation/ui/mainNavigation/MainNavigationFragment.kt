@@ -1,10 +1,12 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.core.view.WindowCompat
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -12,8 +14,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentMainNavigationBinding
+import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -22,23 +26,24 @@ class MainNavigationFragment : Fragment() {
 
     private lateinit var binding: FragmentMainNavigationBinding
     private val viewModel: MainNavigationViewModel by activityViewModels()
-    private lateinit var windowManager: WindowManager
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentMainNavigationBinding.inflate(inflater, container, false)
-//        extendRootViewLayout(activity?.window)
-//        binding.root.setPadding(0, 0, 0, getNavigationBarHeight())
-//        binding.clFloatingChatContainer.setPadding(0, getStatusBarHeight(), 0, 0)
+
         setUpBottomNavigation()
         binding.mcvChatRounder.setBackgroundResource(R.drawable.background_dialog_round_top)
 
-        val window = activity?.window
-        window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-//        window?.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-//        window?.statusBarColor = requireContext().getColor(R.color.main_500)
+        // set fullscreen
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowCompat.setDecorFitsSystemWindows(requireActivity().window, false)
+            binding.clFloatingChatContainer.setPadding(0, getStatusBarHeight(), 0, 0)
+        } else {
+            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        }
 
         return binding.root
     }
@@ -69,8 +74,8 @@ class MainNavigationFragment : Fragment() {
         }
         val navHostFragment = childFragmentManager.findFragmentById(R.id.fcv_fragment) as NavHostFragment
         val navController = navHostFragment.navController
-//        bottomNav.setupWithNavController(navController)
-        bottomNav.setupWithMainNavController(navController)
+        bottomNav.setupWithNavController(navController)
+//        bottomNav.setupWithMainNavController(navController)
     }
 
 
@@ -92,10 +97,10 @@ class MainNavigationFragment : Fragment() {
         }
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
-//        closeRootViewLayout(activity?.window)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowCompat.setDecorFitsSystemWindows(requireActivity().window, true)
+        }
     }
-
 }

@@ -4,7 +4,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     tools:context=".new_presentation.ui.mainNavigation.MainNavigationFragment">
 
     <LinearLayout
@@ -41,7 +40,6 @@
         android:id="@+id/view_chat_behind"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
         android:background="@color/system_black"
         android:alpha="0.5"
         android:visibility="gone"
@@ -57,8 +55,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:clipChildren="false"
-        android:clipToPadding="false"
         android:animateLayoutChanges="true">
 
         <FrameLayout

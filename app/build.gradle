@@ -90,6 +90,8 @@ dependencies {
     // androidx brower
     implementation 'androidx.browser:browser:1.5.0'
 
+    implementation "dev.chrisbanes.insetter:insetter:0.6.1"
+
     // 믹스패널 데이터 분석
     implementation "com.mixpanel.android:mixpanel-android:7.+"
 

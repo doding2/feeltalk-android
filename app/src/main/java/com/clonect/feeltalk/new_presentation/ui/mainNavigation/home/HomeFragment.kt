@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.home
 
+import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -19,9 +20,7 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentHomeBinding
 import com.clonect.feeltalk.new_domain.model.signal.Signal
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.signal.SignalBottomSheetFragment
-import com.clonect.feeltalk.new_presentation.ui.util.CustomTypefaceSpan
-import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
-import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
+import com.clonect.feeltalk.new_presentation.ui.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -39,9 +38,12 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
-//        binding.root.setPadding(0, getStatusBarHeight(), 0, 0)
-        setLightStatusBars(false, activity, binding.root)
-        activity?.window?.statusBarColor = requireContext().getColor(R.color.main_500)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            binding.root.setPadding(0, getStatusBarHeight(), 0, 0)
+            setLightStatusBars(false, activity, binding.root)
+        } else {
+            activity.setStatusBarColor(binding.root, requireContext().getColor(R.color.main_500), false)
+        }
         return binding.root
     }
 

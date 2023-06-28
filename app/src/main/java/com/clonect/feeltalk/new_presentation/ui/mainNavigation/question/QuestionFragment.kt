@@ -1,6 +1,7 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.question
 
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +17,9 @@ import com.clonect.feeltalk.databinding.FragmentQuestionBinding
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.answer.AnswerBottomSheetFragment
+import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
+import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -37,9 +40,12 @@ class QuestionFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentQuestionBinding.inflate(inflater, container, false)
-//        binding.root.setPadding(0, getStatusBarHeight(), 0, 0)
-        setLightStatusBars(true, activity, binding.root)
-        activity?.window?.statusBarColor = requireContext().getColor(R.color.gray_100)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            binding.root.setPadding(0, getStatusBarHeight(), 0, 0)
+            setLightStatusBars(true, activity, binding.root)
+        } else {
+            activity.setStatusBarColor(binding.root, requireContext().getColor(R.color.gray_100), true)
+        }
         return binding.root
     }
 

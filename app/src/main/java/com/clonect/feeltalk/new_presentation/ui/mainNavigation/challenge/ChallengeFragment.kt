@@ -1,6 +1,7 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge
 
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -19,7 +20,9 @@ import com.clonect.feeltalk.databinding.FragmentChallengeBinding
 import com.clonect.feeltalk.databinding.TabItemCompletedBinding
 import com.clonect.feeltalk.databinding.TabItemOngoingBinding
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
+import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
+import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -37,9 +40,12 @@ class ChallengeFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentChallengeBinding.inflate(inflater, container, false)
-//        binding.root.setPadding(0, getStatusBarHeight(), 0, 0)
-        setLightStatusBars(true, activity, binding.root)
-        activity?.window?.statusBarColor = requireContext().getColor(R.color.gray_100)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            binding.root.setPadding(0, getStatusBarHeight(), 0, 0)
+            setLightStatusBars(true, activity, binding.root)
+        } else {
+            activity.setStatusBarColor(binding.root, requireContext().getColor(R.color.gray_100), true)
+        }
         return binding.root
     }
 
