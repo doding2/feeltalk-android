@@ -9,7 +9,9 @@ interface SignInRemoteDataSource {
 
     suspend fun checkMemberType(socialToken: SocialToken): CheckMemberTypeDto
     suspend fun signUp(socialToken: SocialToken, nickname: String): SignUpDto
+
     suspend fun getCoupleCode(accessToken: String): CoupleCodeDto
+    suspend fun matchCouple(accessToken: String, coupleCode: String)
 
 
 }

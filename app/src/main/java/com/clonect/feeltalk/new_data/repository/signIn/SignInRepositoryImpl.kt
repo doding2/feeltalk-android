@@ -59,5 +59,16 @@ class SignInRepositoryImpl(
         }
     }
 
+    override suspend fun matchCouple(accessToken: String, coupleCode: String): Resource<Unit> {
+        return try {
+            val result = remoteDataSource.matchCouple(accessToken, coupleCode)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
 
 }

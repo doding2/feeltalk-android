@@ -123,6 +123,12 @@
     <string name="change_category_select_8">팔</string>
 
 
+    <!--  Chat  -->
+    <string name="chat_read"/>
+    <string name="chat_unread">안읽음</string>
+    <string name="chat_camera">카메라</string>
+    <string name="chat_album">앨범</string>
+
 
     <!--  old ui  -->
 

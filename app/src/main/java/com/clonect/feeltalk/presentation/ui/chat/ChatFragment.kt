@@ -1,10 +1,31 @@
-package com.clonect.feeltalk.presentation.ui.chat
-
-import androidx.fragment.app.Fragment
-import dagger.hilt.android.AndroidEntryPoint
-
-@AndroidEntryPoint
-class ChatFragment : Fragment() {
+//package com.clonect.feeltalk.presentation.ui.chat
+//
+//import android.content.Context
+//import android.os.Bundle
+//import android.view.LayoutInflater
+//import android.view.View
+//import android.view.ViewGroup
+//import android.view.WindowManager
+//import android.widget.ImageView
+//import android.widget.TextView
+//import androidx.activity.OnBackPressedCallback
+//import androidx.annotation.LayoutRes
+//import androidx.fragment.app.Fragment
+//import androidx.fragment.app.viewModels
+//import androidx.lifecycle.lifecycleScope
+//import androidx.lifecycle.repeatOnLifecycle
+//import androidx.recyclerview.widget.RecyclerView
+//import com.bumptech.glide.Glide
+//import com.clonect.feeltalk.R
+//import com.clonect.feeltalk.databinding.FragmentChatBinding
+//import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.ChatAdapter
+//import dagger.hilt.android.AndroidEntryPoint
+//import kotlinx.coroutines.flow.collectLatest
+//import kotlinx.coroutines.launch
+//import javax.inject.Inject
+//
+//@AndroidEntryPoint
+//class ChatFragment : Fragment() {
 //
 //    private lateinit var binding: FragmentChatBinding
 //    private val viewModel: ChatViewModel by viewModels()
@@ -182,6 +203,7 @@ class ChatFragment : Fragment() {
 //            if (bottom == oldBottom) return@addOnLayoutChangeListener
 //
 //            val rangeMoved = oldBottom - bottom
+//            // 키보드가 올라갔을때
 //            if (bottom < oldBottom) {
 //                binding.rvChat.scrollBy(0, rangeMoved)
 //                scrollRemainHeight = computeRemainScrollHeight()
@@ -270,4 +292,4 @@ class ChatFragment : Fragment() {
 //        super.onDetach()
 //        onBackCallback.remove()
 //    }
-}
+//}

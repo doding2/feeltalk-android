@@ -6,8 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.annotation.RequiresApi
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -20,6 +20,7 @@ import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ChatFragment : Fragment() {
@@ -28,15 +29,17 @@ class ChatFragment : Fragment() {
     private val viewModel: ChatViewModel by viewModels()
     private val navViewModel: MainNavigationViewModel by activityViewModels()
     private lateinit var onBackCallback: OnBackPressedCallback
+    @Inject
+    lateinit var adapter: ChatAdapter
+
+    private var scrollRemainHeight = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentChatBinding.inflate(inflater, container, false)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            setKeyboardInsets()
-        }
+        setKeyboardInsets()
         return binding.root
     }
 
@@ -44,27 +47,100 @@ class ChatFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         collectNavViewModel()
+        setRecyclerView()
+
+        binding.run {
+            etTextMessage.addTextChangedListener { viewModel.setTextChat(it?.toString() ?: "") }
+            ivSendTextChat.setOnClickListener { sendTextChat() }
+            ivExpansion.setOnClickListener { viewModel.toggleExpandChatMedia() }
+            ivCancel.setOnClickListener { cancel() }
+        }
     }
 
-    @RequiresApi(Build.VERSION_CODES.R)
+
+    private fun sendTextChat() {
+        viewModel.sendTextChat(
+            onComplete =  {
+                binding.etTextMessage.setText("")
+            }
+        )
+    }
+
+    private fun cancel() {
+        viewModel.setExpandChatMedia(false)
+
+        binding.run {
+            ivCancel.visibility = View.GONE
+            ivExpansion.visibility = View.VISIBLE
+        }
+    }
+
+
+    private fun setRecyclerView() = binding.run {
+        rvChat.adapter = adapter.apply {
+            setMyNickname("me")
+            setPartnerNickname("partner")
+        }
+    }
+
     private fun setKeyboardInsets() {
         binding.root.setOnApplyWindowInsetsListener { v, insets ->
-            val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-            if (imeHeight == 0) {
-                binding.root.setPadding(0, 0, 0, getNavigationBarHeight())
-            } else {
-                binding.root.setPadding(0, 0, 0, imeHeight)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+
+                if (imeHeight == 0) {
+                    binding.root.setPadding(0, 0, 0, getNavigationBarHeight())
+                } else {
+                    binding.root.setPadding(0, 0, 0, imeHeight)
+                }
             }
             insets
         }
+
+        binding.rvChat.addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
+            if (bottom == oldBottom) return@addOnLayoutChangeListener
+
+            val rangeMoved = oldBottom - bottom
+            if (bottom < oldBottom) {
+                binding.rvChat.scrollBy(0, rangeMoved)
+                scrollRemainHeight = computeRemainScrollHeight()
+                return@addOnLayoutChangeListener
+            }
+
+            if (scrollRemainHeight < -rangeMoved) {
+                binding.rvChat.scrollBy(0, -scrollRemainHeight)
+                return@addOnLayoutChangeListener
+            }
+
+            binding.rvChat.scrollBy(0, rangeMoved)
+        }
     }
+
+    private fun computeRemainScrollHeight(): Int {
+        return binding.rvChat.run {
+            computeVerticalScrollRange() - computeVerticalScrollOffset() - computeVerticalScrollExtent()
+        }
+    }
+
+    private fun scrollToBottom() {
+        scrollRemainHeight -= computeRemainScrollHeight()
+        val position = adapter.itemCount - 1
+        binding.rvChat.scrollToPosition(position)
+    }
+
+
 
     private fun setBackCallback(isChatShown: Boolean) {
         if (isChatShown) {
             onBackCallback = object: OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
+                    if (viewModel.expandChat.value) {
+                        viewModel.toggleExpandChatMedia()
+                        return
+                    }
                     if (navViewModel.showChatNavigation.value) {
                         navViewModel.toggleShowChatNavigation()
+                        return
                     }
                 }
             }
@@ -74,15 +150,48 @@ class ChatFragment : Fragment() {
         }
     }
 
+    private fun prepareTextChat(message: String) = binding.run {
+        val isTextChatMode = message.isNotEmpty()
+        if (isTextChatMode) {
+            ivActivateVoiceChat.visibility = View.GONE
+            ivSendTextChat.visibility = View.VISIBLE
+        } else {
+            ivActivateVoiceChat.visibility = View.VISIBLE
+            ivSendTextChat.visibility = View.GONE
+        }
+    }
+
+    private fun changeChatMediaView(isExpanded: Boolean) = binding.run {
+        llMediaContainer.visibility =
+            if (isExpanded) View.VISIBLE
+            else View.GONE
+
+        ivExpansion.visibility =
+            if (isExpanded) View.GONE
+            else View.VISIBLE
+
+        ivCancel.visibility =
+            if (isExpanded) View.VISIBLE
+            else View.GONE
+    }
+
     private fun collectNavViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch { viewModel.textChat.collectLatest(::prepareTextChat) }
+            launch { viewModel.expandChat.collectLatest(::changeChatMediaView) }
+
+            launch {
+                viewModel.chatList.collectLatest {
+                    adapter.differ.submitList(it)
+                }
+            }
+            launch {
+                viewModel.scrollToBottom.collectLatest {
+                    if (it) scrollToBottom()
+                }
+            }
             launch {
                 navViewModel.showChatNavigation.collectLatest {
-//                    if (it) {
-//                        chatUpper.addListener()
-//                    } else {
-//                        chatUpper.removeListener()
-//                    }
                     setBackCallback(it)
                 }
             }

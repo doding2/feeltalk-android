@@ -1,9 +1,9 @@
 package com.clonect.feeltalk.new_presentation.di
 
+import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.ChatAdapter
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.completed.CompletedChallengeAdapter
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.ongoing.OngoingChallengeAdapter
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.question.QuestionAdapter
-import com.clonect.feeltalk.presentation.ui.chat.ChatAdapter
 import com.clonect.feeltalk.presentation.ui.guide.GuideAdapter
 import com.clonect.feeltalk.presentation.ui.news.NewsAdapter
 import com.clonect.feeltalk.presentation.ui.question_list.QuestionListAdapter
@@ -35,6 +35,11 @@ class AdapterModule {
         return CompletedChallengeAdapter()
     }
 
+    @Singleton
+    @Provides
+    fun providesChatAdapter(): ChatAdapter {
+        return ChatAdapter()
+    }
 
 
     // 밑에 것들은 나중에 지워야 됨
@@ -43,11 +48,6 @@ class AdapterModule {
     @Provides
     fun providesQuestionListAdapter(): QuestionListAdapter {
         return QuestionListAdapter()
-    }
-
-    @Provides
-    fun providesChatAdapter(): ChatAdapter {
-        return ChatAdapter()
     }
 
     @Singleton

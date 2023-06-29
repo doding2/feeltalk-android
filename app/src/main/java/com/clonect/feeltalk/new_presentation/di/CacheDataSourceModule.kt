@@ -1,7 +1,7 @@
 package com.clonect.feeltalk.new_presentation.di
 
-import com.clonect.feeltalk.data.repository.chat.datasource.ChatCacheDataSource
-import com.clonect.feeltalk.data.repository.chat.datasourceImpl.ChatCacheDataSourceImpl
+import com.clonect.feeltalk.data.repository.chat.datasource.ChatCacheDataSource2
+import com.clonect.feeltalk.data.repository.chat.datasourceImpl.ChatCacheDataSource2Impl
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionCacheDataSource
 import com.clonect.feeltalk.data.repository.encryption.datasourceImpl.EncryptionCacheDataSourceImpl
 import com.clonect.feeltalk.data.repository.question.datasource.QuestionCacheDataSource
@@ -51,8 +51,8 @@ class CacheDataSourceModule {
 
     @Singleton
     @Provides
-    fun providesChatCacheDataSource(): ChatCacheDataSource {
-        return ChatCacheDataSourceImpl()
+    fun providesChatCacheDataSource(): ChatCacheDataSource2 {
+        return ChatCacheDataSource2Impl()
     }
 
     @Singleton

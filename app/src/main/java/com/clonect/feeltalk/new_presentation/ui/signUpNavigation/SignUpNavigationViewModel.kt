@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.usecase.signIn.GetCoupleCodeUseCase
+import com.clonect.feeltalk.new_domain.usecase.signIn.MatchCoupleUseCase
 import com.clonect.feeltalk.new_domain.usecase.signIn.SignUpUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +21,7 @@ import javax.inject.Inject
 class SignUpNavigationViewModel @Inject constructor(
     private val signUpUseCase: SignUpUseCase,
     private val getCoupleCodeUseCase: GetCoupleCodeUseCase,
+    private val matchCoupleUseCase: MatchCoupleUseCase,
 ) : ViewModel() {
 
     // note: Common
@@ -137,10 +139,20 @@ class SignUpNavigationViewModel @Inject constructor(
         _partnerCoupleCode.value = code
     }
 
-    // TODO
     fun matchCoupleCode() = viewModelScope.launch {
         val partnerCode = _partnerCoupleCode.value ?: return@launch
+        setLoading(true)
 
-        _isCoupleConnected.emit(true)
+        when (val result = matchCoupleUseCase(partnerCode)) {
+            is Resource.Success -> {
+                _isCoupleConnected.emit(true)
+            }
+            is Resource.Error -> {
+                infoLog("커플매칭 실패: ${result.throwable.stackTrace.joinToString("\n")}")
+                result.throwable.localizedMessage?.let { sendErrorMessage(it) }
+            }
+        }
+
+        setLoading(false)
     }
 }

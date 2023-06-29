@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.domain.model.data.chat.Chat
+import com.clonect.feeltalk.domain.model.data.chat.Chat2
 import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.model.dto.question.QuestionDetailDto
@@ -55,8 +55,8 @@ class ChatViewModel @Inject constructor(
     private val _questionDetail = MutableStateFlow<QuestionDetailDto?>(null)
     val questionDetail = _questionDetail.asStateFlow()
 
-    private val _chatList = MutableStateFlow<List<Chat>>(emptyList())
-    val chatList = _chatList.asStateFlow()
+    private val _chat2List = MutableStateFlow<List<Chat2>>(emptyList())
+    val chatList = _chat2List.asStateFlow()
 
     private val _myProfileImageUrl = MutableStateFlow<String?>(null)
     val myProfileImageUrl = _myProfileImageUrl.asStateFlow()
@@ -123,11 +123,11 @@ class ChatViewModel @Inject constructor(
     private fun collectFcmNewChat() = viewModelScope.launch(Dispatchers.IO) {
         FcmNewChatObserver.getInstance().newChat.collect {
             if (it is Resource.Success) {
-                val newList = mutableListOf<Chat>().apply {
-                    addAll(_chatList.value)
+                val newList = mutableListOf<Chat2>().apply {
+                    addAll(_chat2List.value)
                     add(it.data)
                 }
-                _chatList.value = newList
+                _chat2List.value = newList
             }
         }
     }
@@ -176,14 +176,14 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    private fun updateChatList(chatList: List<Chat>) {
-        val newList = mutableListOf<Chat>()
-        newList.addAll(chatList)
+    private fun updateChatList(chat2List: List<Chat2>) {
+        val newList = mutableListOf<Chat2>()
+        newList.addAll(chat2List)
         newList.sortBy { it.id }
 
         _isPartnerAnswered.value = newList.any { it.owner == "partner" }
         if (!isPartnerAnswered.value) {
-            val waitingChat = Chat(
+            val waitingChat2 = Chat2(
                 id = -1,
                 question = _question.value.question,
                 owner = "partner",
@@ -191,10 +191,10 @@ class ChatViewModel @Inject constructor(
                 date = "",
                 isAnswer = true
             )
-            newList.add(waitingChat)
+            newList.add(waitingChat2)
         }
 
-        _chatList.value = newList
+        _chat2List.value = newList
     }
 
 
@@ -203,14 +203,14 @@ class ChatViewModel @Inject constructor(
         val date = format.format(Date())
         infoLog("날짜: ${date}")
 
-        val chat = Chat(
+        val chat2 = Chat2(
             question = _question.value.question,
             owner = "mine",
             message = content,
             date = date
         )
 
-        val result = sendChatUseCase(chat)
+        val result = sendChatUseCase(chat2)
         when (result) {
             is Resource.Success -> {
                 infoLog("Success to send chat: ${result.data}")

@@ -138,6 +138,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="12dp"
+            android:clickable="true"
+            app:rippleColor="@android:color/transparent"
             app:cardCornerRadius="0dp"
             app:cardElevation="0dp"
             app:cardBackgroundColor="@color/system_white">

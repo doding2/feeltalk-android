@@ -36,9 +36,9 @@ class SignInRemoteDataSourceImpl(
         }
         val response = clonectService.checkMemberType(body)
         if (!response.isSuccessful) throw HttpException(response)
-        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
-        return response.body()!!.data
+        return response.body()!!.data!!
     }
 
     override suspend fun signUp(socialToken: SocialToken, nickname: String): SignUpDto {
@@ -65,17 +65,27 @@ class SignInRemoteDataSourceImpl(
         }
         val response = clonectService.signUp(body)
         if (!response.isSuccessful) throw HttpException(response)
-        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
-        return response.body()!!.data
+        return response.body()!!.data!!
     }
 
     override suspend fun getCoupleCode(accessToken: String): CoupleCodeDto {
         val response = clonectService.getCoupleCode("Bearer $accessToken")
         if (!response.isSuccessful) throw HttpException(response)
+        if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
+        return response.body()!!.data!!
+    }
+
+    override suspend fun matchCouple(accessToken: String, coupleCode: String) {
+        val body = JsonObject().apply {
+            addProperty("generateCode", coupleCode)
+        }
+        val response = clonectService.mathCouple("Bearer $accessToken", body)
+        if (!response.isSuccessful) throw HttpException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
-        return response.body()!!.data
     }
 
 

@@ -2,27 +2,27 @@ package com.clonect.feeltalk.data.repository.chat
 
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.data.mapper.toChatList
-import com.clonect.feeltalk.data.repository.chat.datasource.ChatCacheDataSource
-import com.clonect.feeltalk.data.repository.chat.datasource.ChatLocalDataSource
-import com.clonect.feeltalk.data.repository.chat.datasource.ChatRemoteDataSource
+import com.clonect.feeltalk.data.repository.chat.datasource.ChatCacheDataSource2
+import com.clonect.feeltalk.data.repository.chat.datasource.ChatLocalDataSource2
+import com.clonect.feeltalk.data.repository.chat.datasource.ChatRemoteDataSource2
 import com.clonect.feeltalk.data.utils.UserLevelEncryptHelper
-import com.clonect.feeltalk.domain.model.data.chat.Chat
-import com.clonect.feeltalk.domain.model.dto.chat.ChatListItemDto
-import com.clonect.feeltalk.domain.model.dto.chat.SendChatDto
-import com.clonect.feeltalk.domain.repository.ChatRepository
+import com.clonect.feeltalk.domain.model.data.chat.Chat2
+import com.clonect.feeltalk.domain.model.dto.chat.ChatListItemDto2
+import com.clonect.feeltalk.domain.model.dto.chat.SendChatDto2
+import com.clonect.feeltalk.domain.repository.ChatRepository2
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 
-class ChatRepositoryImpl(
-    private val remoteDataSource: ChatRemoteDataSource,
-    private val localDataSource: ChatLocalDataSource,
-    private val cacheDataSource: ChatCacheDataSource,
+class ChatRepository2Impl(
+    private val remoteDataSource: ChatRemoteDataSource2,
+    private val localDataSource: ChatLocalDataSource2,
+    private val cacheDataSource: ChatCacheDataSource2,
     private val userLevelEncryptHelper: UserLevelEncryptHelper,
-): ChatRepository {
+): ChatRepository2 {
 
     @OptIn(FlowPreview::class)
-    override fun getChatListByQuestion(accessToken: String, questionContent: String): Flow<Resource<List<Chat>>> {
+    override fun getChatListByQuestion(accessToken: String, questionContent: String): Flow<Resource<List<Chat2>>> {
         val cacheFlow = channelFlow {
             val cache = cacheDataSource.getChatListByQuestion(questionContent)
             cache?.let { send(Resource.Success(cache)) }
@@ -77,12 +77,12 @@ class ChatRepositoryImpl(
         return Resource.Error(Exception("Fail to reload chat list: $questionContent"))
     }
 
-    override suspend fun sendChat(accessToken: String, chat: Chat): Resource<SendChatDto> {
+    override suspend fun sendChat(accessToken: String, chat2: Chat2): Resource<SendChatDto2> {
         return try {
-            val encryptedChat = chat.copy(message = userLevelEncryptHelper.encryptMyText(chat.message))
+            val encryptedChat = chat2.copy(message = userLevelEncryptHelper.encryptMyText(chat2.message))
             val remote = remoteDataSource.sendChat(accessToken, encryptedChat).body()!!
-            localDataSource.saveOneChatToDatabase(chat)
-            cacheDataSource.saveOneChatToCache(chat)
+            localDataSource.saveOneChatToDatabase(chat2)
+            cacheDataSource.saveOneChatToCache(chat2)
             Resource.Success(remote)
         } catch (e: CancellationException) {
             throw e
@@ -92,9 +92,9 @@ class ChatRepositoryImpl(
     }
 
 
-    override suspend fun saveChat(chat: Chat): Resource<Long> {
+    override suspend fun saveChat(chat2: Chat2): Resource<Long> {
         return try {
-            val id = localDataSource.saveOneChatToDatabase(chat)
+            val id = localDataSource.saveOneChatToDatabase(chat2)
             Resource.Success(id)
         } catch (e: Exception) {
             if (e is CancellationException) throw e
@@ -103,7 +103,7 @@ class ChatRepositoryImpl(
     }
 
 
-    private suspend fun getChatListFromServer(accessToken: String, questionString: String): Resource<List<ChatListItemDto>> {
+    private suspend fun getChatListFromServer(accessToken: String, questionString: String): Resource<List<ChatListItemDto2>> {
         return try {
             val response = remoteDataSource.getChatListByQuestion(accessToken, questionString)
             Resource.Success(response.body()!!)

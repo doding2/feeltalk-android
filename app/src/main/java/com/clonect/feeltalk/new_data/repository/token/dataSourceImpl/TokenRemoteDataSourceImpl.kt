@@ -19,9 +19,9 @@ class TokenRemoteDataSourceImpl(
         }
         val response = clonectService.renewToken(body)
         if (!response.isSuccessful) throw HttpException(response)
-        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
-        return response.body()!!.data
+        return response.body()!!.data!!
     }
 
 }

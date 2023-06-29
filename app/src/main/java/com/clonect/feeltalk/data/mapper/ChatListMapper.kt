@@ -1,14 +1,14 @@
 package com.clonect.feeltalk.data.mapper
 
 import com.clonect.feeltalk.data.utils.UserLevelEncryptHelper
-import com.clonect.feeltalk.domain.model.data.chat.Chat
-import com.clonect.feeltalk.domain.model.dto.chat.ChatListItemDto
+import com.clonect.feeltalk.domain.model.data.chat.Chat2
+import com.clonect.feeltalk.domain.model.dto.chat.ChatListItemDto2
 
-suspend fun List<ChatListItemDto>.toChatList(
+suspend fun List<ChatListItemDto2>.toChatList(
     accessToken: String,
     questionString: String,
     userLevelEncryptHelper: UserLevelEncryptHelper,
-): List<Chat> {
+): List<Chat2> {
     var isMyAnswerExist = false
     var isPartnerAnswerExist = false
 
@@ -33,7 +33,7 @@ suspend fun List<ChatListItemDto>.toChatList(
             isAnswer = true
         }
 
-        Chat(
+        Chat2(
             id = 0,
             question = questionString,
             owner = owner,

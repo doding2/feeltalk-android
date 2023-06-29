@@ -1,10 +1,10 @@
 package com.clonect.feeltalk.domain.usecase.question
 
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.domain.model.data.chat.Chat
+import com.clonect.feeltalk.domain.model.data.chat.Chat2
 import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.model.dto.question.SendQuestionDto
-import com.clonect.feeltalk.domain.repository.ChatRepository
+import com.clonect.feeltalk.domain.repository.ChatRepository2
 import com.clonect.feeltalk.domain.repository.QuestionRepository
 import com.clonect.feeltalk.domain.repository.UserRepository
 import java.text.SimpleDateFormat
@@ -13,7 +13,7 @@ import java.util.*
 class SendQuestionAnswerUseCase(
     private val userRepository: UserRepository,
     private val questionRepository: QuestionRepository,
-    private val chatRepository: ChatRepository,
+    private val chatRepository2: ChatRepository2,
 ) {
     suspend operator fun invoke(question: Question): Resource<SendQuestionDto> {
         val accessTokenResult = userRepository.getAccessToken()
@@ -28,7 +28,7 @@ class SendQuestionAnswerUseCase(
             return Resource.Error(questionAnswerResult.throwable)
         }
 
-        val chat = Chat(
+        val chat2 = Chat2(
             question = question.question,
             owner = "mine",
             message = question.myAnswer ?: "",
@@ -40,7 +40,7 @@ class SendQuestionAnswerUseCase(
                 },
             isAnswer = true
         )
-        chatRepository.saveChat(chat)
+        chatRepository2.saveChat(chat2)
 
         return questionAnswerResult
     }

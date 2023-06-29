@@ -1,7 +1,7 @@
 package com.clonect.feeltalk.new_presentation.di
 
-import com.clonect.feeltalk.data.repository.chat.datasource.ChatRemoteDataSource
-import com.clonect.feeltalk.data.repository.chat.datasourceImpl.ChatRemoteDataSourceImpl
+import com.clonect.feeltalk.data.repository.chat.datasource.ChatRemoteDataSource2
+import com.clonect.feeltalk.data.repository.chat.datasourceImpl.ChatRemoteDataSource2Impl
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionRemoteDataSource
 import com.clonect.feeltalk.data.repository.encryption.datasourceImpl.EncryptionRemoteDataSourceImpl
 import com.clonect.feeltalk.data.repository.question.datasource.QuestionRemoteDataSource
@@ -50,8 +50,8 @@ class RemoteDataSourceModule {
     @Provides
     fun providesChatRemoteDataSource(
         clonectService: ClonectService
-    ): ChatRemoteDataSource {
-        return ChatRemoteDataSourceImpl(clonectService)
+    ): ChatRemoteDataSource2 {
+        return ChatRemoteDataSource2Impl(clonectService)
     }
 
     @Singleton

@@ -3,8 +3,8 @@ package com.clonect.feeltalk.new_data.api
 import com.clonect.feeltalk.common.ApiResponse
 import com.clonect.feeltalk.domain.model.data.encryption.LoadPartnerPrivateKeyDto
 import com.clonect.feeltalk.domain.model.data.encryption.LoadPartnerPublicKeyDto
-import com.clonect.feeltalk.domain.model.dto.chat.ChatListItemDto
-import com.clonect.feeltalk.domain.model.dto.chat.SendChatDto
+import com.clonect.feeltalk.domain.model.dto.chat.ChatListItemDto2
+import com.clonect.feeltalk.domain.model.dto.chat.SendChatDto2
 import com.clonect.feeltalk.domain.model.dto.common.StatusDto
 import com.clonect.feeltalk.domain.model.dto.encryption.AppLevelAesKeyDto
 import com.clonect.feeltalk.domain.model.dto.encryption.RestorePrivateKeysDto
@@ -40,6 +40,11 @@ interface ClonectService {
         @Header("Authorization") token: String
     ): Response<ApiResponse<CoupleCodeDto>>
 
+    @POST("/api/v1/couple")
+    suspend fun mathCouple(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<ApiResponse<Unit>>
 
     /** Token **/
 
@@ -181,7 +186,7 @@ interface ClonectService {
     @POST("/api/chattingMessage")
     suspend fun sendChat(
         @Body body: JsonObject,
-    ): Response<SendChatDto>
+    ): Response<SendChatDto2>
 
     @GET("/api/chattingRoom/{accessToken}")
     suspend fun getChattingRoomList(
@@ -191,7 +196,7 @@ interface ClonectService {
     @POST("/api/chattingMessageList")
     suspend fun getChatList(
         @Body body: JsonObject,
-    ): Response<List<ChatListItemDto>>
+    ): Response<List<ChatListItemDto2>>
 
 
     /**  News  **/

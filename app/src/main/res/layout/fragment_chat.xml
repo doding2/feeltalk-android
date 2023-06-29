@@ -6,8 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/system_white"
-    tools:context=".presentation.ui.chat.ChatFragment">
+    android:background="@color/system_white">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_top_bar"
@@ -29,7 +28,7 @@
             android:text="UserName"
             android:textSize="18sp"
             android:textColor="@color/system_black"
-            android:fontFamily="@font/pretendard_semi_bold"
+            android:fontFamily="@font/pretendard_medium"
             android:lines="1"
             android:ellipsize="end"
             app:layout_constrainedWidth="true"
@@ -55,6 +54,8 @@
         android:id="@+id/rv_chat"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintTop_toBottomOf="@id/cl_top_bar"
         app:layout_constraintBottom_toTopOf="@id/ll_bottom_bar"
         app:layout_constraintStart_toStartOf="parent"
@@ -64,65 +65,194 @@
         android:id="@+id/ll_bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:elevation="5dp"
         android:background="@color/system_white"
+        android:animateLayoutChanges="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <ImageView
-            android:id="@+id/iv_more_chat_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:layout_marginVertical="9dp"
-            android:layout_gravity="bottom"
-            android:src="@drawable/n_ic_more_chat_type"/>
-
-        <com.google.android.material.card.MaterialCardView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="9dp"
-            android:layout_marginEnd="12dp"
-            app:cardBackgroundColor="@color/gray_100"
-            app:cardElevation="0dp"
-            app:cardCornerRadius="16dp"
-            app:strokeColor="@color/gray_300"
-            app:strokeWidth="1dp">
+            android:orientation="horizontal">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <ImageView
+                android:id="@+id/iv_expansion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:layout_marginVertical="9dp"
+                android:layout_gravity="bottom"
+                android:src="@drawable/n_ic_chat_expansion"/>
+
+            <ImageView
+                android:id="@+id/iv_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:layout_marginVertical="9dp"
+                android:visibility="gone"
+                android:layout_gravity="bottom"
+                android:src="@drawable/n_ic_chat_cancel"/>
+
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="9dp"
+                android:layout_marginEnd="12dp"
+                app:cardBackgroundColor="@color/gray_100"
+                app:cardElevation="0dp"
+                app:cardCornerRadius="16dp"
+                app:strokeColor="@color/gray_300"
+                app:strokeWidth="1dp">
 
-                <EditText
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:paddingVertical="12dp"
-                    android:paddingStart="12dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/system_black"
-                    android:fontFamily="@font/pretendard_regular"
-                    android:maxLines="3"
-                    android:background="@null"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/iv_voice_chat"
-                    app:layout_constraintHorizontal_bias="0"/>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/et_text_message"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:paddingVertical="12dp"
+                        android:paddingStart="12dp"
+                        android:textSize="16sp"
+                        android:textColor="@color/system_black"
+                        android:fontFamily="@font/pretendard_regular"
+                        android:maxLines="3"
+                        android:background="@null"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/view_spacer"
+                        app:layout_constraintHorizontal_bias="0"/>
+
+                    <View
+                        android:id="@+id/view_spacer"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        app:layout_constraintVertical_bias="1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    <ImageView
+                        android:id="@+id/iv_send_text_chat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:padding="12dp"
+                        android:src="@drawable/n_ic_send_text_chat"
+                        app:layout_constraintVertical_bias="1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    <ImageView
+                        android:id="@+id/iv_activate_voice_chat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="12dp"
+                        android:src="@drawable/n_ic_voice_chat"
+                        app:layout_constraintVertical_bias="1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+                    <ImageView
+                        android:id="@+id/iv_start_voice_recoding"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:src="@drawable/n_ic_start_voice_recoding"
+                        app:layout_constraintVertical_bias="1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    <ImageView
+                        android:id="@+id/iv_stop_voice_recoding"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:padding="12dp"
+                        android:src="@drawable/n_ic_stop_voice_recoding"
+                        app:layout_constraintVertical_bias="1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    <ImageView
+                        android:id="@+id/iv_send_voice_chat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:padding="12dp"
+                        android:src="@drawable/n_ic_send_voice_chat"
+                        app:layout_constraintVertical_bias="1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_media_container"
+            android:layout_width="match_parent"
+            android:layout_height="335dp"
+            android:orientation="horizontal"
+            android:background="@color/gray_100">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/iv_voice_chat"
+                    android:id="@+id/iv_camera"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="12dp"
-                    android:src="@drawable/n_ic_voice_chat"
-                    app:layout_constraintVertical_bias="1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </com.google.android.material.card.MaterialCardView>
+                    android:layout_margin="8dp"
+                    android:src="@drawable/n_ic_camera"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/chat_camera"
+                    android:textColor="@color/system_black"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/pretendard_regular"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/iv_album"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/n_ic_album"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/chat_camera"
+                    android:textColor="@color/system_black"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/pretendard_regular"/>
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

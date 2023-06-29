@@ -1,9 +1,9 @@
 package com.clonect.feeltalk.new_presentation.di
 
-import com.clonect.feeltalk.data.repository.chat.ChatRepositoryImpl
-import com.clonect.feeltalk.data.repository.chat.datasource.ChatCacheDataSource
-import com.clonect.feeltalk.data.repository.chat.datasource.ChatLocalDataSource
-import com.clonect.feeltalk.data.repository.chat.datasource.ChatRemoteDataSource
+import com.clonect.feeltalk.data.repository.chat.ChatRepository2Impl
+import com.clonect.feeltalk.data.repository.chat.datasource.ChatCacheDataSource2
+import com.clonect.feeltalk.data.repository.chat.datasource.ChatLocalDataSource2
+import com.clonect.feeltalk.data.repository.chat.datasource.ChatRemoteDataSource2
 import com.clonect.feeltalk.data.repository.encryption.EncryptionRepositoryImpl
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionCacheDataSource
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionLocalDataSource
@@ -81,12 +81,12 @@ class RepositoryModule {
     @Singleton
     @Provides
     fun providesChatRepository(
-        remoteDataSource: ChatRemoteDataSource,
-        localDataSource: ChatLocalDataSource,
-        cacheDataSource: ChatCacheDataSource,
+        remoteDataSource: ChatRemoteDataSource2,
+        localDataSource: ChatLocalDataSource2,
+        cacheDataSource: ChatCacheDataSource2,
         userLevelEncryptHelper: UserLevelEncryptHelper,
-    ): ChatRepository {
-        return ChatRepositoryImpl(remoteDataSource, localDataSource, cacheDataSource, userLevelEncryptHelper)
+    ): ChatRepository2 {
+        return ChatRepository2Impl(remoteDataSource, localDataSource, cacheDataSource, userLevelEncryptHelper)
     }
 
     @Singleton

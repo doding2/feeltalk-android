@@ -20,6 +20,7 @@ import com.clonect.feeltalk.new_domain.repository.signIn.SignInRepository
 import com.clonect.feeltalk.new_domain.repository.signIn.TokenRepository
 import com.clonect.feeltalk.new_domain.usecase.signIn.CheckMemberTypeUseCase
 import com.clonect.feeltalk.new_domain.usecase.signIn.GetCoupleCodeUseCase
+import com.clonect.feeltalk.new_domain.usecase.signIn.MatchCoupleUseCase
 import com.clonect.feeltalk.new_domain.usecase.signIn.SignUpUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.CacheSocialTokenUseCase
 import dagger.Module
@@ -62,6 +63,11 @@ class UseCaseModule {
         return GetCoupleCodeUseCase(tokenRepository, signInRepository)
     }
 
+    @Singleton
+    @Provides
+    fun providesMatchCoupleUseCase(tokenRepository: TokenRepository, signInRepository: SignInRepository): MatchCoupleUseCase {
+        return MatchCoupleUseCase(tokenRepository, signInRepository)
+    }
 
 
 
@@ -101,14 +107,14 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesGetChatListUseCase(userRepository: UserRepository, chatRepository: ChatRepository): GetChatListUseCase {
-        return GetChatListUseCase(userRepository, chatRepository)
+    fun providesGetChatListUseCase(userRepository: UserRepository, chatRepository2: ChatRepository2): GetChatListUseCase {
+        return GetChatListUseCase(userRepository, chatRepository2)
     }
 
     @Singleton
     @Provides
-    fun providesSendChatUseCase(userRepository: UserRepository, chatRepository: ChatRepository): SendChatUseCase {
-        return SendChatUseCase(userRepository, chatRepository)
+    fun providesSendChatUseCase(userRepository: UserRepository, chatRepository2: ChatRepository2): SendChatUseCase {
+        return SendChatUseCase(userRepository, chatRepository2)
     }
 
     @Singleton
@@ -131,14 +137,14 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesSendQuestionAnswerUseCase(userRepository: UserRepository, questionRepository: QuestionRepository, chatRepository: ChatRepository): SendQuestionAnswerUseCase {
-        return SendQuestionAnswerUseCase(userRepository, questionRepository, chatRepository)
+    fun providesSendQuestionAnswerUseCase(userRepository: UserRepository, questionRepository: QuestionRepository, chatRepository2: ChatRepository2): SendQuestionAnswerUseCase {
+        return SendQuestionAnswerUseCase(userRepository, questionRepository, chatRepository2)
     }
 
     @Singleton
     @Provides
-    fun providesSaveChatUseCase(chatRepository: ChatRepository): SaveChatUseCase {
-        return SaveChatUseCase(chatRepository)
+    fun providesSaveChatUseCase(chatRepository2: ChatRepository2): SaveChatUseCase {
+        return SaveChatUseCase(chatRepository2)
     }
 
     @Singleton
@@ -365,8 +371,8 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesReloadChatListUseCase(userRepository: UserRepository, chatRepository: ChatRepository): ReloadChatListUseCase {
-        return ReloadChatListUseCase(userRepository, chatRepository)
+    fun providesReloadChatListUseCase(userRepository: UserRepository, chatRepository2: ChatRepository2): ReloadChatListUseCase {
+        return ReloadChatListUseCase(userRepository, chatRepository2)
     }
 
     @Singleton

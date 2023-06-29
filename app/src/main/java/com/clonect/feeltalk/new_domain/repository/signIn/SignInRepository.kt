@@ -10,6 +10,8 @@ interface SignInRepository {
 
     suspend fun checkMemberType(socialToken: SocialToken): Resource<CheckMemberTypeDto>
     suspend fun signUp(socialToken: SocialToken, nickname: String): Resource<TokenInfo>
+
     suspend fun getCoupleCode(accessToken: String): Resource<CoupleCodeDto>
+    suspend fun matchCouple(accessToken: String, coupleCode: String): Resource<Unit>
 
 }

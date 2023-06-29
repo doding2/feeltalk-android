@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "ChatTable")
-data class Chat(
+data class Chat2(
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0,
     val question: String,
@@ -14,7 +14,7 @@ data class Chat(
     val isAnswer: Boolean = false
 ) {
     override fun equals(other: Any?): Boolean {
-        if (other !is Chat) return false
+        if (other !is Chat2) return false
         if (other === this) return true
         return id == other.id
                 && question == other.question

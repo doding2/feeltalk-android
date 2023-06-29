@@ -3,8 +3,8 @@ package com.clonect.feeltalk.new_presentation.di
 import android.content.Context
 import com.clonect.feeltalk.data.db.ChatDao
 import com.clonect.feeltalk.data.db.QuestionDao
-import com.clonect.feeltalk.data.repository.chat.datasource.ChatLocalDataSource
-import com.clonect.feeltalk.data.repository.chat.datasourceImpl.ChatLocalDataSourceImpl
+import com.clonect.feeltalk.data.repository.chat.datasource.ChatLocalDataSource2
+import com.clonect.feeltalk.data.repository.chat.datasourceImpl.ChatLocalDataSource2Impl
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionLocalDataSource
 import com.clonect.feeltalk.data.repository.encryption.datasourceImpl.EncryptionLocalDataSourceImpl
 import com.clonect.feeltalk.data.repository.question.datasource.QuestionLocalDataSource
@@ -51,8 +51,8 @@ class LocalDataSourceModule {
     @Provides
     fun providesChatLocalDataSource(
         chatDao: ChatDao
-    ): ChatLocalDataSource {
-        return ChatLocalDataSourceImpl(chatDao)
+    ): ChatLocalDataSource2 {
+        return ChatLocalDataSource2Impl(chatDao)
     }
 
     @Singleton

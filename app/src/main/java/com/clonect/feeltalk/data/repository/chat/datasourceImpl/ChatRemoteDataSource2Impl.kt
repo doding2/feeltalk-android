@@ -1,19 +1,19 @@
 package com.clonect.feeltalk.data.repository.chat.datasourceImpl
 
+import com.clonect.feeltalk.data.repository.chat.datasource.ChatRemoteDataSource2
+import com.clonect.feeltalk.domain.model.data.chat.Chat2
+import com.clonect.feeltalk.domain.model.dto.chat.ChatListItemDto2
+import com.clonect.feeltalk.domain.model.dto.chat.SendChatDto2
 import com.clonect.feeltalk.new_data.api.ClonectService
-import com.clonect.feeltalk.data.repository.chat.datasource.ChatRemoteDataSource
-import com.clonect.feeltalk.domain.model.data.chat.Chat
-import com.clonect.feeltalk.domain.model.dto.chat.ChatListItemDto
-import com.clonect.feeltalk.domain.model.dto.chat.SendChatDto
 import com.google.gson.JsonObject
 import retrofit2.HttpException
 import retrofit2.Response
 
-class ChatRemoteDataSourceImpl(
+class ChatRemoteDataSource2Impl(
     private val clonectService: ClonectService
-): ChatRemoteDataSource {
+): ChatRemoteDataSource2 {
 
-    override suspend fun getChatListByQuestion(accessToken: String, questionContent: String): Response<List<ChatListItemDto>> {
+    override suspend fun getChatListByQuestion(accessToken: String, questionContent: String): Response<List<ChatListItemDto2>> {
         val body = JsonObject().apply {
             addProperty("accessToken", accessToken)
             addProperty("question", questionContent)
@@ -24,11 +24,11 @@ class ChatRemoteDataSourceImpl(
         return response
     }
 
-    override suspend fun sendChat(accessToken: String, chat: Chat): Response<SendChatDto> {
+    override suspend fun sendChat(accessToken: String, chat2: Chat2): Response<SendChatDto2> {
         val body = JsonObject().apply {
             addProperty("accessToken", accessToken)
-            addProperty("question", chat.question)
-            addProperty("message", chat.message)
+            addProperty("question", chat2.question)
+            addProperty("message", chat2.message)
         }
         val response = clonectService.sendChat(body)
         if (!response.isSuccessful) throw HttpException(response)
