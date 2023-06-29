@@ -1,11 +1,15 @@
 package com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.plusDayBy
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.DividerChat
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
+import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.RecordingSampler
+import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.VisualizerView
+import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -31,8 +35,24 @@ class ChatViewModel @Inject constructor(
     private val _expandChat = MutableStateFlow(false)
     val expandChat = _expandChat.asStateFlow()
 
+    private val _isVoiceSetupMode = MutableStateFlow(false)
+    val isVoiceSetupMode = _isVoiceSetupMode.asStateFlow()
+
+    private val _isVoiceRecordingMode = MutableStateFlow(false)
+    val isVoiceRecordingMode = _isVoiceRecordingMode.asStateFlow()
+
+    private val _isVoiceRecordingStopMode = MutableStateFlow(false)
+    val isVoiceRecordingStopMode = _isVoiceRecordingStopMode.asStateFlow()
+
+    private val _voiceSampler = MutableStateFlow<RecordingSampler?>(null)
+    val voiceSampler = _voiceSampler.asStateFlow()
+
     private val _scrollToBottom = MutableSharedFlow<Boolean>()
     val scrollToBottom = _scrollToBottom.asSharedFlow()
+
+    private val _isKeyboardUp = MutableStateFlow(false)
+    val isKeyboardUp = _isKeyboardUp.asStateFlow()
+
 
     init {
         initChatList()
@@ -64,17 +84,52 @@ class ChatViewModel @Inject constructor(
         _scrollToBottom.emit(true)
     }
 
+
     fun setTextChat(message: String) {
         _textChat.value = message
     }
 
+
     fun toggleExpandChatMedia() {
         _expandChat.value = _expandChat.value.not()
     }
-
     fun setExpandChatMedia(isExpanded: Boolean) {
         _expandChat.value = isExpanded
     }
+
+
+    fun setVoiceSetupMode(isSetup: Boolean) {
+        _isVoiceSetupMode.value = isSetup
+    }
+
+
+    fun startVoiceRecording(context: Context, visualizerView: VisualizerView) {
+        _isVoiceRecordingMode.value = true
+        _isVoiceRecordingStopMode.value = false
+        _voiceSampler.value = RecordingSampler(context).apply {
+            setSamplingInterval(100)
+            link(visualizerView)
+            startRecording()
+            infoLog("start recording. isRecording: $isRecording")
+            setOnRecordTimeListener {
+                infoLog("record time: $it")
+            }
+        }
+    }
+    fun stopVoiceRecording() {
+        _voiceSampler.value?.stopRecording()
+        _isVoiceRecordingStopMode.value = true
+    }
+    fun setVoiceRecordingMode(isRecording: Boolean) {
+        _isVoiceRecordingMode.value = isRecording
+        _isVoiceRecordingStopMode.value = false
+    }
+
+
+    fun setKeyboardUp(isUp: Boolean) {
+        _isKeyboardUp.value = isUp
+    }
+
 
 
 

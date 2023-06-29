@@ -89,7 +89,7 @@ dependencies {
     implementation 'com.github.martinstamenkovski:ARIndicatorView:2.0.0'
     // androidx brower
     implementation 'androidx.browser:browser:1.5.0'
-
+    // insets helper
     implementation "dev.chrisbanes.insetter:insetter:0.6.1"
 
     // 믹스패널 데이터 분석

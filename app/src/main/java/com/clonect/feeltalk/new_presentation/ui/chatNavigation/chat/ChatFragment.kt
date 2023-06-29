@@ -1,11 +1,17 @@
 package com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -17,7 +23,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.clonect.feeltalk.databinding.FragmentChatBinding
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
+import com.clonect.feeltalk.presentation.utils.infoLog
+import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -51,12 +60,29 @@ class ChatFragment : Fragment() {
 
         binding.run {
             etTextMessage.addTextChangedListener { viewModel.setTextChat(it?.toString() ?: "") }
+            ivSetupVoiceChat.setOnClickListener { setupVoiceRecording() }
+            ivStartVoiceRecording.setOnClickListener { startVoiceRecording() }
             ivSendTextChat.setOnClickListener { sendTextChat() }
-            ivExpansion.setOnClickListener { viewModel.toggleExpandChatMedia() }
+            ivExpansion.setOnClickListener { expandChatMedia() }
             ivCancel.setOnClickListener { cancel() }
         }
     }
 
+
+    private fun setupVoiceRecording() {
+        cancel()
+        hideKeyboard()
+        viewModel.setVoiceSetupMode(true)
+    }
+
+    private fun startVoiceRecording() {
+        checkAudioPermission { isGranted ->
+            if (isGranted) {
+                viewModel.setVoiceSetupMode(false)
+                viewModel.startVoiceRecording(requireContext(), binding.vvVoiceVisualizer)
+            }
+        }
+    }
 
     private fun sendTextChat() {
         viewModel.sendTextChat(
@@ -66,8 +92,19 @@ class ChatFragment : Fragment() {
         )
     }
 
+    private fun expandChatMedia() = lifecycleScope.launch {
+        cancel()
+        if (viewModel.isKeyboardUp.value) {
+            hideKeyboard()
+            delay(100)
+        }
+        viewModel.toggleExpandChatMedia()
+    }
+
     private fun cancel() {
         viewModel.setExpandChatMedia(false)
+        viewModel.setVoiceSetupMode(false)
+        viewModel.setVoiceRecordingMode(false)
 
         binding.run {
             ivCancel.visibility = View.GONE
@@ -85,15 +122,23 @@ class ChatFragment : Fragment() {
 
     private fun setKeyboardInsets() {
         binding.root.setOnApplyWindowInsetsListener { v, insets ->
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-
-                if (imeHeight == 0) {
-                    binding.root.setPadding(0, 0, 0, getNavigationBarHeight())
-                } else {
-                    binding.root.setPadding(0, 0, 0, imeHeight)
-                }
+            val imeHeight = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            } else {
+                insets.systemWindowInsetBottom
             }
+
+            viewModel.setKeyboardUp(imeHeight != 0)
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R)
+                return@setOnApplyWindowInsetsListener insets
+
+            if (imeHeight == 0) {
+                binding.root.setPadding(0, 0, 0, getNavigationBarHeight())
+            } else {
+                binding.root.setPadding(0, 0, 0, imeHeight)
+            }
+
             insets
         }
 
@@ -128,6 +173,40 @@ class ChatFragment : Fragment() {
         binding.rvChat.scrollToPosition(position)
     }
 
+    private fun hideKeyboard() {
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.etTextMessage.windowToken, 0)
+    }
+
+
+    // audio recording permission
+    private val audioPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        infoLog("audio permission is granted: $isGranted")
+        if (!isGranted) {
+            showPermissionRequestDialog(
+                title = "알림 권한 설정",
+                message = "푸쉬 알림을 활성화 하려면 알림 권한을 설정해주셔야 합니다."
+            )
+        }
+    }
+
+    private fun checkAudioPermission(onCompleted: (Boolean) -> Unit) {
+        val permission = Manifest.permission.RECORD_AUDIO
+
+        val isAlreadyGranted = ContextCompat.checkSelfPermission(
+            requireContext(),
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (isAlreadyGranted) {
+            onCompleted(true)
+            return
+        }
+
+        audioPermissionLauncher.launch(permission)
+    }
 
 
     private fun setBackCallback(isChatShown: Boolean) {
@@ -138,8 +217,17 @@ class ChatFragment : Fragment() {
                         viewModel.toggleExpandChatMedia()
                         return
                     }
+                    if (viewModel.isVoiceSetupMode.value) {
+                        viewModel.setVoiceSetupMode(false)
+                        return
+                    }
+                    if (viewModel.isVoiceRecordingMode.value) {
+                        viewModel.setVoiceRecordingMode(false)
+                        return
+                    }
                     if (navViewModel.showChatNavigation.value) {
                         navViewModel.toggleShowChatNavigation()
+                        cancel()
                         return
                     }
                 }
@@ -153,10 +241,10 @@ class ChatFragment : Fragment() {
     private fun prepareTextChat(message: String) = binding.run {
         val isTextChatMode = message.isNotEmpty()
         if (isTextChatMode) {
-            ivActivateVoiceChat.visibility = View.GONE
+            ivSetupVoiceChat.visibility = View.GONE
             ivSendTextChat.visibility = View.VISIBLE
         } else {
-            ivActivateVoiceChat.visibility = View.VISIBLE
+            ivSetupVoiceChat.visibility = View.VISIBLE
             ivSendTextChat.visibility = View.GONE
         }
     }
@@ -175,10 +263,59 @@ class ChatFragment : Fragment() {
             else View.GONE
     }
 
+    private fun changeVoiceSetupView(isSetup: Boolean) = binding.run {
+        if (isSetup) {
+            ivCancel.visibility = View.VISIBLE
+            ivExpansion.visibility = View.GONE
+
+            mcvDefaultBottomBar.visibility = View.GONE
+            mcvVoiceSetupBottomBar.visibility = View.VISIBLE
+        } else {
+            ivCancel.visibility = View.GONE
+            ivExpansion.visibility = View.VISIBLE
+
+            mcvDefaultBottomBar.visibility = View.VISIBLE
+            mcvVoiceSetupBottomBar.visibility = View.GONE
+        }
+    }
+
+
+    private fun changeVoiceRecordingView(isRecording: Boolean) = binding.run {
+        if (isRecording) {
+            ivCancel.visibility = View.VISIBLE
+            ivExpansion.visibility = View.GONE
+
+            mcvDefaultBottomBar.visibility = View.GONE
+            mcvVoiceSetupBottomBar.visibility = View.GONE
+            mcvVoiceRecordingBottomBar.visibility = View.VISIBLE
+        } else {
+            ivCancel.visibility = View.GONE
+            ivExpansion.visibility = View.VISIBLE
+
+            mcvDefaultBottomBar.visibility = View.VISIBLE
+            mcvVoiceSetupBottomBar.visibility = View.GONE
+            mcvVoiceRecordingBottomBar.visibility = View.GONE
+
+            viewModel.stopVoiceRecording()
+        }
+    }
+
+    private fun applyKeyboardUp(isUp: Boolean) {
+        if (isUp) {
+            binding.etTextMessage.requestFocus()
+            cancel()
+        } else {
+            binding.etTextMessage.clearFocus()
+        }
+    }
+
     private fun collectNavViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.textChat.collectLatest(::prepareTextChat) }
             launch { viewModel.expandChat.collectLatest(::changeChatMediaView) }
+            launch { viewModel.isVoiceSetupMode.collectLatest(::changeVoiceSetupView) }
+            launch { viewModel.isVoiceRecordingMode.collectLatest(::changeVoiceRecordingView) }
+            launch { viewModel.isKeyboardUp.collectLatest(::applyKeyboardUp) }
 
             launch {
                 viewModel.chatList.collectLatest {
@@ -191,8 +328,12 @@ class ChatFragment : Fragment() {
                 }
             }
             launch {
-                navViewModel.showChatNavigation.collectLatest {
-                    setBackCallback(it)
+                navViewModel.showChatNavigation.collectLatest { isShown ->
+                    setBackCallback(isShown)
+                    if (!isShown) {
+                        hideKeyboard()
+                        viewModel.setExpandChatMedia(false)
+                    }
                 }
             }
         }
