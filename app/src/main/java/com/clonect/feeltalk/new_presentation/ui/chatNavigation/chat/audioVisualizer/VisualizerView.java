@@ -12,10 +12,11 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.clonect.feeltalk.R;
+
+import java.util.ArrayList;
 
 /**
  * A class that draws visualizations of data received from {@link RecordingSampler}
@@ -29,6 +30,7 @@ public class VisualizerView extends FrameLayout {
     private static final int RENDAR_RANGE_BOTTOM = 1;
     private static final int RENDAR_RANGE_TOP_BOTTOM = 2;
 
+    private ArrayList<Float> barHeightList;
     private int mNumColumns;
     private int mRenderColor;
     private int mType;
@@ -50,6 +52,7 @@ public class VisualizerView extends FrameLayout {
         init(context, attrs);
         mPaint.setColor(mRenderColor);
         mFadePaint.setColor(Color.argb(138, 255, 255, 255));
+        barHeightList = new ArrayList<>();
     }
 
     private void init(Context context, AttributeSet attrs) {
@@ -59,8 +62,6 @@ public class VisualizerView extends FrameLayout {
         mType = args.getInt(R.styleable.visualizerView_renderType, Type.BAR.getFlag());
         mRenderRange = args.getInteger(R.styleable.visualizerView_renderRange, RENDAR_RANGE_TOP_BOTTOM);
         args.recycle();
-
-        Log.d("FeeltalkInfo", "renderColor is white?" + (mRenderColor == Color.WHITE));
     }
 
     /**
@@ -69,6 +70,10 @@ public class VisualizerView extends FrameLayout {
 
     public void setBaseY(int baseY) {
         mBaseY = baseY;
+    }
+
+    public void reset() {
+        barHeightList = new ArrayList<>();
     }
 
     @Override
@@ -107,6 +112,13 @@ public class VisualizerView extends FrameLayout {
      * @param volume volume from mic input
      */
     protected void receive(final int volume) {
+        if (barHeightList.isEmpty()) {
+            float defaultHeight = getRandomHeight(6);
+            for (int i = 0; i < mNumColumns; i++) {
+                barHeightList.add(defaultHeight);
+            }
+        }
+
         post(() -> {
             if (mCanvas == null) {
                 invalidate();
@@ -127,15 +139,23 @@ public class VisualizerView extends FrameLayout {
                 drawBar(volume);
             }
             if ((mType & Type.PIXEL.getFlag()) != 0) {
-                drawPixel(volume);
+                drawBar(volume);
             }
             invalidate();
         });
     }
 
     private void drawBar(int volume) {
+        int withMinVolume = volume * 3 / 5;
+        if (withMinVolume < 0) withMinVolume = 6;
+
+        float firstVarHeight = getRandomHeight(withMinVolume);
+        barHeightList.add(0, firstVarHeight);
+        barHeightList.remove(barHeightList.size() - 1);
+
         for (int i = 0; i < mNumColumns; i++) {
-            float height = getRandomHeight(volume);
+            if (barHeightList.size() <= i) return;
+            float height = barHeightList.get(i);
             float left = i * mColumnWidth + mSpace;
             float right = (i + 1) * mColumnWidth - mSpace;
 
@@ -192,6 +212,9 @@ public class VisualizerView extends FrameLayout {
 
     private float getRandomHeight(int volume) {
         double randomVolume = Math.random() * volume + 1;
+        randomVolume = volume;
+        if (randomVolume < 6)
+            randomVolume = 6;
         float height = getHeight();
         switch (mRenderRange) {
             case RENDAR_RANGE_TOP:

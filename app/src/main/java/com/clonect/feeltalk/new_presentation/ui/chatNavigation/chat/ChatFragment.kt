@@ -59,12 +59,16 @@ class ChatFragment : Fragment() {
         setRecyclerView()
 
         binding.run {
+            ivCancel.setOnClickListener { cancel() }
+
             etTextMessage.addTextChangedListener { viewModel.setTextChat(it?.toString() ?: "") }
-            ivSetupVoiceChat.setOnClickListener { setupVoiceRecording() }
-            ivStartVoiceRecording.setOnClickListener { startVoiceRecording() }
             ivSendTextChat.setOnClickListener { sendTextChat() }
             ivExpansion.setOnClickListener { expandChatMedia() }
-            ivCancel.setOnClickListener { cancel() }
+
+            ivSetupVoiceChat.setOnClickListener { setupVoiceRecording() }
+            ivStartVoiceRecording.setOnClickListener { startVoiceRecording() }
+            ivStopVoiceRecording.setOnClickListener { stopVoiceRecording() }
+            ivReplayVoiceRecording.setOnClickListener { replayVoiceRecording() }
         }
     }
 
@@ -82,6 +86,14 @@ class ChatFragment : Fragment() {
                 viewModel.startVoiceRecording(requireContext(), binding.vvVoiceVisualizer)
             }
         }
+    }
+
+    private fun stopVoiceRecording() {
+        viewModel.stopVoiceRecording()
+    }
+
+    private fun replayVoiceRecording() {
+        viewModel.startVoiceRecordingReplay(requireContext(), binding.vvVoiceVisualizer)
     }
 
     private fun sendTextChat() {
@@ -105,10 +117,13 @@ class ChatFragment : Fragment() {
         viewModel.setExpandChatMedia(false)
         viewModel.setVoiceSetupMode(false)
         viewModel.setVoiceRecordingMode(false)
+        viewModel.stopVoiceRecordingReplay()
 
         binding.run {
             ivCancel.visibility = View.GONE
             ivExpansion.visibility = View.VISIBLE
+
+            vvVoiceVisualizer.reset()
         }
     }
 
@@ -209,6 +224,15 @@ class ChatFragment : Fragment() {
     }
 
 
+    private fun applyKeyboardUp(isUp: Boolean) {
+        if (isUp) {
+            binding.etTextMessage.requestFocus()
+            cancel()
+        } else {
+            binding.etTextMessage.clearFocus()
+        }
+    }
+
     private fun setBackCallback(isChatShown: Boolean) {
         if (isChatShown) {
             onBackCallback = object: OnBackPressedCallback(true) {
@@ -223,6 +247,7 @@ class ChatFragment : Fragment() {
                     }
                     if (viewModel.isVoiceRecordingMode.value) {
                         viewModel.setVoiceRecordingMode(false)
+                        viewModel.stopVoiceRecordingReplay()
                         return
                     }
                     if (navViewModel.showChatNavigation.value) {
@@ -300,13 +325,26 @@ class ChatFragment : Fragment() {
         }
     }
 
-    private fun applyKeyboardUp(isUp: Boolean) {
-        if (isUp) {
-            binding.etTextMessage.requestFocus()
-            cancel()
+    private fun changeVoiceRecordingStopView(isStop: Boolean) = binding.run {
+        if (isStop) {
+            ivStopVoiceRecording.visibility = View.GONE
+            ivReplayVoiceRecording.visibility = View.VISIBLE
+            ivSendVoiceChat.visibility = View.VISIBLE
         } else {
-            binding.etTextMessage.clearFocus()
+            ivStopVoiceRecording.visibility = View.VISIBLE
+            ivReplayVoiceRecording.visibility = View.GONE
+            ivSendVoiceChat.visibility = View.GONE
         }
+    }
+
+    private fun changeVoiceRecordingTimeView(recordingTime: Long) = binding.run {
+        val totalSeconds = recordingTime / 1000
+        val minutes = totalSeconds / 60
+        val seconds = totalSeconds % 60
+
+        val minutesStr = if (minutes < 10) "0$minutes" else minutes.toString()
+        val secondsStr = if (seconds < 10) "0$seconds" else seconds.toString()
+        tvRecordTime.text = "$minutesStr:$secondsStr"
     }
 
     private fun collectNavViewModel() = lifecycleScope.launch {
@@ -315,6 +353,8 @@ class ChatFragment : Fragment() {
             launch { viewModel.expandChat.collectLatest(::changeChatMediaView) }
             launch { viewModel.isVoiceSetupMode.collectLatest(::changeVoiceSetupView) }
             launch { viewModel.isVoiceRecordingMode.collectLatest(::changeVoiceRecordingView) }
+            launch { viewModel.isVoiceRecordingStopMode.collectLatest(::changeVoiceRecordingStopView) }
+            launch { viewModel.voiceRecordTime.collectLatest(::changeVoiceRecordingTimeView) }
             launch { viewModel.isKeyboardUp.collectLatest(::applyKeyboardUp) }
 
             launch {
@@ -332,7 +372,7 @@ class ChatFragment : Fragment() {
                     setBackCallback(isShown)
                     if (!isShown) {
                         hideKeyboard()
-                        viewModel.setExpandChatMedia(false)
+                        cancel()
                     }
                 }
             }

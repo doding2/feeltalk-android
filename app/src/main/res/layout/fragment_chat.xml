@@ -236,15 +236,45 @@
                         android:id="@+id/vv_voice_visualizer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingVertical="12dp"
-                        android:layout_marginStart="12dp"
+                        android:paddingVertical="18dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="10dp"
                         android:background="@color/main_500"
                         app:layout_constrainedWidth="true"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/view_recording_spacer"
+                        app:layout_constraintEnd_toStartOf="@id/tv_record_time"
                         app:layout_constraintHorizontal_bias="0"/>
+
+
+                    <ImageView
+                        android:id="@+id/iv_replay_voice_recording"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:padding="8dp"
+                        android:background="@color/main_500"
+                        android:src="@drawable/n_ic_voice_record_replay"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"/>
+
+                    <TextView
+                        android:id="@+id/tv_record_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="6dp"
+                        android:background="@null"
+                        android:enabled="false"
+                        android:focusable="false"
+                        android:text="@string/chat_voice_record_time_default"
+                        android:textSize="14sp"
+                        android:textColor="@color/system_white"
+                        android:fontFamily="@font/pretendard_semi_bold"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/view_recording_spacer"/>
 
                     <View
                         android:id="@+id/view_recording_spacer"

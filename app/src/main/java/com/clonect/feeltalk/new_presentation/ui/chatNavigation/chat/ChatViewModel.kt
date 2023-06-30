@@ -7,9 +7,9 @@ import com.clonect.feeltalk.common.plusDayBy
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.DividerChat
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
+import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.RecordingReplayer
 import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.RecordingSampler
 import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.VisualizerView
-import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,6 +26,13 @@ class ChatViewModel @Inject constructor(
 
 ) : ViewModel() {
 
+    private val _scrollToBottom = MutableSharedFlow<Boolean>()
+    val scrollToBottom = _scrollToBottom.asSharedFlow()
+
+    private val _isKeyboardUp = MutableStateFlow(false)
+    val isKeyboardUp = _isKeyboardUp.asStateFlow()
+
+
     private val _chatList = MutableStateFlow<List<Chat>>(emptyList())
     val chatList = _chatList.asStateFlow()
 
@@ -34,6 +41,7 @@ class ChatViewModel @Inject constructor(
 
     private val _expandChat = MutableStateFlow(false)
     val expandChat = _expandChat.asStateFlow()
+
 
     private val _isVoiceSetupMode = MutableStateFlow(false)
     val isVoiceSetupMode = _isVoiceSetupMode.asStateFlow()
@@ -47,12 +55,16 @@ class ChatViewModel @Inject constructor(
     private val _voiceSampler = MutableStateFlow<RecordingSampler?>(null)
     val voiceSampler = _voiceSampler.asStateFlow()
 
-    private val _scrollToBottom = MutableSharedFlow<Boolean>()
-    val scrollToBottom = _scrollToBottom.asSharedFlow()
+    private var recordTimer: Timer? = null
+    private val _voiceRecordTime = MutableStateFlow(0L)
+    val voiceRecordTime = _voiceRecordTime.asStateFlow()
 
-    private val _isKeyboardUp = MutableStateFlow(false)
-    val isKeyboardUp = _isKeyboardUp.asStateFlow()
+    private var voiceReplayer: RecordingReplayer? = null
+    private val _isVoiceRecordingReplayMode = MutableStateFlow(false)
+    val isVoiceRecordingReplayMode = _isVoiceRecordingReplayMode.asStateFlow()
 
+    private val _isVoiceRecordingReplayPaused = MutableStateFlow(false)
+    val isVoiceRecordingReplayPaused = _isVoiceRecordingReplayPaused.asStateFlow()
 
     init {
         initChatList()
@@ -93,6 +105,7 @@ class ChatViewModel @Inject constructor(
     fun toggleExpandChatMedia() {
         _expandChat.value = _expandChat.value.not()
     }
+
     fun setExpandChatMedia(isExpanded: Boolean) {
         _expandChat.value = isExpanded
     }
@@ -102,27 +115,60 @@ class ChatViewModel @Inject constructor(
         _isVoiceSetupMode.value = isSetup
     }
 
-
     fun startVoiceRecording(context: Context, visualizerView: VisualizerView) {
         _isVoiceRecordingMode.value = true
         _isVoiceRecordingStopMode.value = false
         _voiceSampler.value = RecordingSampler(context).apply {
-            setSamplingInterval(100)
             link(visualizerView)
             startRecording()
-            infoLog("start recording. isRecording: $isRecording")
-            setOnRecordTimeListener {
-                infoLog("record time: $it")
-            }
         }
+        // 녹음 시간 기록하기
+        _voiceRecordTime.value = 0
+        recordTimer = Timer()
+        recordTimer?.schedule(object: TimerTask() {
+            override fun run() {
+                _voiceRecordTime.value += 1000
+            }
+        }, 1000, 1000)
     }
+
     fun stopVoiceRecording() {
         _voiceSampler.value?.stopRecording()
         _isVoiceRecordingStopMode.value = true
+        recordTimer?.cancel()
     }
+
     fun setVoiceRecordingMode(isRecording: Boolean) {
         _isVoiceRecordingMode.value = isRecording
         _isVoiceRecordingStopMode.value = false
+        if (!isRecording) {
+            recordTimer?.cancel()
+        }
+    }
+
+    fun startVoiceRecordingReplay(context: Context, visualizerView: VisualizerView) {
+        _isVoiceRecordingReplayMode.value = true
+        val voiceFile = _voiceSampler.value?.voiceRecordFile ?: return
+        voiceReplayer = RecordingReplayer(context, voiceFile, visualizerView)
+        voiceReplayer?.replay()
+
+        _voiceRecordTime.value = 0
+        recordTimer = Timer()
+        recordTimer?.schedule(object: TimerTask() {
+            override fun run() {
+                if (voiceReplayer?.isReplaying == true) {
+                    _voiceRecordTime.value += 100
+                } else {
+                    cancel()
+                }
+            }
+        }, 100, 100)
+    }
+
+    fun stopVoiceRecordingReplay() {
+        _isVoiceRecordingReplayMode.value = false
+        voiceReplayer?.stop()
+        recordTimer?.cancel()
     }
 
 
