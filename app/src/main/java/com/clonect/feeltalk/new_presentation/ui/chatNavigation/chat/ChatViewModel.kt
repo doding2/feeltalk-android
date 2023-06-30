@@ -43,29 +43,35 @@ class ChatViewModel @Inject constructor(
     val expandChat = _expandChat.asStateFlow()
 
 
+    // 셋업
     private val _isVoiceSetupMode = MutableStateFlow(false)
     val isVoiceSetupMode = _isVoiceSetupMode.asStateFlow()
 
+    // 보이스 녹음중
     private val _isVoiceRecordingMode = MutableStateFlow(false)
     val isVoiceRecordingMode = _isVoiceRecordingMode.asStateFlow()
 
+    // 보이스 녹음 완료
     private val _isVoiceRecordingStopMode = MutableStateFlow(false)
     val isVoiceRecordingStopMode = _isVoiceRecordingStopMode.asStateFlow()
 
     private val _voiceSampler = MutableStateFlow<RecordingSampler?>(null)
     val voiceSampler = _voiceSampler.asStateFlow()
 
+    // 타이머
     private var recordTimer: Timer? = null
     private val _voiceRecordTime = MutableStateFlow(0L)
     val voiceRecordTime = _voiceRecordTime.asStateFlow()
 
+    // 리플레이 재생중
     private var voiceReplayer: RecordingReplayer? = null
-    private val _isVoiceRecordingReplayMode = MutableStateFlow(false)
-    val isVoiceRecordingReplayMode = _isVoiceRecordingReplayMode.asStateFlow()
+    private val _isVoiceRecordingReplaying = MutableStateFlow(false)
+    val isVoiceRecordingReplaying = _isVoiceRecordingReplaying.asStateFlow()
 
-    private val _isVoiceRecordingReplayPaused = MutableStateFlow(false)
+    // 리플레이 재생 상태에서 리플레이 중단
+    private val _isVoiceRecordingReplayPaused = MutableStateFlow(true)
     val isVoiceRecordingReplayPaused = _isVoiceRecordingReplayPaused.asStateFlow()
-
+    
     init {
         initChatList()
     }
@@ -147,8 +153,10 @@ class ChatViewModel @Inject constructor(
     }
 
     fun startVoiceRecordingReplay(context: Context, visualizerView: VisualizerView) {
-        _isVoiceRecordingReplayMode.value = true
+        _isVoiceRecordingReplaying.value = true
+        _isVoiceRecordingReplayPaused.value = false
         val voiceFile = _voiceSampler.value?.voiceRecordFile ?: return
+        voiceReplayer?.stop()
         voiceReplayer = RecordingReplayer(context, voiceFile, visualizerView)
         voiceReplayer?.replay()
 
@@ -158,7 +166,10 @@ class ChatViewModel @Inject constructor(
             override fun run() {
                 if (voiceReplayer?.isReplaying == true) {
                     _voiceRecordTime.value += 100
-                } else {
+                }
+                if (voiceReplayer?.isCompleted == true) {
+                    _isVoiceRecordingReplaying.value = false
+                    _isVoiceRecordingReplayPaused.value = true
                     cancel()
                 }
             }
@@ -166,9 +177,20 @@ class ChatViewModel @Inject constructor(
     }
 
     fun stopVoiceRecordingReplay() {
-        _isVoiceRecordingReplayMode.value = false
+        _isVoiceRecordingReplaying.value = false
+        _isVoiceRecordingReplayPaused.value = true
         voiceReplayer?.stop()
         recordTimer?.cancel()
+    }
+
+    fun pauseVoiceRecordingReplay() {
+        _isVoiceRecordingReplayPaused.value = true
+        voiceReplayer?.pause()
+    }
+
+    fun resumeVoiceRecordingReplay() {
+        _isVoiceRecordingReplayPaused.value = false
+        voiceReplayer?.resume()
     }
 
 

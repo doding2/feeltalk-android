@@ -35,6 +35,8 @@ class RecordingReplayer(
     private var recordBufferSize: Int
 
     var isReplaying = false
+    var isCompleted = false
+    private var lastReadFileReadCount = 0
 
     init {
         recordBufferSize = AudioRecord.getMinBufferSize(
@@ -74,52 +76,107 @@ class RecordingReplayer(
 
         CoroutineScope(Dispatchers.Main).launch {
             for (count in 0..fileReadCount) {
-                if (!isReplaying)
+                if (!isReplaying) {
+                    lastReadFileReadCount = count
                     break
+                }
 
                 val readSize = withContext(Dispatchers.IO) {
                     inputStream.read(buf, 0, buf.size)
                 }
-                if (readSize == -1) {
-                    infoLog("readSize is -1")
-                    break
+                if (readSize != -1) {
+                    var tempBuf = buf.take(recordBufferSize).toByteArray()
+                    var decibel = DecibelCalculator.calculate(tempBuf, tempBuf.size)
+
+                    if (decibel >= 70) {
+                        tempBuf = buf.takeLast(recordBufferSize).toByteArray()
+                        decibel = DecibelCalculator.calculate(tempBuf, tempBuf.size)
+                    }
+
+                    if (decibel >= 70) {
+                        decibel = DecibelCalculator.calculate(buf, buf.size)
+                    }
+
+                    infoLog("decibel: $decibel")
+
+                    visualizer.receive(decibel)
                 }
-
-                val tempBuf = buf.take(recordBufferSize).toByteArray()
-                val decibel = DecibelCalculator.calculate(tempBuf, tempBuf.size)
-                infoLog("decibel: $decibel")
-
-                visualizer.receive(decibel)
 
                 delay(mSampleInterval)
                 replayTime += mSampleInterval
-            }
 
+                if (count == fileReadCount) {
+//                    for (i in 0..2) {
+//                        visualizer.receive(0)
+//                        delay(mSampleInterval)
+//                    }
 
-            for (i in 0..2) {
-                visualizer.receive(0)
-                delay(mSampleInterval)
+                    isCompleted = true
+                }
             }
 
             isReplaying = false
-            stop()
             infoLog("iterate while fileReadCount done")
         }
     }
 
 
     fun resume() {
+        isReplaying = true
+        CoroutineScope(Dispatchers.IO).launch {
+            delay(mSampleInterval)
+            mediaPlayer.start()
+        }
 
+        val buf = ByteArray(bufferSize)
+
+        CoroutineScope(Dispatchers.Main).launch {
+            for (count in lastReadFileReadCount..fileReadCount) {
+                if (!isReplaying) {
+                    lastReadFileReadCount = count
+                    break
+                }
+
+                val readSize = withContext(Dispatchers.IO) {
+                    inputStream.read(buf, 0, buf.size)
+                }
+                if (readSize != -1) {
+                    val tempBuf = buf.take(recordBufferSize).toByteArray()
+                    val decibel = DecibelCalculator.calculate(tempBuf, tempBuf.size)
+                    infoLog("decibel: $decibel")
+
+                    visualizer.receive(decibel)
+                }
+
+                delay(mSampleInterval)
+                replayTime += mSampleInterval
+
+                if (count == fileReadCount) {
+//                    for (i in 0..2) {
+//                        visualizer.receive(0)
+//                        delay(mSampleInterval)
+//                    }
+
+                    isCompleted = true
+                }
+            }
+
+            isReplaying = false
+            infoLog("iterate while fileReadCount done")
+        }
     }
 
     fun pause() {
         isReplaying = false
-        mediaPlayer?.stop()
+        mediaPlayer?.pause()
     }
 
     fun stop() {
-        pause()
+        isReplaying = false
+        isCompleted = true
+        mediaPlayer?.release()
         replayTime = 0
+        lastReadFileReadCount = 0
         inputStream.close()
     }
 }

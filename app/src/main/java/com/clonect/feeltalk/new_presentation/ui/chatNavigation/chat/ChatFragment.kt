@@ -69,6 +69,7 @@ class ChatFragment : Fragment() {
             ivStartVoiceRecording.setOnClickListener { startVoiceRecording() }
             ivStopVoiceRecording.setOnClickListener { stopVoiceRecording() }
             ivReplayVoiceRecording.setOnClickListener { replayVoiceRecording() }
+            ivPauseReplayVoiceRecording.setOnClickListener { pauseVoiceRecordingReplaying() }
         }
     }
 
@@ -93,7 +94,15 @@ class ChatFragment : Fragment() {
     }
 
     private fun replayVoiceRecording() {
-        viewModel.startVoiceRecordingReplay(requireContext(), binding.vvVoiceVisualizer)
+        if (viewModel.isVoiceRecordingReplaying.value && viewModel.isVoiceRecordingReplayPaused.value) {
+            viewModel.resumeVoiceRecordingReplay()
+        } else {
+            viewModel.startVoiceRecordingReplay(requireContext(), binding.vvVoiceVisualizer)
+        }
+    }
+
+    private fun pauseVoiceRecordingReplaying() {
+        viewModel.pauseVoiceRecordingReplay()
     }
 
     private fun sendTextChat() {
@@ -347,6 +356,26 @@ class ChatFragment : Fragment() {
         tvRecordTime.text = "$minutesStr:$secondsStr"
     }
 
+    private fun changePauseVoiceRecordingReplayingView(isPaused: Boolean) = binding.run {
+        // 리플레이 상태가 아님
+        if (!viewModel.isVoiceRecordingReplaying.value) {
+            ivReplayVoiceRecording.visibility = View.VISIBLE
+            ivPauseReplayVoiceRecording.visibility = View.GONE
+            return@run
+        }
+        
+        // 리플레이 재생중
+        if (!isPaused) {
+            ivReplayVoiceRecording.visibility = View.GONE
+            ivPauseReplayVoiceRecording.visibility = View.VISIBLE
+        }
+        // 리플레이 중단됨
+        if (isPaused) {
+            ivReplayVoiceRecording.visibility = View.VISIBLE
+            ivPauseReplayVoiceRecording.visibility = View.GONE
+        }
+    }
+
     private fun collectNavViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.textChat.collectLatest(::prepareTextChat) }
@@ -354,6 +383,7 @@ class ChatFragment : Fragment() {
             launch { viewModel.isVoiceSetupMode.collectLatest(::changeVoiceSetupView) }
             launch { viewModel.isVoiceRecordingMode.collectLatest(::changeVoiceRecordingView) }
             launch { viewModel.isVoiceRecordingStopMode.collectLatest(::changeVoiceRecordingStopView) }
+            launch { viewModel.isVoiceRecordingReplayPaused.collectLatest(::changePauseVoiceRecordingReplayingView) }
             launch { viewModel.voiceRecordTime.collectLatest(::changeVoiceRecordingTimeView) }
             launch { viewModel.isKeyboardUp.collectLatest(::applyKeyboardUp) }
 
