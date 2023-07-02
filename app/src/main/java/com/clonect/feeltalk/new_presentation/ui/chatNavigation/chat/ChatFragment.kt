@@ -90,7 +90,7 @@ class ChatFragment : Fragment() {
     }
 
     private fun stopVoiceRecording() {
-        viewModel.stopVoiceRecording()
+        viewModel.finishVoiceRecording()
     }
 
     private fun replayVoiceRecording() {
@@ -123,9 +123,13 @@ class ChatFragment : Fragment() {
     }
 
     private fun cancel() {
+        // 채팅 확장 취소
         viewModel.setExpandChatMedia(false)
+        // 보이스 챗 셋업 취소
         viewModel.setVoiceSetupMode(false)
-        viewModel.setVoiceRecordingMode(false)
+        // 보이스 녹음 취소
+        viewModel.cancelVoiceRecordingMode()
+        // 보이스 리플레이 취소
         viewModel.stopVoiceRecordingReplay()
 
         binding.run {
@@ -255,7 +259,7 @@ class ChatFragment : Fragment() {
                         return
                     }
                     if (viewModel.isVoiceRecordingMode.value) {
-                        viewModel.setVoiceRecordingMode(false)
+                        viewModel.cancelVoiceRecordingMode()
                         viewModel.stopVoiceRecordingReplay()
                         return
                     }
@@ -330,12 +334,12 @@ class ChatFragment : Fragment() {
             mcvVoiceSetupBottomBar.visibility = View.GONE
             mcvVoiceRecordingBottomBar.visibility = View.GONE
 
-            viewModel.stopVoiceRecording()
+            viewModel.finishVoiceRecording()
         }
     }
 
-    private fun changeVoiceRecordingStopView(isStop: Boolean) = binding.run {
-        if (isStop) {
+    private fun changeVoiceRecordingFinishedView(isFinished: Boolean) = binding.run {
+        if (isFinished) {
             ivStopVoiceRecording.visibility = View.GONE
             ivReplayVoiceRecording.visibility = View.VISIBLE
             ivSendVoiceChat.visibility = View.VISIBLE
@@ -359,7 +363,12 @@ class ChatFragment : Fragment() {
     private fun changePauseVoiceRecordingReplayingView(isPaused: Boolean) = binding.run {
         // 리플레이 상태가 아님
         if (!viewModel.isVoiceRecordingReplaying.value) {
-            ivReplayVoiceRecording.visibility = View.VISIBLE
+            // 리플레이 재생이 끝남
+            if (viewModel.isVoiceRecordingReplayCompleted.value) {
+                ivReplayVoiceRecording.visibility = View.VISIBLE
+            } else {
+                ivReplayVoiceRecording.visibility = View.GONE
+            }
             ivPauseReplayVoiceRecording.visibility = View.GONE
             return@run
         }
@@ -382,7 +391,7 @@ class ChatFragment : Fragment() {
             launch { viewModel.expandChat.collectLatest(::changeChatMediaView) }
             launch { viewModel.isVoiceSetupMode.collectLatest(::changeVoiceSetupView) }
             launch { viewModel.isVoiceRecordingMode.collectLatest(::changeVoiceRecordingView) }
-            launch { viewModel.isVoiceRecordingStopMode.collectLatest(::changeVoiceRecordingStopView) }
+            launch { viewModel.isVoiceRecordingFinished.collectLatest(::changeVoiceRecordingFinishedView) }
             launch { viewModel.isVoiceRecordingReplayPaused.collectLatest(::changePauseVoiceRecordingReplayingView) }
             launch { viewModel.voiceRecordTime.collectLatest(::changeVoiceRecordingTimeView) }
             launch { viewModel.isKeyboardUp.collectLatest(::applyKeyboardUp) }

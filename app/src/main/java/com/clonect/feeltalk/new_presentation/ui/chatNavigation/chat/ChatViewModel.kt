@@ -52,8 +52,8 @@ class ChatViewModel @Inject constructor(
     val isVoiceRecordingMode = _isVoiceRecordingMode.asStateFlow()
 
     // 보이스 녹음 완료
-    private val _isVoiceRecordingStopMode = MutableStateFlow(false)
-    val isVoiceRecordingStopMode = _isVoiceRecordingStopMode.asStateFlow()
+    private val _isVoiceRecordingFinished = MutableStateFlow(false)
+    val isVoiceRecordingFinished = _isVoiceRecordingFinished.asStateFlow()
 
     private val _voiceSampler = MutableStateFlow<RecordingSampler?>(null)
     val voiceSampler = _voiceSampler.asStateFlow()
@@ -71,6 +71,10 @@ class ChatViewModel @Inject constructor(
     // 리플레이 재생 상태에서 리플레이 중단
     private val _isVoiceRecordingReplayPaused = MutableStateFlow(true)
     val isVoiceRecordingReplayPaused = _isVoiceRecordingReplayPaused.asStateFlow()
+
+    // 리플레이 재생 완료
+    private val _isVoiceRecordingReplayCompleted = MutableStateFlow(false)
+    val isVoiceRecordingReplayCompleted = _isVoiceRecordingReplayCompleted.asStateFlow()
     
     init {
         initChatList()
@@ -123,7 +127,7 @@ class ChatViewModel @Inject constructor(
 
     fun startVoiceRecording(context: Context, visualizerView: VisualizerView) {
         _isVoiceRecordingMode.value = true
-        _isVoiceRecordingStopMode.value = false
+        _isVoiceRecordingFinished.value = false
         _voiceSampler.value = RecordingSampler(context).apply {
             link(visualizerView)
             startRecording()
@@ -138,21 +142,21 @@ class ChatViewModel @Inject constructor(
         }, 1000, 1000)
     }
 
-    fun stopVoiceRecording() {
+    fun finishVoiceRecording() {
         _voiceSampler.value?.stopRecording()
-        _isVoiceRecordingStopMode.value = true
+        _isVoiceRecordingFinished.value = true
         recordTimer?.cancel()
     }
 
-    fun setVoiceRecordingMode(isRecording: Boolean) {
-        _isVoiceRecordingMode.value = isRecording
-        _isVoiceRecordingStopMode.value = false
-        if (!isRecording) {
-            recordTimer?.cancel()
-        }
+    fun cancelVoiceRecordingMode() {
+        _isVoiceRecordingMode.value = false
+        _isVoiceRecordingFinished.value = false
+        recordTimer?.cancel()
+        _voiceSampler.value?.stopRecording()
     }
 
     fun startVoiceRecordingReplay(context: Context, visualizerView: VisualizerView) {
+        _isVoiceRecordingReplayCompleted.value = false
         _isVoiceRecordingReplaying.value = true
         _isVoiceRecordingReplayPaused.value = false
         val voiceFile = _voiceSampler.value?.voiceRecordFile ?: return
@@ -168,6 +172,7 @@ class ChatViewModel @Inject constructor(
                     _voiceRecordTime.value += 100
                 }
                 if (voiceReplayer?.isCompleted == true) {
+                    _isVoiceRecordingReplayCompleted.value = true
                     _isVoiceRecordingReplaying.value = false
                     _isVoiceRecordingReplayPaused.value = true
                     cancel()
@@ -177,7 +182,9 @@ class ChatViewModel @Inject constructor(
     }
 
     fun stopVoiceRecordingReplay() {
+        _isVoiceRecordingReplayCompleted.value = false
         _isVoiceRecordingReplaying.value = false
+        _isVoiceRecordingReplayPaused.value = false
         _isVoiceRecordingReplayPaused.value = true
         voiceReplayer?.stop()
         recordTimer?.cancel()

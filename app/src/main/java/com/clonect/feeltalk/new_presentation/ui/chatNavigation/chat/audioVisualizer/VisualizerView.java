@@ -14,6 +14,8 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
+import androidx.annotation.ColorInt;
+
 import com.clonect.feeltalk.R;
 
 import java.util.ArrayList;
@@ -76,6 +78,15 @@ public class VisualizerView extends FrameLayout {
         barHeightList = new ArrayList<>();
     }
 
+    public void setRenderColor(@ColorInt int color) {
+        mRenderColor = color;
+        mPaint.setColor(mRenderColor);
+    }
+
+    public void drawDefaultView() {
+        receive(0);
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -112,14 +123,14 @@ public class VisualizerView extends FrameLayout {
      * @param volume volume from mic input
      */
     protected void receive(final int volume) {
-        if (barHeightList.isEmpty()) {
-            float defaultHeight = getRandomHeight(6);
-            for (int i = 0; i < mNumColumns; i++) {
-                barHeightList.add(defaultHeight);
-            }
-        }
-
         post(() -> {
+            if (barHeightList.isEmpty()) {
+                float defaultHeight = getRandomHeight(6);
+                for (int i = 0; i < mNumColumns; i++) {
+                    barHeightList.add(defaultHeight);
+                }
+            }
+
             if (mCanvas == null) {
                 invalidate();
                 return;

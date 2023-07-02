@@ -218,10 +218,18 @@ public class RecordingSampler {
     }
 
     private void runRecording() {
+        if (mVisualizerViews != null && !mVisualizerViews.isEmpty()) {
+            for (int i = 0; i < mVisualizerViews.size(); i++) {
+                mVisualizerViews.get(i).drawDefaultView();
+            }
+        }
+
         final byte buf[] = new byte[mBufSize];
+
         mTimer.schedule(new TimerTask() {
             @Override
             public void run() {
+
                 // stop recording
                 if (!mIsRecording) {
                     mAudioRecord.stop();

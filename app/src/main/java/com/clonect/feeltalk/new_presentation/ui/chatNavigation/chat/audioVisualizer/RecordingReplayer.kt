@@ -67,6 +67,7 @@ class RecordingReplayer(
             mediaPlayer.start()
         }
         visualizer.reset()
+        visualizer.drawDefaultView()
         isReplaying = true
 
         val buf = ByteArray(bufferSize)
@@ -86,15 +87,23 @@ class RecordingReplayer(
                 }
                 if (readSize != -1) {
                     var tempBuf = buf.take(recordBufferSize).toByteArray()
-                    var decibel = DecibelCalculator.calculate(tempBuf, tempBuf.size)
+                    val firstDecibel = DecibelCalculator.calculate(tempBuf, tempBuf.size)
 
-                    if (decibel >= 70) {
+                    val lastDecibel = if (firstDecibel >= 70) {
                         tempBuf = buf.takeLast(recordBufferSize).toByteArray()
-                        decibel = DecibelCalculator.calculate(tempBuf, tempBuf.size)
+                         DecibelCalculator.calculate(tempBuf, tempBuf.size)
+                    } else {
+                        firstDecibel
                     }
-
-                    if (decibel >= 70) {
-                        decibel = DecibelCalculator.calculate(buf, buf.size)
+                    val wholeDecibel = if (lastDecibel >= 70) {
+                        DecibelCalculator.calculate(buf, buf.size)
+                    } else {
+                        lastDecibel
+                    }
+                    val decibel = if (firstDecibel >= 70 && lastDecibel >= 70 && wholeDecibel >= 70) {
+                        0
+                    } else {
+                        lastDecibel
                     }
 
                     infoLog("decibel: $decibel")
@@ -162,7 +171,6 @@ class RecordingReplayer(
             }
 
             isReplaying = false
-            infoLog("iterate while fileReadCount done")
         }
     }
 
