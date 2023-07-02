@@ -7,6 +7,7 @@ import com.clonect.feeltalk.common.plusDayBy
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.DividerChat
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
+import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
 import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.RecordingReplayer
 import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.RecordingSampler
 import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.VisualizerView
@@ -102,6 +103,29 @@ class ChatViewModel @Inject constructor(
         setScrollToBottom()
     }
 
+    fun sendVoiceChat(onComplete: () -> Unit) = viewModelScope.launch {
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        VoiceChat(
+            index = _chatList.value.size.toLong(),
+            pageNo = 0,
+            chatSender = "me",
+            isRead = true,
+            createAt = format.format(Date()),
+            url = "voiceCache.wav",
+        ).also {
+            _chatList.value = _chatList.value
+                .toMutableList()
+                .apply {
+                    add(it)
+                }
+        }
+        onComplete()
+        delay(50)
+        setScrollToBottom()
+    }
+
+
+
     fun setScrollToBottom() = viewModelScope.launch {
         _scrollToBottom.emit(true)
     }
@@ -153,6 +177,7 @@ class ChatViewModel @Inject constructor(
         _isVoiceRecordingFinished.value = false
         recordTimer?.cancel()
         _voiceSampler.value?.stopRecording()
+        _voiceSampler.value = null
     }
 
     fun startVoiceRecordingReplay(context: Context, visualizerView: VisualizerView) {
@@ -182,12 +207,13 @@ class ChatViewModel @Inject constructor(
     }
 
     fun stopVoiceRecordingReplay() {
+        voiceReplayer?.stop()
+        voiceReplayer = null
+        recordTimer?.cancel()
         _isVoiceRecordingReplayCompleted.value = false
         _isVoiceRecordingReplaying.value = false
         _isVoiceRecordingReplayPaused.value = false
         _isVoiceRecordingReplayPaused.value = true
-        voiceReplayer?.stop()
-        recordTimer?.cancel()
     }
 
     fun pauseVoiceRecordingReplay() {

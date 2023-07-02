@@ -1,5 +1,7 @@
 package com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat
 
+import android.media.MediaMetadataRetriever
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,10 +9,13 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.R
-import com.clonect.feeltalk.databinding.ItemChatDividerBinding
-import com.clonect.feeltalk.databinding.ItemTextChatMineBinding
-import com.clonect.feeltalk.databinding.ItemTextChatPartnerBinding
+import com.clonect.feeltalk.databinding.*
 import com.clonect.feeltalk.new_domain.model.chat.*
+import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.RecordingReplayer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -57,7 +62,9 @@ class ChatAdapter: RecyclerView.Adapter<ChatViewHolder>() {
         }
     }
 
-    val differ = AsyncListDiffer(this, callback)
+    private val differ = AsyncListDiffer(this, callback)
+    private val viewHolders = mutableListOf<ChatViewHolder>()
+    private val voiceViewHolders = mutableListOf<ChatViewHolder>()
 
 
     private var onQuestionAnswerButtonClick: ((QuestionChat) -> Unit)? = null
@@ -68,7 +75,7 @@ class ChatAdapter: RecyclerView.Adapter<ChatViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
-        return when (viewType) {
+        val viewHolder = when (viewType) {
             TYPE_DIVIDER -> {
                 val binding = ItemChatDividerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 ChatDividerViewHolder(binding)
@@ -81,11 +88,25 @@ class ChatAdapter: RecyclerView.Adapter<ChatViewHolder>() {
                 val binding = ItemTextChatPartnerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 TextChatPartnerViewHolder(binding)
             }
+            TYPE_VOICE_MINE -> {
+                val binding = ItemVoiceChatMineBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                val holder = VoiceChatMineViewHolder(binding)
+                voiceViewHolders.add(holder)
+                holder
+            }
+            TYPE_VOICE_PARTNER -> {
+                val binding = ItemVoiceChatPartnerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                val holder = VoiceChatPartnerViewHolder(binding)
+                voiceViewHolders.add(holder)
+                holder
+            }
             else -> {
                 val binding = ItemChatDividerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 ChatDividerViewHolder(binding)
             }
         }
+        voiceViewHolders.add(viewHolder)
+        return viewHolder
     }
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
@@ -130,6 +151,16 @@ class ChatAdapter: RecyclerView.Adapter<ChatViewHolder>() {
         }
     }
 
+    fun submitList(newList: List<Chat>) {
+        differ.submitList(newList)
+    }
+
+    fun resetVoiceChats() {
+        for (holder in voiceViewHolders) {
+            if (holder is VoiceChatMineViewHolder) holder.reset()
+            if (holder is VoiceChatPartnerViewHolder) holder.reset()
+        }
+    }
 
     fun setOnQuestionAnswerButtonClick(onClick: ((QuestionChat) -> Unit)) {
         onQuestionAnswerButtonClick = onClick
@@ -209,3 +240,324 @@ class TextChatPartnerViewHolder(
     }
 }
 
+class VoiceChatMineViewHolder(
+    val binding: ItemVoiceChatMineBinding,
+) : ChatViewHolder(binding.root) {
+
+    var audioFile: File? = null
+    var replayer: RecordingReplayer? = null
+    var timer: Timer? = null
+    var replayTime: Long = 0
+    var isPaused = false
+
+    override fun bind(item: Chat) {
+        val chat = item as VoiceChat
+
+        binding.run {
+            if (replayer?.isReplaying == true) {
+                ivReplay.visibility = View.GONE
+                ivPause.visibility = View.VISIBLE
+                vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.main_500))
+            }
+            else {
+                ivReplay.visibility = View.VISIBLE
+                ivPause.visibility = View.GONE
+                vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
+            }
+
+            vvVoiceVisualizer.visibility = View.VISIBLE
+            init(chat)
+
+            tvTime.text = getFormatted(chat.createAt)
+
+            ivReplay.setOnClickListener {
+                if (isPaused) resume()
+                else replay()
+            }
+            ivPause.setOnClickListener { pause() }
+        }
+    }
+
+    private fun init(chat: VoiceChat) = binding.run {
+        if (audioFile == null) {
+            // TODO 나중에 오디오 파일 다운로드 해야댐
+            audioFile = File(root.context.cacheDir, chat.url)
+            audioFile = audioFile?.copyTo(
+                target = File(root.context.cacheDir, chat.index.toString() + "" + chat.url),
+                overwrite = true
+            )
+
+            vvVoiceVisualizer.numColumns = 8
+            vvVoiceVisualizer.reset()
+            vvVoiceVisualizer.drawDefaultView()
+
+            replayTime = 0
+            setAudioDuration()
+        }
+    }
+
+    private fun setAudioDuration() {
+        val mmr = MediaMetadataRetriever()
+        mmr.setDataSource(binding.root.context, Uri.fromFile(audioFile))
+        val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+        val audioDuration = duration?.toLong() ?: 0
+        setReplayTimeText(audioDuration)
+    }
+
+    private fun setReplayTimeText(replayTime: Long) = binding.run {
+        val totalSeconds = replayTime / 1000
+        val minutes = totalSeconds / 60
+        val seconds = totalSeconds % 60
+
+        val minutesStr = if (minutes < 10) "0$minutes" else minutes.toString()
+        val secondsStr = if (seconds < 10) "0$seconds" else seconds.toString()
+        tvReplayTime.text = "$minutesStr:$secondsStr"
+    }
+
+
+    fun replay() = binding.run {
+        if (audioFile == null || replayer?.isReplaying == true) return@run
+
+        replayer = RecordingReplayer(root.context, audioFile!!, vvVoiceVisualizer)
+        replayer?.replay()
+
+        ivReplay.visibility = View.GONE
+        ivPause.visibility = View.VISIBLE
+        vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.main_500))
+        isPaused = false
+
+        timer = Timer()
+        timer?.schedule(object: TimerTask(){
+            override fun run() {
+                if (replayer?.isReplaying == true) {
+                    replayTime += 100
+                    CoroutineScope(Dispatchers.Main).launch {
+                        setReplayTimeText(replayTime)
+                    }
+                }
+                if (replayer?.isCompleted == true) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        reset(isCompleted = true)
+                    }
+                }
+            }
+        }, 100, 100)
+    }
+
+    fun pause() = binding.run {
+        replayer?.pause()
+        isPaused = true
+
+        vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
+        ivReplay.visibility = View.VISIBLE
+        ivPause.visibility = View.GONE
+    }
+
+    fun resume() = binding.run {
+        replayer?.resume()
+        isPaused = false
+
+        vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.main_500))
+        ivReplay.visibility = View.GONE
+        ivPause.visibility = View.VISIBLE
+    }
+
+    fun reset(isCompleted: Boolean = false) = binding.run {
+        ivReplay.visibility = View.VISIBLE
+        ivPause.visibility = View.GONE
+
+        if (!isCompleted) {
+            vvVoiceVisualizer.reset()
+            vvVoiceVisualizer.drawDefaultView()
+        }
+        vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
+
+        isPaused = false
+        replayTime = 0
+        setAudioDuration()
+
+        replayer?.stop()
+        replayer = null
+        timer?.cancel()
+        timer = null
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class VoiceChatPartnerViewHolder(
+    val binding: ItemVoiceChatPartnerBinding,
+) : ChatViewHolder(binding.root) {
+
+    var audioFile: File? = null
+    var replayer: RecordingReplayer? = null
+    var timer: Timer? = null
+    var replayTime: Long = 0
+    var isPaused = false
+
+    override fun bind(item: Chat) {
+        val chat = item as VoiceChat
+
+        binding.run {
+            if (replayer?.isReplaying == true) {
+                ivReplay.visibility = View.GONE
+                ivPause.visibility = View.VISIBLE
+                vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.main_500))
+            }
+            else {
+                ivReplay.visibility = View.VISIBLE
+                ivPause.visibility = View.GONE
+                vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
+            }
+
+            vvVoiceVisualizer.visibility = View.VISIBLE
+            init(chat)
+
+            tvTime.text = getFormatted(chat.createAt)
+
+            ivReplay.setOnClickListener {
+                if (isPaused) resume()
+                else replay()
+            }
+            ivPause.setOnClickListener { pause() }
+        }
+    }
+
+    private fun init(chat: VoiceChat) = binding.run {
+        if (audioFile == null) {
+            // TODO 나중에 오디오 파일 다운로드 해야댐
+            audioFile = File(root.context.cacheDir, chat.url)
+            audioFile = audioFile?.copyTo(
+                target = File(root.context.cacheDir, chat.index.toString() + "" + chat.url),
+                overwrite = true
+            )
+
+            vvVoiceVisualizer.numColumns = 8
+            vvVoiceVisualizer.reset()
+            vvVoiceVisualizer.drawDefaultView()
+
+            replayTime = 0
+            setAudioDuration()
+        }
+    }
+
+    private fun setAudioDuration() {
+        val mmr = MediaMetadataRetriever()
+        mmr.setDataSource(binding.root.context, Uri.fromFile(audioFile))
+        val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+        val audioDuration = duration?.toLong() ?: 0
+        setReplayTimeText(audioDuration)
+    }
+
+    private fun setReplayTimeText(replayTime: Long) = binding.run {
+        val totalSeconds = replayTime / 1000
+        val minutes = totalSeconds / 60
+        val seconds = totalSeconds % 60
+
+        val minutesStr = if (minutes < 10) "0$minutes" else minutes.toString()
+        val secondsStr = if (seconds < 10) "0$seconds" else seconds.toString()
+        tvReplayTime.text = "$minutesStr:$secondsStr"
+    }
+
+
+    fun replay() = binding.run {
+        if (audioFile == null || replayer?.isReplaying == true) return@run
+
+        replayer = RecordingReplayer(root.context, audioFile!!, vvVoiceVisualizer)
+        replayer?.replay()
+
+        ivReplay.visibility = View.GONE
+        ivPause.visibility = View.VISIBLE
+        vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.main_500))
+        isPaused = false
+
+        timer = Timer()
+        timer?.schedule(object: TimerTask(){
+            override fun run() {
+                if (replayer?.isReplaying == true) {
+                    replayTime += 100
+                    CoroutineScope(Dispatchers.Main).launch {
+                        setReplayTimeText(replayTime)
+                    }
+                }
+                if (replayer?.isCompleted == true) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        reset()
+                    }
+                }
+            }
+        }, 100, 100)
+    }
+
+    fun pause() = binding.run {
+        replayer?.pause()
+        isPaused = true
+
+        vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
+        ivReplay.visibility = View.VISIBLE
+        ivPause.visibility = View.GONE
+    }
+
+    fun resume() = binding.run {
+        replayer?.resume()
+        isPaused = false
+
+        vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.main_500))
+        ivReplay.visibility = View.GONE
+        ivPause.visibility = View.VISIBLE
+    }
+
+    fun reset(isCompleted: Boolean = false) = binding.run {
+        ivReplay.visibility = View.VISIBLE
+        ivPause.visibility = View.GONE
+
+        if (isCompleted) {
+            vvVoiceVisualizer.reset()
+            vvVoiceVisualizer.drawDefaultView()
+        }
+        vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
+
+        isPaused = false
+        replayTime = 0
+        setAudioDuration()
+
+        replayer?.stop()
+        replayer = null
+        timer?.cancel()
+        timer = null
+    }
+}

@@ -65,15 +65,72 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:id="@+id/tv_message"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="10dp"
-                    android:textColor="@color/system_black"
-                    android:textSize="16sp"
-                    android:fontFamily="@font/pretendard_regular"/>
+                    android:layout_marginStart="4dp"
+                    android:layout_marginVertical="12dp">
+
+                    <View
+                        android:id="@+id/view_spacer"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"/>
+
+                    <ImageView
+                        android:id="@+id/iv_replay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:src="@drawable/n_ic_voice_record_replay"
+                        app:tint="@color/system_black"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"/>
+
+                    <ImageView
+                        android:id="@+id/iv_pause"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:visibility="gone"
+                        android:src="@drawable/n_ic_voice_record_replay_pause"
+                        app:tint="@color/system_black"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"/>
+
+                    <com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.VisualizerView
+                        android:id="@+id/vv_voice_visualizer"
+                        android:layout_width="45dp"
+                        android:layout_height="36dp"
+                        android:layout_marginStart="5dp"
+                        android:background="@color/gray_100"
+                        android:visibility="gone"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintStart_toEndOf="@id/view_spacer"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    <TextView
+                        android:id="@+id/tv_replay_time"
+                        android:layout_width="72dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:background="@null"
+                        android:enabled="false"
+                        android:focusable="false"
+                        android:text="@string/chat_voice_record_time_default"
+                        android:textSize="14sp"
+                        android:textColor="@color/system_black"
+                        android:fontFamily="@font/pretendard_semi_bold"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/vv_voice_visualizer"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <TextView

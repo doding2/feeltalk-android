@@ -26,9 +26,11 @@ import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -70,9 +72,46 @@ class ChatFragment : Fragment() {
             ivStopVoiceRecording.setOnClickListener { stopVoiceRecording() }
             ivReplayVoiceRecording.setOnClickListener { replayVoiceRecording() }
             ivPauseReplayVoiceRecording.setOnClickListener { pauseVoiceRecordingReplaying() }
+            ivSendVoiceChat.setOnClickListener { sendVoiceChat() }
         }
     }
 
+
+    private fun cancel() {
+        // 채팅 확장 취소
+        viewModel.setExpandChatMedia(false)
+        // 보이스 챗 셋업 취소
+        viewModel.setVoiceSetupMode(false)
+        // 보이스 녹음 취소
+        viewModel.cancelVoiceRecordingMode()
+        // 보이스 리플레이 취소
+        viewModel.stopVoiceRecordingReplay()
+        // 보이스 채팅 모두 중단
+        adapter.resetVoiceChats()
+
+        binding.run {
+            ivCancel.visibility = View.GONE
+            ivExpansion.visibility = View.VISIBLE
+
+            vvVoiceVisualizer.reset()
+        }
+    }
+
+
+    private fun sendTextChat() {
+        viewModel.sendTextChat(
+            onComplete =  {
+                binding.etTextMessage.setText("")
+            }
+        )
+    }
+
+
+    private fun sendVoiceChat() {
+        viewModel.sendVoiceChat {
+            cancel()
+        }
+    }
 
     private fun setupVoiceRecording() {
         cancel()
@@ -105,13 +144,6 @@ class ChatFragment : Fragment() {
         viewModel.pauseVoiceRecordingReplay()
     }
 
-    private fun sendTextChat() {
-        viewModel.sendTextChat(
-            onComplete =  {
-                binding.etTextMessage.setText("")
-            }
-        )
-    }
 
     private fun expandChatMedia() = lifecycleScope.launch {
         cancel()
@@ -120,24 +152,6 @@ class ChatFragment : Fragment() {
             delay(100)
         }
         viewModel.toggleExpandChatMedia()
-    }
-
-    private fun cancel() {
-        // 채팅 확장 취소
-        viewModel.setExpandChatMedia(false)
-        // 보이스 챗 셋업 취소
-        viewModel.setVoiceSetupMode(false)
-        // 보이스 녹음 취소
-        viewModel.cancelVoiceRecordingMode()
-        // 보이스 리플레이 취소
-        viewModel.stopVoiceRecordingReplay()
-
-        binding.run {
-            ivCancel.visibility = View.GONE
-            ivExpansion.visibility = View.VISIBLE
-
-            vvVoiceVisualizer.reset()
-        }
     }
 
 
@@ -243,36 +257,6 @@ class ChatFragment : Fragment() {
             cancel()
         } else {
             binding.etTextMessage.clearFocus()
-        }
-    }
-
-    private fun setBackCallback(isChatShown: Boolean) {
-        if (isChatShown) {
-            onBackCallback = object: OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    if (viewModel.expandChat.value) {
-                        viewModel.toggleExpandChatMedia()
-                        return
-                    }
-                    if (viewModel.isVoiceSetupMode.value) {
-                        viewModel.setVoiceSetupMode(false)
-                        return
-                    }
-                    if (viewModel.isVoiceRecordingMode.value) {
-                        viewModel.cancelVoiceRecordingMode()
-                        viewModel.stopVoiceRecordingReplay()
-                        return
-                    }
-                    if (navViewModel.showChatNavigation.value) {
-                        navViewModel.toggleShowChatNavigation()
-                        cancel()
-                        return
-                    }
-                }
-            }
-            requireActivity().onBackPressedDispatcher.addCallback(this.viewLifecycleOwner, onBackCallback)
-        } else if (::onBackCallback.isInitialized) {
-            onBackCallback.remove()
         }
     }
 
@@ -385,6 +369,37 @@ class ChatFragment : Fragment() {
         }
     }
 
+
+
+    private fun setBackCallback(isChatShown: Boolean) {
+        if (isChatShown) {
+            onBackCallback = object: OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (viewModel.expandChat.value) {
+                        cancel()
+                        return
+                    }
+                    if (viewModel.isVoiceSetupMode.value) {
+                        cancel()
+                        return
+                    }
+                    if (viewModel.isVoiceRecordingMode.value) {
+                        cancel()
+                        return
+                    }
+                    if (navViewModel.showChatNavigation.value) {
+                        navViewModel.toggleShowChatNavigation()
+                        cancel()
+                        return
+                    }
+                }
+            }
+            requireActivity().onBackPressedDispatcher.addCallback(this.viewLifecycleOwner, onBackCallback)
+        } else if (::onBackCallback.isInitialized) {
+            onBackCallback.remove()
+        }
+    }
+
     private fun collectNavViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.textChat.collectLatest(::prepareTextChat) }
@@ -398,7 +413,7 @@ class ChatFragment : Fragment() {
 
             launch {
                 viewModel.chatList.collectLatest {
-                    adapter.differ.submitList(it)
+                    adapter.submitList(it)
                 }
             }
             launch {

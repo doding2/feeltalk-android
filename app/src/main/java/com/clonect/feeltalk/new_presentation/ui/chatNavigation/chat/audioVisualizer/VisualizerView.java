@@ -78,13 +78,32 @@ public class VisualizerView extends FrameLayout {
         barHeightList = new ArrayList<>();
     }
 
-    public void setRenderColor(@ColorInt int color) {
-        mRenderColor = color;
-        mPaint.setColor(mRenderColor);
+    public void setNumColumns(int numColumns) {
+        mNumColumns = numColumns;
+    }
+
+    public int getNumColumns() {
+        return mNumColumns;
     }
 
     public void drawDefaultView() {
         receive(0);
+    }
+
+    public void setRenderColor(@ColorInt int color) {
+        mRenderColor = color;
+        mPaint.setColor(mRenderColor);
+        for (int i = 0; i < mNumColumns; i++) {
+            if (barHeightList.size() <= i) return;
+            float height = barHeightList.get(i);
+            float left = i * mColumnWidth + mSpace;
+            float right = (i + 1) * mColumnWidth - mSpace;
+
+            RectF rect = createRectF(left, right, height);
+            if (mCanvas != null) {
+                mCanvas.drawRoundRect(rect, 20, 20, mPaint);
+            }
+        }
     }
 
     @Override
@@ -125,7 +144,7 @@ public class VisualizerView extends FrameLayout {
     protected void receive(final int volume) {
         post(() -> {
             if (barHeightList.isEmpty()) {
-                float defaultHeight = getRandomHeight(6);
+                float defaultHeight = getRandomHeight(0);
                 for (int i = 0; i < mNumColumns; i++) {
                     barHeightList.add(defaultHeight);
                 }
@@ -157,7 +176,7 @@ public class VisualizerView extends FrameLayout {
     }
 
     private void drawBar(int volume) {
-        int withMinVolume = volume * 3 / 5;
+        int withMinVolume = volume * 2 / 5;
         if (withMinVolume < 0) withMinVolume = 6;
 
         float firstVarHeight = getRandomHeight(withMinVolume);
@@ -172,7 +191,9 @@ public class VisualizerView extends FrameLayout {
 
             RectF rect = createRectF(left, right, height);
 //            mCanvas.drawRect(rect, mPaint);
-            mCanvas.drawRoundRect(rect, 20, 20, mPaint);
+            if (mCanvas != null) {
+                mCanvas.drawRoundRect(rect, 20, 20, mPaint);
+            }
         }
     }
 

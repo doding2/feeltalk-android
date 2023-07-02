@@ -115,20 +115,14 @@ class RecordingReplayer(
                 replayTime += mSampleInterval
 
                 if (count == fileReadCount) {
-//                    for (i in 0..2) {
-//                        visualizer.receive(0)
-//                        delay(mSampleInterval)
-//                    }
-
                     isCompleted = true
+                    infoLog("iterate while fileReadCount done")
                 }
             }
 
             isReplaying = false
-            infoLog("iterate while fileReadCount done")
         }
     }
-
 
     fun resume() {
         isReplaying = true
@@ -150,8 +144,26 @@ class RecordingReplayer(
                     inputStream.read(buf, 0, buf.size)
                 }
                 if (readSize != -1) {
-                    val tempBuf = buf.take(recordBufferSize).toByteArray()
-                    val decibel = DecibelCalculator.calculate(tempBuf, tempBuf.size)
+                    var tempBuf = buf.take(recordBufferSize).toByteArray()
+                    val firstDecibel = DecibelCalculator.calculate(tempBuf, tempBuf.size)
+
+                    val lastDecibel = if (firstDecibel >= 70) {
+                        tempBuf = buf.takeLast(recordBufferSize).toByteArray()
+                        DecibelCalculator.calculate(tempBuf, tempBuf.size)
+                    } else {
+                        firstDecibel
+                    }
+                    val wholeDecibel = if (lastDecibel >= 70) {
+                        DecibelCalculator.calculate(buf, buf.size)
+                    } else {
+                        lastDecibel
+                    }
+                    val decibel = if (firstDecibel >= 70 && lastDecibel >= 70 && wholeDecibel >= 70) {
+                        0
+                    } else {
+                        lastDecibel
+                    }
+
                     infoLog("decibel: $decibel")
 
                     visualizer.receive(decibel)
@@ -161,12 +173,8 @@ class RecordingReplayer(
                 replayTime += mSampleInterval
 
                 if (count == fileReadCount) {
-//                    for (i in 0..2) {
-//                        visualizer.receive(0)
-//                        delay(mSampleInterval)
-//                    }
-
                     isCompleted = true
+                    infoLog("iterate while fileReadCount done")
                 }
             }
 
@@ -182,6 +190,7 @@ class RecordingReplayer(
     fun stop() {
         isReplaying = false
         isCompleted = true
+        mediaPlayer?.stop()
         mediaPlayer?.release()
         replayTime = 0
         lastReadFileReadCount = 0

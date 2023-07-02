@@ -129,7 +129,7 @@
     <string name="chat_camera">카메라</string>
     <string name="chat_album">앨범</string>
     <string name="chat_voice_guide">연인에게 음성메시지를 보내보세요 !</string>
-    <string name="chat_voice_record_time_default">0000</string>
+    <string name="chat_voice_record_time_default">00:00</string>
 
 
     <!--  old ui  -->

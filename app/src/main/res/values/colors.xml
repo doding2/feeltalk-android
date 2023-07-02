@@ -22,6 +22,7 @@
     <color name="main_300">#FFEBF2</color>
     <color name="main_100">#FFF9FA</color>
 
+    <color name="gray_700">#8B898D</color>
     <color name="gray_600">#A09EA3</color>
     <color name="gray_500">#B5B3B7</color>
     <color name="gray_400">#D7D5D9</color>
