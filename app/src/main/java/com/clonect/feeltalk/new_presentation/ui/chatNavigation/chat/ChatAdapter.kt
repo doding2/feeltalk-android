@@ -12,6 +12,7 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.*
 import com.clonect.feeltalk.new_domain.model.chat.*
 import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.RecordingReplayer
+import com.clonect.feeltalk.presentation.utils.infoLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -244,6 +245,7 @@ class VoiceChatMineViewHolder(
     val binding: ItemVoiceChatMineBinding,
 ) : ChatViewHolder(binding.root) {
 
+    var audioDuration: Long = 0
     var audioFile: File? = null
     var replayer: RecordingReplayer? = null
     var timer: Timer? = null
@@ -252,6 +254,8 @@ class VoiceChatMineViewHolder(
 
     override fun bind(item: Chat) {
         val chat = item as VoiceChat
+
+        init(chat)
 
         binding.run {
             if (replayer?.isReplaying == true) {
@@ -266,7 +270,6 @@ class VoiceChatMineViewHolder(
             }
 
             vvVoiceVisualizer.visibility = View.VISIBLE
-            init(chat)
 
             tvTime.text = getFormatted(chat.createAt)
 
@@ -287,20 +290,29 @@ class VoiceChatMineViewHolder(
                 overwrite = true
             )
 
+            vvVoiceVisualizer.visibility = View.VISIBLE
             vvVoiceVisualizer.numColumns = 8
             vvVoiceVisualizer.reset()
             vvVoiceVisualizer.drawDefaultView()
 
+            audioDuration = 0
             replayTime = 0
             setAudioDuration()
         }
     }
 
     private fun setAudioDuration() {
-        val mmr = MediaMetadataRetriever()
-        mmr.setDataSource(binding.root.context, Uri.fromFile(audioFile))
-        val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-        val audioDuration = duration?.toLong() ?: 0
+        try {
+            val mmr = MediaMetadataRetriever()
+            mmr.setDataSource(binding.root.context, Uri.fromFile(audioFile))
+            val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+            if (duration != null) {
+                audioDuration = duration.toLong()
+            }
+        } catch (e: Exception) {
+            infoLog("audio duration error: ${e.localizedMessage}")
+            audioDuration = 0
+        }
         setReplayTimeText(audioDuration)
     }
 
@@ -331,8 +343,11 @@ class VoiceChatMineViewHolder(
             override fun run() {
                 if (replayer?.isReplaying == true) {
                     replayTime += 100
-                    CoroutineScope(Dispatchers.Main).launch {
-                        setReplayTimeText(replayTime)
+
+                    if (replayTime <= audioDuration) {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            setReplayTimeText(replayTime)
+                        }
                     }
                 }
                 if (replayer?.isCompleted == true) {
@@ -363,15 +378,6 @@ class VoiceChatMineViewHolder(
     }
 
     fun reset(isCompleted: Boolean = false) = binding.run {
-        ivReplay.visibility = View.VISIBLE
-        ivPause.visibility = View.GONE
-
-        if (!isCompleted) {
-            vvVoiceVisualizer.reset()
-            vvVoiceVisualizer.drawDefaultView()
-        }
-        vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
-
         isPaused = false
         replayTime = 0
         setAudioDuration()
@@ -380,49 +386,23 @@ class VoiceChatMineViewHolder(
         replayer = null
         timer?.cancel()
         timer = null
+
+        ivReplay.visibility = View.VISIBLE
+        ivPause.visibility = View.GONE
+
+        if (!isCompleted) {
+            vvVoiceVisualizer.reset()
+            vvVoiceVisualizer.drawDefaultView()
+        }
+        vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 class VoiceChatPartnerViewHolder(
     val binding: ItemVoiceChatPartnerBinding,
 ) : ChatViewHolder(binding.root) {
 
+    var audioDuration: Long = 0
     var audioFile: File? = null
     var replayer: RecordingReplayer? = null
     var timer: Timer? = null
@@ -431,6 +411,8 @@ class VoiceChatPartnerViewHolder(
 
     override fun bind(item: Chat) {
         val chat = item as VoiceChat
+
+        init(chat)
 
         binding.run {
             if (replayer?.isReplaying == true) {
@@ -445,7 +427,6 @@ class VoiceChatPartnerViewHolder(
             }
 
             vvVoiceVisualizer.visibility = View.VISIBLE
-            init(chat)
 
             tvTime.text = getFormatted(chat.createAt)
 
@@ -466,10 +447,12 @@ class VoiceChatPartnerViewHolder(
                 overwrite = true
             )
 
+            vvVoiceVisualizer.visibility = View.VISIBLE
             vvVoiceVisualizer.numColumns = 8
             vvVoiceVisualizer.reset()
             vvVoiceVisualizer.drawDefaultView()
 
+            audioDuration = 0
             replayTime = 0
             setAudioDuration()
         }
@@ -479,7 +462,9 @@ class VoiceChatPartnerViewHolder(
         val mmr = MediaMetadataRetriever()
         mmr.setDataSource(binding.root.context, Uri.fromFile(audioFile))
         val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-        val audioDuration = duration?.toLong() ?: 0
+        if (duration != null) {
+            audioDuration = duration.toLong()
+        }
         setReplayTimeText(audioDuration)
     }
 
@@ -510,13 +495,16 @@ class VoiceChatPartnerViewHolder(
             override fun run() {
                 if (replayer?.isReplaying == true) {
                     replayTime += 100
-                    CoroutineScope(Dispatchers.Main).launch {
-                        setReplayTimeText(replayTime)
+
+                    if (replayTime <= audioDuration) {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            setReplayTimeText(replayTime)
+                        }
                     }
                 }
                 if (replayer?.isCompleted == true) {
                     CoroutineScope(Dispatchers.Main).launch {
-                        reset()
+                        reset(isCompleted = true)
                     }
                 }
             }
@@ -542,15 +530,6 @@ class VoiceChatPartnerViewHolder(
     }
 
     fun reset(isCompleted: Boolean = false) = binding.run {
-        ivReplay.visibility = View.VISIBLE
-        ivPause.visibility = View.GONE
-
-        if (isCompleted) {
-            vvVoiceVisualizer.reset()
-            vvVoiceVisualizer.drawDefaultView()
-        }
-        vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
-
         isPaused = false
         replayTime = 0
         setAudioDuration()
@@ -559,5 +538,14 @@ class VoiceChatPartnerViewHolder(
         replayer = null
         timer?.cancel()
         timer = null
+
+        ivReplay.visibility = View.VISIBLE
+        ivPause.visibility = View.GONE
+
+        if (!isCompleted) {
+            vvVoiceVisualizer.reset()
+            vvVoiceVisualizer.drawDefaultView()
+        }
+        vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
     }
 }

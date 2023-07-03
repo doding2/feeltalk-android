@@ -99,8 +99,8 @@ class MainNavigationFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            WindowCompat.setDecorFitsSystemWindows(requireActivity().window, true)
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+//            WindowCompat.setDecorFitsSystemWindows(requireActivity().window, true)
+//        }
     }
 }

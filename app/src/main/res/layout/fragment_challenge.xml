@@ -54,7 +54,6 @@
         android:layout_height="48dp"
         android:background="@color/gray_100"
         app:tabRippleColor="@color/gray_400"
-
         app:tabIndicator="@null"
         app:tabIndicatorHeight="0dp"
         app:tabPaddingBottom="0dp"

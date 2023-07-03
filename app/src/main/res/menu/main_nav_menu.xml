@@ -13,11 +13,6 @@
         android:title="@string/main_navigation_question" />
 
     <item
-        android:id="@+id/navigation_chat"
-        android:icon="@drawable/n_selector_chat"
-        android:title="@string/main_navigation_chat" />
-
-    <item
         android:id="@+id/navigation_bucket_list"
         android:icon="@drawable/n_selector_bucket_list"
         android:title="@string/main_navigation_bucket_list" />

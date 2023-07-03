@@ -35,11 +35,11 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/iv_more"
+            app:layout_constraintEnd_toStartOf="@id/iv_contents_share"
             app:layout_constraintHorizontal_bias="0"/>
 
         <ImageView
-            android:id="@+id/iv_more"
+            android:id="@+id/iv_contents_share"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="12dp"

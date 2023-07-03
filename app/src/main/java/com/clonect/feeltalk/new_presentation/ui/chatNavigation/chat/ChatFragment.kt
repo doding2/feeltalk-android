@@ -20,17 +20,17 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentChatBinding
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -73,9 +73,17 @@ class ChatFragment : Fragment() {
             ivReplayVoiceRecording.setOnClickListener { replayVoiceRecording() }
             ivPauseReplayVoiceRecording.setOnClickListener { pauseVoiceRecordingReplaying() }
             ivSendVoiceChat.setOnClickListener { sendVoiceChat() }
+
+            ivContentsShare.setOnClickListener { navigateToContentsShare() }
         }
     }
 
+    private fun navigateToContentsShare() {
+        requireParentFragment()
+            .requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_mainNavigationFragment_to_contentsShareFragment)
+    }
 
     private fun cancel() {
         // 채팅 확장 취소

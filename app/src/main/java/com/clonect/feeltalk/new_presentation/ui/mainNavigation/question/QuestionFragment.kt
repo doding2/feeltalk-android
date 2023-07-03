@@ -60,6 +60,10 @@ class QuestionFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        setLightStatusBars(true, activity, binding.root)
+    }
 
     private fun navigateToChat() {
 //        requireParentFragment()

@@ -1,6 +1,7 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.addChallenge
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -38,6 +40,9 @@ class AddChallengeFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentAddChallengeBinding.inflate(inflater, container, false)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowCompat.setDecorFitsSystemWindows(requireActivity().window, true)
+        }
         return binding.root
     }
 
@@ -202,5 +207,12 @@ class AddChallengeFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         onBackCallback.remove()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowCompat.setDecorFitsSystemWindows(requireActivity().window, false)
+        }
     }
 }

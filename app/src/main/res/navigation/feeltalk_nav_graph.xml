@@ -44,6 +44,9 @@
         <action
             android:id="@+id/action_mainNavigationFragment_to_addChallengeFragment"
             app:destination="@id/addChallengeFragment" />
+        <action
+            android:id="@+id/action_mainNavigationFragment_to_contentsShareFragment"
+            app:destination="@id/contentsShareFragment" />
     </fragment>
     <fragment
         android:id="@+id/agreementPrivacyDetailFragment"
@@ -60,4 +63,8 @@
         android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.addChallenge.AddChallengeFragment"
         android:label="fragment_add_challenge"
         tools:layout="@layout/fragment_add_challenge" />
+    <fragment
+        android:id="@+id/contentsShareFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.chatNavigation.contentsShare.ContentsShareFragment"
+        android:label="ContentsShareFragment" />
 </navigation>
