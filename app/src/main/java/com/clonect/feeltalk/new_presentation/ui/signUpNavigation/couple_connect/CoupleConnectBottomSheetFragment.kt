@@ -27,7 +27,10 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class CoupleConnectBottomSheetFragment : BottomSheetDialogFragment() {
+class CoupleConnectBottomSheetFragment(
+    private val onKeyboardUp: () -> Unit = {},
+    private val onKeyboardDown: () -> Unit = {}
+) : BottomSheetDialogFragment() {
 
     companion object {
         const val TAG = "CoupleConnectBottomSheetFragment"
@@ -83,11 +86,13 @@ class CoupleConnectBottomSheetFragment : BottomSheetDialogFragment() {
         keyboardListener.setOnShownKeyboard {
             setConnectButtonMargin(0)
             mcvConnect.radius = 0f
+            onKeyboardUp()
         }
         keyboardListener.setOnHiddenKeyboard {
             etPartnerCoupleCode.clearFocus()
             setConnectButtonMargin(activity.dpToPx(20f).toInt())
             mcvConnect.radius = activity.dpToPx(30f)
+            onKeyboardDown()
         }
     }
 

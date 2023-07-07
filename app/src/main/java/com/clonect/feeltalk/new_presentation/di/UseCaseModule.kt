@@ -23,6 +23,7 @@ import com.clonect.feeltalk.new_domain.usecase.signIn.GetCoupleCodeUseCase
 import com.clonect.feeltalk.new_domain.usecase.signIn.MatchCoupleUseCase
 import com.clonect.feeltalk.new_domain.usecase.signIn.SignUpUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.CacheSocialTokenUseCase
+import com.clonect.feeltalk.new_domain.usecase.token.GetCachedSocialTokenUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,6 +43,13 @@ class UseCaseModule {
     fun providesCacheSocialTokenUseCase(tokenRepository: TokenRepository): CacheSocialTokenUseCase {
         return CacheSocialTokenUseCase(tokenRepository)
     }
+
+    @Singleton
+    @Provides
+    fun providesGetCachedSocialTokenUseCase(tokenRepository: TokenRepository): GetCachedSocialTokenUseCase {
+        return GetCachedSocialTokenUseCase(tokenRepository)
+    }
+
 
     /** Sign In **/
 

@@ -30,6 +30,7 @@
         android:textColor="@color/gray_600"/>
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/mcv_sns_email_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
@@ -59,7 +60,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="example@email.com"
                 android:textColor="@color/gray_700"
                 android:textSize="16sp"
                 android:fontFamily="@font/pretendard_regular"/>
@@ -95,7 +95,7 @@
         app:cardElevation="0dp"
         app:strokeColor="@color/system_black"
         app:strokeWidth="1dp"
-        app:rippleColor="@android:color/transparent"
+        app:rippleColor="@color/gray_200"
         android:animateLayoutChanges="true">
 
         <LinearLayout

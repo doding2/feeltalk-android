@@ -41,7 +41,7 @@
     <!--  Custom EditText  -->
     <style name="GradientEditTextStyle" parent="@android:style/Widget.EditText">
         <item name="android:textCursorDrawable">@drawable/edit_text_cursor</item>
-        <item name="android:background">@drawable/n_background_edit_text</item>
+        <item name="android:background">@drawable/n_background_edit_text_filled</item>
     </style>
 
     <!--  Custom Bottom Sheet  -->

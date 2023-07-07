@@ -31,7 +31,6 @@ class NicknameFragment : Fragment() {
 
     private lateinit var binding: FragmentNicknameBinding
     private val viewModel: SignUpNavigationViewModel by activityViewModels()
-    private lateinit var onBackCallback: OnBackPressedCallback
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,7 +45,8 @@ class NicknameFragment : Fragment() {
 
         collectViewModel()
         setKeyboardListeners()
-        viewModel.setSignUpProcess(60)
+        viewModel.setSignUpProcess(66)
+        viewModel.setCurrentPage("nickname")
 
 
         binding.run {

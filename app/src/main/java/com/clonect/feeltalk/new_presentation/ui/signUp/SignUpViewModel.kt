@@ -45,6 +45,7 @@ class SignUpViewModel @Inject constructor(
         cacheSocialToken(socialToken)
         _navigateToAgreement.emit(true)
 
+//        TODO 주석 해제
 //        setLoading(true)
 //        when (val result = checkMemberTypeUseCase(socialToken)) {
 //            is Resource.Success -> {

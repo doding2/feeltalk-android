@@ -3,9 +3,11 @@ package com.clonect.feeltalk.new_presentation.ui.signUpNavigation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.new_domain.model.token.SocialToken
 import com.clonect.feeltalk.new_domain.usecase.signIn.GetCoupleCodeUseCase
 import com.clonect.feeltalk.new_domain.usecase.signIn.MatchCoupleUseCase
 import com.clonect.feeltalk.new_domain.usecase.signIn.SignUpUseCase
+import com.clonect.feeltalk.new_domain.usecase.token.GetCachedSocialTokenUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpNavigationViewModel @Inject constructor(
+    private val getCachedSocialTokenUseCase: GetCachedSocialTokenUseCase,
     private val signUpUseCase: SignUpUseCase,
     private val getCoupleCodeUseCase: GetCoupleCodeUseCase,
     private val matchCoupleUseCase: MatchCoupleUseCase,
@@ -28,6 +31,9 @@ class SignUpNavigationViewModel @Inject constructor(
     private val _signUpProcess = MutableStateFlow(0)
     val signUpProcess = _signUpProcess.asStateFlow()
 
+    private val _currentPage = MutableStateFlow("agreement")
+    val currentPage = _currentPage.asStateFlow()
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
 
@@ -36,6 +42,10 @@ class SignUpNavigationViewModel @Inject constructor(
 
     fun setSignUpProcess(process: Int) {
         _signUpProcess.value = process.coerceIn(0, 80)
+    }
+
+    fun setCurrentPage(page: String) {
+        _currentPage.value = page
     }
 
     fun setLoading(isLoading: Boolean) {
@@ -48,13 +58,28 @@ class SignUpNavigationViewModel @Inject constructor(
 
     fun clear() {
         _signUpProcess.value = 0
+        _currentPage.value = "agreement"
+        _isLoading.value = false
+
+        _socialToken.value = null
         _isAdult.value = false
+        _isAgreeAll.value = false
+        _isServiceAgreed.value = false
+        _isPrivacyAgreed.value = false
+        _isSensitiveAgreed.value = false
+        _isMarketingAgreed.value = false
+
         _nickname.value = ""
+
+        _coupleCode.value = null
         _partnerCoupleCode.value = null
     }
 
 
     // note: Agreement Fragment
+    private val _socialToken = MutableStateFlow<SocialToken?>(null)
+    val socialToken = _socialToken.asStateFlow()
+
     private val _isAdult = MutableStateFlow(false)
     val isAdult = _isAdult.asStateFlow()
 
@@ -75,6 +100,17 @@ class SignUpNavigationViewModel @Inject constructor(
 
     private val _isAgreementProcessed = MutableSharedFlow<Boolean>()
     val isAgreementProcessed = _isAgreementProcessed.asSharedFlow()
+
+    fun getSocialToken() = viewModelScope.launch {
+        when (val result = getCachedSocialTokenUseCase()) {
+            is Resource.Success -> {
+                _socialToken.value = result.data
+            }
+            is Resource.Error -> {
+                _socialToken.value = null
+            }
+        }
+    }
 
     fun certifyAdult() {
         _isAdult.value = true
@@ -121,19 +157,22 @@ class SignUpNavigationViewModel @Inject constructor(
     }
 
     fun signUp() = viewModelScope.launch(Dispatchers.IO) {
-        setLoading(true)
-        when (val result = signUpUseCase(_nickname.value)) {
-            is Resource.Success -> {
-                getCoupleCode()
-                setNicknameProcessed(true)
-            }
-            is Resource.Error -> {
-                setNicknameProcessed(false)
-                infoLog("회원가입 실패:${result.throwable.stackTrace.joinToString("\n")}")
-                result.throwable.localizedMessage?.let { sendErrorMessage(it) }
-            }
-        }
-        setLoading(false)
+        setNicknameProcessed(true)
+
+//        TODO 주석 해제
+//        setLoading(true)
+//        when (val result = signUpUseCase(_nickname.value)) {
+//            is Resource.Success -> {
+//                getCoupleCode()
+//                setNicknameProcessed(true)
+//            }
+//            is Resource.Error -> {
+//                setNicknameProcessed(false)
+//                infoLog("회원가입 실패:${result.throwable.stackTrace.joinToString("\n")}")
+//                result.throwable.localizedMessage?.let { sendErrorMessage(it) }
+//            }
+//        }
+//        setLoading(false)
     }
 
 

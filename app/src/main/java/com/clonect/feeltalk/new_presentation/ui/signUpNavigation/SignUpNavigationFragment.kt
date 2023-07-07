@@ -63,6 +63,7 @@ class SignUpNavigationFragment : Fragment() {
 
         binding.run {
             ivBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
+            ivExit.setOnClickListener { onBackCallback.handleOnBackPressed() }
         }
     }
 
@@ -128,10 +129,34 @@ class SignUpNavigationFragment : Fragment() {
         }
     }
 
+    private fun changeActionBar(currentPage: String) = binding.run {
+        when (currentPage) {
+            "agreement" -> {
+                ivExit.visibility = View.VISIBLE
+                ivBack.visibility = View.GONE
+                lpiProcess.visibility = View.VISIBLE
+                tvTitle.setText(R.string.sign_up_title_sign_up)
+            }
+            "nickname" -> {
+                ivExit.visibility = View.GONE
+                ivBack.visibility = View.VISIBLE
+                lpiProcess.visibility = View.VISIBLE
+                tvTitle.setText(R.string.sign_up_title_sign_up)
+            }
+            "coupleCode" -> {
+                ivExit.visibility = View.GONE
+                ivBack.visibility = View.GONE
+                lpiProcess.visibility = View.GONE
+                tvTitle.setText(R.string.sign_up_title_couple_code)
+            }
+        }
+    }
+
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.errorMessage.collectLatest(::showErrorSnackBar) }
             launch { viewModel.isLoading.collectLatest(::showLoading) }
+            launch { viewModel.currentPage.collectLatest(::changeActionBar) }
             launch {
                 viewModel.signUpProcess.collectLatest {
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {

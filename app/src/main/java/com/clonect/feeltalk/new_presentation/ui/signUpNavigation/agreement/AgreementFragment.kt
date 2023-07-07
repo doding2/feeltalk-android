@@ -13,6 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentAgreementBinding
+import com.clonect.feeltalk.new_domain.model.token.SocialToken
+import com.clonect.feeltalk.new_domain.model.user.SocialType
 import com.clonect.feeltalk.new_presentation.ui.signUpNavigation.SignUpNavigationViewModel
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import dagger.hilt.android.AndroidEntryPoint
@@ -37,11 +39,13 @@ class AgreementFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         collectViewModel()
-        enableNextButton(false)
+        enableNextButton(isRequirementAllAgreed())
+        viewModel.getSocialToken()
+        viewModel.setCurrentPage("agreement")
 
         binding.run {
             root.layoutTransition.apply {
-                setDuration(1000)
+                setDuration(600)
             }
             mcvCertifyAdult.setOnClickListener { certifyAdult() }
             clAgreeAll.setOnClickListener { toggleAgreeAll() }
@@ -55,7 +59,6 @@ class AgreementFragment : Fragment() {
 
     private fun certifyAdult() {
         viewModel.certifyAdult()
-        viewModel.setSignUpProcess(20)
     }
 
     private fun navigateToNickname() {
@@ -144,6 +147,8 @@ class AgreementFragment : Fragment() {
             spacerAgreement.visibility = View.VISIBLE
             clAgreeAll.visibility = View.VISIBLE
             llSubAgreements.visibility = View.VISIBLE
+
+            viewModel.setSignUpProcess(33)
         } else {
             spacerAdult.visibility = View.VISIBLE
             tvAdultAnnounce.visibility = View.VISIBLE
@@ -178,8 +183,30 @@ class AgreementFragment : Fragment() {
         ))
     }
 
+    private fun changeSocialEmailView(socialToken: SocialToken?) = binding.run {
+        if (socialToken?.email != null) {
+            mcvSnsEmailContainer.visibility = View.VISIBLE
+            tvNicknameTitle.visibility = View.VISIBLE
+
+            tvEmail.text = socialToken.email
+            tvNicknameTitle.text = "${socialToken.name ?: socialToken.email} ${requireContext().getString(R.string.agreement_sub_title)}"
+            ivSnsIcon.setImageResource(
+                when (socialToken.type) {
+                    SocialType.Kakao -> R.drawable.n_image_kakao
+                    SocialType.Naver -> R.drawable.n_image_naver
+                    SocialType.Google -> R.drawable.n_image_google
+                    SocialType.Apple -> R.drawable.n_image_apple
+                }
+            )
+        } else {
+            mcvSnsEmailContainer.visibility = View.GONE
+            tvNicknameTitle.visibility = View.GONE
+        }
+    }
+
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch { viewModel.socialToken.collectLatest(::changeSocialEmailView) }
             launch { viewModel.isAdult.collectLatest(::changeAdultView) }
             launch { viewModel.isAgreeAll.collectLatest(::changeAgreeAllView) }
             launch {

@@ -12,89 +12,72 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:id="@+id/ll_logo"
+        <ImageView
+            android:id="@+id/iv_logo"
+            android:layout_width="114dp"
+            android:layout_height="114dp"
+            android:layout_marginHorizontal="48dp"
+            android:background="@color/gray_300"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tv_slogan_1"
+            app:layout_constraintVertical_bias="0.6939"/>
+
+        <TextView
+            android:id="@+id/tv_slogan_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
+            android:text="@string/sign_up_slogan_1"
+            android:layout_marginHorizontal="48dp"
+            android:textSize="24sp"
+            android:textColor="@color/system_black"
+            android:fontFamily="@font/pretendard_regular"
+            app:layout_constraintBottom_toTopOf="@id/tv_slogan_2"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv_slogan_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_up_slogan_2"
+            android:layout_marginStart="48dp"
+            android:textSize="24sp"
+            android:textColor="@color/system_black"
+            android:fontFamily="@font/pretendard_regular"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/iv_sign_up_bubble"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/mcv_sign_up_kakao"
-            app:layout_constraintVertical_bias="0.624">
+            app:layout_constraintVertical_bias="0.8265"/>
 
-            <ImageView
-                android:layout_width="209dp"
-                android:layout_height="67dp"
-                android:src="@drawable/logo_feeltalk" />
+        <TextView
+            android:id="@+id/tv_slogan_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="@string/sign_up_slogan_3"
+            android:textSize="24sp"
+            android:textColor="@color/system_black"
+            android:fontFamily="@font/pretendard_bold"
+            app:layout_constraintTop_toTopOf="@id/tv_slogan_2"
+            app:layout_constraintBottom_toBottomOf="@id/tv_slogan_2"
+            app:layout_constraintStart_toEndOf="@id/tv_slogan_2"/>
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="3.85dp"
-                android:src="@drawable/logo_subscript"/>
-        </LinearLayout>
 
 
         <!--  Kakao sign up button  -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/mcv_sign_up_kakao"
-            android:layout_width="294dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="40dp"
-            android:layout_marginVertical="5dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="4dp"
             android:layout_gravity="center"
+            app:rippleColor="@color/gray_200"
             app:cardElevation="0dp"
-            app:strokeWidth="0dp"
-            app:cardBackgroundColor="@color/sign_up_kakao_background"
-            app:cardCornerRadius="25dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/mcv_sign_up_naver">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_marginVertical="5dp">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_kakao"/>
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="13dp"
-                    android:background="@color/sign_up_kakao_text_color"
-                    android:alpha="0.1"
-                    android:layout_marginStart="3dp"
-                    android:layout_marginEnd="10dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/sign_up_kakao"
-                    android:textSize="15sp"
-                    android:textColor="@color/sign_up_kakao_text_color"
-                    android:fontFamily="@font/pretendard_bold"/>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-
-        <!--  Naver sign up button  -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/mcv_sign_up_naver"
-            android:layout_width="294dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="40dp"
-            android:layout_marginVertical="5dp"
-            android:layout_gravity="center"
-            app:cardElevation="0dp"
-            app:strokeWidth="0dp"
-            app:cardBackgroundColor="@color/sign_up_naver_background"
-            app:cardCornerRadius="25dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/gray_300"
+            app:cardBackgroundColor="@color/system_white"
+            app:cardCornerRadius="30dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/mcv_sign_up_google">
@@ -102,45 +85,79 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_marginVertical="5dp">
+                android:gravity="center">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_naver"/>
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="13dp"
-                    android:background="@color/sign_up_naver_text_color"
-                    android:alpha="0.1"
-                    android:layout_marginStart="3dp"
-                    android:layout_marginEnd="10dp"/>
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginVertical="17.5dp"
+                    android:layout_marginHorizontal="10dp"
+                    android:src="@drawable/n_image_kakao"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/sign_up_naver"
-                    android:textSize="15sp"
-                    android:textColor="@color/sign_up_naver_text_color"
-                    android:fontFamily="@font/pretendard_bold"/>
+                    android:text="@string/sign_up_kakao"
+                    android:textSize="18sp"
+                    android:textColor="@color/system_black"
+                    android:fontFamily="@font/pretendard_medium"/>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
-
 
         <!--  Google sign up button  -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/mcv_sign_up_google"
-            android:layout_width="294dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="40dp"
-            android:layout_marginVertical="5dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="4dp"
             android:layout_gravity="center"
+            app:rippleColor="@color/gray_200"
             app:cardElevation="0dp"
-            app:strokeWidth="0dp"
-            app:cardBackgroundColor="@color/sign_up_google_background"
-            app:cardCornerRadius="25dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/gray_300"
+            app:cardBackgroundColor="@color/system_white"
+            app:cardCornerRadius="30dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/mcv_sign_up_naver">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginVertical="17.5dp"
+                    android:layout_marginHorizontal="10dp"
+                    android:src="@drawable/n_image_google"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sign_up_google"
+                    android:textSize="18sp"
+                    android:textColor="@color/system_black"
+                    android:fontFamily="@font/pretendard_medium"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!--  Naver sign up button  -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/mcv_sign_up_naver"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="4dp"
+            android:layout_gravity="center"
+            app:rippleColor="@color/gray_200"
+            app:cardElevation="0dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/gray_300"
+            app:cardBackgroundColor="@color/system_white"
+            app:cardCornerRadius="30dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/mcv_sign_up_apple">
@@ -148,45 +165,40 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_marginVertical="5dp">
+                android:gravity="center">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_google"/>
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="13dp"
-                    android:background="@color/sign_up_google_text_color"
-                    android:alpha="0.1"
-                    android:layout_marginStart="3dp"
-                    android:layout_marginEnd="10dp"/>
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginVertical="17.5dp"
+                    android:layout_marginHorizontal="10dp"
+                    android:src="@drawable/n_image_naver"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/sign_up_google"
-                    android:textSize="15sp"
-                    android:textColor="@color/sign_up_naver_text_color"
-                    android:fontFamily="@font/pretendard_bold"/>
+                    android:text="@string/sign_up_naver"
+                    android:textSize="18sp"
+                    android:textColor="@color/system_black"
+                    android:fontFamily="@font/pretendard_medium"/>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <!--  Apple sign up button  -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/mcv_sign_up_apple"
-            android:layout_width="294dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="40dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="39dp"
             android:layout_gravity="center"
+            app:rippleColor="@color/gray_200"
             app:cardElevation="0dp"
-            app:strokeWidth="0dp"
-            app:cardBackgroundColor="@color/sign_up_apple_background"
-            app:cardCornerRadius="25dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/gray_300"
+            app:cardBackgroundColor="@color/system_white"
+            app:cardCornerRadius="30dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/tv_customer_service">
@@ -194,29 +206,22 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_marginVertical="5dp">
+                android:gravity="center">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_apple"/>
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="13dp"
-                    android:background="@color/sign_up_apple_text_color"
-                    android:alpha="0.1"
-                    android:layout_marginStart="3dp"
-                    android:layout_marginEnd="10dp"/>
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginVertical="17.5dp"
+                    android:layout_marginHorizontal="10dp"
+                    android:src="@drawable/n_image_apple"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/sign_up_apple"
-                    android:textSize="15sp"
-                    android:textColor="@color/sign_up_apple_text_color"
-                    android:fontFamily="@font/pretendard_bold"/>
+                    android:textSize="18sp"
+                    android:textColor="@color/system_black"
+                    android:fontFamily="@font/pretendard_medium"/>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -224,15 +229,34 @@
             android:id="@+id/tv_customer_service"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="35dp"
+            android:layout_marginBottom="32dp"
             android:layout_gravity="center"
             android:text="@string/sign_up_customer_service"
-            android:textColor="@color/sign_up_customer_service_text_color"
-            android:textSize="13sp"
-            android:fontFamily="@font/pretendard_light"
-            android:alpha="0.4"
+            android:textColor="@color/gray_600"
+            android:textSize="14sp"
+            android:fontFamily="@font/pretendard_regular"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
+        
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/gray_600"
+            app:layout_constraintStart_toStartOf="@id/tv_customer_service"
+            app:layout_constraintEnd_toEndOf="@id/tv_customer_service"
+            app:layout_constraintTop_toBottomOf="@id/tv_customer_service"/>
+
+
+
+        <ImageView
+            android:id="@+id/iv_sign_up_bubble"
+            android:layout_width="120dp"
+            android:layout_height="41dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginBottom="-5dp"
+            android:src="@drawable/n_image_sign_up_bubble"
+            app:layout_constraintStart_toStartOf="@id/mcv_sign_up_kakao"
+            app:layout_constraintBottom_toTopOf="@id/mcv_sign_up_kakao"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

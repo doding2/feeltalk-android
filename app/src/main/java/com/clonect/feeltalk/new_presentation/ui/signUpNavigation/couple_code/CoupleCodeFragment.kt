@@ -39,7 +39,7 @@ class CoupleCodeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         collectViewModel()
-        viewModel.setSignUpProcess(80)
+        viewModel.setCurrentPage("coupleCode")
 
         binding.run {
             mcvShareCoupleCode.setOnClickListener { copyCoupleCode() }
@@ -49,8 +49,12 @@ class CoupleCodeFragment : Fragment() {
 
 
     private fun showCoupleConnectSheet() {
-        val bottomSheet = CoupleConnectBottomSheetFragment()
+        val bottomSheet = CoupleConnectBottomSheetFragment(
+            onKeyboardUp = { binding.clCodeLayout.visibility = View.GONE },
+            onKeyboardDown = { binding.clCodeLayout.visibility = View.VISIBLE }
+        )
         bottomSheet.show(requireActivity().supportFragmentManager, CoupleConnectBottomSheetFragment.TAG)
+
     }
 
     private fun copyCoupleCode() {

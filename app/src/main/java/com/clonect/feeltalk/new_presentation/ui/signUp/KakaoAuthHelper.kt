@@ -1,6 +1,7 @@
 package com.clonect.feeltalk.new_presentation.ui.signUp
 
 import android.content.Context
+import com.clonect.feeltalk.common.Quadruple
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -19,7 +20,16 @@ class KakaoAuthHelper {
                     continuation.resumeWithException(error)
                 } else if (token != null) {
                     // 카카오톡 로그인 성공
-                    continuation.resume(Pair(token.accessToken, token.refreshToken))
+                    UserApiClient.instance.me { user, error ->
+                        continuation.resume(
+                            Quadruple(
+                                token.accessToken,
+                                token.refreshToken,
+                                user?.kakaoAccount?.email,
+                                user?.kakaoAccount?.name
+                            )
+                        )
+                    }
                 } else {
                     // 존재할 수 없는 에러
                     continuation.resumeWithException(IllegalStateException("카카오톡 연동에 예상치 못한 에러 발생"))
@@ -42,7 +52,16 @@ class KakaoAuthHelper {
                             loginWithKakaoAccount(context, callback = browserCallback)
                         } else if (token != null) {
                             // 카카오톡 로그인 성공
-                            continuation.resume(token.accessToken to token.refreshToken)
+                            UserApiClient.instance.me { user, error ->
+                                continuation.resume(
+                                    Quadruple(
+                                        token.accessToken,
+                                        token.refreshToken,
+                                        user?.kakaoAccount?.email,
+                                        user?.kakaoAccount?.name
+                                    )
+                                )
+                            }
                         } else {
                             // 존재할 수 없는 에러
                             continuation.resumeWithException(IllegalStateException("카카오톡 연동에 예상치 못한 에러 발생"))

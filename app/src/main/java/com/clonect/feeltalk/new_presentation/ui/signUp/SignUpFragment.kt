@@ -3,7 +3,6 @@ package com.clonect.feeltalk.new_presentation.ui.signUp
 import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
-import android.graphics.Paint
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -53,13 +52,13 @@ class SignUpFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         collectViewModel()
-        initCustomerServiceText()
 
         binding.apply {
             mcvSignUpKakao.setOnClickListener { clickKakaoButton() }
             mcvSignUpNaver.setOnClickListener { clickNaverButton() }
             mcvSignUpGoogle.setOnClickListener { clickGoogleButton() }
             mcvSignUpApple.setOnClickListener { clickAppleButton() }
+            tvCustomerService.setOnClickListener { sendFeedbackEmail() }
         }
     }
 
@@ -99,9 +98,11 @@ class SignUpFragment : Fragment() {
 
     private fun clickKakaoButton() = lifecycleScope.launch {
         try {
-            val (accessToken, refreshToken) = KakaoAuthHelper.signIn(requireContext())
+            val (accessToken, refreshToken, email, name) = KakaoAuthHelper.signIn(requireContext())
             val socialToken = SocialToken(
                 type = SocialType.Kakao,
+                email = email,
+                name = name,
                 accessToken = accessToken,
                 refreshToken = refreshToken
             )
@@ -164,18 +165,20 @@ class SignUpFragment : Fragment() {
         if (result.resultCode == Activity.RESULT_OK) {
             val data = result.data
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            val (idToken, serverAuthCode) = GoogleAuthHelper.handleSignInData(task)
-            proceedGoogleSignIn(idToken, serverAuthCode)
+            val (idToken, serverAuthCode, email, name) = GoogleAuthHelper.handleSignInData(task)
+            proceedGoogleSignIn(idToken, serverAuthCode, email, name)
         } else {
             viewModel.sendErrorMessage("구글 로그인에 실패했습니다.")
             infoLog("구글 로그인 실패")
         }
     }
 
-    private fun proceedGoogleSignIn(idToken: String, serverAuthCode: String) = lifecycleScope.launch {
+    private fun proceedGoogleSignIn(idToken: String, serverAuthCode: String, email: String?, name: String?) = lifecycleScope.launch {
         try {
             val socialToken = SocialToken(
                 type = SocialType.Google,
+                email = email,
+                name = name,
                 idToken = idToken,
                 serverAuthCode = serverAuthCode
             )
@@ -199,13 +202,6 @@ class SignUpFragment : Fragment() {
             putExtra(Intent.EXTRA_SUBJECT, "[필로우톡] 이런 점이 아쉬워요 !")
         }
         startActivity(Intent.createChooser(intent, null))
-    }
-
-    private fun initCustomerServiceText() = binding.tvCustomerService.apply {
-        paintFlags = Paint.UNDERLINE_TEXT_FLAG
-        setOnClickListener {
-            sendFeedbackEmail()
-        }
     }
 
 
