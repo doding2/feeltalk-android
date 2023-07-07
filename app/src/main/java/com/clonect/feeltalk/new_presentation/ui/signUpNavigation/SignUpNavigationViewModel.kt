@@ -48,29 +48,56 @@ class SignUpNavigationViewModel @Inject constructor(
 
     fun clear() {
         _signUpProcess.value = 0
-        _isSensitiveInfoAgreed.value = false
-        _isPrivacyInfoAgreed.value = false
+        _isAdult.value = false
         _nickname.value = ""
         _partnerCoupleCode.value = null
     }
 
 
     // note: Agreement Fragment
-    private val _isSensitiveInfoAgreed = MutableStateFlow(false)
-    val isSensitiveInfoAgreed = _isSensitiveInfoAgreed.asStateFlow()
+    private val _isAdult = MutableStateFlow(false)
+    val isAdult = _isAdult.asStateFlow()
 
-    private val _isPrivacyInfoAgreed = MutableStateFlow(false)
-    val isPrivacyInfoAgreed = _isPrivacyInfoAgreed.asStateFlow()
+    private val _isAgreeAll = MutableStateFlow(false)
+    val isAgreeAll = _isAgreeAll.asStateFlow()
+
+    private val _isServiceAgreed = MutableStateFlow(false)
+    val isServiceAgreed = _isServiceAgreed.asStateFlow()
+
+    private val _isPrivacyAgreed = MutableStateFlow(false)
+    val isPrivacyAgreed = _isPrivacyAgreed.asStateFlow()
+
+    private val _isSensitiveAgreed = MutableStateFlow(false)
+    val isSensitiveAgreed = _isSensitiveAgreed.asStateFlow()
+
+    private val _isMarketingAgreed = MutableStateFlow(false)
+    val isMarketingAgreed = _isMarketingAgreed.asStateFlow()
 
     private val _isAgreementProcessed = MutableSharedFlow<Boolean>()
     val isAgreementProcessed = _isAgreementProcessed.asSharedFlow()
 
-    fun setSensitiveInfoAgreed(agreed: Boolean) {
-        _isSensitiveInfoAgreed.value = agreed
+    fun certifyAdult() {
+        _isAdult.value = true
     }
-    
-    fun setPrivacyInfoAgreed(agreed: Boolean) {
-        _isPrivacyInfoAgreed.value = agreed
+
+    fun setAgreeAll(agreeAll: Boolean) {
+        _isAgreeAll.value = agreeAll
+    }
+
+    fun setServiceAgreed(isAgreed: Boolean) {
+        _isServiceAgreed.value = isAgreed
+    }
+
+    fun setPrivacyAgreed(isAgreed: Boolean) {
+        _isPrivacyAgreed.value = isAgreed
+    }
+
+    fun setSensitiveAgreed(isAgreed: Boolean) {
+        _isSensitiveAgreed.value = isAgreed
+    }
+
+    fun setMarketingAgreed(isAgreed: Boolean) {
+        _isMarketingAgreed.value = isAgreed
     }
 
     fun setAgreementProcessed(processed: Boolean) = viewModelScope.launch {

@@ -12,6 +12,7 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.*
 import com.clonect.feeltalk.new_domain.model.chat.*
 import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.RecordingReplayer
+import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.presentation.utils.infoLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -112,7 +113,11 @@ class ChatAdapter: RecyclerView.Adapter<ChatViewHolder>() {
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
         val item = differ.currentList[position]
-        holder.bind(item)
+        val prevItem = if (position - 1 < 0) null
+        else differ.currentList[position - 1]
+        val nextItem = if (differ.currentList.size <= position + 1) null
+        else differ.currentList[position + 1]
+        holder.bind(prevItem, item, nextItem)
     }
 
     override fun getItemCount(): Int = differ.currentList.size
@@ -184,7 +189,10 @@ class ChatAdapter: RecyclerView.Adapter<ChatViewHolder>() {
 
 abstract class ChatViewHolder(root: View): RecyclerView.ViewHolder(root) {
 
-    abstract fun bind(item: Chat)
+    val defaultVerticalMargin = root.context.dpToPx(8f).toInt()
+    val continuousVerticalMargin = root.context.dpToPx(2f).toInt()
+
+    abstract fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?)
 
     fun getFormatted(date: String): String {
         return date.substringAfter("T").substringBeforeLast(":")
@@ -194,12 +202,13 @@ abstract class ChatViewHolder(root: View): RecyclerView.ViewHolder(root) {
 class ChatDividerViewHolder(
     val binding: ItemChatDividerBinding
 ): ChatViewHolder(binding.root) {
-    override fun bind(item: Chat) {
+
+    override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
         val chat = item as DividerChat
         val itemFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val dividerFormat = SimpleDateFormat("yyyy년 M월 d일", Locale.getDefault())
         val date = itemFormat.parse(chat.createAt)
-        binding.tvDate.text = dividerFormat.format(date)
+        binding.tvDate.text = date?.let { dividerFormat.format(it) }
     }
 }
 
@@ -207,9 +216,43 @@ class TextChatMineViewHolder(
     val binding: ItemTextChatMineBinding,
 ) : ChatViewHolder(binding.root) {
 
-    override fun bind(item: Chat) {
+    override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
         val chat = item as TextChat
         binding.run {
+//            // 단일 채팅
+//            var tvReadVisibility = View.VISIBLE
+//            var tvTimeVisibility = View.VISIBLE
+//            var rootTopMargin = defaultVerticalMargin
+//            var rootBottomMargin = defaultVerticalMargin
+//
+//            infoLog("createAt: ${item.createAt}")
+//            // 연속 채팅
+//            val isTopContinuous = prevItem?.createAt?.substringBeforeLast(":") == item.createAt.substringBeforeLast(":") && prevItem.chatSender == item.chatSender
+//            val isBottomContinuous = item.createAt.substringBeforeLast(":") == nextItem?.createAt?.substringBeforeLast(":") && item.chatSender == nextItem.chatSender
+//            if (isTopContinuous) {
+//                tvReadVisibility = View.GONE
+//                tvTimeVisibility = View.GONE
+//                rootTopMargin = continuousVerticalMargin
+//            }
+//            if (isBottomContinuous) {
+//                tvReadVisibility = View.VISIBLE
+//                tvTimeVisibility = View.VISIBLE
+//                rootBottomMargin = continuousVerticalMargin
+//            }
+//            // 3연속 이상 채팅의 중간
+//            if (isTopContinuous && isBottomContinuous) {
+//                tvReadVisibility= View.GONE
+//                tvTimeVisibility = View.GONE
+//            }
+//
+//            // 단일 채팅
+//            tvRead.visibility = tvReadVisibility
+//            tvTime.visibility = tvTimeVisibility
+//            root.layoutParams = (root.layoutParams as RecyclerView.LayoutParams).apply {
+//                topMargin = rootTopMargin
+//                bottomMargin = rootBottomMargin
+//            }
+            
             tvRead.text = root.context.getString(
                 if (chat.isRead) R.string.chat_read
                 else R.string.chat_unread
@@ -224,7 +267,7 @@ class TextChatPartnerViewHolder(
     val binding: ItemTextChatPartnerBinding,
 ) : ChatViewHolder(binding.root) {
 
-    override fun bind(item: Chat) {
+    override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
         val chat = item as TextChat
         binding.run {
             tvRead.text = root.context.getString(
@@ -252,7 +295,7 @@ class VoiceChatMineViewHolder(
     var replayTime: Long = 0
     var isPaused = false
 
-    override fun bind(item: Chat) {
+    override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
         val chat = item as VoiceChat
 
         init(chat)
@@ -409,7 +452,7 @@ class VoiceChatPartnerViewHolder(
     var replayTime: Long = 0
     var isPaused = false
 
-    override fun bind(item: Chat) {
+    override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
         val chat = item as VoiceChat
 
         init(chat)

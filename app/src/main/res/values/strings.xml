@@ -11,11 +11,18 @@
 
     <!--  Agreement  -->
     <string name="agreement_title">필로우톡을 시작해볼까요?</string>
-    <string name="agreement_sub_title">필로우톡을 이용하시려면 아래의 약관에 동의해주세요.</string>
-    <string name="agreement_sensitive_agree_button">민감정보 처리에 대한 동의</string>
-    <string name="agreement_more_sensitive_info">삼성 헬스의 기능을 제공하기 위해, 헬스 데이터를 수집하고 처리합니다. 상세 정보에서 헬스 데이터 수집항목, 수집방법, 동의철회방법을 확인하세요.\n헬스 데이터 처리에 대한 동의는 선택사항입니다.</string>
-    <string name="agreement_privacy_agree_button">개인정보수집에 대한 동의</string>
-    <string name="agreement_more_privacy_info">연결된 소셜 계정 정보가 삭제돼요</string>
+    <string name="agreement_sub_title">계정으로 필로우톡을 이용할 수 있어요</string>
+    <string name="agreement_adult_announce">만 19세 이상임을 인증하면\n연인과 함께 필로우톡을 이용할 수 있어요</string>
+    <string name="agreement_certify_adult">성인인증 하기</string>
+    <string name="agreement_certify_adult_done">성인인증을 완료했어요</string>
+    <string name="agreement_agree_all">약관 및 개인, 민감정보 수집, 이용 동의</string>
+    <string name="agreement_requirement">[필수]</string>
+    <string name="agreement_option">[선택]</string>
+    <string name="agreement_agree_adult">만 19세 이상입니다.</string>
+    <string name="agreement_agree_service">서비스 이용 약관 동의</string>
+    <string name="agreement_agree_privacy">개인정보 수집 및 서비스 활용 동의</string>
+    <string name="agreement_agree_sensitive">민감정보 수집 및 서비스 활용 동의</string>
+    <string name="agreement_agree_marketing">마케팅 정보 수신 동의 (푸시 알림)</string>
 
     <!--  Nickname  -->
     <string name="nickname_title">닉네임을 입력해주세요</string>

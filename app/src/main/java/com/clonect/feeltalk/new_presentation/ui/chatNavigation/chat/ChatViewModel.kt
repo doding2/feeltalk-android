@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.plusDayBy
 import com.clonect.feeltalk.new_domain.model.chat.Chat
-import com.clonect.feeltalk.new_domain.model.chat.DividerChat
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
 import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.RecordingReplayer
@@ -244,7 +243,7 @@ class ChatViewModel @Inject constructor(
             TextChat(
                 index = 0,
                 pageNo = 0,
-                chatSender = "me",
+                chatSender = "partner",
                 isRead = true,
                 createAt = createAtWeekAgo,
                 message = "첫번째 메시지"
@@ -294,23 +293,20 @@ class ChatViewModel @Inject constructor(
                 pageNo = 0,
                 chatSender = "partner",
                 isRead = true,
-                createAt = createAtToday,
-                message = "허걱"
+                createAt = createAtYesterday,
+                message = "허걱스"
+            ),
+            TextChat(
+                index = 8,
+                pageNo = 0,
+                chatSender = "partner",
+                isRead = true,
+                createAt = createAtYesterday,
+                message = "대박"
             ),
         )
 
         _chatList.value = newChatList
-            .groupBy {
-                it.createAt.substringBefore("T")
-            }.map {
-                val divider = DividerChat(it.key)
-                val list = it.value
-                    .toMutableList()
-                    .apply {
-                        add(0, divider)
-                    }
-                list
-            }.flatten()
         setScrollToBottom()
     }
 }

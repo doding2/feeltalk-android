@@ -69,7 +69,7 @@ class CompletedChallengeAdapter(): RecyclerView.Adapter<CompletedChallengeAdapte
     fun calculateItemSize(activity: Activity) {
         val screenWidth = activity.getScreenWidth()
         // 12.5 * 2 + 7.5 * 4 = 55
-        itemSize = (screenWidth - activity.dpToPx(56f).toInt()) / 2
+        itemSize = (screenWidth - activity.applicationContext.dpToPx(56f).toInt()) / 2
     }
 
 

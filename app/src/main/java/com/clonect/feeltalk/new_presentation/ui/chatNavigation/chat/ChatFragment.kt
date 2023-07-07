@@ -23,6 +23,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentChatBinding
+import com.clonect.feeltalk.new_domain.model.chat.DividerChat
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.presentation.utils.infoLog
@@ -358,8 +359,11 @@ class ChatFragment : Fragment() {
             // 리플레이 재생이 끝남
             if (viewModel.isVoiceRecordingReplayCompleted.value) {
                 ivReplayVoiceRecording.visibility = View.VISIBLE
-            } else {
+            }
+            else if (!viewModel.isVoiceRecordingFinished.value){
                 ivReplayVoiceRecording.visibility = View.GONE
+            } else {
+//                ivReplayVoiceRecording.visibility = View.GONE
             }
             ivPauseReplayVoiceRecording.visibility = View.GONE
             return@run
@@ -420,8 +424,20 @@ class ChatFragment : Fragment() {
             launch { viewModel.isKeyboardUp.collectLatest(::applyKeyboardUp) }
 
             launch {
-                viewModel.chatList.collectLatest {
-                    adapter.submitList(it)
+                viewModel.chatList.collectLatest { newChatList ->
+                    adapter.submitList(
+                        newChatList.groupBy {
+                            it.createAt.substringBefore("T")
+                        }.map {
+                            val divider = DividerChat(it.key)
+                            val list = it.value
+                                .toMutableList()
+                                .apply {
+                                    add(0, divider)
+                                }
+                            list
+                        }.flatten()
+                    )
                 }
             }
             launch {

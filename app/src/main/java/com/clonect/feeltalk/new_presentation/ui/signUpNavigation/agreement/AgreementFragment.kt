@@ -4,15 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentAgreementBinding
 import com.clonect.feeltalk.new_presentation.ui.signUpNavigation.SignUpNavigationViewModel
+import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -35,50 +37,83 @@ class AgreementFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         collectViewModel()
+        enableNextButton(false)
 
         binding.run {
-            clAgreeSensitiveInfo.setOnClickListener { agreeSensitiveInfo() }
-            ivMoreSensitiveInfo.setOnClickListener { navigateToSensitiveDetail() }
-
-            clAgreePrivacyInfo.setOnClickListener { agreePrivacyInfo() }
-            ivMorePrivacyInfo.setOnClickListener { navigateToPrivacyDetail() }
-
+            root.layoutTransition.apply {
+                setDuration(1000)
+            }
+            mcvCertifyAdult.setOnClickListener { certifyAdult() }
+            clAgreeAll.setOnClickListener { toggleAgreeAll() }
+            llAgreement1.setOnClickListener { toggleAgreeService() }
+            llAgreement2.setOnClickListener { toggleAgreePrivacy() }
+            llAgreement3.setOnClickListener { toggleAgreeSensitive() }
+            llAgreement4.setOnClickListener { toggleAgreeMarketing() }
             mcvNext.setOnClickListener { navigateToNickname() }
         }
     }
 
-
-    private fun navigateToSensitiveDetail() {
-        requireParentFragment()
-            .requireParentFragment()
-                .findNavController()
-                .navigate(R.id.action_signUpNavigationFragment_to_agreementSensitiveDetailFragment)
+    private fun certifyAdult() {
+        viewModel.certifyAdult()
+        viewModel.setSignUpProcess(20)
     }
-
-    private fun navigateToPrivacyDetail() {
-        requireParentFragment()
-            .requireParentFragment()
-            .findNavController()
-            .navigate(R.id.action_signUpNavigationFragment_to_agreementPrivacyDetailFragment)
-    }
-
 
     private fun navigateToNickname() {
         viewModel.setAgreementProcessed(true)
     }
 
-    private fun agreeSensitiveInfo() {
-        if (viewModel.isPrivacyInfoAgreed.value) return
-        viewModel.setSensitiveInfoAgreed(viewModel.isSensitiveInfoAgreed.value.not())
+    private fun toggleAgreeAll() = viewModel.run {
+        // 이미 모두 체크된 상태에서 클릭
+        if (isAgreeAll.value) {
+            setAgreeAll(false)
+            setServiceAgreed(false)
+            setPrivacyAgreed(false)
+            setSensitiveAgreed(false)
+            setMarketingAgreed(false)
+            enableNextButton(false)
+        }
+        // 모두 체크되지 않은 상태에서 클릭
+        else {
+            setAgreeAll(true)
+            setServiceAgreed(true)
+            setPrivacyAgreed(true)
+            setSensitiveAgreed(true)
+            setMarketingAgreed(true)
+            enableNextButton(true)
+        }
     }
 
-    private fun agreePrivacyInfo() {
-        viewModel.setPrivacyInfoAgreed(viewModel.isPrivacyInfoAgreed.value.not())
+    private fun toggleAgreeService() = viewModel.run {
+        setServiceAgreed(!isServiceAgreed.value)
+        enableNextButton(isRequirementAllAgreed())
+        setAgreeAll(isAllAgreed())
+    }
+
+    private fun toggleAgreePrivacy() = viewModel.run {
+        setPrivacyAgreed(!isPrivacyAgreed.value)
+        enableNextButton(isRequirementAllAgreed())
+        setAgreeAll(isAllAgreed())
+    }
+
+    private fun toggleAgreeSensitive() = viewModel.run {
+        setSensitiveAgreed(!isSensitiveAgreed.value)
+        enableNextButton(isRequirementAllAgreed())
+        setAgreeAll(isAllAgreed())
+    }
+
+    private fun toggleAgreeMarketing() = viewModel.run {
+        setMarketingAgreed(!isMarketingAgreed.value)
+        enableNextButton(isRequirementAllAgreed())
+        setAgreeAll(isAllAgreed())
     }
 
 
-    private fun setPrivacyInfoVisible(visible: Boolean) = binding.run {
-        llPrivacyInfo.visibility = if (visible) View.VISIBLE else View.GONE
+    private fun isAllAgreed() = viewModel.run {
+        isServiceAgreed.value && isPrivacyAgreed.value && isSensitiveAgreed.value && isMarketingAgreed.value
+    }
+
+    private fun isRequirementAllAgreed() = viewModel.run {
+        isServiceAgreed.value && isPrivacyAgreed.value && isSensitiveAgreed.value
     }
 
     private fun enableNextButton(enabled: Boolean) = binding.mcvNext.run {
@@ -95,43 +130,84 @@ class AgreementFragment : Fragment() {
         }
     }
 
-    private fun changeSensitiveInfoView(enabled: Boolean) = binding.run {
-        if (enabled) {
-            ivSensitiveCheck.setImageResource(R.drawable.n_ic_processed_check)
-            tvSensitiveAgree.setTextColor(resources.getColor(R.color.gray_500, null))
-            setPrivacyInfoVisible(true)
-            viewModel.setSignUpProcess(20)
+    private fun changeAdultView(isAdult: Boolean) = binding.run {
+        if (isAdult) {
+            spacerAdult.visibility = View.GONE
+            tvAdultAnnounce.visibility = View.GONE
+            mcvCertifyAdult.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
+            mcvCertifyAdult.strokeWidth = 0
+            tvCertifyAdult.setText(R.string.agreement_certify_adult_done)
+            tvCertifyAdult.setTextColor(requireContext().getColor(R.color.gray_400))
+            ivCertifyAdultDone.visibility = View.VISIBLE
+
+            mcvNext.visibility = View.VISIBLE
+            spacerAgreement.visibility = View.VISIBLE
+            clAgreeAll.visibility = View.VISIBLE
+            llSubAgreements.visibility = View.VISIBLE
         } else {
-            ivSensitiveCheck.setImageResource(R.drawable.n_ic_disabled_check)
-            tvSensitiveAgree.setTextColor(resources.getColor(R.color.system_black, null))
-            setPrivacyInfoVisible(false)
-            viewModel.setSignUpProcess(0)
+            spacerAdult.visibility = View.VISIBLE
+            tvAdultAnnounce.visibility = View.VISIBLE
+            mcvCertifyAdult.setCardBackgroundColor(requireContext().getColor(R.color.system_white))
+            mcvCertifyAdult.strokeWidth = requireContext().dpToPx(1f).toInt()
+            tvCertifyAdult.setText(R.string.agreement_certify_adult)
+            tvCertifyAdult.setTextColor(requireContext().getColor(R.color.system_black))
+            ivCertifyAdultDone.visibility = View.GONE
+
+            spacerAgreement.visibility = View.GONE
+            clAgreeAll.visibility = View.GONE
+            mcvNext.visibility = View.GONE
+            llSubAgreements.visibility = View.GONE
         }
     }
 
-    private fun changePrivacyInfoView(enabled: Boolean) = binding.run {
-        if (enabled) {
-            ivPrivacyCheck.setImageResource(R.drawable.n_ic_processed_check)
-            tvPrivacyAgree.setTextColor(resources.getColor(R.color.gray_500, null))
-            viewModel.setSignUpProcess(40)
-        } else {
-            ivPrivacyCheck.setImageResource(R.drawable.n_ic_disabled_check)
-            tvPrivacyAgree.setTextColor(resources.getColor(R.color.system_black, null))
-
-            if (viewModel.isSensitiveInfoAgreed.value) {
-                viewModel.setSignUpProcess(20)
-            }
-        }
+    private fun changeAgreeAllView(agreeAll: Boolean) = binding.run {
+        ivAgreeAll.setImageResource(
+            if (agreeAll) R.drawable.n_ic_agree_all
+            else R.drawable.n_ic_disagree_all
+        )
     }
 
+    private fun changeAgreementView(isEnabled: Boolean, check: ImageView, text: TextView) {
+        check.setImageResource(
+            if (isEnabled) R.drawable.n_ic_enabled_check
+            else R.drawable.n_ic_disabled_check
+        )
+        text.setTextColor(requireContext().getColor(
+            if (isEnabled) R.color.system_black
+            else R.color.gray_600
+        ))
+    }
 
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-            launch { viewModel.isSensitiveInfoAgreed.collectLatest(::changeSensitiveInfoView) }
+            launch { viewModel.isAdult.collectLatest(::changeAdultView) }
+            launch { viewModel.isAgreeAll.collectLatest(::changeAgreeAllView) }
             launch {
-                viewModel.isPrivacyInfoAgreed.collectLatest {
-                    changePrivacyInfoView(it)
-                    enableNextButton(it)
+                viewModel.isServiceAgreed.collectLatest {
+                    binding.run {
+                        changeAgreementView(it, ivAgreementCheck1, tvAgreement1)
+                    }
+                }
+            }
+            launch {
+                viewModel.isPrivacyAgreed.collectLatest {
+                    binding.run {
+                        changeAgreementView(it, ivAgreementCheck2, tvAgreement2)
+                    }
+                }
+            }
+            launch {
+                viewModel.isSensitiveAgreed.collectLatest {
+                    binding.run {
+                        changeAgreementView(it, ivAgreementCheck3, tvAgreement3)
+                    }
+                }
+            }
+            launch {
+                viewModel.isMarketingAgreed.collectLatest {
+                    binding.run {
+                        changeAgreementView(it, ivAgreementCheck4, tvAgreement4)
+                    }
                 }
             }
         }

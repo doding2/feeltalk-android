@@ -7,7 +7,6 @@ import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
 import com.clonect.feeltalk.new_domain.usecase.signIn.CheckMemberTypeUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.CacheSocialTokenUseCase
-import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -41,32 +40,36 @@ class SignUpViewModel @Inject constructor(
     val errorMessage = _errorMessage.asSharedFlow()
 
 
+    // login
     suspend fun checkMemberType(socialToken: SocialToken) = viewModelScope.launch(Dispatchers.IO) {
-        setLoading(true)
-        when (val result = checkMemberTypeUseCase(socialToken)) {
-            is Resource.Success -> {
-                setLoading(false)
-                when (result.data.type.lowercase()) {
-                    "newbie" -> {
-                        cacheSocialToken(socialToken)
-                        _navigateToAgreement.emit(true)
-                    }
-                    "solo" -> {
-                        // TODO 자동 로그인 하기
-                        _navigateToCoupleCode.emit(true)
-                    }
-                    "couple" -> {
-                        // TODO 자동 로그인 하기
-                        _navigateToMain.emit(true)
-                    }
-                }
-            }
-            is Resource.Error -> {
-                setLoading(false)
-                infoLog("회원 타입 체크 실패: ${result.throwable.stackTrace.joinToString("\n")}")
-                result.throwable.localizedMessage?.let { _errorMessage.emit(it) }
-            }
-        }
+        cacheSocialToken(socialToken)
+        _navigateToAgreement.emit(true)
+
+//        setLoading(true)
+//        when (val result = checkMemberTypeUseCase(socialToken)) {
+//            is Resource.Success -> {
+//                setLoading(false)
+//                when (result.data.type.lowercase()) {
+//                    "newbie" -> {
+//                        cacheSocialToken(socialToken)
+//                        _navigateToAgreement.emit(true)
+//                    }
+//                    "solo" -> {
+//                        // TODO 자동 로그인 하기
+//                        _navigateToCoupleCode.emit(true)
+//                    }
+//                    "couple" -> {
+//                        // TODO 자동 로그인 하기
+//                        _navigateToMain.emit(true)
+//                    }
+//                }
+//            }
+//            is Resource.Error -> {
+//                setLoading(false)
+//                infoLog("회원 타입 체크 실패: ${result.throwable.stackTrace.joinToString("\n")}")
+//                result.throwable.localizedMessage?.let { _errorMessage.emit(it) }
+//            }
+//        }
     }
 
     private suspend fun cacheSocialToken(socialToken: SocialToken) = withContext(Dispatchers.IO) {

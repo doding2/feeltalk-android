@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
 
         val navGraph = navController.navInflater.inflate(R.navigation.feeltalk_nav_graph)
         val startDestination = viewModel.run {
-            R.id.mainNavigationFragment
+            R.id.signUpFragment
 //            if (!isLoggedIn.value)
 //                R.id.signUpFragment
 //            else if (!isUserInfoEntered.value)

@@ -91,12 +91,12 @@ class ContentsShareFragment : Fragment() {
             if (enabled) {
                 tvBody.setTextColor(requireContext().getColor(R.color.system_black))
                 divider.setBackgroundColor(requireContext().getColor(R.color.system_black))
-                dividerParams.height = activity?.dpToPx(2f)?.toInt() ?: 0
+                dividerParams.height = activity.dpToPx(2f).toInt()
                 divider.layoutParams = dividerParams
             } else {
                 tvBody.setTextColor(requireContext().getColor(R.color.gray_400))
                 divider.setBackgroundColor(requireContext().getColor(R.color.gray_400))
-                dividerParams.height = activity?.dpToPx(1f)?.toInt() ?: 0
+                dividerParams.height = activity.dpToPx(1f).toInt()
                 divider.layoutParams = dividerParams
             }
         }

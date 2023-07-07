@@ -80,9 +80,9 @@ class OngoingChallengeAdapter(): RecyclerView.Adapter<OngoingChallengeAdapter.On
     fun calculateItemSize(activity: Activity) {
         val screenWidth = activity.getScreenWidth()
         // 12.5 * 2 + 7.5 * 2 = 40
-        imminentItemSize = screenWidth - activity.dpToPx(40f).toInt()
+        imminentItemSize = screenWidth - activity.applicationContext.dpToPx(40f).toInt()
         // 12.5 * 2 + 7.5 * 4 = 55
-        enoughItemSize = (screenWidth - activity.dpToPx(56f).toInt()) / 2
+        enoughItemSize = (screenWidth - activity.applicationContext.dpToPx(56f).toInt()) / 2
     }
 
 
