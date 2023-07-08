@@ -68,7 +68,7 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    fun getLastChatPageNo() = viewModelScope.launch {
+    suspend fun getLastChatPageNo() = withContext(Dispatchers.IO) {
         when (val result = getLastChatPageNoUseCase()) {
             is Resource.Success -> {
                 val pageNo = result.data.pageNo
@@ -137,6 +137,7 @@ class ChatViewModel @Inject constructor(
 
                 _chatList.value = _chatList.value.toMutableList().apply {
                     add(chat)
+                    sortBy { it.index }
                 }
                 delay(50)
                 setScrollToBottom()
@@ -162,7 +163,10 @@ class ChatViewModel @Inject constructor(
                 }
 
                 _chatList.value = _chatList.value.toMutableList().apply {
-                    add(chat)
+                    if (all { it.index != chat.index }) {
+                        add(chat)
+                        sortBy { it.index }
+                    }
                 }
             }
     }
