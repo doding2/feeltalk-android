@@ -6,7 +6,7 @@ class SignInCacheDataSourceImpl: SignInCacheDataSource {
 
     private var coupleCode: String? = null
 
-    override fun saveCoupleCode(coupleCode: String) {
+    override fun saveCoupleCode(coupleCode: String?) {
         this.coupleCode = coupleCode
     }
 

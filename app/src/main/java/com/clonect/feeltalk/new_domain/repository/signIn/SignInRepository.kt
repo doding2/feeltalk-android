@@ -14,5 +14,4 @@ interface SignInRepository {
 
     suspend fun getCoupleCode(accessToken: String): Resource<CoupleCodeDto>
     suspend fun matchCouple(accessToken: String, coupleCode: String): Resource<Unit>
-
 }
