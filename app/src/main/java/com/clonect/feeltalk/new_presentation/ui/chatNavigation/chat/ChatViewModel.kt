@@ -106,10 +106,11 @@ class ChatViewModel @Inject constructor(
                     newChatList.add(chat)
                 }
 
-                val chatList = chatList.value.toMutableList()
-                chatList.addAll(newChatList)
-                chatList.sortBy { it.index }
-                _chatList.value = chatList
+                _chatList.value = chatList.value.toMutableList().run {
+                    addAll(newChatList)
+                    sortBy { it.index }
+                    distinctBy { it.index }
+                }
             }
             is Resource.Error -> {
                 infoLog("가장 최근 채팅 페이지 가져오기 실패: ${result.throwable.stackTrace.joinToString("\n")}")
@@ -135,9 +136,10 @@ class ChatViewModel @Inject constructor(
                     )
                 }
 
-                _chatList.value = _chatList.value.toMutableList().apply {
+                _chatList.value = _chatList.value.toMutableList().run {
                     add(chat)
                     sortBy { it.index }
+                    distinctBy { it.index }
                 }
                 delay(50)
                 setScrollToBottom()
@@ -162,11 +164,10 @@ class ChatViewModel @Inject constructor(
                     else -> return@collectLatest
                 }
 
-                _chatList.value = _chatList.value.toMutableList().apply {
-                    if (all { it.index != chat.index }) {
-                        add(chat)
-                        sortBy { it.index }
-                    }
+                _chatList.value = _chatList.value.toMutableList().run {
+                    add(chat)
+                    sortBy { it.index }
+                    distinctBy { it.index }
                 }
             }
     }
