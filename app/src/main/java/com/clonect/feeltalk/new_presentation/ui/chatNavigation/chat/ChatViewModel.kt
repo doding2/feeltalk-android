@@ -36,6 +36,9 @@ class ChatViewModel @Inject constructor(
     private val sendTextChatUseCase: SendTextChatUseCase
 ) : ViewModel() {
 
+    private val _expandChat = MutableStateFlow(false)
+    val expandChat = _expandChat.asStateFlow()
+
     private val _scrollToBottom = MutableSharedFlow<Boolean>()
     val scrollToBottom = _scrollToBottom.asSharedFlow()
 
@@ -43,7 +46,8 @@ class ChatViewModel @Inject constructor(
     val isKeyboardUp = _isKeyboardUp.asStateFlow()
 
 
-    private val _lastChatPageNo = MutableStateFlow(0L)
+
+    private val _lastChatPageNo = MutableStateFlow(-1L)
     val lastChatPageNo = _lastChatPageNo.asStateFlow()
 
     private val _chatList = MutableStateFlow<List<Chat>>(emptyList())
@@ -51,9 +55,6 @@ class ChatViewModel @Inject constructor(
 
     private val _textChat = MutableStateFlow("")
     val textChat = _textChat.asStateFlow()
-
-    private val _expandChat = MutableStateFlow(false)
-    val expandChat = _expandChat.asStateFlow()
 
 
     suspend fun changeChatRoomState(isInChat: Boolean) = withContext(Dispatchers.IO) {
@@ -81,6 +82,8 @@ class ChatViewModel @Inject constructor(
     }
 
     fun loadChatList(pageNo: Long = lastChatPageNo.value) = viewModelScope.launch {
+        if (pageNo < 0) return@launch
+
         when (val result = getChatListUseCase(pageNo)) {
             is Resource.Success -> {
                 val thisPageNo = result.data.page
@@ -174,6 +177,7 @@ class ChatViewModel @Inject constructor(
 
     fun clearChatList() {
         _chatList.value = emptyList()
+        _lastChatPageNo.value = -1
         NewChatObserver.onCleared()
     }
 

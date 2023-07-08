@@ -71,7 +71,6 @@ class SignUpNavigationViewModel @Inject constructor(
 
         _nickname.value = ""
 
-        _coupleCode.value = null
         _partnerCoupleCode.value = null
 
         CreateCoupleObserver.onCleared()
