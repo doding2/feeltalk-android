@@ -19,11 +19,8 @@ import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisuali
 import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.VisualizerView
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -36,6 +33,9 @@ class ChatViewModel @Inject constructor(
     private val sendTextChatUseCase: SendTextChatUseCase
 ) : ViewModel() {
 
+    private val _job = MutableStateFlow<Job?>(null)
+    val job = _job.asStateFlow()
+
     private val _expandChat = MutableStateFlow(false)
     val expandChat = _expandChat.asStateFlow()
 
@@ -46,6 +46,39 @@ class ChatViewModel @Inject constructor(
     val isKeyboardUp = _isKeyboardUp.asStateFlow()
 
 
+    fun toggleExpandChatMedia() {
+        _expandChat.value = _expandChat.value.not()
+    }
+
+    fun setExpandChatMedia(isExpanded: Boolean) {
+        _expandChat.value = isExpanded
+    }
+
+
+    fun setKeyboardUp(isUp: Boolean) {
+        _isKeyboardUp.value = isUp
+    }
+
+
+    fun setScrollToBottom() = viewModelScope.launch {
+        _scrollToBottom.emit(true)
+    }
+
+    fun cancelJob() {
+        _job.value?.cancel()
+    }
+
+    fun setJob(job: Job) = viewModelScope.launch {
+        _job.value = job
+    }
+
+    fun setTextChat(message: String) {
+        _textChat.value = message
+    }
+
+
+
+    /** Text Chat **/
 
     private val _lastChatPageNo = MutableStateFlow(-1L)
     val lastChatPageNo = _lastChatPageNo.asStateFlow()
@@ -61,7 +94,7 @@ class ChatViewModel @Inject constructor(
         when (val result = changeChatRoomStateUseCase(isInChat)) {
             is Resource.Success -> {
                 result.data
-                infoLog("채팅 입장 상태 변경 성공")
+                infoLog("채팅 입장 상태 변경 성공 isInChat: $isInChat")
             }
             is Resource.Error -> {
                 infoLog("채팅 입장 상태 변경 실패: ${result.throwable.stackTrace.joinToString("\n")}")
@@ -181,33 +214,6 @@ class ChatViewModel @Inject constructor(
         NewChatObserver.onCleared()
     }
 
-
-
-
-
-
-    fun setScrollToBottom() = viewModelScope.launch {
-        _scrollToBottom.emit(true)
-    }
-
-
-    fun setTextChat(message: String) {
-        _textChat.value = message
-    }
-
-
-    fun toggleExpandChatMedia() {
-        _expandChat.value = _expandChat.value.not()
-    }
-
-    fun setExpandChatMedia(isExpanded: Boolean) {
-        _expandChat.value = isExpanded
-    }
-
-
-    fun setKeyboardUp(isUp: Boolean) {
-        _isKeyboardUp.value = isUp
-    }
 
 
     private fun initChatList() = viewModelScope.launch {

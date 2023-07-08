@@ -29,6 +29,7 @@ import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -45,6 +46,7 @@ class ChatFragment : Fragment() {
     lateinit var adapter: ChatAdapter
 
     private var scrollRemainHeight = 0
+    private var navJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,8 +60,11 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        collectNavViewModel()
         setRecyclerView()
+        viewModel.cancelJob()
+        viewModel.setJob(
+            collectViewModel()
+        )
 
         binding.run {
             ivCancel.setOnClickListener { cancel() }
@@ -412,7 +417,8 @@ class ChatFragment : Fragment() {
         }
     }
 
-    private fun collectNavViewModel() = lifecycleScope.launch {
+    private fun collectViewModel() = lifecycleScope.launch {
+        navJob?.cancel()
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.textChat.collectLatest(::prepareTextChat) }
             launch { viewModel.expandChat.collectLatest(::changeChatMediaView) }
@@ -462,6 +468,13 @@ class ChatFragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        lifecycleScope.launch {
+            viewModel.changeChatRoomState(false)
         }
     }
 }
