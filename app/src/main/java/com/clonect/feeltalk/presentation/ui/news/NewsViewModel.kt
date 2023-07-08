@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.news.News
-import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
-import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
+import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
+import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.news.GetNewsListUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetPartnerProfileImageUrlUseCase
 import com.clonect.feeltalk.presentation.utils.AppSettings

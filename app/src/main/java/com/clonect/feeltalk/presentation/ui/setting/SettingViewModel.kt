@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.notification.Topics
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
-import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
-import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
+import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
+import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.user.*
 import com.clonect.feeltalk.presentation.utils.AppSettings

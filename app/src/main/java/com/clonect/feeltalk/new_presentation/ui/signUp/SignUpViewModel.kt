@@ -5,8 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
-import com.clonect.feeltalk.new_domain.usecase.signIn.CheckMemberTypeUseCase
+import com.clonect.feeltalk.new_domain.usecase.signIn.GetCoupleCodeUseCase
+import com.clonect.feeltalk.new_domain.usecase.signIn.ReLogInUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.CacheSocialTokenUseCase
+import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,8 +21,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val checkMemberTypeUseCase: CheckMemberTypeUseCase,
+    private val reLogInUseCase: ReLogInUseCase,
     private val cacheSocialTokenUseCase: CacheSocialTokenUseCase,
+    private val getCoupleCodeUseCase: GetCoupleCodeUseCase,
     private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
 ): ViewModel() {
 
@@ -41,36 +44,31 @@ class SignUpViewModel @Inject constructor(
 
 
     // login
-    suspend fun checkMemberType(socialToken: SocialToken) = viewModelScope.launch(Dispatchers.IO) {
-        cacheSocialToken(socialToken)
-        _navigateToAgreement.emit(true)
-
-//        TODO 주석 해제
-//        setLoading(true)
-//        when (val result = checkMemberTypeUseCase(socialToken)) {
-//            is Resource.Success -> {
-//                setLoading(false)
-//                when (result.data.type.lowercase()) {
-//                    "newbie" -> {
-//                        cacheSocialToken(socialToken)
-//                        _navigateToAgreement.emit(true)
-//                    }
-//                    "solo" -> {
-//                        // TODO 자동 로그인 하기
-//                        _navigateToCoupleCode.emit(true)
-//                    }
-//                    "couple" -> {
-//                        // TODO 자동 로그인 하기
-//                        _navigateToMain.emit(true)
-//                    }
-//                }
-//            }
-//            is Resource.Error -> {
-//                setLoading(false)
-//                infoLog("회원 타입 체크 실패: ${result.throwable.stackTrace.joinToString("\n")}")
-//                result.throwable.localizedMessage?.let { _errorMessage.emit(it) }
-//            }
-//        }
+    suspend fun reLogIn(socialToken: SocialToken) = viewModelScope.launch(Dispatchers.IO) {
+        setLoading(true)
+        when (val result = reLogInUseCase(socialToken)) {
+            is Resource.Success -> {
+                setLoading(false)
+                when (result.data.lowercase()) {
+                    "newbie" -> {
+                        cacheSocialToken(socialToken)
+                        _navigateToAgreement.emit(true)
+                    }
+                    "solo" -> {
+                        getCoupleCode()
+                        _navigateToCoupleCode.emit(true)
+                    }
+                    "couple" -> {
+                        _navigateToMain.emit(true)
+                    }
+                }
+            }
+            is Resource.Error -> {
+                setLoading(false)
+                infoLog("재 로그인 실패: ${result.throwable.stackTrace.joinToString("\n")}")
+                result.throwable.localizedMessage?.let { _errorMessage.emit(it) }
+            }
+        }
     }
 
     private suspend fun cacheSocialToken(socialToken: SocialToken) = withContext(Dispatchers.IO) {
@@ -83,6 +81,16 @@ class SignUpViewModel @Inject constructor(
             }
         }
     }
+
+    private suspend fun getCoupleCode() = withContext(Dispatchers.IO) {
+        val result = getCoupleCodeUseCase()
+        if (result is Resource.Error) {
+            infoLog("커플코드 로딩 실패: ${result.throwable.stackTrace.joinToString("\n")}")
+            result.throwable.localizedMessage?.let { sendErrorMessage(it) }
+        }
+    }
+
+
 
 
     fun setLoading(isLoading: Boolean) {

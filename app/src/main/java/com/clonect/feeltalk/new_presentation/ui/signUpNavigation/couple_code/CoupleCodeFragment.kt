@@ -39,6 +39,8 @@ class CoupleCodeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         collectViewModel()
+        getCoupleCode()
+        viewModel.registerService()
         viewModel.setCurrentPage("coupleCode")
 
         binding.run {
@@ -47,6 +49,9 @@ class CoupleCodeFragment : Fragment() {
         }
     }
 
+    private fun getCoupleCode() = lifecycleScope.launch {
+        viewModel.getCoupleCode()
+    }
 
     private fun showCoupleConnectSheet() {
         val bottomSheet = CoupleConnectBottomSheetFragment(

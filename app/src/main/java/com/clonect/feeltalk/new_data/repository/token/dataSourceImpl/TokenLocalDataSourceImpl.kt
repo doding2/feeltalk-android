@@ -19,9 +19,9 @@ class TokenLocalDataSourceImpl(
 
     override fun getTokenInfo(): TokenInfo? {
         val file = File(context.filesDir, "tokenInfo.dat")
-        if (!file.exists()) return null
+        if (!file.exists() || !file.canRead()) return null
         val dataBytes = file.readBytes()
-        val decrypted = appLevelEncryptHelper.decryptObject<TokenInfo>("TokenInfo", dataBytes)
+        val decrypted = appLevelEncryptHelper.decryptObject<TokenInfo>("tokenInfo", dataBytes)
         return decrypted as? TokenInfo
     }
 

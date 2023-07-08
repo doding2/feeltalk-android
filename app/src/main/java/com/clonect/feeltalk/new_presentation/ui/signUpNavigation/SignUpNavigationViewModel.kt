@@ -4,23 +4,23 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
+import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.signIn.GetCoupleCodeUseCase
 import com.clonect.feeltalk.new_domain.usecase.signIn.MatchCoupleUseCase
 import com.clonect.feeltalk.new_domain.usecase.signIn.SignUpUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.GetCachedSocialTokenUseCase
+import com.clonect.feeltalk.new_presentation.service.notification_observer.CreateCoupleObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class SignUpNavigationViewModel @Inject constructor(
+    private val getAppSettingsUseCase: GetAppSettingsUseCase,
     private val getCachedSocialTokenUseCase: GetCachedSocialTokenUseCase,
     private val signUpUseCase: SignUpUseCase,
     private val getCoupleCodeUseCase: GetCoupleCodeUseCase,
@@ -73,6 +73,8 @@ class SignUpNavigationViewModel @Inject constructor(
 
         _coupleCode.value = null
         _partnerCoupleCode.value = null
+
+        CreateCoupleObserver.onCleared()
     }
 
 
@@ -157,22 +159,21 @@ class SignUpNavigationViewModel @Inject constructor(
     }
 
     fun signUp() = viewModelScope.launch(Dispatchers.IO) {
-        setNicknameProcessed(true)
+        val fcmToken = getAppSettingsUseCase().fcmToken ?: return@launch
 
-//        TODO 주석 해제
-//        setLoading(true)
-//        when (val result = signUpUseCase(_nickname.value)) {
-//            is Resource.Success -> {
-//                getCoupleCode()
-//                setNicknameProcessed(true)
-//            }
-//            is Resource.Error -> {
-//                setNicknameProcessed(false)
-//                infoLog("회원가입 실패:${result.throwable.stackTrace.joinToString("\n")}")
-//                result.throwable.localizedMessage?.let { sendErrorMessage(it) }
-//            }
-//        }
-//        setLoading(false)
+        setLoading(true)
+        when (val result = signUpUseCase(_isMarketingAgreed.value, _nickname.value, fcmToken)) {
+            is Resource.Success -> {
+                getCoupleCode()
+                setNicknameProcessed(true)
+            }
+            is Resource.Error -> {
+                setNicknameProcessed(false)
+                infoLog("회원가입 실패:${result.throwable.stackTrace.joinToString("\n")}")
+                result.throwable.localizedMessage?.let { sendErrorMessage(it) }
+            }
+        }
+        setLoading(false)
     }
 
 
@@ -180,10 +181,10 @@ class SignUpNavigationViewModel @Inject constructor(
     private val _coupleCode = MutableStateFlow<String?>(null)
     val coupleCode = _coupleCode.asStateFlow()
 
-    private suspend fun getCoupleCode() = withContext(Dispatchers.IO) {
+    suspend fun getCoupleCode() = withContext(Dispatchers.IO) {
         when (val result = getCoupleCodeUseCase()) {
             is Resource.Success -> {
-                _coupleCode.value = result.data.generateCode
+                _coupleCode.value = result.data.inviteCode
             }
             is Resource.Error -> {
                 _coupleCode.value = null
@@ -200,6 +201,15 @@ class SignUpNavigationViewModel @Inject constructor(
 
     private val _isCoupleConnected = MutableSharedFlow<Boolean>()
     val isCoupleConnected = _isCoupleConnected.asSharedFlow()
+
+    fun registerService() = viewModelScope.launch {
+        CreateCoupleObserver
+            .getInstance()
+            .isCoupleCreated
+            .collectLatest {
+                _isCoupleConnected.emit(it)
+            }
+    }
 
     fun setPartnerCoupleCode(code: String) {
         _partnerCoupleCode.value = code

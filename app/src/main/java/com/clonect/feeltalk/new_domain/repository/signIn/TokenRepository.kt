@@ -9,5 +9,5 @@ interface TokenRepository {
     fun getCachedSocialToken(): Resource<SocialToken>
 
     fun saveTokenInfo(tokenInfo: TokenInfo): Resource<Unit>
-    fun getTokenInfo(): Resource<TokenInfo>
+    suspend fun getTokenInfo(): Resource<TokenInfo>
 }

@@ -1,5 +1,5 @@
 package com.clonect.feeltalk.new_domain.model.signIn
 
 data class CoupleCodeDto(
-    val generateCode: String
+    val inviteCode: String
 ): java.io.Serializable

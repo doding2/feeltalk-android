@@ -8,7 +8,7 @@ import com.clonect.feeltalk.data.mapper.toStringLowercase
 import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.model.data.user.Emotion
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
-import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
+import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionAnswersFromServer
 import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionUseCase

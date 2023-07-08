@@ -14,8 +14,8 @@ import com.clonect.feeltalk.domain.usecase.chat.SendChatUseCase
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetQuestionDetailUseCase
 import com.clonect.feeltalk.domain.usecase.user.*
-import com.clonect.feeltalk.presentation.service.notification_observer.FcmNewChatObserver
-import com.clonect.feeltalk.presentation.service.notification_observer.QuestionAnswerObserver
+import com.clonect.feeltalk.new_presentation.service.notification_observer.FcmNewChatObserver
+import com.clonect.feeltalk.new_presentation.service.notification_observer.QuestionAnswerObserver
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel

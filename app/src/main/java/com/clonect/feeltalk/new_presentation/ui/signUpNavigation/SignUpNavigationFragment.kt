@@ -42,7 +42,7 @@ class SignUpNavigationFragment : Fragment() {
         binding = FragmentSignUpNavigationBinding.inflate(inflater, container, false)
         val navHostFragment = childFragmentManager.findFragmentById(R.id.fcv_fragment) as NavHostFragment
         navController = navHostFragment.navController
-        val startPage = arguments?.getString("startPage", "agreement")
+        val startPage = arguments?.getString("startPage", "coupleCode")
         val startDestination = if (startPage == "coupleCode") {
             R.id.coupleCodeFragment
         } else {

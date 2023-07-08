@@ -4,4 +4,12 @@ import com.clonect.feeltalk.new_data.repository.signIn.dataSource.SignInCacheDat
 
 class SignInCacheDataSourceImpl: SignInCacheDataSource {
 
+    private var coupleCode: String? = null
+
+    override fun saveCoupleCode(coupleCode: String) {
+        this.coupleCode = coupleCode
+    }
+
+    override fun getCoupleCode() = coupleCode
+
 }

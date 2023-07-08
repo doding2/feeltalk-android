@@ -73,8 +73,8 @@ class AppLevelEncryptHelper(
         return cipher.doFinal(dataBytes)
     }
 
-    fun <T : Serializable> decryptObject(name: String, dataBytes: ByteArray): Serializable {
-        val ivString = pref.getString("${name}_iv", null)
+    fun <T : Serializable> decryptObject(name: String, dataBytes: ByteArray): Serializable? {
+        val ivString = pref.getString("${name}_iv", null) ?: return null
         val iv = Base64.decode(ivString, Base64.NO_WRAP)
 
         val spec = GCMParameterSpec(128, iv)

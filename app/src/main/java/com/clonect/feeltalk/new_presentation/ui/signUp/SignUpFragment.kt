@@ -107,7 +107,7 @@ class SignUpFragment : Fragment() {
                 refreshToken = refreshToken
             )
 
-            viewModel.checkMemberType(socialToken)
+            viewModel.reLogIn(socialToken)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -127,7 +127,7 @@ class SignUpFragment : Fragment() {
                 refreshToken = refreshToken
             )
 
-            viewModel.checkMemberType(socialToken)
+            viewModel.reLogIn(socialToken)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -145,7 +145,7 @@ class SignUpFragment : Fragment() {
                 state = state
             )
 
-            viewModel.checkMemberType(socialToken)
+            viewModel.reLogIn(socialToken)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -183,7 +183,7 @@ class SignUpFragment : Fragment() {
                 serverAuthCode = serverAuthCode
             )
 
-            viewModel.checkMemberType(socialToken)
+            viewModel.reLogIn(socialToken)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {

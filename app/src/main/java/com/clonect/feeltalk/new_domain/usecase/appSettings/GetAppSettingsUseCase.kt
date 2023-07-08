@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.domain.usecase.app_settings
+package com.clonect.feeltalk.new_domain.usecase.appSettings
 
 import android.content.SharedPreferences
 import com.clonect.feeltalk.new_data.util.AppLevelEncryptHelper

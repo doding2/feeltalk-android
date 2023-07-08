@@ -4,8 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.clonect.feeltalk.domain.repository.*
 import com.clonect.feeltalk.domain.usecase.*
-import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
-import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.chat.GetChatListUseCase
 import com.clonect.feeltalk.domain.usecase.chat.ReloadChatListUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SaveChatUseCase
@@ -18,10 +16,9 @@ import com.clonect.feeltalk.domain.usecase.user.*
 import com.clonect.feeltalk.new_data.util.AppLevelEncryptHelper
 import com.clonect.feeltalk.new_domain.repository.signIn.SignInRepository
 import com.clonect.feeltalk.new_domain.repository.signIn.TokenRepository
-import com.clonect.feeltalk.new_domain.usecase.signIn.CheckMemberTypeUseCase
-import com.clonect.feeltalk.new_domain.usecase.signIn.GetCoupleCodeUseCase
-import com.clonect.feeltalk.new_domain.usecase.signIn.MatchCoupleUseCase
-import com.clonect.feeltalk.new_domain.usecase.signIn.SignUpUseCase
+import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
+import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
+import com.clonect.feeltalk.new_domain.usecase.signIn.*
 import com.clonect.feeltalk.new_domain.usecase.token.CacheSocialTokenUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.GetCachedSocialTokenUseCase
 import dagger.Module
@@ -53,16 +50,23 @@ class UseCaseModule {
 
     /** Sign In **/
 
+
     @Singleton
     @Provides
-    fun providesSignUpUseCase(tokenRepository: TokenRepository, signInRepository: SignInRepository): SignUpUseCase {
-        return SignUpUseCase(tokenRepository, signInRepository)
+    fun providesAutoLogInUseCase(tokenRepository: TokenRepository, signInRepository: SignInRepository): AutoLogInUseCase {
+        return AutoLogInUseCase(tokenRepository, signInRepository)
     }
 
     @Singleton
     @Provides
-    fun providesCheckNewMemberUseCase(signInRepository: SignInRepository): CheckMemberTypeUseCase {
-        return CheckMemberTypeUseCase(signInRepository)
+    fun providesReLogInUseCase(tokenRepository: TokenRepository, signInRepository: SignInRepository): ReLogInUseCase {
+        return ReLogInUseCase(tokenRepository, signInRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesSignUpUseCase(tokenRepository: TokenRepository, signInRepository: SignInRepository): SignUpUseCase {
+        return SignUpUseCase(tokenRepository, signInRepository)
     }
 
     @Singleton
@@ -78,18 +82,7 @@ class UseCaseModule {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-    /** Old **/
+    /** AppSettings **/
 
     @Singleton
     @Provides
@@ -107,10 +100,22 @@ class UseCaseModule {
         @Named("AppSettings")
         pref: SharedPreferences,
         appLevelEncryptHelper: AppLevelEncryptHelper,
-        userRepository: UserRepository
     ): SaveAppSettingsUseCase {
-        return SaveAppSettingsUseCase(pref, appLevelEncryptHelper, userRepository)
+        return SaveAppSettingsUseCase(pref, appLevelEncryptHelper)
     }
+
+
+
+
+
+
+
+
+
+
+
+    /** Old **/
+
 
 
     @Singleton
@@ -447,12 +452,6 @@ class UseCaseModule {
     @Provides
     fun providesGetQuestionDetailUseCase(userRepository: UserRepository, questionRepository: QuestionRepository): GetQuestionDetailUseCase {
         return GetQuestionDetailUseCase(userRepository, questionRepository)
-    }
-
-    @Singleton
-    @Provides
-    fun providesAutoLogInUseCase(userRepository: UserRepository): AutoLogInUseCase {
-        return AutoLogInUseCase(userRepository)
     }
 
     @Singleton

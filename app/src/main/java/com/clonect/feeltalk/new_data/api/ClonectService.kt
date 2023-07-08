@@ -12,10 +12,8 @@ import com.clonect.feeltalk.domain.model.dto.encryption.TempPublicKeyDto
 import com.clonect.feeltalk.domain.model.dto.news.NewsDto
 import com.clonect.feeltalk.domain.model.dto.question.*
 import com.clonect.feeltalk.domain.model.dto.user.*
-import com.clonect.feeltalk.new_domain.model.signIn.CheckMemberTypeDto
-import com.clonect.feeltalk.new_domain.model.signIn.CoupleCodeDto
-import com.clonect.feeltalk.new_domain.model.signIn.SignUpDto
-import com.clonect.feeltalk.new_domain.model.token.TokenInfo
+import com.clonect.feeltalk.new_domain.model.signIn.*
+import com.clonect.feeltalk.new_domain.model.token.RenewTokenDto
 import com.google.gson.JsonObject
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -25,17 +23,22 @@ interface ClonectService {
 
     /** SignIn **/
 
-    @POST("/api/v1/checkMemberType")
-    suspend fun checkMemberType(
-        @Body body: JsonObject
-    ): Response<ApiResponse<CheckMemberTypeDto>>
+    @GET("/api/v1/auto-login")
+    suspend fun autoLogIn(
+        @Header("Authorization") token: String
+    ): Response<ApiResponse<AutoLogInDto>>
 
-    @POST("/api/v1/member")
+    @POST("/api/v1/re-login")
+    suspend fun reLogIn(
+        @Body body: JsonObject
+    ): Response<ApiResponse<ReLogInDto>>
+
+    @POST("/api/v1/sign-up")
     suspend fun signUp(
         @Body body: JsonObject
     ): Response<ApiResponse<SignUpDto>>
 
-    @GET("/api/v1/sign-up/invitation")
+    @GET("/api/v1/member/invite-code")
     suspend fun getCoupleCode(
         @Header("Authorization") token: String
     ): Response<ApiResponse<CoupleCodeDto>>
@@ -44,14 +47,14 @@ interface ClonectService {
     suspend fun mathCouple(
         @Header("Authorization") token: String,
         @Body body: JsonObject
-    ): Response<ApiResponse<Unit>>
+    ): Response<ApiResponse<MatchCoupleDto>>
 
     /** Token **/
 
-    @POST("/api/v1/")
+    @POST("/api/v1/renew-access-token")
     suspend fun renewToken(
         @Body body: JsonObject
-    ): Response<ApiResponse<TokenInfo>>
+    ): Response<ApiResponse<RenewTokenDto>>
 
 
 

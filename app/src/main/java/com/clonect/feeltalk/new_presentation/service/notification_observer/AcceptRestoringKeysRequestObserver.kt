@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.presentation.service.notification_observer
+package com.clonect.feeltalk.new_presentation.service.notification_observer
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

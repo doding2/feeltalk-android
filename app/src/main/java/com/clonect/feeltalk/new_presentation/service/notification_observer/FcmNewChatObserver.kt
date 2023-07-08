@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.presentation.service.notification_observer
+package com.clonect.feeltalk.new_presentation.service.notification_observer
 
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.chat.Chat2

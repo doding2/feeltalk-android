@@ -6,12 +6,15 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.usecase.encryption.*
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.user.*
-import com.clonect.feeltalk.presentation.service.notification_observer.CoupleRegistrationObserver
+import com.clonect.feeltalk.new_presentation.service.notification_observer.CreateCoupleObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -60,12 +63,12 @@ class CoupleRegistrationViewModel @Inject constructor(
 
 
     private fun collectIsCoupleRegistrationCompleted() = viewModelScope.launch(Dispatchers.IO) {
-        CoupleRegistrationObserver.getInstance()
-            .isCoupleRegistrationCompleted.collectLatest { isCompleted ->
-                if (isCompleted) {
-                    exchangeKeyPair()
-                }
-            }
+//        CreateCoupleObserver.getInstance()
+//            .isCoupleRegistrationCompleted.collectLatest { isCompleted ->
+//                if (isCompleted) {
+//                    exchangeKeyPair()
+//                }
+//            }
     }
 
     private fun getCoupleRegistrationCode() = viewModelScope.launch(Dispatchers.IO) {
@@ -118,7 +121,7 @@ class CoupleRegistrationViewModel @Inject constructor(
             infoLog("Fail to upload MyPublicKey : ${myPublicKeyResult.throwable.localizedMessage}")
             breakUpCouple()
             reloadCoupleRegistrationCode()
-            CoupleRegistrationObserver.getInstance().setCoupleRegistrationCompleted(false)
+//            CreateCoupleObserver.getInstance().setCoupleRegistrationCompleted(false)
             _isLoading.value = false
             return@launch
         }
@@ -129,7 +132,7 @@ class CoupleRegistrationViewModel @Inject constructor(
             infoLog("Fail to load PartnerPublicKey : ${partnerPublicKeyResult.throwable.localizedMessage}")
             breakUpCouple()
             reloadCoupleRegistrationCode()
-            CoupleRegistrationObserver.getInstance().setCoupleRegistrationCompleted(false)
+//            CreateCoupleObserver.getInstance().setCoupleRegistrationCompleted(false)
             _isLoading.value = false
             return@launch
         }
@@ -140,7 +143,7 @@ class CoupleRegistrationViewModel @Inject constructor(
             infoLog("Fail to upload MyPrivateKey : ${myPrivateKeyResult.throwable.localizedMessage}")
             breakUpCouple()
             reloadCoupleRegistrationCode()
-            CoupleRegistrationObserver.getInstance().setCoupleRegistrationCompleted(false)
+//            CreateCoupleObserver.getInstance().setCoupleRegistrationCompleted(false)
             _isLoading.value = false
             return@launch
         }
@@ -151,7 +154,7 @@ class CoupleRegistrationViewModel @Inject constructor(
             infoLog("Fail to load PartnerPrivateKey : ${partnerPrivateKeyResult.throwable.localizedMessage}")
             breakUpCouple()
             reloadCoupleRegistrationCode()
-            CoupleRegistrationObserver.getInstance().setCoupleRegistrationCompleted(false)
+//            CreateCoupleObserver.getInstance().setCoupleRegistrationCompleted(false)
             _isLoading.value = false
             return@launch
         }
@@ -162,7 +165,7 @@ class CoupleRegistrationViewModel @Inject constructor(
             infoLog("Exchanged Key Pairs are not saved : ${keyPairsExist.throwable.localizedMessage}")
             breakUpCouple()
             reloadCoupleRegistrationCode()
-            CoupleRegistrationObserver.getInstance().setCoupleRegistrationCompleted(false)
+//            CreateCoupleObserver.getInstance().setCoupleRegistrationCompleted(false)
             _isLoading.value = false
             return@launch
         }
@@ -173,7 +176,7 @@ class CoupleRegistrationViewModel @Inject constructor(
             infoLog("Exchanged Key Pairs are corrupted : ${keyPairsWorkWell.throwable.localizedMessage}")
             breakUpCouple()
             reloadCoupleRegistrationCode()
-            CoupleRegistrationObserver.getInstance().setCoupleRegistrationCompleted(false)
+//            CreateCoupleObserver.getInstance().setCoupleRegistrationCompleted(false)
             _isLoading.value = false
             return@launch
         }
@@ -187,7 +190,7 @@ class CoupleRegistrationViewModel @Inject constructor(
 
         _isLoading.value = false
         _isKeyPairExchangingCompleted.value = true
-        CoupleRegistrationObserver.getInstance().setCoupleRegistrationCompleted(false)
+//        CreateCoupleObserver.getInstance().setCoupleRegistrationCompleted(false)
     }
 
     private suspend fun breakUpCouple() {
@@ -276,6 +279,6 @@ class CoupleRegistrationViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
-        CoupleRegistrationObserver.onCleared()
+        CreateCoupleObserver.onCleared()
     }
 }

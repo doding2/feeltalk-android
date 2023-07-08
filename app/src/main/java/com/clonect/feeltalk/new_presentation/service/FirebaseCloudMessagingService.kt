@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.presentation.service
+package com.clonect.feeltalk.new_presentation.service
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -15,8 +15,6 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.data.utils.UserLevelEncryptHelper
 import com.clonect.feeltalk.domain.model.data.chat.Chat2
 import com.clonect.feeltalk.domain.model.data.question.Question
-import com.clonect.feeltalk.domain.usecase.app_settings.GetAppSettingsUseCase
-import com.clonect.feeltalk.domain.usecase.app_settings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SaveChatUseCase
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetQuestionAnswersUseCase
@@ -25,11 +23,13 @@ import com.clonect.feeltalk.domain.usecase.user.CheckUserIsSignedUpUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetUserInfoUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetUserIsActiveUseCase
 import com.clonect.feeltalk.domain.usecase.user.SetUserIsActiveUseCase
+import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
+import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
+import com.clonect.feeltalk.new_presentation.service.notification_observer.AcceptRestoringKeysRequestObserver
+import com.clonect.feeltalk.new_presentation.service.notification_observer.CreateCoupleObserver
+import com.clonect.feeltalk.new_presentation.service.notification_observer.FcmNewChatObserver
+import com.clonect.feeltalk.new_presentation.service.notification_observer.QuestionAnswerObserver
 import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
-import com.clonect.feeltalk.presentation.service.notification_observer.AcceptRestoringKeysRequestObserver
-import com.clonect.feeltalk.presentation.service.notification_observer.CoupleRegistrationObserver
-import com.clonect.feeltalk.presentation.service.notification_observer.FcmNewChatObserver
-import com.clonect.feeltalk.presentation.service.notification_observer.QuestionAnswerObserver
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -95,13 +95,15 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         const val REQUEST_KEY_RESTORING_CHANNEL_ID ="feeltalk_request_key_restoring_notification"
         const val ACCEPT_KEY_RESTORING_CHANNEL_ID = "feeltalk_accept_key_restoring_notification"
 
-        const val TYPE_CHAT = "chat"
-        const val TYPE_COUPLE_REGISTRATION = "coupleMatch"
-        const val TYPE_TODAY_QUESTION = "newQuestion"
-        const val TYPE_PARTNER_ANSWERED = "isAnswer"
-        const val TYPE_REQUEST_EMOTION_CHANGE = "emotionRequest"
-        const val TYPE_REQUEST_KEY_RESTORING = "KeyTrade"
-        const val TYPE_ACCEPT_KEY_RESTORING = "KeyTradeOk"
+//        const val TYPE_CHAT = "chat"
+//        const val TYPE_COUPLE_REGISTRATION = "coupleMatch"
+//        const val TYPE_TODAY_QUESTION = "newQuestion"
+//        const val TYPE_PARTNER_ANSWERED = "isAnswer"
+//        const val TYPE_REQUEST_EMOTION_CHANGE = "emotionRequest"
+//        const val TYPE_REQUEST_KEY_RESTORING = "KeyTrade"
+//        const val TYPE_ACCEPT_KEY_RESTORING = "KeyTradeOk"
+
+        const val TYPE_CREATE_COUPLE = "createCouple"
     }
 
     override fun onNewToken(newToken: String) {
@@ -139,17 +141,41 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             }
 
             when (data["type"]) {
-                TYPE_TODAY_QUESTION -> handleTodayQuestionData(data)
-                TYPE_PARTNER_ANSWERED -> handlePartnerAnsweredData(data)
-                TYPE_REQUEST_EMOTION_CHANGE -> handleRequestEmotionChangeData(data)
-                TYPE_CHAT -> handleChatData(data)
-                TYPE_COUPLE_REGISTRATION -> handleCoupleRegistrationData(data)
-                TYPE_REQUEST_KEY_RESTORING -> handleRequestKeyRestoringData(data)
-                TYPE_ACCEPT_KEY_RESTORING -> handleAcceptRequestKeyRestoringData(data)
+                TYPE_CREATE_COUPLE -> handleCreateCoupleData(data)
+//                TYPE_TODAY_QUESTION -> handleTodayQuestionData(data)
+//                TYPE_PARTNER_ANSWERED -> handlePartnerAnsweredData(data)
+//                TYPE_REQUEST_EMOTION_CHANGE -> handleRequestEmotionChangeData(data)
+//                TYPE_CHAT -> handleChatData(data)
+//                TYPE_COUPLE_REGISTRATION -> handleCoupleRegistrationData(data)
+//                TYPE_REQUEST_KEY_RESTORING -> handleRequestKeyRestoringData(data)
+//                TYPE_ACCEPT_KEY_RESTORING -> handleAcceptRequestKeyRestoringData(data)
                 else -> handleOtherCases(data)
             }
         }
     }
+
+
+    private fun handleCreateCoupleData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+        CreateCoupleObserver.getInstance().setCoupleCreated(true)
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private fun handleTodayQuestionData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
         val question = data["detail"] ?: return@launch
@@ -344,9 +370,9 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
         }
         
-        CoupleRegistrationObserver
+        CreateCoupleObserver
             .getInstance()
-            .setCoupleRegistrationCompleted(true)
+            .setCoupleCreated(true)
 
         CoroutineScope(Dispatchers.IO).launch {
             val appSettings = getAppSettingsUseCase().apply {

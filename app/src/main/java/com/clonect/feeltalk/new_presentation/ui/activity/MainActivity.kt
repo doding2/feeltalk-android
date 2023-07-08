@@ -14,16 +14,9 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.ActivityMainBinding
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.presentation.utils.infoLog
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.kakao.sdk.auth.AuthApiClient
-import com.kakao.sdk.user.UserApiClient
-import com.navercorp.nid.NaverIdLoginSDK
-import com.navercorp.nid.oauth.NidOAuthLoginState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -76,15 +69,14 @@ class MainActivity : AppCompatActivity() {
 
         val navGraph = navController.navInflater.inflate(R.navigation.feeltalk_nav_graph)
         val startDestination = viewModel.run {
-            R.id.signUpFragment
-//            if (!isLoggedIn.value)
-//                R.id.signUpFragment
-//            else if (!isUserInfoEntered.value)
-//                R.id.userGenderInputFragment
-//            else if (!isUserCouple.value)
-//                R.id.guideFragment
-//            else
-//                R.id.bottomNavigationFragment
+            if (!isLoggedIn.value)
+                R.id.signUpFragment
+            else if (!isUser.value)
+                R.id.signUpFragment
+            else if (!isUserCouple.value)
+                R.id.signUpNavigationFragment
+            else
+                R.id.mainNavigationFragment
         }
 
         navGraph.setStartDestination(startDestination)
@@ -94,61 +86,10 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun tryAutoLogIn() = lifecycleScope.launch {
-//        viewModel.autoLogIn()
-//        if (tryGoogleAutoLogIn()) return@launch
-//        if (tryKakaoAutoLogIn()) return@launch
-//        if (tryNaverAutoLogIn()) return@launch
-//        if (tryAppleAutoLogIn()) return@launch
-//
+        viewModel.autoLogIn()
         viewModel.setReady()
         infoLog("로그인 된 계정이 없음")
     }
-
-    private fun tryGoogleAutoLogIn(): Boolean {
-        val googleAccount = GoogleSignIn.getLastSignedInAccount(this@MainActivity)
-        googleAccount?.let {
-            viewModel.autoGoogleLogIn()
-            return true
-        }
-        return false
-    }
-
-    private suspend fun tryKakaoAutoLogIn(): Boolean = suspendCoroutine { continuation ->
-        if (AuthApiClient.instance.hasToken()) {
-            UserApiClient.instance.accessTokenInfo { _, error ->
-                if (error == null) {
-                    viewModel.autoKakaoLogIn()
-                    continuation.resume(true)
-                } else {
-                    continuation.resume(false)
-                }
-            }
-        } else {
-            continuation.resume(false)
-        }
-    }
-
-    private fun tryNaverAutoLogIn(): Boolean {
-        try {
-            val state = NaverIdLoginSDK.getState()
-            if (state == NidOAuthLoginState.OK) {
-                viewModel.autoNaverLogIn()
-                return true
-            }
-            return false
-        } catch (e: Exception) {
-            return false
-        }
-    }
-
-    private suspend fun tryAppleAutoLogIn(): Boolean {
-        val isLoggedIn = viewModel.checkIsAppleLoggedIn()
-        if (isLoggedIn) {
-            viewModel.autoAppleLogIn()
-        }
-        return isLoggedIn
-    }
-
 
 
     override fun onResume() {
