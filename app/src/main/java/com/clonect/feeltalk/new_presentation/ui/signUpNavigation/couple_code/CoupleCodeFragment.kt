@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -25,6 +26,7 @@ class CoupleCodeFragment : Fragment() {
 
     private lateinit var binding: FragmentCoupleCodeBinding
     private val viewModel: SignUpNavigationViewModel by activityViewModels()
+    private lateinit var onBackCallback: OnBackPressedCallback
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,6 +48,7 @@ class CoupleCodeFragment : Fragment() {
         binding.run {
             mcvShareCoupleCode.setOnClickListener { copyCoupleCode() }
             mcvShowSheet.setOnClickListener { showCoupleConnectSheet() }
+            llReload.setOnClickListener { getCoupleCode() }
         }
     }
 
@@ -105,5 +108,21 @@ class CoupleCodeFragment : Fragment() {
                 viewModel.coupleCode.collectLatest(binding.tvCoupleCode::setText)
             }
         }
+    }
+
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        onBackCallback = object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                requireActivity().finish()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, onBackCallback)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        onBackCallback.remove()
     }
 }
