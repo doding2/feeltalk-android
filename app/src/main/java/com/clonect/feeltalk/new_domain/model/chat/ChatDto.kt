@@ -5,6 +5,7 @@ data class ChatDto(
     val type: String,
     val chatSender: String,
     val isRead: Boolean,
+    val mine: Boolean,
     val createAt: String,
     val message: String?,
     val coupleChallenge: ChatChallengeDto?,

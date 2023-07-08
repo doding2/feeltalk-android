@@ -11,9 +11,11 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetUserIsActiveUseCase
 import com.clonect.feeltalk.domain.usecase.user.SetUserIsActiveUseCase
+import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.new_presentation.service.notification_observer.CreateCoupleObserver
+import com.clonect.feeltalk.new_presentation.service.notification_observer.NewChatObserver
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -65,6 +67,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 //        const val TYPE_ACCEPT_KEY_RESTORING = "KeyTradeOk"
 
         const val TYPE_CREATE_COUPLE = "createCouple"
+        const val TYPE_TEXT_CHATTING = "textChatting"
     }
 
     override fun onNewToken(newToken: String) {
@@ -103,6 +106,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
             when (data["type"]) {
                 TYPE_CREATE_COUPLE -> handleCreateCoupleData(data)
+                TYPE_TEXT_CHATTING -> handleTextChatData(data)
 //                TYPE_TODAY_QUESTION -> handleTodayQuestionData(data)
 //                TYPE_PARTNER_ANSWERED -> handlePartnerAnsweredData(data)
 //                TYPE_REQUEST_EMOTION_CHANGE -> handleRequestEmotionChangeData(data)
@@ -120,7 +124,25 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         CreateCoupleObserver.getInstance().setCoupleCreated(true)
     }
 
+    private fun handleTextChatData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+        val index = data["index"]?.toLong() ?: return@launch
+        val message = data["message"] ?: return@launch
+        val isRead = data["isRead"]?.toBoolean() ?: return@launch
+        val createAt = data["createAt"] ?: return@launch
 
+        NewChatObserver
+            .getInstance()
+            .setNewChat(
+                TextChat(
+                    index = index,
+                    pageNo = 0,
+                    chatSender = "partner",
+                    isRead = isRead,
+                    createAt = createAt,
+                    message = message
+                )
+            )
+    }
 
 
 

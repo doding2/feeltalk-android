@@ -109,7 +109,7 @@ class ChatFragment : Fragment() {
 
     private fun sendTextChat() {
         viewModel.sendTextChat(
-            onComplete =  {
+            onSend =  {
                 binding.etTextMessage.setText("")
             }
         )
@@ -448,9 +448,17 @@ class ChatFragment : Fragment() {
             launch {
                 navViewModel.showChatNavigation.collectLatest { isShown ->
                     setBackCallback(isShown)
-                    if (!isShown) {
+                    if (isShown) {
+                        viewModel.changeChatRoomState(true)
+                        viewModel.getLastChatPageNo()
+                        viewModel.loadChatList()
+                        viewModel.collectFcmChat()
+                    }
+                    else {
                         hideKeyboard()
                         cancel()
+                        viewModel.changeChatRoomState(false)
+                        viewModel.clearChatList()
                     }
                 }
             }

@@ -7,7 +7,7 @@ import com.clonect.feeltalk.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class GetChatListUseCase(private val userRepository: UserRepository, private val chatRepository2: ChatRepository2) {
+class GetChatListUseCase2(private val userRepository: UserRepository, private val chatRepository2: ChatRepository2) {
 
     suspend operator fun invoke(questionContent: String): Flow<Resource<List<Chat2>>> {
         val result = userRepository.getAccessToken()

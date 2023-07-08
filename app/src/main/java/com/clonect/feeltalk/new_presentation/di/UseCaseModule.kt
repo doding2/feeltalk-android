@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.clonect.feeltalk.domain.repository.*
 import com.clonect.feeltalk.domain.usecase.*
-import com.clonect.feeltalk.domain.usecase.chat.GetChatListUseCase
+import com.clonect.feeltalk.domain.usecase.chat.GetChatListUseCase2
 import com.clonect.feeltalk.domain.usecase.chat.ReloadChatListUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SaveChatUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SendChatUseCase
@@ -14,10 +14,15 @@ import com.clonect.feeltalk.domain.usecase.news.GetNewsListUseCase
 import com.clonect.feeltalk.domain.usecase.question.*
 import com.clonect.feeltalk.domain.usecase.user.*
 import com.clonect.feeltalk.new_data.util.AppLevelEncryptHelper
+import com.clonect.feeltalk.new_domain.repository.chat.ChatRepository
 import com.clonect.feeltalk.new_domain.repository.signIn.SignInRepository
 import com.clonect.feeltalk.new_domain.repository.signIn.TokenRepository
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.ChangeChatRoomStateUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.GetChatListUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.GetLastChatPageNoUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.SendTextChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.signIn.*
 import com.clonect.feeltalk.new_domain.usecase.token.CacheSocialTokenUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.GetCachedSocialTokenUseCase
@@ -105,6 +110,33 @@ class UseCaseModule {
     }
 
 
+    /** Chat **/
+
+    @Singleton
+    @Provides
+    fun providesChangeChatRoomStateUseCase(tokenRepository: TokenRepository, chatRepository: ChatRepository): ChangeChatRoomStateUseCase {
+        return ChangeChatRoomStateUseCase(tokenRepository, chatRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetLastChatPageNoUseCase(tokenRepository: TokenRepository, chatRepository: ChatRepository): GetLastChatPageNoUseCase {
+        return GetLastChatPageNoUseCase(tokenRepository, chatRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetChatListUseCase(tokenRepository: TokenRepository, chatRepository: ChatRepository): GetChatListUseCase {
+        return GetChatListUseCase(tokenRepository, chatRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesSendTextChatUseCase(tokenRepository: TokenRepository, chatRepository: ChatRepository): SendTextChatUseCase {
+        return SendTextChatUseCase(tokenRepository, chatRepository)
+    }
+
+
 
 
 
@@ -120,8 +152,8 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesGetChatListUseCase(userRepository: UserRepository, chatRepository2: ChatRepository2): GetChatListUseCase {
-        return GetChatListUseCase(userRepository, chatRepository2)
+    fun providesGetChatListUseCase2(userRepository: UserRepository, chatRepository2: ChatRepository2): GetChatListUseCase2 {
+        return GetChatListUseCase2(userRepository, chatRepository2)
     }
 
     @Singleton

@@ -2,7 +2,7 @@ package com.clonect.feeltalk.new_domain.model.chat
 
 abstract class Chat(
     open val index: Long,
-    open val pageNo: Long,
+    open var pageNo: Long,
     open val type: ChatType,
     open val chatSender: String,
     open val isRead: Boolean,
@@ -16,7 +16,7 @@ data class DividerChat(
 
 data class TextChat(
     override val index: Long,
-    override val pageNo: Long,
+    override var pageNo: Long,
     override val chatSender: String,
     override val isRead: Boolean,
     override val createAt: String,
@@ -25,7 +25,7 @@ data class TextChat(
 
 data class VoiceChat(
     override val index: Long,
-    override val pageNo: Long,
+    override var pageNo: Long,
     override val chatSender: String,
     override val isRead: Boolean,
     override val createAt: String,
@@ -34,7 +34,7 @@ data class VoiceChat(
 
 data class EmojiChat(
     override val index: Long,
-    override val pageNo: Long,
+    override var pageNo: Long,
     override val chatSender: String,
     override val isRead: Boolean,
     override val createAt: String,
@@ -43,7 +43,7 @@ data class EmojiChat(
 
 data class ImageChat(
     override val index: Long,
-    override val pageNo: Long,
+    override var pageNo: Long,
     override val chatSender: String,
     override val isRead: Boolean,
     override val createAt: String,
@@ -53,7 +53,7 @@ data class ImageChat(
 
 data class VideoChat(
     override val index: Long,
-    override val pageNo: Long,
+    override var pageNo: Long,
     override val chatSender: String,
     override val isRead: Boolean,
     override val createAt: String,
@@ -63,7 +63,7 @@ data class VideoChat(
 
 data class ChallengeChat(
     override val index: Long,
-    override val pageNo: Long,
+    override var pageNo: Long,
     override val chatSender: String,
     override val isRead: Boolean,
     override val createAt: String,
@@ -72,7 +72,7 @@ data class ChallengeChat(
 
 data class QuestionChat(
     override val index: Long,
-    override val pageNo: Long,
+    override var pageNo: Long,
     override val chatSender: String,
     override val isRead: Boolean,
     override val createAt: String,

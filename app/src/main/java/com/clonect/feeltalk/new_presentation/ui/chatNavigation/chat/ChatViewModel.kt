@@ -3,27 +3,37 @@ package com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.common.plusDayBy
 import com.clonect.feeltalk.new_domain.model.chat.Chat
+import com.clonect.feeltalk.new_domain.model.chat.ChatType
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
+import com.clonect.feeltalk.new_domain.usecase.chat.ChangeChatRoomStateUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.GetChatListUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.GetLastChatPageNoUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.SendTextChatUseCase
+import com.clonect.feeltalk.new_presentation.service.notification_observer.NewChatObserver
 import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.RecordingReplayer
 import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.RecordingSampler
 import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.VisualizerView
+import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
-
+    private val changeChatRoomStateUseCase: ChangeChatRoomStateUseCase,
+    private val getLastChatPageNoUseCase: GetLastChatPageNoUseCase,
+    private val getChatListUseCase: GetChatListUseCase,
+    private val sendTextChatUseCase: SendTextChatUseCase
 ) : ViewModel() {
 
     private val _scrollToBottom = MutableSharedFlow<Boolean>()
@@ -32,6 +42,9 @@ class ChatViewModel @Inject constructor(
     private val _isKeyboardUp = MutableStateFlow(false)
     val isKeyboardUp = _isKeyboardUp.asStateFlow()
 
+
+    private val _lastChatPageNo = MutableStateFlow(0L)
+    val lastChatPageNo = _lastChatPageNo.asStateFlow()
 
     private val _chatList = MutableStateFlow<List<Chat>>(emptyList())
     val chatList = _chatList.asStateFlow()
@@ -42,6 +55,233 @@ class ChatViewModel @Inject constructor(
     private val _expandChat = MutableStateFlow(false)
     val expandChat = _expandChat.asStateFlow()
 
+
+    suspend fun changeChatRoomState(isInChat: Boolean) = withContext(Dispatchers.IO) {
+        when (val result = changeChatRoomStateUseCase(isInChat)) {
+            is Resource.Success -> {
+                result.data
+                infoLog("채팅 입장 상태 변경 성공")
+            }
+            is Resource.Error -> {
+                infoLog("채팅 입장 상태 변경 실패: ${result.throwable.stackTrace.joinToString("\n")}")
+            }
+        }
+    }
+
+    fun getLastChatPageNo() = viewModelScope.launch {
+        when (val result = getLastChatPageNoUseCase()) {
+            is Resource.Success -> {
+                val pageNo = result.data.pageNo
+                _lastChatPageNo.value = pageNo
+            }
+            is Resource.Error -> {
+                infoLog("가장 최근 채팅 페이지 가져오기 실패: ${result.throwable.stackTrace.joinToString("\n")}")
+            }
+        }
+    }
+
+    fun loadChatList(pageNo: Long = lastChatPageNo.value) = viewModelScope.launch {
+        when (val result = getChatListUseCase(pageNo)) {
+            is Resource.Success -> {
+                val thisPageNo = result.data.page
+                val newChatList = mutableListOf<Chat>()
+                for (chatDto in result.data.chatting) {
+                    val chat = when (chatDto.type) {
+                        "text", "textChatting" -> {
+                            chatDto.run {
+                                TextChat(
+                                    index = index,
+                                    pageNo = thisPageNo,
+                                    chatSender = if (mine) "me" else "partner",
+                                    isRead = isRead,
+                                    createAt = createAt,
+                                    message = message ?: ""
+                                )
+                            }
+                        }
+                        else -> {
+                            continue
+                        }
+                    }
+                    newChatList.add(chat)
+                }
+
+                val chatList = chatList.value.toMutableList()
+                chatList.addAll(newChatList)
+                chatList.sortBy { it.index }
+                _chatList.value = chatList
+            }
+            is Resource.Error -> {
+                infoLog("가장 최근 채팅 페이지 가져오기 실패: ${result.throwable.stackTrace.joinToString("\n")}")
+            }
+        }
+    }
+
+    fun sendTextChat(onSend: () -> Unit) = viewModelScope.launch {
+        val message = _textChat.value
+        _textChat.value = ""
+        onSend()
+
+        when (val result = sendTextChatUseCase(message)) {
+            is Resource.Success -> {
+                val chat = result.data.run {
+                    TextChat(
+                        index = index,
+                        pageNo = lastChatPageNo.value,
+                        chatSender = "me",
+                        isRead = isRead,
+                        createAt = createAt,
+                        message = message
+                    )
+                }
+
+                _chatList.value = _chatList.value.toMutableList().apply {
+                    add(chat)
+                }
+                delay(50)
+                setScrollToBottom()
+            }
+            is Resource.Error -> {
+                infoLog("텍스트 채팅 전송 실패: ${result.throwable.stackTrace.joinToString("\n")}")
+            }
+        }
+    }
+
+
+    fun collectFcmChat()  = viewModelScope.launch {
+        NewChatObserver
+            .getInstance()
+            .newChat
+            .collectLatest { newChat ->
+                val chat = when (newChat?.type) {
+                    ChatType.TextChatting -> {
+                        val textChat = newChat as? TextChat ?: return@collectLatest
+                        textChat
+                    }
+                    else -> return@collectLatest
+                }
+
+                _chatList.value = _chatList.value.toMutableList().apply {
+                    add(chat)
+                }
+            }
+    }
+
+    fun clearChatList() {
+        _chatList.value = emptyList()
+        NewChatObserver.onCleared()
+    }
+
+
+
+
+
+
+    fun setScrollToBottom() = viewModelScope.launch {
+        _scrollToBottom.emit(true)
+    }
+
+
+    fun setTextChat(message: String) {
+        _textChat.value = message
+    }
+
+
+    fun toggleExpandChatMedia() {
+        _expandChat.value = _expandChat.value.not()
+    }
+
+    fun setExpandChatMedia(isExpanded: Boolean) {
+        _expandChat.value = isExpanded
+    }
+
+
+    fun setKeyboardUp(isUp: Boolean) {
+        _isKeyboardUp.value = isUp
+    }
+
+
+    private fun initChatList() = viewModelScope.launch {
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val createAtWeekAgo = format.format(Date().plusDayBy(-7))
+        val createAtYesterday = format.format(Date().plusDayBy(-1))
+        val createAtToday = format.format(Date())
+
+        val newChatList = listOf<Chat>(
+            TextChat(
+                index = 0,
+                pageNo = 0,
+                chatSender = "partner",
+                isRead = true,
+                createAt = createAtWeekAgo,
+                message = "첫번째 메시지"
+            ),
+            TextChat(
+                index = 1,
+                pageNo = 0,
+                chatSender = "partner",
+                isRead = true,
+                createAt = createAtWeekAgo,
+                message = "두번째 메시지"
+            ),
+            TextChat(
+                index = 3,
+                pageNo = 0,
+                chatSender = "me",
+                isRead = false,
+                createAt = createAtWeekAgo,
+                message = "내 메시지"
+            ),
+            TextChat(
+                index = 4,
+                pageNo = 0,
+                chatSender = "partner",
+                isRead = false,
+                createAt = createAtWeekAgo,
+                message = "연인 메시지"
+            ),
+            TextChat(
+                index = 5,
+                pageNo = 0,
+                chatSender = "me",
+                isRead = true,
+                createAt = createAtYesterday,
+                message = "띵동"
+            ),
+            TextChat(
+                index = 6,
+                pageNo = 0,
+                chatSender = "partner",
+                isRead = true,
+                createAt = createAtYesterday,
+                message = "ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ"
+            ),
+            TextChat(
+                index = 7,
+                pageNo = 0,
+                chatSender = "partner",
+                isRead = true,
+                createAt = createAtYesterday,
+                message = "허걱스"
+            ),
+            TextChat(
+                index = 8,
+                pageNo = 0,
+                chatSender = "partner",
+                isRead = true,
+                createAt = createAtYesterday,
+                message = "대박"
+            ),
+        )
+
+        _chatList.value = newChatList
+        setScrollToBottom()
+    }
+
+
+
+
+    /** Voice **/
 
     // 셋업
     private val _isVoiceSetupMode = MutableStateFlow(false)
@@ -75,32 +315,7 @@ class ChatViewModel @Inject constructor(
     // 리플레이 재생 완료
     private val _isVoiceRecordingReplayCompleted = MutableStateFlow(false)
     val isVoiceRecordingReplayCompleted = _isVoiceRecordingReplayCompleted.asStateFlow()
-    
-    init {
-        initChatList()
-    }
 
-    fun sendTextChat(onComplete: () -> Unit) = viewModelScope.launch {
-        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-        TextChat(
-            index = _chatList.value.size.toLong(),
-            pageNo = 0,
-            chatSender = "me",
-            isRead = true,
-            createAt = format.format(Date()),
-            message = _textChat.value
-        ).also {
-            _chatList.value = _chatList.value
-                .toMutableList()
-                .apply {
-                    add(it)
-                }
-        }
-        _textChat.value = ""
-        onComplete()
-        delay(50)
-        setScrollToBottom()
-    }
 
     fun sendVoiceChat(onComplete: () -> Unit) = viewModelScope.launch {
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
@@ -121,26 +336,6 @@ class ChatViewModel @Inject constructor(
         onComplete()
         delay(50)
         setScrollToBottom()
-    }
-
-
-
-    fun setScrollToBottom() = viewModelScope.launch {
-        _scrollToBottom.emit(true)
-    }
-
-
-    fun setTextChat(message: String) {
-        _textChat.value = message
-    }
-
-
-    fun toggleExpandChatMedia() {
-        _expandChat.value = _expandChat.value.not()
-    }
-
-    fun setExpandChatMedia(isExpanded: Boolean) {
-        _expandChat.value = isExpanded
     }
 
 
@@ -225,88 +420,4 @@ class ChatViewModel @Inject constructor(
         voiceReplayer?.resume()
     }
 
-
-    fun setKeyboardUp(isUp: Boolean) {
-        _isKeyboardUp.value = isUp
-    }
-
-
-
-
-    private fun initChatList() = viewModelScope.launch {
-        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-        val createAtWeekAgo = format.format(Date().plusDayBy(-7))
-        val createAtYesterday = format.format(Date().plusDayBy(-1))
-        val createAtToday = format.format(Date())
-
-        val newChatList = listOf<Chat>(
-            TextChat(
-                index = 0,
-                pageNo = 0,
-                chatSender = "partner",
-                isRead = true,
-                createAt = createAtWeekAgo,
-                message = "첫번째 메시지"
-            ),
-            TextChat(
-                index = 1,
-                pageNo = 0,
-                chatSender = "partner",
-                isRead = true,
-                createAt = createAtWeekAgo,
-                message = "두번째 메시지"
-            ),
-            TextChat(
-                index = 3,
-                pageNo = 0,
-                chatSender = "me",
-                isRead = false,
-                createAt = createAtWeekAgo,
-                message = "내 메시지"
-            ),
-            TextChat(
-                index = 4,
-                pageNo = 0,
-                chatSender = "partner",
-                isRead = false,
-                createAt = createAtWeekAgo,
-                message = "연인 메시지"
-            ),
-            TextChat(
-                index = 5,
-                pageNo = 0,
-                chatSender = "me",
-                isRead = true,
-                createAt = createAtYesterday,
-                message = "띵동"
-            ),
-            TextChat(
-                index = 6,
-                pageNo = 0,
-                chatSender = "partner",
-                isRead = true,
-                createAt = createAtYesterday,
-                message = "ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ"
-            ),
-            TextChat(
-                index = 7,
-                pageNo = 0,
-                chatSender = "partner",
-                isRead = true,
-                createAt = createAtYesterday,
-                message = "허걱스"
-            ),
-            TextChat(
-                index = 8,
-                pageNo = 0,
-                chatSender = "partner",
-                isRead = true,
-                createAt = createAtYesterday,
-                message = "대박"
-            ),
-        )
-
-        _chatList.value = newChatList
-        setScrollToBottom()
-    }
 }

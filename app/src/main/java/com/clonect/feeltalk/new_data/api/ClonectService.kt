@@ -12,6 +12,9 @@ import com.clonect.feeltalk.domain.model.dto.encryption.TempPublicKeyDto
 import com.clonect.feeltalk.domain.model.dto.news.NewsDto
 import com.clonect.feeltalk.domain.model.dto.question.*
 import com.clonect.feeltalk.domain.model.dto.user.*
+import com.clonect.feeltalk.new_domain.model.chat.ChatListDto
+import com.clonect.feeltalk.new_domain.model.chat.LastChatPageNoDto
+import com.clonect.feeltalk.new_domain.model.chat.SendTextChatDto
 import com.clonect.feeltalk.new_domain.model.signIn.*
 import com.clonect.feeltalk.new_domain.model.token.RenewTokenDto
 import com.google.gson.JsonObject
@@ -56,7 +59,30 @@ interface ClonectService {
         @Body body: JsonObject
     ): Response<ApiResponse<RenewTokenDto>>
 
+    /** Chat **/
 
+    @PUT("/api/v1/member/chatting-room-status")
+    suspend fun changeChatRoomState(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<ApiResponse<Unit>>
+
+    @GET("/api/v1/chatting-message/last/page-no")
+    suspend fun getLastChatPageNo(
+        @Header("Authorization") token: String
+    ): Response<ApiResponse<LastChatPageNoDto>>
+
+    @POST("/api/v1/chatting-messages")
+    suspend fun getChatList(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<ApiResponse<ChatListDto>>
+
+    @POST("/api/v1/chatting-message/text")
+    suspend fun sendTextChat(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<ApiResponse<SendTextChatDto>>
 
 
 

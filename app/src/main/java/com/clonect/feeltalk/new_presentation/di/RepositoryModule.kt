@@ -21,6 +21,10 @@ import com.clonect.feeltalk.data.utils.MessageEncryptHelper
 import com.clonect.feeltalk.data.utils.UserLevelEncryptHelper
 import com.clonect.feeltalk.domain.repository.*
 import com.clonect.feeltalk.new_data.api.ClonectService
+import com.clonect.feeltalk.new_data.repository.chat.ChatRepositoryImpl
+import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatCacheDataSource
+import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatLocalDataSource
+import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.signIn.SignInRepositoryImpl
 import com.clonect.feeltalk.new_data.repository.signIn.dataSource.SignInCacheDataSource
 import com.clonect.feeltalk.new_data.repository.signIn.dataSource.SignInLocalDataSource
@@ -29,6 +33,7 @@ import com.clonect.feeltalk.new_data.repository.token.TokenRepositoryImpl
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenCacheDataSource
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenLocalDataSource
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenRemoteDataSource
+import com.clonect.feeltalk.new_domain.repository.chat.ChatRepository
 import com.clonect.feeltalk.new_domain.repository.signIn.SignInRepository
 import com.clonect.feeltalk.new_domain.repository.signIn.TokenRepository
 import dagger.Module
@@ -61,7 +66,15 @@ class RepositoryModule {
         return TokenRepositoryImpl(cacheDataSource, localDataSource, remoteDataSource)
     }
 
-
+    @Singleton
+    @Provides
+    fun providesChatRepository(
+        remoteDataSource: ChatRemoteDataSource,
+        localDataSource: ChatLocalDataSource,
+        cacheDataSource: ChatCacheDataSource,
+    ): ChatRepository {
+        return ChatRepositoryImpl(cacheDataSource, localDataSource, remoteDataSource)
+    }
 
 
 
@@ -80,7 +93,7 @@ class RepositoryModule {
 
     @Singleton
     @Provides
-    fun providesChatRepository(
+    fun providesChatRepository2(
         remoteDataSource: ChatRemoteDataSource2,
         localDataSource: ChatLocalDataSource2,
         cacheDataSource: ChatCacheDataSource2,

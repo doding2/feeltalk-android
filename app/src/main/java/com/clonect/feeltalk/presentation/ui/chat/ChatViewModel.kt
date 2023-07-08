@@ -8,13 +8,13 @@ import com.clonect.feeltalk.domain.model.data.chat.Chat2
 import com.clonect.feeltalk.domain.model.data.question.Question
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.model.dto.question.QuestionDetailDto
-import com.clonect.feeltalk.domain.usecase.chat.GetChatListUseCase
+import com.clonect.feeltalk.domain.usecase.chat.GetChatListUseCase2
 import com.clonect.feeltalk.domain.usecase.chat.ReloadChatListUseCase
 import com.clonect.feeltalk.domain.usecase.chat.SendChatUseCase
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetQuestionDetailUseCase
 import com.clonect.feeltalk.domain.usecase.user.*
-import com.clonect.feeltalk.new_presentation.service.notification_observer.FcmNewChatObserver
+import com.clonect.feeltalk.new_presentation.service.notification_observer.NewChatObserver
 import com.clonect.feeltalk.new_presentation.service.notification_observer.QuestionAnswerObserver
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.presentation.utils.infoLog
@@ -35,7 +35,7 @@ import javax.inject.Inject
 class ChatViewModel @Inject constructor(
     private val getQuestionDetailUseCase: GetQuestionDetailUseCase,
     private val getPartnerInfoUseCase: GetPartnerInfoUseCase,
-    private val getChatListUseCase: GetChatListUseCase,
+    private val getChatListUseCase2: GetChatListUseCase2,
     private val sendChatUseCase: SendChatUseCase,
     private val reloadChatListUseCase: ReloadChatListUseCase,
     private val getMyProfileImageUrlUseCase: GetMyProfileImageUrlUseCase,
@@ -121,20 +121,20 @@ class ChatViewModel @Inject constructor(
     }
 
     private fun collectFcmNewChat() = viewModelScope.launch(Dispatchers.IO) {
-        FcmNewChatObserver.getInstance().newChat.collect {
-            if (it is Resource.Success) {
-                val newList = mutableListOf<Chat2>().apply {
-                    addAll(_chat2List.value)
-                    add(it.data)
-                }
-                _chat2List.value = newList
-            }
-        }
+//        NewChatObserver.getInstance().newChat.collect {
+//            if (it is Resource.Success) {
+//                val newList = mutableListOf<Chat2>().apply {
+//                    addAll(_chat2List.value)
+//                    add(it.data)
+//                }
+//                _chat2List.value = newList
+//            }
+//        }
     }
 
     private fun collectChatList() = viewModelScope.launch(Dispatchers.IO) {
         val questionContent = _question.value.question
-        getChatListUseCase(questionContent)
+        getChatListUseCase2(questionContent)
             .catch { infoLog("collect chat list error: ${it.localizedMessage}") }
             .collectLatest { result ->
             when (result) {
@@ -264,7 +264,7 @@ class ChatViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         FeeltalkApp.setQuestionIdOfShowingChatFragment(null)
-        FcmNewChatObserver.onCleared()
+        NewChatObserver.onCleared()
         QuestionAnswerObserver.onCleared()
     }
 }

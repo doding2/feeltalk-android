@@ -12,6 +12,8 @@ import com.clonect.feeltalk.data.repository.question.datasourceImpl.QuestionLoca
 import com.clonect.feeltalk.data.repository.user.datasource.UserLocalDataSource
 import com.clonect.feeltalk.data.repository.user.datasourceImpl.UserLocalDataSourceImpl
 import com.clonect.feeltalk.data.utils.MessageEncryptHelper
+import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatLocalDataSource
+import com.clonect.feeltalk.new_data.repository.chat.dataSourceImpl.ChatLocalDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.signIn.dataSource.SignInLocalDataSource
 import com.clonect.feeltalk.new_data.repository.signIn.dataSourceImpl.SignInLocalDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenLocalDataSource
@@ -43,13 +45,20 @@ class LocalDataSourceModule {
         return TokenLocalDataSourceImpl(context, appLevelEncryptHelper)
     }
 
+    @Singleton
+    @Provides
+    fun providesChatLocalDataSource(): ChatLocalDataSource {
+        return ChatLocalDataSourceImpl()
+    }
+
+
 
 
     /** Old **/
 
     @Singleton
     @Provides
-    fun providesChatLocalDataSource(
+    fun providesChatLocalDataSource2(
         chatDao: ChatDao
     ): ChatLocalDataSource2 {
         return ChatLocalDataSource2Impl(chatDao)
