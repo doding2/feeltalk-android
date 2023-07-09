@@ -73,6 +73,8 @@ class SignUpNavigationViewModel @Inject constructor(
 
         _partnerCoupleCode.value = null
 
+        _isCoupleConnected.value = false
+
         CreateCoupleObserver.onCleared()
     }
 
@@ -198,8 +200,8 @@ class SignUpNavigationViewModel @Inject constructor(
     private val _partnerCoupleCode = MutableStateFlow<String?>(null)
     val partnerCoupleCode = _partnerCoupleCode.asStateFlow()
 
-    private val _isCoupleConnected = MutableSharedFlow<Boolean>()
-    val isCoupleConnected = _isCoupleConnected.asSharedFlow()
+    private val _isCoupleConnected = MutableStateFlow(false)
+    val isCoupleConnected = _isCoupleConnected.asStateFlow()
 
     fun registerService() = viewModelScope.launch {
         CreateCoupleObserver

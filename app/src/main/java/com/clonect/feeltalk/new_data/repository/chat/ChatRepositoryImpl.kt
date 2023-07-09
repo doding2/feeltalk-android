@@ -1,6 +1,8 @@
 package com.clonect.feeltalk.new_data.repository.chat
 
-import androidx.paging.*
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatCacheDataSource
@@ -74,11 +76,12 @@ class ChatRepositoryImpl(
         }
     }
 
-    @OptIn(ExperimentalPagingApi::class)
     override fun getPagingChat(): Flow<PagingData<Chat>> {
         return Pager(
-            config = PagingConfig(pageSize = Constants.PAGE_SIZE, enablePlaceholders = false),
-//            remoteMediator = ChatRemoteMediator(tokenRepository, cacheDataSource, remoteDataSource)
+            PagingConfig(
+                pageSize = Constants.PAGE_SIZE,
+                enablePlaceholders = false
+            )
         ) {
             ChatPagingSource(tokenRepository, cacheDataSource, remoteDataSource)
         }.flow

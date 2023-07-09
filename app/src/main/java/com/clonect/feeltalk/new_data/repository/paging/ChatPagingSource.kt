@@ -41,7 +41,6 @@ class ChatPagingSource(
             val pageKey = params.key
                 ?: getLastChatPageNo().pageNo
 
-//            val result = chatCacheDataSource.getChatList(pageKey)
             val result = getChatList(pageKey).toChatList()
             LoadResult.Page(
                 data = result,

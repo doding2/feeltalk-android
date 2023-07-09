@@ -99,7 +99,7 @@ class SignUpNavigationFragment : Fragment() {
             val view = it.view
             view.setOnClickListener { _ -> it.dismiss() }
             val layoutParams = view.layoutParams as FrameLayout.LayoutParams
-            layoutParams.bottomMargin = getNavigationBarHeight() + activity.dpToPx(56f).toInt()
+            layoutParams.bottomMargin = activity.dpToPx(56f).toInt()
             view.layoutParams = layoutParams
             it.show()
         }
