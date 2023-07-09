@@ -208,7 +208,7 @@ class SignUpNavigationViewModel @Inject constructor(
             .getInstance()
             .isCoupleCreated
             .collectLatest {
-                _isCoupleConnected.emit(it)
+                _isCoupleConnected.value = it
             }
     }
 
