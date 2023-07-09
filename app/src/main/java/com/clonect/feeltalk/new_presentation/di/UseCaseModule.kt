@@ -19,10 +19,7 @@ import com.clonect.feeltalk.new_domain.repository.signIn.SignInRepository
 import com.clonect.feeltalk.new_domain.repository.signIn.TokenRepository
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
-import com.clonect.feeltalk.new_domain.usecase.chat.ChangeChatRoomStateUseCase
-import com.clonect.feeltalk.new_domain.usecase.chat.GetChatListUseCase
-import com.clonect.feeltalk.new_domain.usecase.chat.GetLastChatPageNoUseCase
-import com.clonect.feeltalk.new_domain.usecase.chat.SendTextChatUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.*
 import com.clonect.feeltalk.new_domain.usecase.signIn.*
 import com.clonect.feeltalk.new_domain.usecase.token.CacheSocialTokenUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.GetCachedSocialTokenUseCase
@@ -126,14 +123,20 @@ class UseCaseModule {
 
     @Singleton
     @Provides
+    fun providesSendTextChatUseCase(tokenRepository: TokenRepository, chatRepository: ChatRepository): SendTextChatUseCase {
+        return SendTextChatUseCase(tokenRepository, chatRepository)
+    }
+
+    @Singleton
+    @Provides
     fun providesGetChatListUseCase(tokenRepository: TokenRepository, chatRepository: ChatRepository): GetChatListUseCase {
         return GetChatListUseCase(tokenRepository, chatRepository)
     }
 
     @Singleton
     @Provides
-    fun providesSendTextChatUseCase(tokenRepository: TokenRepository, chatRepository: ChatRepository): SendTextChatUseCase {
-        return SendTextChatUseCase(tokenRepository, chatRepository)
+    fun providesGetPagingChatUseCase(chatRepository: ChatRepository): GetPagingChatUseCase {
+        return GetPagingChatUseCase(chatRepository)
     }
 
 

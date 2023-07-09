@@ -18,6 +18,7 @@ class Constants {
         const val APP_LEVEL_CIPHER_ALGORITHM = "AES/GCM/NoPadding"
 
 
+        const val PAGE_SIZE = 4
 
 
         const val EXCHANGE_KEY_WAIT_DELAY = 500L

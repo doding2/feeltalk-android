@@ -21,6 +21,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.insertSeparators
+import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentChatBinding
 import com.clonect.feeltalk.new_domain.model.chat.DividerChat
@@ -29,7 +31,6 @@ import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -46,7 +47,6 @@ class ChatFragment : Fragment() {
     lateinit var adapter: ChatAdapter
 
     private var scrollRemainHeight = 0
-    private var navJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -65,6 +65,7 @@ class ChatFragment : Fragment() {
         viewModel.setJob(
             collectViewModel()
         )
+//        collectViewModel()
 
         binding.run {
             ivCancel.setOnClickListener { cancel() }
@@ -91,6 +92,7 @@ class ChatFragment : Fragment() {
             .navigate(R.id.action_mainNavigationFragment_to_contentsShareFragment)
     }
 
+
     private fun cancel() {
         // 채팅 확장 취소
         viewModel.setExpandChatMedia(false)
@@ -114,7 +116,7 @@ class ChatFragment : Fragment() {
 
     private fun sendTextChat() {
         viewModel.sendTextChat(
-            onSend =  {
+            onStart =  {
                 binding.etTextMessage.setText("")
             }
         )
@@ -174,6 +176,13 @@ class ChatFragment : Fragment() {
             setMyNickname("me")
             setPartnerNickname("partner")
         }
+        rvChat.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                val isInBottom = !recyclerView.canScrollVertically(10)
+                viewModel.setUserInBottom(isInBottom)
+            }
+        })
     }
 
     private fun setKeyboardInsets() {
@@ -418,7 +427,6 @@ class ChatFragment : Fragment() {
     }
 
     private fun collectViewModel() = lifecycleScope.launch {
-        navJob?.cancel()
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.textChat.collectLatest(::prepareTextChat) }
             launch { viewModel.expandChat.collectLatest(::changeChatMediaView) }
@@ -430,22 +438,41 @@ class ChatFragment : Fragment() {
             launch { viewModel.isKeyboardUp.collectLatest(::applyKeyboardUp) }
 
             launch {
-                viewModel.chatList.collectLatest { newChatList ->
-                    adapter.submitList(
-                        newChatList.groupBy {
-                            it.createAt.substringBefore("T")
-                        }.map {
-                            val divider = DividerChat(it.key)
-                            val list = it.value
-                                .toMutableList()
-                                .apply {
-                                    add(0, divider)
-                                }
-                            list
-                        }.flatten()
+                viewModel.pagingChat.collectLatest {
+                    adapter.submitData(
+                        it.insertSeparators { before, after ->
+                            val beforeCreate = before?.createAt?.substringBefore("T")
+                            val afterCreate = after?.createAt?.substringBefore("T")
+
+                            return@insertSeparators if (beforeCreate == null && afterCreate != null) {
+                                DividerChat(afterCreate)
+                            } else if (beforeCreate != null && afterCreate != null && beforeCreate != afterCreate) {
+                                DividerChat(afterCreate)
+                            } else {
+                                null
+                            }
+                        }
                     )
                 }
             }
+
+//            launch {
+//                viewModel.chatList.collectLatest { newChatList ->
+//                    adapter.submitList(
+//                        newChatList.groupBy {
+//                            it.createAt.substringBefore("T")
+//                        }.map {
+//                            val divider = DividerChat(it.key)
+//                            val list = it.value
+//                                .toMutableList()
+//                                .apply {
+//                                    add(0, divider)
+//                                }
+//                            list
+//                        }.flatten()
+//                    )
+//                }
+//            }
             launch {
                 viewModel.scrollToBottom.collectLatest {
                     if (it) scrollToBottom()
@@ -456,20 +483,22 @@ class ChatFragment : Fragment() {
                     setBackCallback(isShown)
                     if (isShown) {
                         viewModel.changeChatRoomState(true)
-                        viewModel.getLastChatPageNo()
-                        viewModel.loadChatList()
-                        viewModel.collectFcmChat()
+//                        viewModel.getLastChatPageNo()
+//                        viewModel.loadChatList()
+                        viewModel.collectNewChat()
+                        viewModel.collectPartnerChatRoomState()
                     }
                     else {
                         hideKeyboard()
                         cancel()
                         viewModel.changeChatRoomState(false)
-                        viewModel.clearChatList()
+//                        viewModel.clearChatList()
                     }
                 }
             }
         }
     }
+
 
     override fun onPause() {
         super.onPause()

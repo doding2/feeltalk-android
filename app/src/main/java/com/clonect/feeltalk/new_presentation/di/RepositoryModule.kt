@@ -72,8 +72,9 @@ class RepositoryModule {
         remoteDataSource: ChatRemoteDataSource,
         localDataSource: ChatLocalDataSource,
         cacheDataSource: ChatCacheDataSource,
+        tokenRepository: TokenRepository,
     ): ChatRepository {
-        return ChatRepositoryImpl(cacheDataSource, localDataSource, remoteDataSource)
+        return ChatRepositoryImpl(cacheDataSource, localDataSource, remoteDataSource, tokenRepository)
     }
 
 

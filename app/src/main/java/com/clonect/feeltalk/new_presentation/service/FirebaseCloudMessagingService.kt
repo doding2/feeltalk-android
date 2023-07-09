@@ -16,6 +16,7 @@ import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.new_presentation.service.notification_observer.CreateCoupleObserver
 import com.clonect.feeltalk.new_presentation.service.notification_observer.NewChatObserver
+import com.clonect.feeltalk.new_presentation.service.notification_observer.PartnerChatRoomStateObserver
 import com.clonect.feeltalk.presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -67,6 +68,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 //        const val TYPE_ACCEPT_KEY_RESTORING = "KeyTradeOk"
 
         const val TYPE_CREATE_COUPLE = "createCouple"
+        const val TYPE_CHAT_ROOM_STATE = "chatRoomStatusChange"
         const val TYPE_TEXT_CHATTING = "textChatting"
     }
 
@@ -106,6 +108,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
             when (data["type"]) {
                 TYPE_CREATE_COUPLE -> handleCreateCoupleData(data)
+                TYPE_CHAT_ROOM_STATE -> handleChatRoomStateData(data)
                 TYPE_TEXT_CHATTING -> handleTextChatData(data)
 //                TYPE_TODAY_QUESTION -> handleTodayQuestionData(data)
 //                TYPE_PARTNER_ANSWERED -> handlePartnerAnsweredData(data)
@@ -122,6 +125,13 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
     private fun handleCreateCoupleData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
         CreateCoupleObserver.getInstance().setCoupleCreated(true)
+    }
+
+    private fun handleChatRoomStateData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+        val isInChat = data["isInChat"]?.toBoolean() ?: return@launch
+        PartnerChatRoomStateObserver
+            .getInstance()
+            .setInChat(isInChat)
     }
 
     private fun handleTextChatData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {

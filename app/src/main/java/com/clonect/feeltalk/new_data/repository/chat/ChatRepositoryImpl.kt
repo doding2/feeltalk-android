@@ -1,20 +1,26 @@
 package com.clonect.feeltalk.new_data.repository.chat
 
+import androidx.paging.*
+import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatCacheDataSource
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatLocalDataSource
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatRemoteDataSource
+import com.clonect.feeltalk.new_data.repository.paging.ChatPagingSource
+import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.ChatListDto
 import com.clonect.feeltalk.new_domain.model.chat.LastChatPageNoDto
 import com.clonect.feeltalk.new_domain.model.chat.SendTextChatDto
-import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.repository.chat.ChatRepository
+import com.clonect.feeltalk.new_domain.repository.signIn.TokenRepository
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.Flow
 
 class ChatRepositoryImpl(
     private val cacheDataSource: ChatCacheDataSource,
     private val localDataSource: ChatLocalDataSource,
-    private val remoteDataSource: ChatRemoteDataSource
+    private val remoteDataSource: ChatRemoteDataSource,
+    private val tokenRepository: TokenRepository,
 ): ChatRepository {
 
     override suspend fun changeChatRoomState(
@@ -42,17 +48,6 @@ class ChatRepositoryImpl(
         }
     }
 
-    override suspend fun getChatList(accessToken: String, pageNo: Long): Resource<ChatListDto> {
-        return try {
-            val result = remoteDataSource.getChatList(accessToken, pageNo)
-            Resource.Success(result)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            Resource.Error(e)
-        }
-    }
-
     override suspend fun sendTextChat(
         accessToken: String,
         message: String
@@ -67,4 +62,25 @@ class ChatRepositoryImpl(
         }
     }
 
+
+    override suspend fun getChatList(accessToken: String, pageNo: Long): Resource<ChatListDto> {
+        return try {
+            val result = remoteDataSource.getChatList(accessToken, pageNo)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    @OptIn(ExperimentalPagingApi::class)
+    override fun getPagingChat(): Flow<PagingData<Chat>> {
+        return Pager(
+            config = PagingConfig(pageSize = Constants.PAGE_SIZE, enablePlaceholders = false),
+//            remoteMediator = ChatRemoteMediator(tokenRepository, cacheDataSource, remoteDataSource)
+        ) {
+            ChatPagingSource(tokenRepository, cacheDataSource, remoteDataSource)
+        }.flow
+    }
 }

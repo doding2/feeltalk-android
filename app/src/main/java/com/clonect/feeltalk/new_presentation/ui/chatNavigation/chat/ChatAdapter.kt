@@ -5,7 +5,7 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.R
@@ -21,53 +21,10 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ChatAdapter: RecyclerView.Adapter<ChatViewHolder>() {
+class ChatAdapter: PagingDataAdapter<Chat, ChatViewHolder>(diffCallback) {
 
-    companion object {
-        private const val TYPE_DIVIDER = 0
-
-        private const val TYPE_TEXT_MINE = 1
-        private const val TYPE_TEXT_PARTNER = 2
-
-        private const val TYPE_VOICE_MINE = 3
-        private const val TYPE_VOICE_PARTNER = 4
-
-        private const val TYPE_EMOJI_MINE = 5
-        private const val TYPE_EMOJI_PARTNER = 6
-
-        private const val TYPE_IMAGE_MINE = 7
-        private const val TYPE_IMAGE_PARTNER = 8
-
-        private const val TYPE_VIDEO_MINE = 9
-        private const val TYPE_VIDEO_PARTNER = 10
-
-        private const val TYPE_CHALLENGE_MINE = 11
-        private const val TYPE_CHALLENGE_PARTNER = 12
-
-        private const val TYPE_QUESTION_MINE = 13
-        private const val TYPE_QUESTION_PARTNER = 14
-    }
-
-
-    private val callback = object: DiffUtil.ItemCallback<Chat>() {
-        override fun areItemsTheSame(oldItem: Chat, newItem: Chat): Boolean {
-            return oldItem.index == newItem.index && oldItem.createAt == newItem.createAt
-        }
-
-        override fun areContentsTheSame(oldItem: Chat, newItem: Chat): Boolean {
-            return oldItem.index == newItem.index
-                    && oldItem.pageNo == newItem.pageNo
-                    && oldItem.type == newItem.type
-                    && oldItem.chatSender == newItem.chatSender
-                    && oldItem.isRead == newItem.isRead
-                    && oldItem.createAt == newItem.createAt
-        }
-    }
-
-    private val differ = AsyncListDiffer(this, callback)
     private val viewHolders = mutableListOf<ChatViewHolder>()
     private val voiceViewHolders = mutableListOf<ChatViewHolder>()
-
 
     private var onQuestionAnswerButtonClick: ((QuestionChat) -> Unit)? = null
 
@@ -112,19 +69,19 @@ class ChatAdapter: RecyclerView.Adapter<ChatViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
-        val item = differ.currentList[position]
+        val item = getItem(position)
         val prevItem = if (position - 1 < 0) null
-        else differ.currentList[position - 1]
-        val nextItem = if (differ.currentList.size <= position + 1) null
-        else differ.currentList[position + 1]
-        holder.bind(prevItem, item, nextItem)
+        else getItem(position - 1)
+        val nextItem = if (itemCount<= position + 1) null
+        else getItem(position + 1)
+        if (item != null) {
+            holder.bind(prevItem, item, nextItem)
+        }
     }
 
-    override fun getItemCount(): Int = differ.currentList.size
-
     override fun getItemViewType(position: Int): Int {
-        val item = differ.currentList[position]
-        return when (item.type) {
+        val item = getItem(position)
+        return when (item?.type) {
             ChatType.TimeDivider -> TYPE_DIVIDER
             ChatType.TextChatting -> {
                 if (item.chatSender == myNickname) TYPE_TEXT_MINE
@@ -154,11 +111,8 @@ class ChatAdapter: RecyclerView.Adapter<ChatViewHolder>() {
                 if (item.chatSender == myNickname) TYPE_QUESTION_MINE
                 else TYPE_QUESTION_PARTNER
             }
+            else -> TYPE_DIVIDER
         }
-    }
-
-    fun submitList(newList: List<Chat>) {
-        differ.submitList(newList)
     }
 
     fun resetVoiceChats() {
@@ -182,6 +136,48 @@ class ChatAdapter: RecyclerView.Adapter<ChatViewHolder>() {
 
     fun setPartnerProfileUrl(url: String) {
         partnerProfileUrl = url
+    }
+
+
+
+    companion object {
+        private val diffCallback = object: DiffUtil.ItemCallback<Chat>() {
+            override fun areItemsTheSame(oldItem: Chat, newItem: Chat): Boolean {
+                return oldItem.index == newItem.index && oldItem.createAt == newItem.createAt
+            }
+
+            override fun areContentsTheSame(oldItem: Chat, newItem: Chat): Boolean {
+                return oldItem.index == newItem.index
+                        && oldItem.type == newItem.type
+                        && oldItem.chatSender == newItem.chatSender
+                        && oldItem.isRead == newItem.isRead
+                        && oldItem.createAt == newItem.createAt
+            }
+        }
+
+
+        private const val TYPE_DIVIDER = 0
+
+        private const val TYPE_TEXT_MINE = 1
+        private const val TYPE_TEXT_PARTNER = 2
+
+        private const val TYPE_VOICE_MINE = 3
+        private const val TYPE_VOICE_PARTNER = 4
+
+        private const val TYPE_EMOJI_MINE = 5
+        private const val TYPE_EMOJI_PARTNER = 6
+
+        private const val TYPE_IMAGE_MINE = 7
+        private const val TYPE_IMAGE_PARTNER = 8
+
+        private const val TYPE_VIDEO_MINE = 9
+        private const val TYPE_VIDEO_PARTNER = 10
+
+        private const val TYPE_CHALLENGE_MINE = 11
+        private const val TYPE_CHALLENGE_PARTNER = 12
+
+        private const val TYPE_QUESTION_MINE = 13
+        private const val TYPE_QUESTION_PARTNER = 14
     }
 }
 

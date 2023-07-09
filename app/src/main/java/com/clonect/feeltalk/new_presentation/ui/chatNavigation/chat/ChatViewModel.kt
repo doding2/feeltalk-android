@@ -3,17 +3,20 @@ package com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.insertFooterItem
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.common.plusDayBy
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.ChatType
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
+import com.clonect.feeltalk.new_domain.model.page.PageEvents
 import com.clonect.feeltalk.new_domain.usecase.chat.ChangeChatRoomStateUseCase
-import com.clonect.feeltalk.new_domain.usecase.chat.GetChatListUseCase
-import com.clonect.feeltalk.new_domain.usecase.chat.GetLastChatPageNoUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.GetPagingChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.SendTextChatUseCase
 import com.clonect.feeltalk.new_presentation.service.notification_observer.NewChatObserver
+import com.clonect.feeltalk.new_presentation.service.notification_observer.PartnerChatRoomStateObserver
 import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.RecordingReplayer
 import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.RecordingSampler
 import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.VisualizerView
@@ -27,17 +30,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
+    private val getPagingChatUseCase: GetPagingChatUseCase,
     private val changeChatRoomStateUseCase: ChangeChatRoomStateUseCase,
-    private val getLastChatPageNoUseCase: GetLastChatPageNoUseCase,
-    private val getChatListUseCase: GetChatListUseCase,
     private val sendTextChatUseCase: SendTextChatUseCase
 ) : ViewModel() {
 
-    private val _job = MutableStateFlow<Job?>(null)
-    val job = _job.asStateFlow()
+    private val job = MutableStateFlow<Job?>(null)
+
+    private val isUserInChat = MutableStateFlow<Boolean?>(null)
 
     private val _expandChat = MutableStateFlow(false)
     val expandChat = _expandChat.asStateFlow()
+
+    private val _isUserInBottom = MutableStateFlow(false)
+    val isUserInBottom = _isUserInBottom.asStateFlow()
 
     private val _scrollToBottom = MutableSharedFlow<Boolean>()
     val scrollToBottom = _scrollToBottom.asSharedFlow()
@@ -45,6 +51,10 @@ class ChatViewModel @Inject constructor(
     private val _isKeyboardUp = MutableStateFlow(false)
     val isKeyboardUp = _isKeyboardUp.asStateFlow()
 
+
+    fun setKeyboardUp(isUp: Boolean) {
+        _isKeyboardUp.value = isUp
+    }
 
     fun toggleExpandChatMedia() {
         _expandChat.value = _expandChat.value.not()
@@ -55,21 +65,20 @@ class ChatViewModel @Inject constructor(
     }
 
 
-    fun setKeyboardUp(isUp: Boolean) {
-        _isKeyboardUp.value = isUp
+    fun setUserInBottom(isInBottom: Boolean) {
+        _isUserInBottom.value = isInBottom
     }
-
 
     fun setScrollToBottom() = viewModelScope.launch {
         _scrollToBottom.emit(true)
     }
 
-    fun cancelJob() {
-        _job.value?.cancel()
+    fun cancelJob() = viewModelScope.launch {
+        job.value?.job
     }
 
-    fun setJob(job: Job) = viewModelScope.launch {
-        _job.value = job
+    fun setJob(job: Job) {
+        this.job.value = job
     }
 
     fun setTextChat(message: String) {
@@ -77,23 +86,43 @@ class ChatViewModel @Inject constructor(
     }
 
 
+    /** Page Modification **/
+    private val pageModificationEvents = MutableStateFlow<List<PageEvents<Chat>>>(emptyList())
+
+    private fun applyPageModification(paging: PagingData<Chat>, event: PageEvents<Chat>): PagingData<Chat> {
+        return when (event) {
+            is PageEvents.InsertItemFooter -> {
+                paging.insertFooterItem(item = event.item)
+            }
+            else -> paging
+        }
+    }
+
+    fun modifyPage(event: PageEvents<Chat>) {
+        pageModificationEvents.value += event
+    }
+
 
     /** Text Chat **/
 
-    private val _lastChatPageNo = MutableStateFlow(-1L)
-    val lastChatPageNo = _lastChatPageNo.asStateFlow()
-
-    private val _chatList = MutableStateFlow<List<Chat>>(emptyList())
-    val chatList = _chatList.asStateFlow()
+    val pagingChat = getPagingChatUseCase()
+        .cachedIn(viewModelScope)
+        .combine(pageModificationEvents) { pagingData, modifications ->
+            modifications.fold(pagingData) { acc, event ->
+                applyPageModification(acc, event)
+            }
+        }
 
     private val _textChat = MutableStateFlow("")
     val textChat = _textChat.asStateFlow()
 
 
     suspend fun changeChatRoomState(isInChat: Boolean) = withContext(Dispatchers.IO) {
+        if (isUserInChat.value == isInChat) return@withContext
+
         when (val result = changeChatRoomStateUseCase(isInChat)) {
             is Resource.Success -> {
-                result.data
+                isUserInChat.value = isInChat
                 infoLog("채팅 입장 상태 변경 성공 isInChat: $isInChat")
             }
             is Resource.Error -> {
@@ -102,69 +131,16 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    suspend fun getLastChatPageNo() = withContext(Dispatchers.IO) {
-        when (val result = getLastChatPageNoUseCase()) {
-            is Resource.Success -> {
-                val pageNo = result.data.pageNo
-                _lastChatPageNo.value = pageNo
-            }
-            is Resource.Error -> {
-                infoLog("가장 최근 채팅 페이지 가져오기 실패: ${result.throwable.stackTrace.joinToString("\n")}")
-            }
-        }
-    }
-
-    fun loadChatList(pageNo: Long = lastChatPageNo.value) = viewModelScope.launch {
-        if (pageNo < 0) return@launch
-
-        when (val result = getChatListUseCase(pageNo)) {
-            is Resource.Success -> {
-                val thisPageNo = result.data.page
-                val newChatList = mutableListOf<Chat>()
-                for (chatDto in result.data.chatting) {
-                    val chat = when (chatDto.type) {
-                        "text", "textChatting" -> {
-                            chatDto.run {
-                                TextChat(
-                                    index = index,
-                                    pageNo = thisPageNo,
-                                    chatSender = if (mine) "me" else "partner",
-                                    isRead = isRead,
-                                    createAt = createAt,
-                                    message = message ?: ""
-                                )
-                            }
-                        }
-                        else -> {
-                            continue
-                        }
-                    }
-                    newChatList.add(chat)
-                }
-
-                _chatList.value = chatList.value.toMutableList().run {
-                    addAll(newChatList)
-                    sortBy { it.index }
-                    distinctBy { it.index }
-                }
-            }
-            is Resource.Error -> {
-                infoLog("가장 최근 채팅 페이지 가져오기 실패: ${result.throwable.stackTrace.joinToString("\n")}")
-            }
-        }
-    }
-
-    fun sendTextChat(onSend: () -> Unit) = viewModelScope.launch {
+    fun sendTextChat(onStart: () -> Unit) = viewModelScope.launch {
         val message = _textChat.value
         _textChat.value = ""
-        onSend()
+        onStart()
 
         when (val result = sendTextChatUseCase(message)) {
             is Resource.Success -> {
-                val chat = result.data.run {
-                    TextChat(
-                        index = index,
-                        pageNo = lastChatPageNo.value,
+                val textChat = result.data.run {
+                    TextChat(index = index,
+                        pageNo = 0,
                         chatSender = "me",
                         isRead = isRead,
                         createAt = createAt,
@@ -172,11 +148,8 @@ class ChatViewModel @Inject constructor(
                     )
                 }
 
-                _chatList.value = _chatList.value.toMutableList().run {
-                    add(chat)
-                    sortBy { it.index }
-                    distinctBy { it.index }
-                }
+                modifyPage(PageEvents.InsertItemFooter(textChat))
+
                 delay(50)
                 setScrollToBottom()
             }
@@ -187,7 +160,7 @@ class ChatViewModel @Inject constructor(
     }
 
 
-    fun collectFcmChat()  = viewModelScope.launch {
+    fun collectNewChat() = viewModelScope.launch {
         NewChatObserver
             .getInstance()
             .newChat
@@ -200,100 +173,36 @@ class ChatViewModel @Inject constructor(
                     else -> return@collectLatest
                 }
 
-                _chatList.value = _chatList.value.toMutableList().run {
-                    add(chat)
-                    sortBy { it.index }
-                    distinctBy { it.index }
+                modifyPage(PageEvents.InsertItemFooter(chat))
+
+                if (isUserInBottom.value) {
+                    delay(50)
+                    setScrollToBottom()
+                }
+            }
+    }
+
+    fun collectPartnerChatRoomState() = viewModelScope.launch {
+        PartnerChatRoomStateObserver
+            .getInstance()
+            .isInChat
+            .collectLatest { isInChat ->
+                if (isInChat) {
+//                    _chatList.value = _chatList.value
+//                        .toMutableList()
+//                        .map {
+//                            it.apply {
+//                                isRead = true
+//                            }
+//                        }
                 }
             }
     }
 
     fun clearChatList() {
-        _chatList.value = emptyList()
-        _lastChatPageNo.value = -1
         NewChatObserver.onCleared()
+        PartnerChatRoomStateObserver.onCleared()
     }
-
-
-
-    private fun initChatList() = viewModelScope.launch {
-        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-        val createAtWeekAgo = format.format(Date().plusDayBy(-7))
-        val createAtYesterday = format.format(Date().plusDayBy(-1))
-        val createAtToday = format.format(Date())
-
-        val newChatList = listOf<Chat>(
-            TextChat(
-                index = 0,
-                pageNo = 0,
-                chatSender = "partner",
-                isRead = true,
-                createAt = createAtWeekAgo,
-                message = "첫번째 메시지"
-            ),
-            TextChat(
-                index = 1,
-                pageNo = 0,
-                chatSender = "partner",
-                isRead = true,
-                createAt = createAtWeekAgo,
-                message = "두번째 메시지"
-            ),
-            TextChat(
-                index = 3,
-                pageNo = 0,
-                chatSender = "me",
-                isRead = false,
-                createAt = createAtWeekAgo,
-                message = "내 메시지"
-            ),
-            TextChat(
-                index = 4,
-                pageNo = 0,
-                chatSender = "partner",
-                isRead = false,
-                createAt = createAtWeekAgo,
-                message = "연인 메시지"
-            ),
-            TextChat(
-                index = 5,
-                pageNo = 0,
-                chatSender = "me",
-                isRead = true,
-                createAt = createAtYesterday,
-                message = "띵동"
-            ),
-            TextChat(
-                index = 6,
-                pageNo = 0,
-                chatSender = "partner",
-                isRead = true,
-                createAt = createAtYesterday,
-                message = "ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ"
-            ),
-            TextChat(
-                index = 7,
-                pageNo = 0,
-                chatSender = "partner",
-                isRead = true,
-                createAt = createAtYesterday,
-                message = "허걱스"
-            ),
-            TextChat(
-                index = 8,
-                pageNo = 0,
-                chatSender = "partner",
-                isRead = true,
-                createAt = createAtYesterday,
-                message = "대박"
-            ),
-        )
-
-        _chatList.value = newChatList
-        setScrollToBottom()
-    }
-
-
 
 
     /** Voice **/
@@ -335,18 +244,18 @@ class ChatViewModel @Inject constructor(
     fun sendVoiceChat(onComplete: () -> Unit) = viewModelScope.launch {
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         VoiceChat(
-            index = _chatList.value.size.toLong(),
+            index = 0,
             pageNo = 0,
             chatSender = "me",
             isRead = true,
             createAt = format.format(Date()),
             url = "voiceCache.wav",
         ).also {
-            _chatList.value = _chatList.value
-                .toMutableList()
-                .apply {
-                    add(it)
-                }
+//            _chatList.value = _chatList.value
+//                .toMutableList()
+//                .apply {
+//                    add(it)
+//                }
         }
         onComplete()
         delay(50)
