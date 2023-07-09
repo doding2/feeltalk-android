@@ -222,7 +222,7 @@ class SignUpNavigationViewModel @Inject constructor(
 
         when (val result = matchCoupleUseCase(partnerCode)) {
             is Resource.Success -> {
-                _isCoupleConnected.emit(true)
+                _isCoupleConnected.value = true
             }
             is Resource.Error -> {
                 infoLog("커플매칭 실패: ${result.throwable.stackTrace.joinToString("\n")}")

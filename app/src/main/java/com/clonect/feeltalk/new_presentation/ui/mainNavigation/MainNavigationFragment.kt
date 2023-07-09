@@ -27,7 +27,6 @@ class MainNavigationFragment : Fragment() {
     private lateinit var binding: FragmentMainNavigationBinding
     private val viewModel: MainNavigationViewModel by activityViewModels()
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,

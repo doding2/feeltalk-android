@@ -136,6 +136,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
     private fun handleTextChatData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
         val index = data["index"]?.toLong() ?: return@launch
+        val pageIndex = data["pageIndex"]?.toLong() ?: 0
         val message = data["message"] ?: return@launch
         val isRead = data["isRead"]?.toBoolean() ?: return@launch
         val createAt = data["createAt"] ?: return@launch
@@ -145,7 +146,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             .setNewChat(
                 TextChat(
                     index = index,
-                    pageNo = 0,
+                    pageNo = pageIndex,
                     chatSender = "partner",
                     isRead = isRead,
                     createAt = createAt,

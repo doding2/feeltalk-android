@@ -37,12 +37,12 @@ class ChatViewModel @Inject constructor(
 
     private val job = MutableStateFlow<Job?>(null)
 
-    private val isUserInChat = MutableStateFlow<Boolean?>(null)
+    val isUserInChat = MutableStateFlow<Boolean?>(null)
 
     private val _expandChat = MutableStateFlow(false)
     val expandChat = _expandChat.asStateFlow()
 
-    private val _isUserInBottom = MutableStateFlow(false)
+    private val _isUserInBottom = MutableStateFlow(true)
     val isUserInBottom = _isUserInBottom.asStateFlow()
 
     private val _scrollToBottom = MutableSharedFlow<Boolean>()
@@ -105,7 +105,7 @@ class ChatViewModel @Inject constructor(
 
     /** Text Chat **/
 
-    val pagingChat = getPagingChatUseCase()
+    var pagingChat: Flow<PagingData<Chat>> = getPagingChatUseCase()
         .cachedIn(viewModelScope)
         .combine(pageModificationEvents) { pagingData, modifications ->
             modifications.fold(pagingData) { acc, event ->
@@ -117,13 +117,22 @@ class ChatViewModel @Inject constructor(
     val textChat = _textChat.asStateFlow()
 
 
+    fun initPagingChat() {
+        pagingChat = getPagingChatUseCase()
+            .cachedIn(viewModelScope)
+            .combine(pageModificationEvents) { pagingData, modifications ->
+                modifications.fold(pagingData) { acc, event ->
+                    applyPageModification(acc, event)
+                }
+            }
+    }
+
     suspend fun changeChatRoomState(isInChat: Boolean) = withContext(Dispatchers.IO) {
         if (isUserInChat.value == isInChat) return@withContext
 
         when (val result = changeChatRoomStateUseCase(isInChat)) {
             is Resource.Success -> {
                 isUserInChat.value = isInChat
-                infoLog("채팅 입장 상태 변경 성공 isInChat: $isInChat")
             }
             is Resource.Error -> {
                 infoLog("채팅 입장 상태 변경 실패: ${result.throwable.stackTrace.joinToString("\n")}")
@@ -140,7 +149,7 @@ class ChatViewModel @Inject constructor(
             is Resource.Success -> {
                 val textChat = result.data.run {
                     TextChat(index = index,
-                        pageNo = 0,
+                        pageNo = pageIndex,
                         chatSender = "me",
                         isRead = isRead,
                         createAt = createAt,

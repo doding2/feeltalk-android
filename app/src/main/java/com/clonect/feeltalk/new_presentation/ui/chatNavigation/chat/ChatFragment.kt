@@ -65,7 +65,6 @@ class ChatFragment : Fragment() {
         viewModel.setJob(
             collectViewModel()
         )
-//        collectViewModel()
 
         binding.run {
             ivCancel.setOnClickListener { cancel() }
@@ -84,6 +83,21 @@ class ChatFragment : Fragment() {
             ivContentsShare.setOnClickListener { navigateToContentsShare() }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        if (viewModel.isUserInBottom.value) {
+            scrollToBottom()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        lifecycleScope.launch {
+            viewModel.changeChatRoomState(false)
+        }
+    }
+
 
     private fun navigateToContentsShare() {
         requireParentFragment()
@@ -180,7 +194,11 @@ class ChatFragment : Fragment() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 val isInBottom = !recyclerView.canScrollVertically(10)
-                viewModel.setUserInBottom(isInBottom)
+
+                infoLog("isInBottom: ${isInBottom}")
+                if (viewModel.isUserInChat.value == true) {
+                    viewModel.setUserInBottom(isInBottom)
+                }
             }
         })
     }
@@ -234,7 +252,7 @@ class ChatFragment : Fragment() {
 
     private fun scrollToBottom() {
         scrollRemainHeight -= computeRemainScrollHeight()
-        val position = adapter.itemCount - 1
+        var position = adapter.itemCount - 1
         binding.rvChat.scrollToPosition(position)
     }
 
@@ -439,7 +457,7 @@ class ChatFragment : Fragment() {
 
             launch {
                 viewModel.pagingChat.collectLatest {
-                    adapter.submitData(
+                    adapter.submitData(viewLifecycleOwner.lifecycle,
                         it.insertSeparators { before, after ->
                             val beforeCreate = before?.createAt?.substringBefore("T")
                             val afterCreate = after?.createAt?.substringBefore("T")
@@ -492,18 +510,10 @@ class ChatFragment : Fragment() {
                         hideKeyboard()
                         cancel()
                         viewModel.changeChatRoomState(false)
-//                        viewModel.clearChatList()
                     }
                 }
             }
         }
     }
 
-
-    override fun onPause() {
-        super.onPause()
-        lifecycleScope.launch {
-            viewModel.changeChatRoomState(false)
-        }
-    }
 }
