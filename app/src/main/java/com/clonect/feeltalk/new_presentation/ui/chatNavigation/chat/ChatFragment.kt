@@ -501,10 +501,8 @@ class ChatFragment : Fragment() {
                     setBackCallback(isShown)
                     if (isShown) {
                         viewModel.changeChatRoomState(true)
-//                        viewModel.getLastChatPageNo()
-//                        viewModel.loadChatList()
-                        viewModel.collectNewChat()
-                        viewModel.collectPartnerChatRoomState()
+//                        viewModel.collectNewChat()
+//                        viewModel.collectPartnerChatRoomState()
                     }
                     else {
                         hideKeyboard()

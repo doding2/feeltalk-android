@@ -35,6 +35,12 @@ class ChatViewModel @Inject constructor(
     private val sendTextChatUseCase: SendTextChatUseCase
 ) : ViewModel() {
 
+    init {
+        collectNewChat()
+        collectPartnerChatRoomState()
+    }
+
+
     private val job = MutableStateFlow<Job?>(null)
 
     val isUserInChat = MutableStateFlow<Boolean?>(null)
@@ -50,7 +56,6 @@ class ChatViewModel @Inject constructor(
 
     private val _isKeyboardUp = MutableStateFlow(false)
     val isKeyboardUp = _isKeyboardUp.asStateFlow()
-
 
     fun setKeyboardUp(isUp: Boolean) {
         _isKeyboardUp.value = isUp
