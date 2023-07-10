@@ -501,8 +501,9 @@ class ChatFragment : Fragment() {
                     setBackCallback(isShown)
                     if (isShown) {
                         viewModel.changeChatRoomState(true)
-//                        viewModel.collectNewChat()
-//                        viewModel.collectPartnerChatRoomState()
+                        if (viewModel.isUserInBottom.value) {
+                            scrollToBottom()
+                        }
                     }
                     else {
                         hideKeyboard()

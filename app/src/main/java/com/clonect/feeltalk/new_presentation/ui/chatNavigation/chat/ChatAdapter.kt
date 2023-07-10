@@ -248,13 +248,21 @@ class TextChatMineViewHolder(
 //                topMargin = rootTopMargin
 //                bottomMargin = rootBottomMargin
 //            }
-            
+
             tvRead.text = root.context.getString(
                 if (chat.isRead) R.string.chat_read
                 else R.string.chat_unread
             )
             tvTime.text = getFormatted(chat.createAt)
             tvMessage.text = chat.message
+
+            if (chat.isSending) {
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+            } else {
+                tvRead.visibility = View.VISIBLE
+                tvTime.visibility = View.VISIBLE
+            }
         }
     }
 }
@@ -272,6 +280,14 @@ class TextChatPartnerViewHolder(
             )
             tvTime.text = getFormatted(chat.createAt)
             tvMessage.text = chat.message
+
+            if (chat.isSending) {
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+            } else {
+                tvRead.visibility = View.VISIBLE
+                tvTime.visibility = View.VISIBLE
+            }
 
 //           TODO
 //            tvPartnerNickname.text = "연인 닉네임"

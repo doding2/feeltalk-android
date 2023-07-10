@@ -3,9 +3,7 @@ package com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import androidx.paging.insertFooterItem
+import androidx.paging.*
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.ChatType
@@ -13,6 +11,7 @@ import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
 import com.clonect.feeltalk.new_domain.model.page.PageEvents
 import com.clonect.feeltalk.new_domain.usecase.chat.ChangeChatRoomStateUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.GetLastChatPageNoUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPagingChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.SendTextChatUseCase
 import com.clonect.feeltalk.new_presentation.service.notification_observer.NewChatObserver
@@ -30,6 +29,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
+    private val getLastChatPageNoUseCase: GetLastChatPageNoUseCase,
     private val getPagingChatUseCase: GetPagingChatUseCase,
     private val changeChatRoomStateUseCase: ChangeChatRoomStateUseCase,
     private val sendTextChatUseCase: SendTextChatUseCase
@@ -96,10 +96,23 @@ class ChatViewModel @Inject constructor(
 
     private fun applyPageModification(paging: PagingData<Chat>, event: PageEvents<Chat>): PagingData<Chat> {
         return when (event) {
+            is PageEvents.Edit -> {
+                paging.map {
+                    return@map if (it.index == event.item.index)
+                        it.copy(event.item)
+                    else
+                        it
+                }
+            }
+            is PageEvents.Remove -> {
+                paging.filter { it.index != event.item.index }
+            }
             is PageEvents.InsertItemFooter -> {
                 paging.insertFooterItem(item = event.item)
             }
-            else -> paging
+            is PageEvents.InsertItemHeader -> {
+                paging.insertHeaderItem(item = event.item)
+            }
         }
     }
 
@@ -110,7 +123,7 @@ class ChatViewModel @Inject constructor(
 
     /** Text Chat **/
 
-    var pagingChat: Flow<PagingData<Chat>> = getPagingChatUseCase()
+    val pagingChat: Flow<PagingData<Chat>> = getPagingChatUseCase()
         .cachedIn(viewModelScope)
         .combine(pageModificationEvents) { pagingData, modifications ->
             modifications.fold(pagingData) { acc, event ->
@@ -120,17 +133,6 @@ class ChatViewModel @Inject constructor(
 
     private val _textChat = MutableStateFlow("")
     val textChat = _textChat.asStateFlow()
-
-
-    fun initPagingChat() {
-        pagingChat = getPagingChatUseCase()
-            .cachedIn(viewModelScope)
-            .combine(pageModificationEvents) { pagingData, modifications ->
-                modifications.fold(pagingData) { acc, event ->
-                    applyPageModification(acc, event)
-                }
-            }
-    }
 
     suspend fun changeChatRoomState(isInChat: Boolean) = withContext(Dispatchers.IO) {
         if (isUserInChat.value == isInChat) return@withContext
@@ -150,18 +152,40 @@ class ChatViewModel @Inject constructor(
         _textChat.value = ""
         onStart()
 
+        val format = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
+        val now = Date()
+
+        val loadingTextChat = TextChat(
+            index = now.time,
+            pageNo = 0,
+            chatSender = "me",
+            isRead = true,
+            createAt = format.format(now),
+            isSending = true,
+            message = message
+        )
+        launch {
+            modifyPage(PageEvents.InsertItemFooter(loadingTextChat))
+
+            delay(50)
+            setScrollToBottom()
+        }
+
         when (val result = sendTextChatUseCase(message)) {
             is Resource.Success -> {
                 val textChat = result.data.run {
-                    TextChat(index = index,
+                    TextChat(
+                        index = index,
                         pageNo = pageIndex,
                         chatSender = "me",
                         isRead = isRead,
                         createAt = createAt,
+                        isSending = false,
                         message = message
                     )
                 }
 
+                modifyPage(PageEvents.Remove(loadingTextChat))
                 modifyPage(PageEvents.InsertItemFooter(textChat))
 
                 delay(50)
@@ -169,6 +193,7 @@ class ChatViewModel @Inject constructor(
             }
             is Resource.Error -> {
                 infoLog("텍스트 채팅 전송 실패: ${result.throwable.stackTrace.joinToString("\n")}")
+                modifyPage(PageEvents.Remove(loadingTextChat))
             }
         }
     }
