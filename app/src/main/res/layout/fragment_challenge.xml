@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/gray_100"
-    tools:context=".new_presentation.ui.mainNavigation.challenge.ChallengeFragment">
+    tools:context=".new_presentation.ui.challenge.ChallengeFragment">
 
     <LinearLayout
         android:id="@+id/ll_action_bar"

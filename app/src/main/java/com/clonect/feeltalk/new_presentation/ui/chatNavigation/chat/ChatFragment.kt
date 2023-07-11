@@ -28,6 +28,7 @@ import com.clonect.feeltalk.databinding.FragmentChatBinding
 import com.clonect.feeltalk.new_domain.model.chat.DividerChat
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
+import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -86,6 +87,9 @@ class ChatFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        if (navViewModel.showChatNavigation.value) {
+            FeeltalkApp.setUserInChat(true)
+        }
         if (viewModel.isUserInBottom.value) {
             scrollToBottom()
         }
@@ -93,6 +97,7 @@ class ChatFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
+        FeeltalkApp.setUserInChat(false)
         lifecycleScope.launch {
             viewModel.changeChatRoomState(false)
         }
@@ -487,6 +492,7 @@ class ChatFragment : Fragment() {
             launch {
                 navViewModel.showChatNavigation.collectLatest { isShown ->
                     setBackCallback(isShown)
+                    FeeltalkApp.setUserInChat(isShown)
                     if (isShown) {
                         viewModel.changeChatRoomState(true)
                         if (viewModel.isUserInBottom.value) {

@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.ongoing
+package com.clonect.feeltalk.new_presentation.ui.challenge.ongoing
 
 import android.app.Activity
 import android.view.LayoutInflater

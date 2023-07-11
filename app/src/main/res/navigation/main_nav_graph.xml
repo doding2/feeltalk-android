@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/navigation_bucket_list"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.ChallengeFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.challenge.ChallengeFragment"
         android:label="@string/main_navigation_bucket_list"
         tools:layout="@layout/fragment_challenge" />
 </navigation>

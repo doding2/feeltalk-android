@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.presentation.ui
+package com.clonect.feeltalk.new_presentation.ui
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
@@ -12,7 +12,6 @@ import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class FeeltalkApp: Application() {
-
 
     override fun onCreate() {
         super.onCreate()
@@ -49,24 +48,27 @@ class FeeltalkApp: Application() {
     }
 
 
+
     companion object {
-        private var isAppRunning = false
-        private var questionContentOfChatFragment: String? = null
+        private var isAppScreenRunning = false
+        private var isUserInChat = false
 
-        fun getAppRunning() = isAppRunning
+        fun getAppScreenRunning() = isAppScreenRunning
 
-        fun onAppResumed() {
-            isAppRunning = true
+        fun onAppScreenResumed() {
+            isAppScreenRunning = true
         }
 
-        fun onAppPaused() {
-            isAppRunning = false
+        fun onAppScreenPaused() {
+            isAppScreenRunning = false
         }
 
-        fun getQuestionIdOfShowingChatFragment() = questionContentOfChatFragment
 
-        fun setQuestionIdOfShowingChatFragment(questionContent: String?) {
-            questionContentOfChatFragment = questionContent
+        fun getUserInChat() = isUserInChat
+
+        fun setUserInChat(isInChat: Boolean) {
+            isUserInChat = isInChat
         }
+
     }
 }

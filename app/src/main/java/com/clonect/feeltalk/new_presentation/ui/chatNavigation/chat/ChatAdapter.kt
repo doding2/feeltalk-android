@@ -149,7 +149,6 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
     }
 
     fun readAllChats() {
-        infoLog("readAllChats")
         if (viewHolders.isEmpty())
             return
         val readText = viewHolders.first().root.context.getString(R.string.chat_read)

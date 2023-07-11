@@ -1,15 +1,19 @@
 package com.clonect.feeltalk.new_presentation.ui.signUp
 
+import android.Manifest
 import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -52,6 +56,9 @@ class SignUpFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         collectViewModel()
+        checkPostNotificationsPermission {
+            infoLog("Post Notifications Permission is Granted: $it")
+        }
 
         binding.apply {
             mcvSignUpKakao.setOnClickListener { clickKakaoButton() }
@@ -202,6 +209,33 @@ class SignUpFragment : Fragment() {
             putExtra(Intent.EXTRA_SUBJECT, "[필로우톡] 이런 점이 아쉬워요 !")
         }
         startActivity(Intent.createChooser(intent, null))
+    }
+
+    private val permissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        viewModel.enablePushNotificationEnabled(isGranted)
+    }
+
+    private fun checkPostNotificationsPermission(onCompleted: (Boolean) -> Unit) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            onCompleted(true)
+            return
+        }
+
+        val permission = Manifest.permission.POST_NOTIFICATIONS
+
+        val isAlreadyGranted = ContextCompat.checkSelfPermission(
+            requireContext(),
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (isAlreadyGranted) {
+            onCompleted(true)
+            return
+        }
+
+        permissionLauncher.launch(permission)
     }
 
 

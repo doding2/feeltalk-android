@@ -16,7 +16,6 @@ import com.clonect.feeltalk.domain.usecase.question.GetQuestionDetailUseCase
 import com.clonect.feeltalk.domain.usecase.user.*
 import com.clonect.feeltalk.new_presentation.service.notification_observer.NewChatObserver
 import com.clonect.feeltalk.new_presentation.service.notification_observer.QuestionAnswerObserver
-import com.clonect.feeltalk.presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -78,7 +77,7 @@ class ChatViewModel @Inject constructor(
     init {
         savedStateHandle.get<Question>("selectedQuestion")?.let {
             _question.value = it
-            FeeltalkApp.setQuestionIdOfShowingChatFragment(it.question)
+//            FeeltalkApp.setQuestionIdOfShowingChatFragment(it.question)
             infoLog("Chat Room Entered: $it")
         }
         getQuestionDetail()
@@ -263,7 +262,7 @@ class ChatViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
-        FeeltalkApp.setQuestionIdOfShowingChatFragment(null)
+//        FeeltalkApp.setQuestionIdOfShowingChatFragment(null)
         NewChatObserver.onCleared()
         QuestionAnswerObserver.onCleared()
     }

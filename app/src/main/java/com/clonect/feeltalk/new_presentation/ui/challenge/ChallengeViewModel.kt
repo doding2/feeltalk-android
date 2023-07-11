@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge
+package com.clonect.feeltalk.new_presentation.ui.challenge
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

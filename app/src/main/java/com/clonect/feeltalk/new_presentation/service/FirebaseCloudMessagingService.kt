@@ -4,9 +4,12 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
+import androidx.navigation.NavDeepLinkBuilder
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetUserIsActiveUseCase
@@ -17,7 +20,8 @@ import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCas
 import com.clonect.feeltalk.new_presentation.service.notification_observer.CreateCoupleObserver
 import com.clonect.feeltalk.new_presentation.service.notification_observer.NewChatObserver
 import com.clonect.feeltalk.new_presentation.service.notification_observer.PartnerChatRoomStateObserver
-import com.clonect.feeltalk.presentation.ui.FeeltalkApp
+import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
+import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -50,14 +54,14 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     companion object {
         const val NOTIFICATION_GROUP = "group"
         
-        const val TODAY_QUESTION_CHANNEL_ID ="feeltalk_today_question_notification"
-        const val PARTNER_ANSWERED_CHANNEL_ID ="feeltalk_partner_question_answer_notification"
-        const val REQUEST_EMOTION_CHANGE_CHANNEL_ID ="feeltalk_emotion_change_notification"
-        const val CHAT_CHANNEL_ID ="feeltalk_chat_notification"
-        const val COUPLE_REGISTRATION_CHANNEL_ID ="feeltalk_couple_registration_completed_notification"
-        const val ADVERTISING_CHANNEL_ID ="feeltalk_advertising_notification"
-        const val REQUEST_KEY_RESTORING_CHANNEL_ID ="feeltalk_request_key_restoring_notification"
-        const val ACCEPT_KEY_RESTORING_CHANNEL_ID = "feeltalk_accept_key_restoring_notification"
+//        const val TODAY_QUESTION_CHANNEL_ID ="feeltalk_today_question_notification"
+//        const val PARTNER_ANSWERED_CHANNEL_ID ="feeltalk_partner_question_answer_notification"
+//        const val REQUEST_EMOTION_CHANGE_CHANNEL_ID ="feeltalk_emotion_change_notification"
+//        const val CHAT_CHANNEL_ID ="feeltalk_chat_notification"
+//        const val COUPLE_REGISTRATION_CHANNEL_ID ="feeltalk_couple_registration_completed_notification"
+//        const val ADVERTISING_CHANNEL_ID ="feeltalk_advertising_notification"
+//        const val REQUEST_KEY_RESTORING_CHANNEL_ID ="feeltalk_request_key_restoring_notification"
+//        const val ACCEPT_KEY_RESTORING_CHANNEL_ID = "feeltalk_accept_key_restoring_notification"
 
 //        const val TYPE_CHAT = "chat"
 //        const val TYPE_COUPLE_REGISTRATION = "coupleMatch"
@@ -66,6 +70,9 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 //        const val TYPE_REQUEST_EMOTION_CHANGE = "emotionRequest"
 //        const val TYPE_REQUEST_KEY_RESTORING = "KeyTrade"
 //        const val TYPE_ACCEPT_KEY_RESTORING = "KeyTradeOk"
+
+        const val CHAT_CHANNEL_ID ="feeltalk_chat_notification"
+        const val CREATE_COUPLE_CHANNEL_ID ="feeltalk_create_couple_notification"
 
         const val TYPE_CREATE_COUPLE = "createCouple"
         const val TYPE_CHAT_ROOM_STATE = "chatRoomStatusChange"
@@ -85,7 +92,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         super.onMessageReceived(message)
         CoroutineScope(Dispatchers.Main).launch {
 
-            val isAppRunning = FeeltalkApp.getAppRunning()
+            val isAppRunning = FeeltalkApp.getAppScreenRunning()
             infoLog("isAppRunning: $isAppRunning")
 
             val data = if (message.data["data"] == null) {
@@ -97,8 +104,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                     message.data
                 }
             }
-            infoLog("새로 도착한 FCM: ${message.data}")
-            infoLog("파싱된 FCM: $data")
+            infoLog("새로운 FCM 메시지:\n$data")
 
 //            val isSignedUp = checkUserIsSignedUpUseCase()
 //            if (isSignedUp is Resource.Error) {
@@ -124,7 +130,28 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
 
     private fun handleCreateCoupleData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+
         CreateCoupleObserver.getInstance().setCoupleCreated(true)
+
+        if (FeeltalkApp.getAppScreenRunning()) {
+            return@launch
+        }
+
+        val intent = Intent(applicationContext, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val pendingIntent: PendingIntent? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_MUTABLE)
+        } else {
+            PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+        }
+
+        showNotification(
+            title = "연인 등록 완료",
+            message = "연인 등록에 성공했습니다",
+            notificationID = TYPE_CREATE_COUPLE.toBytesInt(),
+            channelID = TYPE_CREATE_COUPLE,
+            pendingIntent = pendingIntent
+        )
     }
 
     private fun handleChatRoomStateData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
@@ -153,6 +180,25 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                     message = message
                 )
             )
+
+        if (FeeltalkApp.getAppScreenRunning() && FeeltalkApp.getUserInChat())
+            return@launch
+
+        val pendingIntent = NavDeepLinkBuilder(applicationContext)
+            .setGraph(R.navigation.feeltalk_nav_graph)
+            .setDestination(R.id.mainNavigationFragment)
+            .setArguments(
+                bundleOf("showChat" to true)
+            )
+            .createPendingIntent()
+
+        showNotification(
+            title = "연인",
+            message = message,
+            notificationID = CHAT_CHANNEL_ID.toBytesInt(),
+            channelID = CHAT_CHANNEL_ID,
+            pendingIntent = pendingIntent
+        )
     }
 
 
@@ -518,27 +564,16 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     }
 
 
+
     private fun getChannelName(channelID: String): String = when (channelID) {
-        TODAY_QUESTION_CHANNEL_ID -> "오늘의 질문"
-        PARTNER_ANSWERED_CHANNEL_ID -> "상대방의 질문 답변"
-        REQUEST_EMOTION_CHANGE_CHANNEL_ID -> "연인 감정 물어보기"
+        CREATE_COUPLE_CHANNEL_ID -> "커플 등록"
         CHAT_CHANNEL_ID -> "채팅"
-        ADVERTISING_CHANNEL_ID -> "광고"
-        COUPLE_REGISTRATION_CHANNEL_ID -> "커플 등록"
-        REQUEST_KEY_RESTORING_CHANNEL_ID -> "키 복구 요청"
-        ACCEPT_KEY_RESTORING_CHANNEL_ID -> "키 복구 요청 수락"
         else -> ""
     }
 
     private fun getChannelDescription(channelID: String): String = when (channelID) {
-        TODAY_QUESTION_CHANNEL_ID -> "오늘의 질문"
-        PARTNER_ANSWERED_CHANNEL_ID -> "상대방의 질문 답변"
-        REQUEST_EMOTION_CHANGE_CHANNEL_ID -> "연인 감정 물어보기"
+        CREATE_COUPLE_CHANNEL_ID -> "커플 등록"
         CHAT_CHANNEL_ID -> "채팅"
-        ADVERTISING_CHANNEL_ID -> "광고"
-        COUPLE_REGISTRATION_CHANNEL_ID -> "커플 등록"
-        REQUEST_KEY_RESTORING_CHANNEL_ID -> "키 복구 요청"
-        ACCEPT_KEY_RESTORING_CHANNEL_ID -> "키 복구 요청 수락"
         else -> ""
     }
 }

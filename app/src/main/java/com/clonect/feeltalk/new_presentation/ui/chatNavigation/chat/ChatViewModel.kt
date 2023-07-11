@@ -232,16 +232,10 @@ class ChatViewModel @Inject constructor(
             .collectLatest { isInChat ->
                 runCatching {
                     _isPartnerInChat.value = isInChat
-                    infoLog("isPartnerInChat: $isInChat")
                 }.onFailure {
                     infoLog("collectPartnerChatRoomState(): ${it.localizedMessage}")
                 }
             }
-    }
-
-    fun clearChatList() {
-        NewChatObserver.onCleared()
-        PartnerChatRoomStateObserver.onCleared()
     }
 
 

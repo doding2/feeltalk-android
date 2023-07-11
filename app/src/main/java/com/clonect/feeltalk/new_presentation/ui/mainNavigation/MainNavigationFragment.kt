@@ -44,6 +44,9 @@ class MainNavigationFragment : Fragment() {
             activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         }
 
+        val showChat = arguments?.getBoolean("showChat", false) ?: false
+        viewModel.setShowChatNavigation(showChat)
+
         return binding.root
     }
 
