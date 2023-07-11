@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.ui.challenge
+package com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge
 
 import android.graphics.Color
 import android.os.Build

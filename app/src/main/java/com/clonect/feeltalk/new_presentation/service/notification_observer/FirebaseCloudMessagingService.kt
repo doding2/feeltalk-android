@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.service
+package com.clonect.feeltalk.new_presentation.service.notification_observer
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -17,11 +17,8 @@ import com.clonect.feeltalk.domain.usecase.user.SetUserIsActiveUseCase
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
-import com.clonect.feeltalk.new_presentation.service.notification_observer.CreateCoupleObserver
-import com.clonect.feeltalk.new_presentation.service.notification_observer.NewChatObserver
-import com.clonect.feeltalk.new_presentation.service.notification_observer.PartnerChatRoomStateObserver
-import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
+import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -181,8 +178,10 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 )
             )
 
-        if (FeeltalkApp.getAppScreenRunning() && FeeltalkApp.getUserInChat())
+        infoLog("isAppScreenRunning: ${FeeltalkApp.getAppScreenRunning()}, isUserInChat: ${FeeltalkApp.getUserInChat()}")
+        if (FeeltalkApp.getAppScreenRunning() && FeeltalkApp.getUserInChat()) {
             return@launch
+        }
 
         val pendingIntent = NavDeepLinkBuilder(applicationContext)
             .setGraph(R.navigation.feeltalk_nav_graph)

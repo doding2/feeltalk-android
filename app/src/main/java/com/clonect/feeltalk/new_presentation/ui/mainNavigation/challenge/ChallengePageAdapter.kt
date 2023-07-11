@@ -1,10 +1,10 @@
-package com.clonect.feeltalk.new_presentation.ui.challenge
+package com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge
 
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.clonect.feeltalk.new_presentation.ui.challenge.completed.CompletedFragment
-import com.clonect.feeltalk.new_presentation.ui.challenge.ongoing.OngoingFragment
+import com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.completed.CompletedFragment
+import com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.ongoing.OngoingFragment
 
 class ChallengePageAdapter(
     fragmentManager: FragmentManager,

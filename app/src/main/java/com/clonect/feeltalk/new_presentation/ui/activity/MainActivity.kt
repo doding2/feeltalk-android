@@ -1,10 +1,15 @@
 package com.clonect.feeltalk.new_presentation.ui.activity
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.ViewTreeObserver
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -13,6 +18,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.ActivityMainBinding
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
+import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -35,7 +41,10 @@ class MainActivity : AppCompatActivity() {
 
         tryAutoLogIn()
 
-
+        checkPostNotificationsPermission {
+            infoLog("Post Notification Permission is Granted: $it")
+            viewModel.enablePushNotificationEnabled(it)
+        }
     }
 
     private fun collectToast() = lifecycleScope.launch {
@@ -89,6 +98,34 @@ class MainActivity : AppCompatActivity() {
         viewModel.setReady()
     }
 
+
+
+    private val permissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        viewModel.enablePushNotificationEnabled(isGranted)
+    }
+
+    private fun checkPostNotificationsPermission(onCompleted: (Boolean) -> Unit) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            onCompleted(true)
+            return
+        }
+
+        val permission = Manifest.permission.POST_NOTIFICATIONS
+
+        val isAlreadyGranted = ContextCompat.checkSelfPermission(
+            applicationContext,
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (isAlreadyGranted) {
+            onCompleted(true)
+            return
+        }
+
+        permissionLauncher.launch(permission)
+    }
 
     override fun onResume() {
         super.onResume()

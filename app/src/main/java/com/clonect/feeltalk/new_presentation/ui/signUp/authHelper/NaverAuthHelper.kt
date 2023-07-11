@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.ui.signUp
+package com.clonect.feeltalk.new_presentation.ui.signUp.authHelper
 
 import android.content.Context
 import com.navercorp.nid.NaverIdLoginSDK

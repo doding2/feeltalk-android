@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.ui.challenge.completed
+package com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.completed
 
 import android.app.Activity
 import android.view.LayoutInflater
@@ -10,8 +10,8 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.databinding.ItemChallengeCompletedBinding
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
-import com.clonect.feeltalk.new_presentation.ui.challenge.ongoing.OngoingChallengeAdapter.Companion.CHALLENGE_ENOUGH
-import com.clonect.feeltalk.new_presentation.ui.challenge.ongoing.OngoingChallengeAdapter.Companion.CHALLENGE_IMMINENT
+import com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.ongoing.OngoingChallengeAdapter.Companion.CHALLENGE_ENOUGH
+import com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.ongoing.OngoingChallengeAdapter.Companion.CHALLENGE_IMMINENT
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getScreenWidth
 import java.util.*

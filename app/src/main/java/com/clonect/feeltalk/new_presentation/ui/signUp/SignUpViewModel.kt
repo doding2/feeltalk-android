@@ -10,9 +10,7 @@ import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCas
 import com.clonect.feeltalk.new_domain.usecase.signIn.GetCoupleCodeUseCase
 import com.clonect.feeltalk.new_domain.usecase.signIn.ReLogInUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.CacheSocialTokenUseCase
-import com.clonect.feeltalk.presentation.utils.AppSettings
 import com.clonect.feeltalk.presentation.utils.infoLog
-import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -28,12 +26,8 @@ class SignUpViewModel @Inject constructor(
     private val reLogInUseCase: ReLogInUseCase,
     private val cacheSocialTokenUseCase: CacheSocialTokenUseCase,
     private val getCoupleCodeUseCase: GetCoupleCodeUseCase,
-    private val getAppSettingsUseCase: GetAppSettingsUseCase,
-    private val saveAppSettingsUseCase: SaveAppSettingsUseCase,
     private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
 ): ViewModel() {
-
-    var appSettings = getAppSettingsUseCase()
 
     private val _navigateToAgreement = MutableSharedFlow<Boolean>()
     val navigateToAgreement = _navigateToAgreement.asSharedFlow()
@@ -96,27 +90,6 @@ class SignUpViewModel @Inject constructor(
             infoLog("커플코드 로딩 실패: ${result.throwable.stackTrace.joinToString("\n")}")
             result.throwable.localizedMessage?.let { sendErrorMessage(it) }
         }
-    }
-
-
-    fun enablePushNotificationEnabled(enabled: Boolean) {
-        FirebaseMessaging.getInstance().apply {
-            token.addOnSuccessListener {
-//                if (enabled) {
-//                    subscribeToTopic(Topics.Push.text)
-//                }
-//                else {
-//                    unsubscribeFromTopic(Topics.Push.text)
-//                }
-                appSettings.fcmToken = it
-                appSettings.isPushNotificationEnabled = enabled
-                saveAppSettings(appSettings)
-            }
-        }
-    }
-
-    private fun saveAppSettings(newAppSettings: AppSettings) = viewModelScope.launch(Dispatchers.IO) {
-        saveAppSettingsUseCase(newAppSettings)
     }
 
 

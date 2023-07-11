@@ -1,8 +1,8 @@
 package com.clonect.feeltalk.new_presentation.di
 
 import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.ChatAdapter
-import com.clonect.feeltalk.new_presentation.ui.challenge.completed.CompletedChallengeAdapter
-import com.clonect.feeltalk.new_presentation.ui.challenge.ongoing.OngoingChallengeAdapter
+import com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.completed.CompletedChallengeAdapter
+import com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.ongoing.OngoingChallengeAdapter
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.question.QuestionAdapter
 import com.clonect.feeltalk.presentation.ui.guide.GuideAdapter
 import com.clonect.feeltalk.presentation.ui.news.NewsAdapter
