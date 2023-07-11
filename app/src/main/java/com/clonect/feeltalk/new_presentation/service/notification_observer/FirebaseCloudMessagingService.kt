@@ -511,41 +511,39 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         channelID: String,
         pendingIntent: PendingIntent?,
     ) {
-        CoroutineScope(Dispatchers.Main).launch {
-            val appSettings = getAppSettingsUseCase()
-            infoLog("isPushNotificationEnabled: ${appSettings.isPushNotificationEnabled}")
-            if (!appSettings.isPushNotificationEnabled) return@launch
+        val appSettings = getAppSettingsUseCase()
+        infoLog("isPushNotificationEnabled: ${appSettings.isPushNotificationEnabled}")
+        if (!appSettings.isPushNotificationEnabled) return
 
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-            createNotificationChannel(
-                notificationManager = notificationManager,
-                channelID = channelID
-            )
+        createNotificationChannel(
+            notificationManager = notificationManager,
+            channelID = channelID
+        )
 
-            val notification = NotificationCompat.Builder(applicationContext, channelID)
-                .setContentTitle(title)
-                .setContentText(message)
-                .setSmallIcon(R.mipmap.ic_launcher_round)
-                .setColor(ContextCompat.getColor(applicationContext, R.color.white))
-                .setOngoing(false)
-                .setAutoCancel(true)
-                .setContentIntent(pendingIntent)
-                .setGroup(NOTIFICATION_GROUP)
-                .build()
+        val notification = NotificationCompat.Builder(applicationContext, channelID)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setSmallIcon(R.mipmap.ic_launcher_round)
+            .setColor(ContextCompat.getColor(applicationContext, R.color.white))
+            .setOngoing(false)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
+            .setGroup(NOTIFICATION_GROUP)
+            .build()
 
-            val groupNotification = NotificationCompat.Builder(applicationContext, channelID)
-                .setSmallIcon(R.mipmap.ic_launcher_round)
-                .setColor(ContextCompat.getColor(applicationContext, R.color.white))
-                .setStyle(NotificationCompat.InboxStyle())
-                .setGroup(NOTIFICATION_GROUP)
-                .setGroupSummary(true)
-                .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_ALL)
-                .build()
+        val groupNotification = NotificationCompat.Builder(applicationContext, channelID)
+            .setSmallIcon(R.mipmap.ic_launcher_round)
+            .setColor(ContextCompat.getColor(applicationContext, R.color.white))
+            .setStyle(NotificationCompat.InboxStyle())
+            .setGroup(NOTIFICATION_GROUP)
+            .setGroupSummary(true)
+            .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_ALL)
+            .build()
 
-            notificationManager.notify(notificationID, notification)
-            notificationManager.notify(NOTIFICATION_GROUP.toBytesInt(), groupNotification)
-        }
+        notificationManager.notify(notificationID, notification)
+        notificationManager.notify(NOTIFICATION_GROUP.toBytesInt(), groupNotification)
     }
 
 
