@@ -11,12 +11,15 @@ import com.clonect.feeltalk.new_domain.usecase.signIn.SignUpUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.GetCachedSocialTokenUseCase
 import com.clonect.feeltalk.new_presentation.service.notification_observer.CreateCoupleObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @HiltViewModel
 class SignUpNavigationViewModel @Inject constructor(
@@ -159,8 +162,24 @@ class SignUpNavigationViewModel @Inject constructor(
         _isNicknameProcessed.emit(processed)
     }
 
+    private suspend fun getFcmToken() = suspendCoroutine { continuation ->
+        FirebaseMessaging.getInstance().apply {
+            token
+                .addOnSuccessListener {
+                    continuation.resume(it)
+                }
+                .addOnFailureListener {
+                    continuation.resume(null)
+                }
+        }
+    }
+
     fun signUp() = viewModelScope.launch(Dispatchers.IO) {
-        val fcmToken = getAppSettingsUseCase().fcmToken ?: return@launch
+        val fcmToken = getFcmToken() ?: run {
+            infoLog("fcmToken is null.")
+            _errorMessage.emit("잠시 후 다시 시도해주세요.")
+            return@launch
+        }
 
         setLoading(true)
         when (val result = signUpUseCase(_isMarketingAgreed.value, _nickname.value, fcmToken)) {
@@ -208,7 +227,11 @@ class SignUpNavigationViewModel @Inject constructor(
             .getInstance()
             .isCoupleCreated
             .collectLatest {
-                _isCoupleConnected.value = it
+                runCatching {
+                    _isCoupleConnected.value = it
+                }.onFailure {
+                    infoLog("CreateCoupleObserver Collect Error: ${it.localizedMessage}\n${it.stackTrace.joinToString("\n")}")
+                }
             }
     }
 

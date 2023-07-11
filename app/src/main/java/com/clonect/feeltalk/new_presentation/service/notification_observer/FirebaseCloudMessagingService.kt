@@ -145,8 +145,8 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         showNotification(
             title = "연인 등록 완료",
             message = "연인 등록에 성공했습니다",
-            notificationID = TYPE_CREATE_COUPLE.toBytesInt(),
-            channelID = TYPE_CREATE_COUPLE,
+            notificationID = CREATE_COUPLE_CHANNEL_ID.toBytesInt(),
+            channelID = CREATE_COUPLE_CHANNEL_ID,
             pendingIntent = pendingIntent
         )
     }
@@ -509,38 +509,40 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         channelID: String,
         pendingIntent: PendingIntent?,
     ) {
-        val appSettings = getAppSettingsUseCase()
-        if (!appSettings.isPushNotificationEnabled) return
+        CoroutineScope(Dispatchers.Main).launch {
+            val appSettings = getAppSettingsUseCase()
+            if (!appSettings.isPushNotificationEnabled) return@launch
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        createNotificationChannel(
-            notificationManager = notificationManager,
-            channelID = channelID
-        )
+            createNotificationChannel(
+                notificationManager = notificationManager,
+                channelID = channelID
+            )
 
-        val notification = NotificationCompat.Builder(applicationContext, channelID)
-            .setContentTitle(title)
-            .setContentText(message)
-            .setSmallIcon(R.mipmap.ic_launcher_round)
-            .setColor(ContextCompat.getColor(applicationContext, R.color.white))
-            .setOngoing(false)
-            .setAutoCancel(true)
-            .setContentIntent(pendingIntent)
-            .setGroup(NOTIFICATION_GROUP)
-            .build()
+            val notification = NotificationCompat.Builder(applicationContext, channelID)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setColor(ContextCompat.getColor(applicationContext, R.color.white))
+                .setOngoing(false)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+                .setGroup(NOTIFICATION_GROUP)
+                .build()
 
-        val groupNotification = NotificationCompat.Builder(applicationContext, channelID)
-            .setSmallIcon(R.mipmap.ic_launcher_round)
-            .setColor(ContextCompat.getColor(applicationContext, R.color.white))
-            .setStyle(NotificationCompat.InboxStyle())
-            .setGroup(NOTIFICATION_GROUP)
-            .setGroupSummary(true)
-            .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_ALL)
-            .build()
+            val groupNotification = NotificationCompat.Builder(applicationContext, channelID)
+                .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setColor(ContextCompat.getColor(applicationContext, R.color.white))
+                .setStyle(NotificationCompat.InboxStyle())
+                .setGroup(NOTIFICATION_GROUP)
+                .setGroupSummary(true)
+                .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_ALL)
+                .build()
 
-        notificationManager.notify(notificationID, notification)
-        notificationManager.notify(NOTIFICATION_GROUP.toBytesInt(), groupNotification)
+            notificationManager.notify(notificationID, notification)
+            notificationManager.notify(NOTIFICATION_GROUP.toBytesInt(), groupNotification)
+        }
     }
 
 
@@ -567,12 +569,12 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     private fun getChannelName(channelID: String): String = when (channelID) {
         CREATE_COUPLE_CHANNEL_ID -> "커플 등록"
         CHAT_CHANNEL_ID -> "채팅"
-        else -> ""
+        else -> "기타"
     }
 
     private fun getChannelDescription(channelID: String): String = when (channelID) {
         CREATE_COUPLE_CHANNEL_ID -> "커플 등록"
         CHAT_CHANNEL_ID -> "채팅"
-        else -> ""
+        else -> "기타"
     }
 }
