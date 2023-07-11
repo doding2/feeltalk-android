@@ -35,15 +35,13 @@ class ChatViewModel @Inject constructor(
     private val sendTextChatUseCase: SendTextChatUseCase
 ) : ViewModel() {
 
-    init {
-        collectNewChat()
-        collectPartnerChatRoomState()
-    }
-
-
     private val job = MutableStateFlow<Job?>(null)
 
-    val isUserInChat = MutableStateFlow<Boolean?>(null)
+    private val _isUserInChat = MutableStateFlow<Boolean?>(null)
+    val isUserInChat = _isUserInChat.asStateFlow()
+
+    private val _isPartnerInChat = MutableStateFlow<Boolean?>(null)
+    val isPartnerInChat = _isPartnerInChat.asStateFlow()
 
     private val _expandChat = MutableStateFlow(false)
     val expandChat = _expandChat.asStateFlow()
@@ -56,6 +54,12 @@ class ChatViewModel @Inject constructor(
 
     private val _isKeyboardUp = MutableStateFlow(false)
     val isKeyboardUp = _isKeyboardUp.asStateFlow()
+
+
+    init {
+        collectNewChat()
+        collectPartnerChatRoomState()
+    }
 
     fun setKeyboardUp(isUp: Boolean) {
         _isKeyboardUp.value = isUp
@@ -139,7 +143,7 @@ class ChatViewModel @Inject constructor(
 
         when (val result = changeChatRoomStateUseCase(isInChat)) {
             is Resource.Success -> {
-                isUserInChat.value = isInChat
+                _isUserInChat.value = isInChat
             }
             is Resource.Error -> {
                 infoLog("채팅 입장 상태 변경 실패: ${result.throwable.stackTrace.joinToString("\n")}")
@@ -152,7 +156,6 @@ class ChatViewModel @Inject constructor(
         _textChat.value = ""
         onStart()
 
-        val format = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
         val now = Date()
 
         val loadingTextChat = TextChat(
@@ -160,7 +163,7 @@ class ChatViewModel @Inject constructor(
             pageNo = 0,
             chatSender = "me",
             isRead = true,
-            createAt = format.format(now),
+            createAt = "",
             isSending = true,
             message = message
         )
@@ -187,9 +190,6 @@ class ChatViewModel @Inject constructor(
 
                 modifyPage(PageEvents.Remove(loadingTextChat))
                 modifyPage(PageEvents.InsertItemFooter(textChat))
-
-                delay(50)
-                setScrollToBottom()
             }
             is Resource.Error -> {
                 infoLog("텍스트 채팅 전송 실패: ${result.throwable.stackTrace.joinToString("\n")}")
@@ -199,41 +199,42 @@ class ChatViewModel @Inject constructor(
     }
 
 
-    fun collectNewChat() = viewModelScope.launch {
+    private fun collectNewChat() = viewModelScope.launch {
         NewChatObserver
             .getInstance()
             .newChat
             .collectLatest { newChat ->
-                val chat = when (newChat?.type) {
-                    ChatType.TextChatting -> {
-                        val textChat = newChat as? TextChat ?: return@collectLatest
-                        textChat
+                runCatching {
+                    val chat = when (newChat?.type) {
+                        ChatType.TextChatting -> {
+                            val textChat = newChat as? TextChat ?: return@collectLatest
+                            textChat
+                        }
+                        else -> return@collectLatest
                     }
-                    else -> return@collectLatest
-                }
 
-                modifyPage(PageEvents.InsertItemFooter(chat))
+                    modifyPage(PageEvents.InsertItemFooter(chat))
 
-                if (isUserInBottom.value) {
-                    delay(50)
-                    setScrollToBottom()
+                    if (isUserInBottom.value) {
+                        delay(50)
+                        setScrollToBottom()
+                    }
+                }.onFailure {
+                    infoLog("collectNewChat(): ${it.localizedMessage}")
                 }
             }
     }
 
-    fun collectPartnerChatRoomState() = viewModelScope.launch {
+    private fun collectPartnerChatRoomState() = viewModelScope.launch {
         PartnerChatRoomStateObserver
             .getInstance()
             .isInChat
             .collectLatest { isInChat ->
-                if (isInChat) {
-//                    _chatList.value = _chatList.value
-//                        .toMutableList()
-//                        .map {
-//                            it.apply {
-//                                isRead = true
-//                            }
-//                        }
+                runCatching {
+                    _isPartnerInChat.value = isInChat
+                    infoLog("isPartnerInChat: $isInChat")
+                }.onFailure {
+                    infoLog("collectPartnerChatRoomState(): ${it.localizedMessage}")
                 }
             }
     }

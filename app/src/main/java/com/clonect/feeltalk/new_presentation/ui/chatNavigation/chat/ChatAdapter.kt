@@ -5,6 +5,7 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -21,13 +22,14 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ChatAdapter: PagingDataAdapter<Chat, ChatViewHolder>(diffCallback) {
+class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallback) {
 
     private val viewHolders = mutableListOf<ChatViewHolder>()
     private val voiceViewHolders = mutableListOf<ChatViewHolder>()
 
     private var onQuestionAnswerButtonClick: ((QuestionChat) -> Unit)? = null
 
+    private var isPartnerInChat = false
     private var myNickname: String? = null
     private var partnerNickname: String? = null
     private var partnerProfileUrl: String? = null
@@ -138,12 +140,29 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatViewHolder>(diffCallback) {
         partnerProfileUrl = url
     }
 
+    fun setPartnerInChat(isInChat: Boolean) {
+        isPartnerInChat = isInChat
+        if (isPartnerInChat) {
+            readAllChats()
+        }
+    }
+
+    fun readAllChats() {
+        infoLog("readAllChats")
+        if (viewHolders.isEmpty())
+            return
+        val readText = viewHolders.first().root.context.getString(R.string.chat_read)
+        for (holder in viewHolders) {
+            val tvRead = holder.root.findViewById<TextView>(R.id.tv_read)
+            tvRead.text = readText
+        }
+    }
 
 
     companion object {
         private val diffCallback = object: DiffUtil.ItemCallback<Chat>() {
             override fun areItemsTheSame(oldItem: Chat, newItem: Chat): Boolean {
-                return oldItem.index == newItem.index && oldItem.createAt == newItem.createAt
+                return oldItem.index == newItem.index && oldItem.createAt == newItem.createAt && oldItem.isSending == newItem.isSending
             }
 
             override fun areContentsTheSame(oldItem: Chat, newItem: Chat): Boolean {
@@ -152,6 +171,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatViewHolder>(diffCallback) {
                         && oldItem.chatSender == newItem.chatSender
                         && oldItem.isRead == newItem.isRead
                         && oldItem.createAt == newItem.createAt
+                        && oldItem.isSending == newItem.isSending
             }
         }
 
@@ -179,428 +199,393 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatViewHolder>(diffCallback) {
         private const val TYPE_QUESTION_MINE = 13
         private const val TYPE_QUESTION_PARTNER = 14
     }
-}
 
 
 
-abstract class ChatViewHolder(root: View): RecyclerView.ViewHolder(root) {
+    abstract class ChatViewHolder(val root: View): RecyclerView.ViewHolder(root) {
 
-    val defaultVerticalMargin = root.context.dpToPx(8f).toInt()
-    val continuousVerticalMargin = root.context.dpToPx(2f).toInt()
+        val defaultVerticalMargin = root.context.dpToPx(8f).toInt()
+        val continuousVerticalMargin = root.context.dpToPx(2f).toInt()
 
-    abstract fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?)
+        abstract fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?)
 
-    fun getFormatted(date: String): String {
-        return date.substringAfter("T").substringBeforeLast(":")
+        fun getFormatted(date: String): String {
+            return date.substringAfter("T").substringBeforeLast(":")
+        }
     }
-}
 
-class ChatDividerViewHolder(
-    val binding: ItemChatDividerBinding
-): ChatViewHolder(binding.root) {
+    inner class ChatDividerViewHolder(
+        val binding: ItemChatDividerBinding
+    ): ChatViewHolder(binding.root) {
 
-    override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
-        val chat = item as DividerChat
-        val itemFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val dividerFormat = SimpleDateFormat("yyyy년 M월 d일", Locale.getDefault())
-        val date = itemFormat.parse(chat.createAt)
-        binding.tvDate.text = date?.let { dividerFormat.format(it) }
+        override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
+            val chat = item as DividerChat
+            val itemFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val dividerFormat = SimpleDateFormat("yyyy년 M월 d일", Locale.getDefault())
+            val date = itemFormat.parse(chat.createAt)
+            binding.tvDate.text = date?.let { dividerFormat.format(it) }
+        }
     }
-}
 
-class TextChatMineViewHolder(
-    val binding: ItemTextChatMineBinding,
-) : ChatViewHolder(binding.root) {
+    inner class TextChatMineViewHolder(
+        val binding: ItemTextChatMineBinding,
+    ) : ChatViewHolder(binding.root) {
 
-    override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
-        val chat = item as TextChat
-        binding.run {
-//            // 단일 채팅
-//            var tvReadVisibility = View.VISIBLE
-//            var tvTimeVisibility = View.VISIBLE
-//            var rootTopMargin = defaultVerticalMargin
-//            var rootBottomMargin = defaultVerticalMargin
-//
-//            infoLog("createAt: ${item.createAt}")
-//            // 연속 채팅
-//            val isTopContinuous = prevItem?.createAt?.substringBeforeLast(":") == item.createAt.substringBeforeLast(":") && prevItem.chatSender == item.chatSender
-//            val isBottomContinuous = item.createAt.substringBeforeLast(":") == nextItem?.createAt?.substringBeforeLast(":") && item.chatSender == nextItem.chatSender
-//            if (isTopContinuous) {
-//                tvReadVisibility = View.GONE
-//                tvTimeVisibility = View.GONE
-//                rootTopMargin = continuousVerticalMargin
-//            }
-//            if (isBottomContinuous) {
-//                tvReadVisibility = View.VISIBLE
-//                tvTimeVisibility = View.VISIBLE
-//                rootBottomMargin = continuousVerticalMargin
-//            }
-//            // 3연속 이상 채팅의 중간
-//            if (isTopContinuous && isBottomContinuous) {
-//                tvReadVisibility= View.GONE
-//                tvTimeVisibility = View.GONE
-//            }
-//
-//            // 단일 채팅
-//            tvRead.visibility = tvReadVisibility
-//            tvTime.visibility = tvTimeVisibility
-//            root.layoutParams = (root.layoutParams as RecyclerView.LayoutParams).apply {
-//                topMargin = rootTopMargin
-//                bottomMargin = rootBottomMargin
-//            }
+        override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
+            val chat = item as TextChat
+            binding.run {
+                tvRead.text = root.context.getString(
+                    if (isPartnerInChat || chat.isRead) R.string.chat_read
+                    else R.string.chat_unread
+                )
+                tvTime.text = getFormatted(chat.createAt)
+                tvMessage.text = chat.message
 
-            tvRead.text = root.context.getString(
-                if (chat.isRead) R.string.chat_read
-                else R.string.chat_unread
-            )
-            tvTime.text = getFormatted(chat.createAt)
-            tvMessage.text = chat.message
-
-            if (chat.isSending) {
-                tvRead.visibility = View.GONE
-                tvTime.visibility = View.GONE
-            } else {
-                tvRead.visibility = View.VISIBLE
-                tvTime.visibility = View.VISIBLE
+                if (chat.isSending) {
+                    tvRead.visibility = View.GONE
+                    tvTime.visibility = View.GONE
+                } else {
+                    tvRead.visibility = View.VISIBLE
+                    tvTime.visibility = View.VISIBLE
+                }
             }
         }
     }
-}
 
-class TextChatPartnerViewHolder(
-    val binding: ItemTextChatPartnerBinding,
-) : ChatViewHolder(binding.root) {
+    inner class TextChatPartnerViewHolder(
+        val binding: ItemTextChatPartnerBinding,
+    ) : ChatViewHolder(binding.root) {
 
-    override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
-        val chat = item as TextChat
-        binding.run {
-            tvRead.text = root.context.getString(
-                if (chat.isRead) R.string.chat_read
-                else R.string.chat_unread
-            )
-            tvTime.text = getFormatted(chat.createAt)
-            tvMessage.text = chat.message
-
-            if (chat.isSending) {
+        override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
+            val chat = item as TextChat
+            binding.run {
                 tvRead.visibility = View.GONE
-                tvTime.visibility = View.GONE
-            } else {
-                tvRead.visibility = View.VISIBLE
-                tvTime.visibility = View.VISIBLE
-            }
+
+                tvTime.text = getFormatted(chat.createAt)
+                tvMessage.text = chat.message
 
 //           TODO
 //            tvPartnerNickname.text = "연인 닉네임"
 //            ivPartnerProfile.setImageResource()
-        }
-    }
-}
-
-class VoiceChatMineViewHolder(
-    val binding: ItemVoiceChatMineBinding,
-) : ChatViewHolder(binding.root) {
-
-    var audioDuration: Long = 0
-    var audioFile: File? = null
-    var replayer: RecordingReplayer? = null
-    var timer: Timer? = null
-    var replayTime: Long = 0
-    var isPaused = false
-
-    override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
-        val chat = item as VoiceChat
-
-        init(chat)
-
-        binding.run {
-            if (replayer?.isReplaying == true) {
-                ivReplay.visibility = View.GONE
-                ivPause.visibility = View.VISIBLE
-                vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.main_500))
             }
-            else {
-                ivReplay.visibility = View.VISIBLE
-                ivPause.visibility = View.GONE
-                vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
-            }
-
-            vvVoiceVisualizer.visibility = View.VISIBLE
-
-            tvTime.text = getFormatted(chat.createAt)
-
-            ivReplay.setOnClickListener {
-                if (isPaused) resume()
-                else replay()
-            }
-            ivPause.setOnClickListener { pause() }
         }
     }
 
-    private fun init(chat: VoiceChat) = binding.run {
-        if (audioFile == null) {
-            // TODO 나중에 오디오 파일 다운로드 해야댐
-            audioFile = File(root.context.cacheDir, chat.url)
-            audioFile = audioFile?.copyTo(
-                target = File(root.context.cacheDir, chat.index.toString() + "" + chat.url),
-                overwrite = true
-            )
+    inner class VoiceChatMineViewHolder(
+        val binding: ItemVoiceChatMineBinding,
+    ) : ChatViewHolder(binding.root) {
 
-            vvVoiceVisualizer.visibility = View.VISIBLE
-            vvVoiceVisualizer.numColumns = 8
-            vvVoiceVisualizer.reset()
-            vvVoiceVisualizer.drawDefaultView()
+        var audioDuration: Long = 0
+        var audioFile: File? = null
+        var replayer: RecordingReplayer? = null
+        var timer: Timer? = null
+        var replayTime: Long = 0
+        var isPaused = false
 
-            audioDuration = 0
+        override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
+            val chat = item as VoiceChat
+
+            init(chat)
+
+            binding.run {
+                if (replayer?.isReplaying == true) {
+                    ivReplay.visibility = View.GONE
+                    ivPause.visibility = View.VISIBLE
+                    vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.main_500))
+                }
+                else {
+                    ivReplay.visibility = View.VISIBLE
+                    ivPause.visibility = View.GONE
+                    vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
+                }
+
+                vvVoiceVisualizer.visibility = View.VISIBLE
+
+                tvRead.text = root.context.getString(
+                    if (isPartnerInChat || chat.isRead) R.string.chat_read
+                    else R.string.chat_unread
+                )
+                tvTime.text = getFormatted(chat.createAt)
+
+                ivReplay.setOnClickListener {
+                    if (isPaused) resume()
+                    else replay()
+                }
+                ivPause.setOnClickListener { pause() }
+            }
+        }
+
+        private fun init(chat: VoiceChat) = binding.run {
+            if (audioFile == null) {
+                // TODO 나중에 오디오 파일 다운로드 해야댐
+                audioFile = File(root.context.cacheDir, chat.url)
+                audioFile = audioFile?.copyTo(
+                    target = File(root.context.cacheDir, chat.index.toString() + "" + chat.url),
+                    overwrite = true
+                )
+
+                vvVoiceVisualizer.visibility = View.VISIBLE
+                vvVoiceVisualizer.numColumns = 8
+                vvVoiceVisualizer.reset()
+                vvVoiceVisualizer.drawDefaultView()
+
+                audioDuration = 0
+                replayTime = 0
+                setAudioDuration()
+            }
+        }
+
+        private fun setAudioDuration() {
+            try {
+                val mmr = MediaMetadataRetriever()
+                mmr.setDataSource(binding.root.context, Uri.fromFile(audioFile))
+                val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                if (duration != null) {
+                    audioDuration = duration.toLong()
+                }
+            } catch (e: Exception) {
+                infoLog("audio duration error: ${e.localizedMessage}")
+                audioDuration = 0
+            }
+            setReplayTimeText(audioDuration)
+        }
+
+        private fun setReplayTimeText(replayTime: Long) = binding.run {
+            val totalSeconds = replayTime / 1000
+            val minutes = totalSeconds / 60
+            val seconds = totalSeconds % 60
+
+            val minutesStr = if (minutes < 10) "0$minutes" else minutes.toString()
+            val secondsStr = if (seconds < 10) "0$seconds" else seconds.toString()
+            tvReplayTime.text = "$minutesStr:$secondsStr"
+        }
+
+
+        fun replay() = binding.run {
+            if (audioFile == null || replayer?.isReplaying == true) return@run
+
+            replayer = RecordingReplayer(root.context, audioFile!!, vvVoiceVisualizer)
+            replayer?.replay()
+
+            ivReplay.visibility = View.GONE
+            ivPause.visibility = View.VISIBLE
+            vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.main_500))
+            isPaused = false
+
+            timer = Timer()
+            timer?.schedule(object: TimerTask(){
+                override fun run() {
+                    if (replayer?.isReplaying == true) {
+                        replayTime += 100
+
+                        if (replayTime <= audioDuration) {
+                            CoroutineScope(Dispatchers.Main).launch {
+                                setReplayTimeText(replayTime)
+                            }
+                        }
+                    }
+                    if (replayer?.isCompleted == true) {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            reset(isCompleted = true)
+                        }
+                    }
+                }
+            }, 100, 100)
+        }
+
+        fun pause() = binding.run {
+            replayer?.pause()
+            isPaused = true
+
+            vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
+            ivReplay.visibility = View.VISIBLE
+            ivPause.visibility = View.GONE
+        }
+
+        fun resume() = binding.run {
+            replayer?.resume()
+            isPaused = false
+
+            vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.main_500))
+            ivReplay.visibility = View.GONE
+            ivPause.visibility = View.VISIBLE
+        }
+
+        fun reset(isCompleted: Boolean = false) = binding.run {
+            isPaused = false
             replayTime = 0
             setAudioDuration()
+
+            replayer?.stop()
+            replayer = null
+            timer?.cancel()
+            timer = null
+
+            ivReplay.visibility = View.VISIBLE
+            ivPause.visibility = View.GONE
+
+            if (!isCompleted) {
+                vvVoiceVisualizer.reset()
+                vvVoiceVisualizer.drawDefaultView()
+            }
+            vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
         }
     }
 
-    private fun setAudioDuration() {
-        try {
+    inner class VoiceChatPartnerViewHolder(
+        val binding: ItemVoiceChatPartnerBinding,
+    ) : ChatViewHolder(binding.root) {
+
+        var audioDuration: Long = 0
+        var audioFile: File? = null
+        var replayer: RecordingReplayer? = null
+        var timer: Timer? = null
+        var replayTime: Long = 0
+        var isPaused = false
+
+        override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
+            val chat = item as VoiceChat
+
+            init(chat)
+
+            binding.run {
+                if (replayer?.isReplaying == true) {
+                    ivReplay.visibility = View.GONE
+                    ivPause.visibility = View.VISIBLE
+                    vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.main_500))
+                }
+                else {
+                    ivReplay.visibility = View.VISIBLE
+                    ivPause.visibility = View.GONE
+                    vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
+                }
+
+                vvVoiceVisualizer.visibility = View.VISIBLE
+
+                tvRead.visibility = View.GONE
+                tvRead.text = root.context.getString(
+                    if (chat.isRead) R.string.chat_read
+                    else R.string.chat_unread
+                )
+                tvTime.text = getFormatted(chat.createAt)
+
+                ivReplay.setOnClickListener {
+                    if (isPaused) resume()
+                    else replay()
+                }
+                ivPause.setOnClickListener { pause() }
+            }
+        }
+
+        private fun init(chat: VoiceChat) = binding.run {
+            if (audioFile == null) {
+                // TODO 나중에 오디오 파일 다운로드 해야댐
+                audioFile = File(root.context.cacheDir, chat.url)
+                audioFile = audioFile?.copyTo(
+                    target = File(root.context.cacheDir, chat.index.toString() + "" + chat.url),
+                    overwrite = true
+                )
+
+                vvVoiceVisualizer.visibility = View.VISIBLE
+                vvVoiceVisualizer.numColumns = 8
+                vvVoiceVisualizer.reset()
+                vvVoiceVisualizer.drawDefaultView()
+
+                audioDuration = 0
+                replayTime = 0
+                setAudioDuration()
+            }
+        }
+
+        private fun setAudioDuration() {
             val mmr = MediaMetadataRetriever()
             mmr.setDataSource(binding.root.context, Uri.fromFile(audioFile))
             val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
             if (duration != null) {
                 audioDuration = duration.toLong()
             }
-        } catch (e: Exception) {
-            infoLog("audio duration error: ${e.localizedMessage}")
-            audioDuration = 0
+            setReplayTimeText(audioDuration)
         }
-        setReplayTimeText(audioDuration)
-    }
 
-    private fun setReplayTimeText(replayTime: Long) = binding.run {
-        val totalSeconds = replayTime / 1000
-        val minutes = totalSeconds / 60
-        val seconds = totalSeconds % 60
+        private fun setReplayTimeText(replayTime: Long) = binding.run {
+            val totalSeconds = replayTime / 1000
+            val minutes = totalSeconds / 60
+            val seconds = totalSeconds % 60
 
-        val minutesStr = if (minutes < 10) "0$minutes" else minutes.toString()
-        val secondsStr = if (seconds < 10) "0$seconds" else seconds.toString()
-        tvReplayTime.text = "$minutesStr:$secondsStr"
-    }
+            val minutesStr = if (minutes < 10) "0$minutes" else minutes.toString()
+            val secondsStr = if (seconds < 10) "0$seconds" else seconds.toString()
+            tvReplayTime.text = "$minutesStr:$secondsStr"
+        }
 
 
-    fun replay() = binding.run {
-        if (audioFile == null || replayer?.isReplaying == true) return@run
+        fun replay() = binding.run {
+            if (audioFile == null || replayer?.isReplaying == true) return@run
 
-        replayer = RecordingReplayer(root.context, audioFile!!, vvVoiceVisualizer)
-        replayer?.replay()
+            replayer = RecordingReplayer(root.context, audioFile!!, vvVoiceVisualizer)
+            replayer?.replay()
 
-        ivReplay.visibility = View.GONE
-        ivPause.visibility = View.VISIBLE
-        vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.main_500))
-        isPaused = false
+            ivReplay.visibility = View.GONE
+            ivPause.visibility = View.VISIBLE
+            vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.main_500))
+            isPaused = false
 
-        timer = Timer()
-        timer?.schedule(object: TimerTask(){
-            override fun run() {
-                if (replayer?.isReplaying == true) {
-                    replayTime += 100
+            timer = Timer()
+            timer?.schedule(object: TimerTask(){
+                override fun run() {
+                    if (replayer?.isReplaying == true) {
+                        replayTime += 100
 
-                    if (replayTime <= audioDuration) {
+                        if (replayTime <= audioDuration) {
+                            CoroutineScope(Dispatchers.Main).launch {
+                                setReplayTimeText(replayTime)
+                            }
+                        }
+                    }
+                    if (replayer?.isCompleted == true) {
                         CoroutineScope(Dispatchers.Main).launch {
-                            setReplayTimeText(replayTime)
+                            reset(isCompleted = true)
                         }
                     }
                 }
-                if (replayer?.isCompleted == true) {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        reset(isCompleted = true)
-                    }
-                }
-            }
-        }, 100, 100)
-    }
-
-    fun pause() = binding.run {
-        replayer?.pause()
-        isPaused = true
-
-        vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
-        ivReplay.visibility = View.VISIBLE
-        ivPause.visibility = View.GONE
-    }
-
-    fun resume() = binding.run {
-        replayer?.resume()
-        isPaused = false
-
-        vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.main_500))
-        ivReplay.visibility = View.GONE
-        ivPause.visibility = View.VISIBLE
-    }
-
-    fun reset(isCompleted: Boolean = false) = binding.run {
-        isPaused = false
-        replayTime = 0
-        setAudioDuration()
-
-        replayer?.stop()
-        replayer = null
-        timer?.cancel()
-        timer = null
-
-        ivReplay.visibility = View.VISIBLE
-        ivPause.visibility = View.GONE
-
-        if (!isCompleted) {
-            vvVoiceVisualizer.reset()
-            vvVoiceVisualizer.drawDefaultView()
+            }, 100, 100)
         }
-        vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
-    }
-}
 
-class VoiceChatPartnerViewHolder(
-    val binding: ItemVoiceChatPartnerBinding,
-) : ChatViewHolder(binding.root) {
+        fun pause() = binding.run {
+            replayer?.pause()
+            isPaused = true
 
-    var audioDuration: Long = 0
-    var audioFile: File? = null
-    var replayer: RecordingReplayer? = null
-    var timer: Timer? = null
-    var replayTime: Long = 0
-    var isPaused = false
-
-    override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
-        val chat = item as VoiceChat
-
-        init(chat)
-
-        binding.run {
-            if (replayer?.isReplaying == true) {
-                ivReplay.visibility = View.GONE
-                ivPause.visibility = View.VISIBLE
-                vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.main_500))
-            }
-            else {
-                ivReplay.visibility = View.VISIBLE
-                ivPause.visibility = View.GONE
-                vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
-            }
-
-            vvVoiceVisualizer.visibility = View.VISIBLE
-
-            tvTime.text = getFormatted(chat.createAt)
-
-            ivReplay.setOnClickListener {
-                if (isPaused) resume()
-                else replay()
-            }
-            ivPause.setOnClickListener { pause() }
+            vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
+            ivReplay.visibility = View.VISIBLE
+            ivPause.visibility = View.GONE
         }
-    }
 
-    private fun init(chat: VoiceChat) = binding.run {
-        if (audioFile == null) {
-            // TODO 나중에 오디오 파일 다운로드 해야댐
-            audioFile = File(root.context.cacheDir, chat.url)
-            audioFile = audioFile?.copyTo(
-                target = File(root.context.cacheDir, chat.index.toString() + "" + chat.url),
-                overwrite = true
-            )
+        fun resume() = binding.run {
+            replayer?.resume()
+            isPaused = false
 
-            vvVoiceVisualizer.visibility = View.VISIBLE
-            vvVoiceVisualizer.numColumns = 8
-            vvVoiceVisualizer.reset()
-            vvVoiceVisualizer.drawDefaultView()
+            vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.main_500))
+            ivReplay.visibility = View.GONE
+            ivPause.visibility = View.VISIBLE
+        }
 
-            audioDuration = 0
+        fun reset(isCompleted: Boolean = false) = binding.run {
+            isPaused = false
             replayTime = 0
             setAudioDuration()
-        }
-    }
 
-    private fun setAudioDuration() {
-        val mmr = MediaMetadataRetriever()
-        mmr.setDataSource(binding.root.context, Uri.fromFile(audioFile))
-        val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-        if (duration != null) {
-            audioDuration = duration.toLong()
-        }
-        setReplayTimeText(audioDuration)
-    }
+            replayer?.stop()
+            replayer = null
+            timer?.cancel()
+            timer = null
 
-    private fun setReplayTimeText(replayTime: Long) = binding.run {
-        val totalSeconds = replayTime / 1000
-        val minutes = totalSeconds / 60
-        val seconds = totalSeconds % 60
+            ivReplay.visibility = View.VISIBLE
+            ivPause.visibility = View.GONE
 
-        val minutesStr = if (minutes < 10) "0$minutes" else minutes.toString()
-        val secondsStr = if (seconds < 10) "0$seconds" else seconds.toString()
-        tvReplayTime.text = "$minutesStr:$secondsStr"
-    }
-
-
-    fun replay() = binding.run {
-        if (audioFile == null || replayer?.isReplaying == true) return@run
-
-        replayer = RecordingReplayer(root.context, audioFile!!, vvVoiceVisualizer)
-        replayer?.replay()
-
-        ivReplay.visibility = View.GONE
-        ivPause.visibility = View.VISIBLE
-        vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.main_500))
-        isPaused = false
-
-        timer = Timer()
-        timer?.schedule(object: TimerTask(){
-            override fun run() {
-                if (replayer?.isReplaying == true) {
-                    replayTime += 100
-
-                    if (replayTime <= audioDuration) {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            setReplayTimeText(replayTime)
-                        }
-                    }
-                }
-                if (replayer?.isCompleted == true) {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        reset(isCompleted = true)
-                    }
-                }
+            if (!isCompleted) {
+                vvVoiceVisualizer.reset()
+                vvVoiceVisualizer.drawDefaultView()
             }
-        }, 100, 100)
-    }
-
-    fun pause() = binding.run {
-        replayer?.pause()
-        isPaused = true
-
-        vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
-        ivReplay.visibility = View.VISIBLE
-        ivPause.visibility = View.GONE
-    }
-
-    fun resume() = binding.run {
-        replayer?.resume()
-        isPaused = false
-
-        vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.main_500))
-        ivReplay.visibility = View.GONE
-        ivPause.visibility = View.VISIBLE
-    }
-
-    fun reset(isCompleted: Boolean = false) = binding.run {
-        isPaused = false
-        replayTime = 0
-        setAudioDuration()
-
-        replayer?.stop()
-        replayer = null
-        timer?.cancel()
-        timer = null
-
-        ivReplay.visibility = View.VISIBLE
-        ivPause.visibility = View.GONE
-
-        if (!isCompleted) {
-            vvVoiceVisualizer.reset()
-            vvVoiceVisualizer.drawDefaultView()
+            vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
         }
-        vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
     }
 }

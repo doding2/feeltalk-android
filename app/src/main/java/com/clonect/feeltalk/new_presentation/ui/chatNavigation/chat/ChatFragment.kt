@@ -456,15 +456,20 @@ class ChatFragment : Fragment() {
             launch { viewModel.isKeyboardUp.collectLatest(::applyKeyboardUp) }
 
             launch {
+                viewModel.scrollToBottom.collectLatest {
+                    if (it) scrollToBottom()
+                }
+            }
+            launch {
                 viewModel.pagingChat.collectLatest {
                     adapter.submitData(viewLifecycleOwner.lifecycle,
                         it.insertSeparators { before, after ->
                             val beforeCreate = before?.createAt?.substringBefore("T")
                             val afterCreate = after?.createAt?.substringBefore("T")
 
-                            return@insertSeparators if (beforeCreate == null && afterCreate != null) {
+                            return@insertSeparators if (beforeCreate.isNullOrBlank() && !afterCreate.isNullOrBlank()) {
                                 DividerChat(afterCreate)
-                            } else if (beforeCreate != null && afterCreate != null && beforeCreate != afterCreate) {
+                            } else if (!beforeCreate.isNullOrBlank() && !afterCreate.isNullOrBlank() && beforeCreate != afterCreate) {
                                 DividerChat(afterCreate)
                             } else {
                                 null
@@ -473,27 +478,11 @@ class ChatFragment : Fragment() {
                     )
                 }
             }
-
-//            launch {
-//                viewModel.chatList.collectLatest { newChatList ->
-//                    adapter.submitList(
-//                        newChatList.groupBy {
-//                            it.createAt.substringBefore("T")
-//                        }.map {
-//                            val divider = DividerChat(it.key)
-//                            val list = it.value
-//                                .toMutableList()
-//                                .apply {
-//                                    add(0, divider)
-//                                }
-//                            list
-//                        }.flatten()
-//                    )
-//                }
-//            }
             launch {
-                viewModel.scrollToBottom.collectLatest {
-                    if (it) scrollToBottom()
+                viewModel.isPartnerInChat.collectLatest {
+                    if (it != null) {
+                        adapter.setPartnerInChat(it)
+                    }
                 }
             }
             launch {
