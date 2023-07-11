@@ -65,7 +65,7 @@ class MainViewModel @Inject constructor(
                     }
                 }
                 _isLoggedIn.value = true
-                infoLog("Success to auto log")
+                infoLog("Success to auto log in")
             }
             is Resource.Error -> {
                 _isLoggedIn.value = false
