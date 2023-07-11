@@ -40,6 +40,7 @@ class AgreementFragment : Fragment() {
 
         collectViewModel()
         enableNextButton(isRequirementAllAgreed())
+        viewModel.setSignUpProcess(33)
         viewModel.getSocialToken()
         viewModel.setCurrentPage("agreement")
 
@@ -147,8 +148,6 @@ class AgreementFragment : Fragment() {
             spacerAgreement.visibility = View.VISIBLE
             clAgreeAll.visibility = View.VISIBLE
             llSubAgreements.visibility = View.VISIBLE
-
-            viewModel.setSignUpProcess(33)
         } else {
             spacerAdult.visibility = View.VISIBLE
             tvAdultAnnounce.visibility = View.VISIBLE

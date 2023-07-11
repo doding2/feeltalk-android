@@ -24,15 +24,16 @@ import java.util.*
 
 class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallback) {
 
-    private val viewHolders = mutableListOf<ChatViewHolder>()
-    private val voiceViewHolders = mutableListOf<ChatViewHolder>()
-
-    private var onQuestionAnswerButtonClick: ((QuestionChat) -> Unit)? = null
-
-    private var isPartnerInChat = false
     private var myNickname: String? = null
     private var partnerNickname: String? = null
     private var partnerProfileUrl: String? = null
+
+    private val viewHolders = mutableListOf<ChatViewHolder>()
+    private val voiceViewHolders = mutableListOf<ChatViewHolder>()
+
+    private var isPartnerInChat = false
+
+    private var onQuestionAnswerButtonClick: ((QuestionChat) -> Unit)? = null
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
@@ -66,7 +67,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 ChatDividerViewHolder(binding)
             }
         }
-        voiceViewHolders.add(viewHolder)
+        viewHolders.add(viewHolder)
         return viewHolder
     }
 
@@ -153,7 +154,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
             return
         val readText = viewHolders.first().root.context.getString(R.string.chat_read)
         for (holder in viewHolders) {
-            val tvRead = holder.root.findViewById<TextView>(R.id.tv_read)
+            val tvRead = holder.root.findViewById<TextView>(R.id.tv_read) ?: continue
             tvRead.text = readText
         }
     }

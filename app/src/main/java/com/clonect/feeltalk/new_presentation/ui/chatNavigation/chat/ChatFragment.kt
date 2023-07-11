@@ -195,7 +195,6 @@ class ChatFragment : Fragment() {
                 super.onScrollStateChanged(recyclerView, newState)
                 val isInBottom = !recyclerView.canScrollVertically(10)
 
-                infoLog("isInBottom: ${isInBottom}")
                 if (viewModel.isUserInChat.value == true) {
                     viewModel.setUserInBottom(isInBottom)
                 }
