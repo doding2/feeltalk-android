@@ -128,7 +128,9 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
     private fun handleCreateCoupleData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
 
-        CreateCoupleObserver.getInstance().setCoupleCreated(true)
+        CreateCoupleObserver
+            .getInstance()
+            .setCoupleCreated(true)
 
         if (FeeltalkApp.getAppScreenRunning()) {
             return@launch
@@ -511,6 +513,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     ) {
         CoroutineScope(Dispatchers.Main).launch {
             val appSettings = getAppSettingsUseCase()
+            infoLog("isPushNotificationEnabled: ${appSettings.isPushNotificationEnabled}")
             if (!appSettings.isPushNotificationEnabled) return@launch
 
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
