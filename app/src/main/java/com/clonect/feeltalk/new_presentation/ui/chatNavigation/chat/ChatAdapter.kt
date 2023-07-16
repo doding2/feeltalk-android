@@ -210,6 +210,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
         abstract fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?)
 
+        open fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) { }
+
         fun getFormatted(date: String): String {
             return date.substringAfter("T").substringBeforeLast(":")
         }
@@ -252,12 +254,12 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 }
 
 
-                makeMeContinuous(prevItem, item, nextItem)
+                makeContinuous(prevItem, item, nextItem)
             }
         }
 
 
-        private fun makeMeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+        override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
             root.updateLayoutParams<RecyclerView.LayoutParams> {
                 val margin = root.context.dpToPx(8f).toInt()
                 topMargin = margin
@@ -301,10 +303,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 val position = snapshot().items.indexOf(prevItem)
                 val prevPrevItem = if (position - 1 < 0) null
                 else snapshot().items[position - 1]
-                if (prevItem != null && prevPrevItem != null
-                    && prevPrevItem.chatSender == prevItem.chatSender
-                    && prevPrevItem.createAt.substringBeforeLast(":") == prevItem.createAt.substringBeforeLast(":")) {
-                    viewHolders[prevItem]?.bind(prevPrevItem, prevItem, item)
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
                 }
             }
         }
@@ -328,12 +328,12 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 //            tvPartnerNickname.text = "연인 닉네임"
 //            ivPartnerProfile.setImageResource()
 
-                makePartnerContinuous(prevItem, item, nextItem)
+                makeContinuous(prevItem, item, nextItem)
             }
         }
 
 
-        private fun makePartnerContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+        override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
             root.updateLayoutParams<RecyclerView.LayoutParams> {
                 val margin = root.context.dpToPx(8f).toInt()
                 topMargin = margin
@@ -377,10 +377,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 val position = snapshot().items.indexOf(prevItem)
                 val prevPrevItem = if (position - 1 < 0) null
                 else snapshot().items[position - 1]
-                if (prevItem != null && prevPrevItem != null
-                    && prevPrevItem.chatSender == prevItem.chatSender
-                    && prevPrevItem.createAt.substringBeforeLast(":") == prevItem.createAt.substringBeforeLast(":")) {
-                    viewHolders[prevItem]?.bind(prevPrevItem, prevItem, item)
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
                 }
             }
         }
@@ -436,7 +434,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                     tvTime.visibility = View.VISIBLE
                 }
 
-                makeMeContinuous(prevItem, item, nextItem)
+                makeContinuous(prevItem, item, nextItem)
             }
         }
 
@@ -558,7 +556,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
 
 
-        private fun makeMeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+        override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
             root.updateLayoutParams<RecyclerView.LayoutParams> {
                 val margin = root.context.dpToPx(8f).toInt()
                 topMargin = margin
@@ -602,10 +600,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 val position = snapshot().items.indexOf(prevItem)
                 val prevPrevItem = if (position - 1 < 0) null
                 else snapshot().items[position - 1]
-                if (prevItem != null && prevPrevItem != null
-                    && prevPrevItem.chatSender == prevItem.chatSender
-                    && prevPrevItem.createAt.substringBeforeLast(":") == prevItem.createAt.substringBeforeLast(":")) {
-                    viewHolders[prevItem]?.bind(prevPrevItem, prevItem, item)
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
                 }
             }
         }
@@ -657,7 +653,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 ivPause.setOnClickListener { pause() }
 
 
-                makePartnerContinuous(prevItem, item, nextItem)
+                makeContinuous(prevItem, item, nextItem)
             }
         }
 
@@ -773,7 +769,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
         }
 
 
-        private fun makePartnerContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+        override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
             root.updateLayoutParams<RecyclerView.LayoutParams> {
                 val margin = root.context.dpToPx(8f).toInt()
                 topMargin = margin
@@ -817,10 +813,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 val position = snapshot().items.indexOf(prevItem)
                 val prevPrevItem = if (position - 1 < 0) null
                 else snapshot().items[position - 1]
-                if (prevItem != null && prevPrevItem != null
-                    && prevPrevItem.chatSender == prevItem.chatSender
-                    && prevPrevItem.createAt.substringBeforeLast(":") == prevItem.createAt.substringBeforeLast(":")) {
-                    viewHolders[prevItem]?.bind(prevPrevItem, prevItem, item)
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
                 }
             }
         }
