@@ -93,16 +93,14 @@ class MainNavigationFragment : Fragment() {
         }
     }
 
+    private fun changeLatestChatMessage(message: String?) = binding.run {
+        tvLatestChat.text = message ?: "(연인에게 온 채팅)"
+    }
+
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.showChatNavigation.collectLatest(::showChatSheet) }
+            launch { viewModel.latestPartnerChat.collectLatest(::changeLatestChatMessage) }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-//            WindowCompat.setDecorFitsSystemWindows(requireActivity().window, true)
-//        }
     }
 }
