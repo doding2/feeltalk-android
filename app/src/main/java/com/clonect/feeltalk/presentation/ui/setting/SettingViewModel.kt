@@ -9,7 +9,7 @@ import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.user.*
-import com.clonect.feeltalk.presentation.utils.AppSettings
+import com.clonect.feeltalk.new_domain.model.appSettings.AppSettings
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -49,7 +49,7 @@ class SettingViewModel @Inject constructor(
     val isPushNotificationEnabled = _isPushNotificationEnabled.asStateFlow()
 
     private var _isUsageInfoNotificationEnabled: MutableStateFlow<Boolean> =
-        MutableStateFlow(appSettings.isUsageInfoNotificationEnabled)
+        MutableStateFlow(false)
     val isUsageInfoNotificationEnabled = _isUsageInfoNotificationEnabled.asStateFlow()
 
 
@@ -107,7 +107,6 @@ class SettingViewModel @Inject constructor(
                     unsubscribeFromTopic(Topics.UsageInfo.text)
                 }
                 appSettings.fcmToken = it
-                appSettings.isUsageInfoNotificationEnabled = enabled
                 saveAppSettings(appSettings)
                 _isUsageInfoNotificationEnabled.value = enabled
             }

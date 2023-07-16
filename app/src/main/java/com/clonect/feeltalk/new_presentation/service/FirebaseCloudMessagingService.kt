@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.service.notification_observer
+package com.clonect.feeltalk.new_presentation.service
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -17,6 +17,9 @@ import com.clonect.feeltalk.domain.usecase.user.SetUserIsActiveUseCase
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
+import com.clonect.feeltalk.new_presentation.service.notification_observer.CreateCoupleObserver
+import com.clonect.feeltalk.new_presentation.service.notification_observer.NewChatObserver
+import com.clonect.feeltalk.new_presentation.service.notification_observer.PartnerChatRoomStateObserver
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
 import com.clonect.feeltalk.presentation.utils.infoLog
@@ -128,8 +131,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
     private fun handleCreateCoupleData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
 
-        CreateCoupleObserver
-            .getInstance()
+        CreateCoupleObserver.getInstance()
             .setCoupleCreated(true)
 
         if (FeeltalkApp.getAppScreenRunning()) {
@@ -155,8 +157,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
     private fun handleChatRoomStateData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
         val isInChat = data["isInChat"]?.toBoolean() ?: return@launch
-        PartnerChatRoomStateObserver
-            .getInstance()
+        PartnerChatRoomStateObserver.getInstance()
             .setInChat(isInChat)
     }
 
@@ -167,8 +168,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         val isRead = data["isRead"]?.toBoolean() ?: return@launch
         val createAt = data["createAt"] ?: return@launch
 
-        NewChatObserver
-            .getInstance()
+        NewChatObserver.getInstance()
             .setNewChat(
                 TextChat(
                     index = index,
@@ -198,7 +198,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             message = message,
             notificationID = CHAT_CHANNEL_ID.toBytesInt(),
             channelID = CHAT_CHANNEL_ID,
-            pendingIntent = pendingIntent
+            pendingIntent = pendingIntent,
         )
     }
 
@@ -511,11 +511,9 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         channelID: String,
         pendingIntent: PendingIntent?,
     ) {
-        val appSettings = getAppSettingsUseCase()
-        infoLog("isPushNotificationEnabled: ${appSettings.isPushNotificationEnabled}")
-        if (!appSettings.isPushNotificationEnabled) return
-
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val activeCount = notificationManager.activeNotifications.size
+        infoLog("activeCount: $activeCount")
 
         createNotificationChannel(
             notificationManager = notificationManager,
@@ -531,6 +529,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
             .setGroup(NOTIFICATION_GROUP)
+            .setNumber(if (activeCount <= 0) 1 else activeCount + 1)
             .build()
 
         val groupNotification = NotificationCompat.Builder(applicationContext, channelID)
@@ -540,6 +539,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             .setGroup(NOTIFICATION_GROUP)
             .setGroupSummary(true)
             .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_ALL)
+            .setNumber(activeCount + 1)
             .build()
 
         notificationManager.notify(notificationID, notification)

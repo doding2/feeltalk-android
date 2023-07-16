@@ -157,7 +157,7 @@ class ChatViewModel @Inject constructor(
         _textChat.value = ""
         onStart()
 
-        val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         val now = Date()
 
         val loadingTextChat = TextChat(
@@ -165,7 +165,7 @@ class ChatViewModel @Inject constructor(
             pageNo = 0,
             chatSender = "me",
             isRead = true,
-            createAt = formatter.format(now),
+            createAt = format.format(now),
             isSending = true,
             message = message
         )

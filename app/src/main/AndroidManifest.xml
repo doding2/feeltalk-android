@@ -58,7 +58,7 @@
         </activity>
 
         <service
-            android:name=".new_presentation.service.notification_observer.FirebaseCloudMessagingService"
+            android:name=".new_presentation.service.FirebaseCloudMessagingService"
             android:directBootAware="true"
             android:exported="true"
             android:permission="com.google.android.c2dm.permission.SEND">

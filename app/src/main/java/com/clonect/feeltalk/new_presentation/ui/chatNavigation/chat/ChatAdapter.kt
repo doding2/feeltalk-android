@@ -261,9 +261,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
         override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
             root.updateLayoutParams<RecyclerView.LayoutParams> {
-                val margin = root.context.dpToPx(8f).toInt()
-                topMargin = margin
-                bottomMargin = margin
+                topMargin = defaultVerticalMargin
+                bottomMargin = defaultVerticalMargin
             }
 
             if (item.isSending)
@@ -275,18 +274,25 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
             if (isMiddleChat) {
                 root.updateLayoutParams<RecyclerView.LayoutParams> {
-                    topMargin = root.context.dpToPx(2f).toInt()
-                    bottomMargin = root.context.dpToPx(2f).toInt()
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = continuousVerticalMargin
                 }
                 tvRead.visibility = View.GONE
                 tvTime.visibility = View.GONE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
                 return@run
             }
 
             if (isStartChat) {
                 root.updateLayoutParams<RecyclerView.LayoutParams> {
-                    topMargin = root.context.dpToPx(8f).toInt()
-                    bottomMargin = root.context.dpToPx(2f).toInt()
+                    topMargin = defaultVerticalMargin
+                    bottomMargin = continuousVerticalMargin
                 }
                 tvRead.visibility = View.GONE
                 tvTime.visibility = View.GONE
@@ -294,8 +300,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
             if (isEndChat) {
                 root.updateLayoutParams<RecyclerView.LayoutParams> {
-                    topMargin = root.context.dpToPx(2f).toInt()
-                    bottomMargin = root.context.dpToPx(8f).toInt()
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = defaultVerticalMargin
                 }
                 tvRead.visibility = View.VISIBLE
                 tvTime.visibility = View.VISIBLE
@@ -335,9 +341,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
         override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
             root.updateLayoutParams<RecyclerView.LayoutParams> {
-                val margin = root.context.dpToPx(8f).toInt()
-                topMargin = margin
-                bottomMargin = margin
+                topMargin = defaultVerticalMargin
+                bottomMargin = defaultVerticalMargin
             }
 
             if (item.isSending)
@@ -349,18 +354,25 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
             if (isMiddleChat) {
                 root.updateLayoutParams<RecyclerView.LayoutParams> {
-                    topMargin = root.context.dpToPx(2f).toInt()
-                    bottomMargin = root.context.dpToPx(2f).toInt()
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = continuousVerticalMargin
                 }
                 tvTime.visibility = View.GONE
                 llPartnerInfo.visibility = View.GONE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
                 return@run
             }
 
             if (isStartChat) {
                 root.updateLayoutParams<RecyclerView.LayoutParams> {
-                    topMargin = root.context.dpToPx(8f).toInt()
-                    bottomMargin = root.context.dpToPx(2f).toInt()
+                    topMargin = defaultVerticalMargin
+                    bottomMargin = continuousVerticalMargin
                 }
                 tvTime.visibility = View.GONE
                 llPartnerInfo.visibility = View.VISIBLE
@@ -368,8 +380,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
             if (isEndChat) {
                 root.updateLayoutParams<RecyclerView.LayoutParams> {
-                    topMargin = root.context.dpToPx(2f).toInt()
-                    bottomMargin = root.context.dpToPx(8f).toInt()
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = defaultVerticalMargin
                 }
                 tvTime.visibility = View.VISIBLE
                 llPartnerInfo.visibility = View.GONE
@@ -558,9 +570,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
         override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
             root.updateLayoutParams<RecyclerView.LayoutParams> {
-                val margin = root.context.dpToPx(8f).toInt()
-                topMargin = margin
-                bottomMargin = margin
+                topMargin = defaultVerticalMargin
+                bottomMargin = defaultVerticalMargin
             }
 
             if (item.isSending)
@@ -572,18 +583,25 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
             if (isMiddleChat) {
                 root.updateLayoutParams<RecyclerView.LayoutParams> {
-                    topMargin = root.context.dpToPx(2f).toInt()
-                    bottomMargin = root.context.dpToPx(2f).toInt()
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = continuousVerticalMargin
                 }
                 tvRead.visibility = View.GONE
                 tvTime.visibility = View.GONE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
                 return@run
             }
 
             if (isStartChat) {
                 root.updateLayoutParams<RecyclerView.LayoutParams> {
-                    topMargin = root.context.dpToPx(8f).toInt()
-                    bottomMargin = root.context.dpToPx(2f).toInt()
+                    topMargin = defaultVerticalMargin
+                    bottomMargin = continuousVerticalMargin
                 }
                 tvRead.visibility = View.GONE
                 tvTime.visibility = View.GONE
@@ -591,8 +609,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
             if (isEndChat) {
                 root.updateLayoutParams<RecyclerView.LayoutParams> {
-                    topMargin = root.context.dpToPx(2f).toInt()
-                    bottomMargin = root.context.dpToPx(8f).toInt()
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = defaultVerticalMargin
                 }
                 tvRead.visibility = View.VISIBLE
                 tvTime.visibility = View.VISIBLE
@@ -771,9 +789,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
         override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
             root.updateLayoutParams<RecyclerView.LayoutParams> {
-                val margin = root.context.dpToPx(8f).toInt()
-                topMargin = margin
-                bottomMargin = margin
+                topMargin = defaultVerticalMargin
+                bottomMargin = defaultVerticalMargin
             }
 
             if (item.isSending)
@@ -785,18 +802,25 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
             if (isMiddleChat) {
                 root.updateLayoutParams<RecyclerView.LayoutParams> {
-                    topMargin = root.context.dpToPx(2f).toInt()
-                    bottomMargin = root.context.dpToPx(2f).toInt()
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = continuousVerticalMargin
                 }
                 tvTime.visibility = View.GONE
                 llPartnerInfo.visibility = View.GONE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
                 return@run
             }
 
             if (isStartChat) {
                 root.updateLayoutParams<RecyclerView.LayoutParams> {
-                    topMargin = root.context.dpToPx(8f).toInt()
-                    bottomMargin = root.context.dpToPx(2f).toInt()
+                    topMargin = defaultVerticalMargin
+                    bottomMargin = continuousVerticalMargin
                 }
                 tvTime.visibility = View.GONE
                 llPartnerInfo.visibility = View.VISIBLE
@@ -804,8 +828,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
             if (isEndChat) {
                 root.updateLayoutParams<RecyclerView.LayoutParams> {
-                    topMargin = root.context.dpToPx(2f).toInt()
-                    bottomMargin = root.context.dpToPx(8f).toInt()
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = defaultVerticalMargin
                 }
                 tvTime.visibility = View.VISIBLE
                 llPartnerInfo.visibility = View.GONE

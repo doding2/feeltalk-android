@@ -5,12 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.notification.Topics
-import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
-import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.encryption.CheckKeyPairsExistUseCase
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetUserInfoUseCase
-import com.clonect.feeltalk.presentation.utils.AppSettings
+import com.clonect.feeltalk.new_domain.model.appSettings.AppSettings
+import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
+import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -53,7 +53,6 @@ class BottomNavigationViewModel @Inject constructor(
     private fun initFirebase() {
         appSettings.run {
             enablePushNotificationEnabled(isPushNotificationEnabled)
-            enableUsageInfoNotification(isUsageInfoNotificationEnabled)
         }
     }
 
@@ -111,7 +110,6 @@ class BottomNavigationViewModel @Inject constructor(
                     unsubscribeFromTopic(Topics.UsageInfo.text)
                 }
                 appSettings.fcmToken = it
-                appSettings.isUsageInfoNotificationEnabled = enabled
                 saveAppSettings(appSettings)
             }
         }

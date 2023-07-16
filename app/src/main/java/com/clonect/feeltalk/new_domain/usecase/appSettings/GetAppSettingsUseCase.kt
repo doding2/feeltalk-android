@@ -2,7 +2,7 @@ package com.clonect.feeltalk.new_domain.usecase.appSettings
 
 import android.content.SharedPreferences
 import com.clonect.feeltalk.new_data.util.AppLevelEncryptHelper
-import com.clonect.feeltalk.presentation.utils.AppSettings
+import com.clonect.feeltalk.new_domain.model.appSettings.AppSettings
 
 class GetAppSettingsUseCase(
     private val settingsPref: SharedPreferences,
@@ -19,14 +19,7 @@ class GetAppSettingsUseCase(
                     "isPushNotificationEnabled",
                     false
                 ),
-                isUsageInfoNotificationEnabled = getBoolean(
-                    "isUsageInfoNotificationEnabled",
-                    false,
-                ),
-                isNotificationUpdated = getBoolean(
-                    "isNotificationUpdated",
-                    false
-                ),
+                unreadChatNotifications = getLong("unreadChatNotifications", 0L),
                 fcmToken = getString(
                     "fcmToken",
                     null,

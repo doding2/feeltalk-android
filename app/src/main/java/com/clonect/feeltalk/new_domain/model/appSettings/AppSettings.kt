@@ -1,11 +1,10 @@
-package com.clonect.feeltalk.presentation.utils
+package com.clonect.feeltalk.new_domain.model.appSettings
 
 import java.io.Serializable
 
 data class AppSettings(
     var isAppSettingsNotChanged: Boolean = true,
     var isPushNotificationEnabled: Boolean = false,
-    var isUsageInfoNotificationEnabled: Boolean = false,
-    var isNotificationUpdated: Boolean = false,
+    var unreadChatNotifications: Long = 0,
     var fcmToken: String? = null
 ): Serializable

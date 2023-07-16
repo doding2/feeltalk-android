@@ -13,7 +13,7 @@ import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionAnswersFromServer
 import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionUseCase
 import com.clonect.feeltalk.domain.usecase.user.*
-import com.clonect.feeltalk.presentation.utils.AppSettings
+import com.clonect.feeltalk.new_domain.model.appSettings.AppSettings
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope

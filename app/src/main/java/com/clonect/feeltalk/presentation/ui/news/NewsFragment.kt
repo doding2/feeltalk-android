@@ -45,7 +45,7 @@ class NewsFragment : Fragment() {
 
     private fun updateHomeNotificationIconState() {
         val appSettings = viewModel.getAppSettings().apply {
-            isNotificationUpdated = false
+//            isNotificationUpdated = false
         }
         viewModel.saveAppSettings(appSettings)
     }
