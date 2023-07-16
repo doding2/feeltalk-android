@@ -193,12 +193,17 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             )
             .createPendingIntent()
 
+        val appSettings = getAppSettingsUseCase()
+        appSettings.activeChatNotification += 1
+        saveAppSettingsUseCase(appSettings)
+
         showNotification(
             title = "연인",
             message = message,
             notificationID = CHAT_CHANNEL_ID.toBytesInt(),
             channelID = CHAT_CHANNEL_ID,
             pendingIntent = pendingIntent,
+            activeNotificationCount = appSettings.activeChatNotification
         )
     }
 
@@ -510,10 +515,10 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         notificationID: Int = System.currentTimeMillis().toInt(),
         channelID: String,
         pendingIntent: PendingIntent?,
+        activeNotificationCount: Int = 0
     ) {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val activeCount = notificationManager.activeNotifications.size
-        infoLog("activeCount: $activeCount")
+        infoLog("activeCount: $activeNotificationCount")
 
         createNotificationChannel(
             notificationManager = notificationManager,
@@ -529,7 +534,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
             .setGroup(NOTIFICATION_GROUP)
-            .setNumber(if (activeCount <= 0) 1 else activeCount + 1)
+            .setNumber(if (activeNotificationCount <= 0) 1 else activeNotificationCount)
             .build()
 
         val groupNotification = NotificationCompat.Builder(applicationContext, channelID)
@@ -539,7 +544,6 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             .setGroup(NOTIFICATION_GROUP)
             .setGroupSummary(true)
             .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_ALL)
-            .setNumber(activeCount + 1)
             .build()
 
         notificationManager.notify(notificationID, notification)

@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.new_domain.model.chat.ChatType
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
+import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
+import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.new_presentation.service.notification_observer.NewChatObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +16,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainNavigationViewModel @Inject constructor(): ViewModel() {
+class MainNavigationViewModel @Inject constructor(
+    private val getAppSettingsUseCase: GetAppSettingsUseCase,
+    private val saveAppSettingsUseCase: SaveAppSettingsUseCase,
+): ViewModel() {
 
     private val _latestPartnerChat = MutableStateFlow<String?>(null)
     val latestPartnerChat = _latestPartnerChat.asStateFlow()
@@ -32,10 +37,14 @@ class MainNavigationViewModel @Inject constructor(): ViewModel() {
         _showChatNavigation.value = _showChatNavigation.value.not()
     }
 
-    fun setShowChatNavigation(showChat: Boolean) {
+    fun setShowChatNavigation(showChat: Boolean) = viewModelScope.launch {
         if (isArgumentsInit) {
             isArgumentsInit = false
             _showChatNavigation.value = showChat
+
+            val appSettings = getAppSettingsUseCase()
+            appSettings.activeChatNotification = 0
+            saveAppSettingsUseCase(appSettings)
         }
     }
 

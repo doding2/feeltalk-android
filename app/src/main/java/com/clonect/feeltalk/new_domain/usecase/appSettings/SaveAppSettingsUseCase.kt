@@ -27,7 +27,7 @@ class SaveAppSettingsUseCase(
             appSettings.run {
                 putBoolean("isAppSettingsNotChanged", false)
                 putBoolean("isPushNotificationEnabled", isPushNotificationEnabled)
-                putLong("unreadChatNotifications", unreadChatNotifications)
+                putInt("activeChatNotification", activeChatNotification)
                 putString("fcmToken", appSettings.fcmToken?.let { appLevelEncryptHelper.encrypt("fcmToken", it) })
             }
         }

@@ -19,7 +19,7 @@ class GetAppSettingsUseCase(
                     "isPushNotificationEnabled",
                     false
                 ),
-                unreadChatNotifications = getLong("unreadChatNotifications", 0L),
+                activeChatNotification = getInt("activeChatNotification", 0),
                 fcmToken = getString(
                     "fcmToken",
                     null,
