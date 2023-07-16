@@ -26,9 +26,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentChatBinding
 import com.clonect.feeltalk.new_domain.model.chat.DividerChat
+import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
-import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -191,6 +191,22 @@ class ChatFragment : Fragment() {
 
 
     private fun setRecyclerView() = binding.run {
+        rvChat.setRecycledViewPool(RecyclerView.RecycledViewPool().apply {
+            setMaxRecycledViews(ChatAdapter.TYPE_TEXT_MINE, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_TEXT_PARTNER, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_VOICE_MINE, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_VOICE_PARTNER, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_EMOJI_MINE, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_EMOJI_PARTNER, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_IMAGE_MINE, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_IMAGE_PARTNER, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_VIDEO_MINE, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_VIDEO_PARTNER, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_CHALLENGE_MINE, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_CHALLENGE_PARTNER, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_QUESTION_MINE, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_QUESTION_PARTNER, 0)
+        })
         rvChat.adapter = adapter.apply {
             setMyNickname("me")
             setPartnerNickname("partner")

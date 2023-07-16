@@ -525,8 +525,11 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             channelID = channelID
         )
 
+        val count = if (activeNotificationCount <= 0) 1 else activeNotificationCount
+        val titleWithCount = "$title $count"
+
         val notification = NotificationCompat.Builder(applicationContext, channelID)
-            .setContentTitle(title)
+            .setContentTitle(titleWithCount)
             .setContentText(message)
             .setSmallIcon(R.mipmap.ic_launcher_round)
             .setColor(ContextCompat.getColor(applicationContext, R.color.white))
@@ -534,7 +537,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
             .setGroup(NOTIFICATION_GROUP)
-            .setNumber(if (activeNotificationCount <= 0) 1 else activeNotificationCount)
+            .setNumber(count)
             .build()
 
         val groupNotification = NotificationCompat.Builder(applicationContext, channelID)
@@ -544,6 +547,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             .setGroup(NOTIFICATION_GROUP)
             .setGroupSummary(true)
             .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_ALL)
+            .setNumber(count)
             .build()
 
         notificationManager.notify(notificationID, notification)
@@ -564,6 +568,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 description = channelDescription
+                setShowBadge(true)
             }
             notificationManager.createNotificationChannel(channel)
         }

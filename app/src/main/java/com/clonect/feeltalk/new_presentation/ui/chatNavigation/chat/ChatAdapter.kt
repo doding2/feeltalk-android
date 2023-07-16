@@ -80,6 +80,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
         if (item != null) {
             viewHolders[item] = holder
             holder.bind(prevItem, item, nextItem)
+
         }
     }
 
@@ -126,6 +127,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
         }
     }
 
+
     fun setOnQuestionAnswerButtonClick(onClick: ((QuestionChat) -> Unit)) {
         onQuestionAnswerButtonClick = onClick
     }
@@ -160,6 +162,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
     }
 
 
+
     companion object {
         private val diffCallback = object: DiffUtil.ItemCallback<Chat>() {
             override fun areItemsTheSame(oldItem: Chat, newItem: Chat): Boolean {
@@ -179,26 +182,26 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
         private const val TYPE_DIVIDER = 0
 
-        private const val TYPE_TEXT_MINE = 1
-        private const val TYPE_TEXT_PARTNER = 2
+        const val TYPE_TEXT_MINE = 1
+        const val TYPE_TEXT_PARTNER = 2
 
-        private const val TYPE_VOICE_MINE = 3
-        private const val TYPE_VOICE_PARTNER = 4
+        const val TYPE_VOICE_MINE = 3
+        const val TYPE_VOICE_PARTNER = 4
 
-        private const val TYPE_EMOJI_MINE = 5
-        private const val TYPE_EMOJI_PARTNER = 6
+        const val TYPE_EMOJI_MINE = 5
+        const val TYPE_EMOJI_PARTNER = 6
 
-        private const val TYPE_IMAGE_MINE = 7
-        private const val TYPE_IMAGE_PARTNER = 8
+        const val TYPE_IMAGE_MINE = 7
+        const val TYPE_IMAGE_PARTNER = 8
 
-        private const val TYPE_VIDEO_MINE = 9
-        private const val TYPE_VIDEO_PARTNER = 10
+        const val TYPE_VIDEO_MINE = 9
+        const val TYPE_VIDEO_PARTNER = 10
 
-        private const val TYPE_CHALLENGE_MINE = 11
-        private const val TYPE_CHALLENGE_PARTNER = 12
+        const val TYPE_CHALLENGE_MINE = 11
+        const val TYPE_CHALLENGE_PARTNER = 12
 
-        private const val TYPE_QUESTION_MINE = 13
-        private const val TYPE_QUESTION_PARTNER = 14
+        const val TYPE_QUESTION_MINE = 13
+        const val TYPE_QUESTION_PARTNER = 14
     }
 
 
@@ -230,6 +233,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
         }
     }
 
+
     inner class TextChatMineViewHolder(
         val binding: ItemTextChatMineBinding,
     ) : ChatViewHolder(binding.root) {
@@ -253,7 +257,6 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                     tvTime.visibility = View.VISIBLE
                 }
 
-
                 makeContinuous(prevItem, item, nextItem)
             }
         }
@@ -265,12 +268,21 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 bottomMargin = defaultVerticalMargin
             }
 
-            if (item.isSending)
-                return
+            tvRead.visibility = View.VISIBLE
+            tvTime.visibility = View.VISIBLE
 
-            val isStartChat = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
-            val isEndChat = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
-            val isMiddleChat = isStartChat && isEndChat
+            if (item.isSending) {
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+                return
+            }
+
+            val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+
+            val isStartChat = !isTopSame && isBottomSame
+            val isEndChat = isTopSame && !isBottomSame
+            val isMiddleChat = isTopSame && isBottomSame
 
             if (isMiddleChat) {
                 root.updateLayoutParams<RecyclerView.LayoutParams> {
@@ -280,10 +292,11 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 tvRead.visibility = View.GONE
                 tvTime.visibility = View.GONE
 
+
                 val position = snapshot().items.indexOf(prevItem)
                 val prevPrevItem = if (position - 1 < 0) null
                 else snapshot().items[position - 1]
-                if (prevItem != null && prevPrevItem != null) {
+                if (prevItem != null) {
                     viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
                 }
                 return@run
@@ -306,10 +319,11 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 tvRead.visibility = View.VISIBLE
                 tvTime.visibility = View.VISIBLE
 
+
                 val position = snapshot().items.indexOf(prevItem)
                 val prevPrevItem = if (position - 1 < 0) null
                 else snapshot().items[position - 1]
-                if (prevItem != null && prevPrevItem != null) {
+                if (prevItem != null) {
                     viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
                 }
             }
@@ -318,7 +332,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
     inner class TextChatPartnerViewHolder(
         val binding: ItemTextChatPartnerBinding,
-    ) : ChatViewHolder(binding.root) {
+    ) : ChatAdapter.ChatViewHolder(binding.root) {
 
         override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
             val chat = item as TextChat
@@ -348,9 +362,12 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
             if (item.isSending)
                 return
 
-            val isStartChat = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
-            val isEndChat = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
-            val isMiddleChat = isStartChat && isEndChat
+            val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+
+            val isStartChat = !isTopSame && isBottomSame
+            val isEndChat = isTopSame && !isBottomSame
+            val isMiddleChat = isTopSame && isBottomSame
 
             if (isMiddleChat) {
                 root.updateLayoutParams<RecyclerView.LayoutParams> {
@@ -574,12 +591,21 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 bottomMargin = defaultVerticalMargin
             }
 
-            if (item.isSending)
-                return
+            tvRead.visibility = View.VISIBLE
+            tvTime.visibility = View.VISIBLE
 
-            val isStartChat = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
-            val isEndChat = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
-            val isMiddleChat = isStartChat && isEndChat
+            if (item.isSending) {
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+                return
+            }
+
+            val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+
+            val isStartChat = !isTopSame && isBottomSame
+            val isEndChat = isTopSame && !isBottomSame
+            val isMiddleChat = isTopSame && isBottomSame
 
             if (isMiddleChat) {
                 root.updateLayoutParams<RecyclerView.LayoutParams> {
@@ -592,7 +618,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 val position = snapshot().items.indexOf(prevItem)
                 val prevPrevItem = if (position - 1 < 0) null
                 else snapshot().items[position - 1]
-                if (prevItem != null && prevPrevItem != null) {
+                if (prevItem != null) {
                     viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
                 }
                 return@run
@@ -615,10 +641,11 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 tvRead.visibility = View.VISIBLE
                 tvTime.visibility = View.VISIBLE
 
+
                 val position = snapshot().items.indexOf(prevItem)
                 val prevPrevItem = if (position - 1 < 0) null
                 else snapshot().items[position - 1]
-                if (prevItem != null && prevPrevItem != null) {
+                if (prevItem != null) {
                     viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
                 }
             }
@@ -796,9 +823,12 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
             if (item.isSending)
                 return
 
-            val isStartChat = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
-            val isEndChat = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
-            val isMiddleChat = isStartChat && isEndChat
+            val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+
+            val isStartChat = !isTopSame && isBottomSame
+            val isEndChat = isTopSame && !isBottomSame
+            val isMiddleChat = isTopSame && isBottomSame
 
             if (isMiddleChat) {
                 root.updateLayoutParams<RecyclerView.LayoutParams> {

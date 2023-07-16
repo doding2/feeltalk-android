@@ -152,7 +152,7 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    fun sendTextChat(onStart: () -> Unit) = viewModelScope.launch {
+    fun sendTextChat(onStart: () -> Unit = {}, onEnd: () -> Unit = {}) = viewModelScope.launch {
         val message = _textChat.value
         _textChat.value = ""
         onStart()
