@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.view.updateLayoutParams
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -28,7 +29,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
     private var partnerNickname: String? = null
     private var partnerProfileUrl: String? = null
 
-    private val viewHolders = mutableListOf<ChatViewHolder>()
+    private val viewHolders = mutableMapOf<Chat, ChatViewHolder>()
     private val voiceViewHolders = mutableListOf<ChatViewHolder>()
 
     private var isPartnerInChat = false
@@ -67,7 +68,6 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 ChatDividerViewHolder(binding)
             }
         }
-        viewHolders.add(viewHolder)
         return viewHolder
     }
 
@@ -75,9 +75,10 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
         val item = getItem(position)
         val prevItem = if (position - 1 < 0) null
         else getItem(position - 1)
-        val nextItem = if (itemCount<= position + 1) null
+        val nextItem = if (itemCount <= position + 1) null
         else getItem(position + 1)
         if (item != null) {
+            viewHolders[item] = holder
             holder.bind(prevItem, item, nextItem)
         }
     }
@@ -151,8 +152,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
     fun readAllChats() {
         if (viewHolders.isEmpty())
             return
-        val readText = viewHolders.first().root.context.getString(R.string.chat_read)
-        for (holder in viewHolders) {
+        val readText = viewHolders.values.first().root.context.getString(R.string.chat_read)
+        for ((chat, holder) in viewHolders) {
             val tvRead = holder.root.findViewById<TextView>(R.id.tv_read) ?: continue
             tvRead.text = readText
         }
@@ -234,6 +235,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
         override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
             val chat = item as TextChat
             binding.run {
+
                 tvRead.text = root.context.getString(
                     if (isPartnerInChat || chat.isRead) R.string.chat_read
                     else R.string.chat_unread
@@ -248,6 +250,60 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                     tvRead.visibility = View.VISIBLE
                     tvTime.visibility = View.VISIBLE
                 }
+
+
+                makeMeContinuous(prevItem, item, nextItem)
+            }
+        }
+
+
+        private fun makeMeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+            root.updateLayoutParams<RecyclerView.LayoutParams> {
+                val margin = root.context.dpToPx(8f).toInt()
+                topMargin = margin
+                bottomMargin = margin
+            }
+
+            if (item.isSending)
+                return
+
+            val isStartChat = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isEndChat = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+            val isMiddleChat = isStartChat && isEndChat
+
+            if (isMiddleChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = root.context.dpToPx(2f).toInt()
+                    bottomMargin = root.context.dpToPx(2f).toInt()
+                }
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+                return@run
+            }
+
+            if (isStartChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = root.context.dpToPx(8f).toInt()
+                    bottomMargin = root.context.dpToPx(2f).toInt()
+                }
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+            }
+
+            if (isEndChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = root.context.dpToPx(2f).toInt()
+                    bottomMargin = root.context.dpToPx(8f).toInt()
+                }
+                tvRead.visibility = View.VISIBLE
+                tvTime.visibility = View.VISIBLE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.bind(prevPrevItem, prevItem, item)
+                }
             }
         }
     }
@@ -260,6 +316,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
             val chat = item as TextChat
             binding.run {
                 tvRead.visibility = View.GONE
+                tvTime.visibility = View.VISIBLE
+                llPartnerInfo.visibility = View.VISIBLE
 
                 tvTime.text = getFormatted(chat.createAt)
                 tvMessage.text = chat.message
@@ -267,6 +325,59 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 //           TODO
 //            tvPartnerNickname.text = "연인 닉네임"
 //            ivPartnerProfile.setImageResource()
+
+                makePartnerContinuous(prevItem, item, nextItem)
+            }
+        }
+
+
+        private fun makePartnerContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+            root.updateLayoutParams<RecyclerView.LayoutParams> {
+                val margin = root.context.dpToPx(8f).toInt()
+                topMargin = margin
+                bottomMargin = margin
+            }
+
+            if (item.isSending)
+                return
+
+            val isStartChat = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isEndChat = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+            val isMiddleChat = isStartChat && isEndChat
+
+            if (isMiddleChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = root.context.dpToPx(2f).toInt()
+                    bottomMargin = root.context.dpToPx(2f).toInt()
+                }
+                tvTime.visibility = View.GONE
+                llPartnerInfo.visibility = View.GONE
+                return@run
+            }
+
+            if (isStartChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = root.context.dpToPx(8f).toInt()
+                    bottomMargin = root.context.dpToPx(2f).toInt()
+                }
+                tvTime.visibility = View.GONE
+                llPartnerInfo.visibility = View.VISIBLE
+            }
+
+            if (isEndChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = root.context.dpToPx(2f).toInt()
+                    bottomMargin = root.context.dpToPx(8f).toInt()
+                }
+                tvTime.visibility = View.VISIBLE
+                llPartnerInfo.visibility = View.GONE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.bind(prevPrevItem, prevItem, item)
+                }
             }
         }
     }
@@ -312,6 +423,16 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                     else replay()
                 }
                 ivPause.setOnClickListener { pause() }
+
+                if (chat.isSending) {
+                    tvRead.visibility = View.GONE
+                    tvTime.visibility = View.GONE
+                } else {
+                    tvRead.visibility = View.VISIBLE
+                    tvTime.visibility = View.VISIBLE
+                }
+
+                makeMeContinuous(prevItem, item, nextItem)
             }
         }
 
@@ -430,6 +551,58 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
             }
             vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
         }
+
+
+
+        private fun makeMeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+            root.updateLayoutParams<RecyclerView.LayoutParams> {
+                val margin = root.context.dpToPx(8f).toInt()
+                topMargin = margin
+                bottomMargin = margin
+            }
+
+            if (item.isSending)
+                return
+
+            val isStartChat = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isEndChat = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+            val isMiddleChat = isStartChat && isEndChat
+
+            if (isMiddleChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = root.context.dpToPx(2f).toInt()
+                    bottomMargin = root.context.dpToPx(2f).toInt()
+                }
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+                return@run
+            }
+
+            if (isStartChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = root.context.dpToPx(8f).toInt()
+                    bottomMargin = root.context.dpToPx(2f).toInt()
+                }
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+            }
+
+            if (isEndChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = root.context.dpToPx(2f).toInt()
+                    bottomMargin = root.context.dpToPx(8f).toInt()
+                }
+                tvRead.visibility = View.VISIBLE
+                tvTime.visibility = View.VISIBLE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.bind(prevPrevItem, prevItem, item)
+                }
+            }
+        }
     }
 
     inner class VoiceChatPartnerViewHolder(
@@ -463,6 +636,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 vvVoiceVisualizer.visibility = View.VISIBLE
 
                 tvRead.visibility = View.GONE
+                tvTime.visibility = View.VISIBLE
+                llPartnerInfo.visibility = View.VISIBLE
                 tvRead.text = root.context.getString(
                     if (chat.isRead) R.string.chat_read
                     else R.string.chat_unread
@@ -474,6 +649,9 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                     else replay()
                 }
                 ivPause.setOnClickListener { pause() }
+
+
+                makePartnerContinuous(prevItem, item, nextItem)
             }
         }
 
@@ -586,6 +764,57 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 vvVoiceVisualizer.drawDefaultView()
             }
             vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
+        }
+
+
+        private fun makePartnerContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+            root.updateLayoutParams<RecyclerView.LayoutParams> {
+                val margin = root.context.dpToPx(8f).toInt()
+                topMargin = margin
+                bottomMargin = margin
+            }
+
+            if (item.isSending)
+                return
+
+            val isStartChat = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isEndChat = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+            val isMiddleChat = isStartChat && isEndChat
+
+            if (isMiddleChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = root.context.dpToPx(2f).toInt()
+                    bottomMargin = root.context.dpToPx(2f).toInt()
+                }
+                tvTime.visibility = View.GONE
+                llPartnerInfo.visibility = View.GONE
+                return@run
+            }
+
+            if (isStartChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = root.context.dpToPx(8f).toInt()
+                    bottomMargin = root.context.dpToPx(2f).toInt()
+                }
+                tvTime.visibility = View.GONE
+                llPartnerInfo.visibility = View.VISIBLE
+            }
+
+            if (isEndChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = root.context.dpToPx(2f).toInt()
+                    bottomMargin = root.context.dpToPx(8f).toInt()
+                }
+                tvTime.visibility = View.VISIBLE
+                llPartnerInfo.visibility = View.GONE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.bind(prevPrevItem, prevItem, item)
+                }
+            }
         }
     }
 }
