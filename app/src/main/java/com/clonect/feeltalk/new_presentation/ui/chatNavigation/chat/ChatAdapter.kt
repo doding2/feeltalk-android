@@ -598,7 +598,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 val position = snapshot().items.indexOf(prevItem)
                 val prevPrevItem = if (position - 1 < 0) null
                 else snapshot().items[position - 1]
-                if (prevItem != null && prevPrevItem != null) {
+                if (prevItem != null && prevPrevItem != null && prevPrevItem.chatSender == prevItem.chatSender) {
                     viewHolders[prevItem]?.bind(prevPrevItem, prevItem, item)
                 }
             }
@@ -811,7 +811,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 val position = snapshot().items.indexOf(prevItem)
                 val prevPrevItem = if (position - 1 < 0) null
                 else snapshot().items[position - 1]
-                if (prevItem != null && prevPrevItem != null) {
+                if (prevItem != null && prevPrevItem != null && prevPrevItem.chatSender == prevItem.chatSender) {
                     viewHolders[prevItem]?.bind(prevPrevItem, prevItem, item)
                 }
             }

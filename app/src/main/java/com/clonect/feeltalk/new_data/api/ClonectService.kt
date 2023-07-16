@@ -15,6 +15,7 @@ import com.clonect.feeltalk.domain.model.dto.user.*
 import com.clonect.feeltalk.new_domain.model.chat.ChatListDto
 import com.clonect.feeltalk.new_domain.model.chat.LastChatPageNoDto
 import com.clonect.feeltalk.new_domain.model.chat.SendTextChatDto
+import com.clonect.feeltalk.new_domain.model.chat.SendVoiceChatDto
 import com.clonect.feeltalk.new_domain.model.signIn.*
 import com.clonect.feeltalk.new_domain.model.token.RenewTokenDto
 import com.google.gson.JsonObject
@@ -84,6 +85,12 @@ interface ClonectService {
         @Body body: JsonObject
     ): Response<ApiResponse<SendTextChatDto>>
 
+    @Multipart
+    @POST("/api/v1/chatting-message/voice")
+    suspend fun sendVoiceChat(
+        @Header("Authorization") token: String,
+        @Part voicePart: MultipartBody.Part
+    ): Response<ApiResponse<SendVoiceChatDto>>
 
 
 

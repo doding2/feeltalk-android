@@ -11,9 +11,9 @@ import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
 import com.clonect.feeltalk.new_domain.model.page.PageEvents
 import com.clonect.feeltalk.new_domain.usecase.chat.ChangeChatRoomStateUseCase
-import com.clonect.feeltalk.new_domain.usecase.chat.GetLastChatPageNoUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPagingChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.SendTextChatUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.SendVoiceChatUseCase
 import com.clonect.feeltalk.new_presentation.service.notification_observer.NewChatObserver
 import com.clonect.feeltalk.new_presentation.service.notification_observer.PartnerChatRoomStateObserver
 import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.RecordingReplayer
@@ -23,16 +23,17 @@ import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
-    private val getLastChatPageNoUseCase: GetLastChatPageNoUseCase,
     private val getPagingChatUseCase: GetPagingChatUseCase,
     private val changeChatRoomStateUseCase: ChangeChatRoomStateUseCase,
-    private val sendTextChatUseCase: SendTextChatUseCase
+    private val sendTextChatUseCase: SendTextChatUseCase,
+    private val sendVoiceChatUseCase: SendVoiceChatUseCase,
 ) : ViewModel() {
 
     private val job = MutableStateFlow<Job?>(null)
@@ -278,23 +279,50 @@ class ChatViewModel @Inject constructor(
 
     fun sendVoiceChat(onComplete: () -> Unit) = viewModelScope.launch {
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-        VoiceChat(
-            index = 0,
+        val now = Date()
+
+        val loadingVoiceChat = VoiceChat(
+            index = now.time,
             pageNo = 0,
             chatSender = "me",
             isRead = true,
             createAt = format.format(Date()),
             url = "voiceCache.wav",
-        ).also {
-//            _chatList.value = _chatList.value
-//                .toMutableList()
-//                .apply {
-//                    add(it)
-//                }
+        )
+
+        launch {
+            modifyPage(PageEvents.InsertItemFooter(loadingVoiceChat))
+
+            delay(50)
+            setScrollToBottom()
         }
+        
+        val audioFile = File("")
+
+        when (val result = sendVoiceChatUseCase(audioFile)) {
+            is Resource.Success -> {
+                val voiceChat = result.data.run {
+                    VoiceChat(
+                        index = index,
+                        pageNo = pageIndex,
+                        chatSender = "me",
+                        isRead = isRead,
+                        createAt = createAt,
+                        isSending = false,
+                        url = audioFile.absolutePath
+                    )
+                }
+
+                modifyPage(PageEvents.Remove(loadingVoiceChat))
+                modifyPage(PageEvents.InsertItemFooter(voiceChat))
+            }
+            is Resource.Error -> {
+                infoLog("보이스 채팅 전송 실패: ${result.throwable.stackTrace.joinToString("\n")}")
+                modifyPage(PageEvents.Remove(loadingVoiceChat))
+            }
+        }
+
         onComplete()
-        delay(50)
-        setScrollToBottom()
     }
 
 

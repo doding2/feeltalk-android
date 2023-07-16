@@ -123,12 +123,6 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesSendTextChatUseCase(tokenRepository: TokenRepository, chatRepository: ChatRepository): SendTextChatUseCase {
-        return SendTextChatUseCase(tokenRepository, chatRepository)
-    }
-
-    @Singleton
-    @Provides
     fun providesGetChatListUseCase(tokenRepository: TokenRepository, chatRepository: ChatRepository): GetChatListUseCase {
         return GetChatListUseCase(tokenRepository, chatRepository)
     }
@@ -137,6 +131,18 @@ class UseCaseModule {
     @Provides
     fun providesGetPagingChatUseCase(chatRepository: ChatRepository): GetPagingChatUseCase {
         return GetPagingChatUseCase(chatRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesSendTextChatUseCase(tokenRepository: TokenRepository, chatRepository: ChatRepository): SendTextChatUseCase {
+        return SendTextChatUseCase(tokenRepository, chatRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesSendVoiceChatUseCase(tokenRepository: TokenRepository, chatRepository: ChatRepository): SendVoiceChatUseCase {
+        return SendVoiceChatUseCase(tokenRepository, chatRepository)
     }
 
 
