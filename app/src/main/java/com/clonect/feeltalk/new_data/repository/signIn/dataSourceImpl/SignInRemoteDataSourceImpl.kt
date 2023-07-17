@@ -26,7 +26,7 @@ class SignInRemoteDataSourceImpl(
 
     override suspend fun reLogIn(socialToken: SocialToken): ReLogInDto {
         val body = JsonObject().apply {
-            addProperty("snsType", socialToken.type.toString().lowercase())
+            addProperty("snsType", socialToken.type.raw)
 
             when (socialToken.type) {
                 SocialType.Kakao,
@@ -58,7 +58,7 @@ class SignInRemoteDataSourceImpl(
         val body = JsonObject().apply {
             addProperty("marketingConsent", true)
             addProperty("nickname", nickname)
-            addProperty("snsType", socialToken.type.toString().lowercase())
+            addProperty("snsType", socialToken.type.raw)
             addProperty("fcmToken", fcmToken)
 
             when (socialToken.type) {
