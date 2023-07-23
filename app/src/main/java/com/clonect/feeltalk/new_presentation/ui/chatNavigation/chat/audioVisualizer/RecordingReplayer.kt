@@ -106,8 +106,6 @@ class RecordingReplayer(
                         lastDecibel
                     }
 
-                    infoLog("decibel: $decibel")
-
                     visualizer.receive(decibel)
                 }
 
@@ -116,7 +114,6 @@ class RecordingReplayer(
 
                 if (count == fileReadCount) {
                     isCompleted = true
-                    infoLog("iterate while fileReadCount done")
                 }
             }
 
@@ -164,8 +161,6 @@ class RecordingReplayer(
                         lastDecibel
                     }
 
-                    infoLog("decibel: $decibel")
-
                     visualizer.receive(decibel)
                 }
 
@@ -174,7 +169,6 @@ class RecordingReplayer(
 
                 if (count == fileReadCount) {
                     isCompleted = true
-                    infoLog("iterate while fileReadCount done")
                 }
             }
 

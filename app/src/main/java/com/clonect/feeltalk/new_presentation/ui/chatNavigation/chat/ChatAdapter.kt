@@ -2,6 +2,8 @@ package com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat
 
 import android.media.MediaMetadataRetriever
 import android.net.Uri
+import android.os.StrictMode
+import android.os.StrictMode.ThreadPolicy
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,12 +18,17 @@ import com.clonect.feeltalk.new_domain.model.chat.*
 import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.RecordingReplayer
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.presentation.utils.infoLog
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.io.File
+import java.io.FileOutputStream
+import java.net.HttpURLConnection
+import java.net.URL
+import java.net.URLConnection
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
+
 
 class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallback) {
 
@@ -221,7 +228,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
     }
 
     inner class ChatDividerViewHolder(
-        val binding: ItemChatDividerBinding
+        val binding: ItemChatDividerBinding,
     ): ChatViewHolder(binding.root) {
 
         override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
@@ -423,6 +430,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
         var timer: Timer? = null
         var replayTime: Long = 0
         var isPaused = false
+        var vvCount = 0
 
         override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
             val chat = item as VoiceChat
@@ -463,18 +471,56 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                     tvTime.visibility = View.VISIBLE
                 }
 
+                CoroutineScope(Dispatchers.IO).launch {
+                    vvCount = 5
+                    while (vvCount > 0) {
+                        vvVoiceVisualizer.reset()
+                        vvVoiceVisualizer.drawDefaultView()
+                        vvCount--
+                        infoLog(vvCount.toString())
+                        delay(50)
+                    }
+                }
+
                 makeContinuous(prevItem, item, nextItem)
             }
         }
 
         private fun init(chat: VoiceChat) = binding.run {
             if (audioFile == null) {
-                // TODO 나중에 오디오 파일 다운로드 해야댐
-                audioFile = File(root.context.cacheDir, chat.url)
-                audioFile = audioFile?.copyTo(
-                    target = File(root.context.cacheDir, chat.index.toString() + "" + chat.url),
-                    overwrite = true
-                )
+                CoroutineScope(Dispatchers.IO).launch {
+
+                    val cacheFile = File(root.context.cacheDir, "${chat.index}.wav")
+                    val serverFileSize = withContext(Dispatchers.IO) {
+                        getVoiceFileSize(chat)
+                    }
+
+                    runCatching {
+                        if (cacheFile.length() == serverFileSize.toLong()) {
+                            cacheFile
+                        } else {
+                            if (chat.url == "index") {
+                                File(root.context.cacheDir, "${chat.index}.wav")
+                            } else {
+                                downloadVoiceFile(chat)
+                            }
+                        }
+                    }.onSuccess {
+                        audioFile = it
+                    }.onFailure {
+                        infoLog("보이스 파일 다운로드 실패: ${it.localizedMessage}\n${
+                            it.stackTrace.joinToString("\n")
+                        }")
+                        audioFile = null
+                    }
+                    if (audioFile?.exists() == false || audioFile?.canRead() == false) {
+                        audioFile = null
+                    }
+
+                    withContext(Dispatchers.Main) {
+                        setAudioDuration()
+                    }
+                }
 
                 vvVoiceVisualizer.visibility = View.VISIBLE
                 vvVoiceVisualizer.numColumns = 8
@@ -483,9 +529,46 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 audioDuration = 0
                 replayTime = 0
-                setAudioDuration()
             }
         }
+
+        private suspend fun getVoiceFileSize(chat: VoiceChat): Int = withContext(Dispatchers.IO) {
+            if (chat.url.isBlank() || chat.url == "index") return@withContext -1
+
+            var conn: URLConnection? = null
+            val size = try {
+                val url = URL(chat.url)
+                conn = url.openConnection()
+                if (conn is HttpURLConnection) {
+                    conn.requestMethod = "HEAD"
+                }
+                conn?.getInputStream()
+                conn?.contentLength
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                null
+            } finally {
+                if (conn is HttpURLConnection) {
+                    conn.disconnect()
+                }
+            }
+            return@withContext size ?: -1
+        }
+
+        private suspend fun downloadVoiceFile(chat: VoiceChat) = suspendCoroutine { continuation ->
+            val policy = ThreadPolicy.Builder().permitAll().build()
+            StrictMode.setThreadPolicy(policy)
+
+            val file = File(binding.root.context.cacheDir, "${chat.index}.wav")
+            URL(chat.url).openStream().use { input ->
+                FileOutputStream(file).use { output ->
+                    input.copyTo(output)
+                    continuation.resume(file)
+                }
+            }
+        }
+
 
         private fun setAudioDuration() {
             try {
@@ -516,7 +599,13 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
         fun replay() = binding.run {
             if (audioFile == null || replayer?.isReplaying == true) return@run
 
-            replayer = RecordingReplayer(root.context, audioFile!!, vvVoiceVisualizer)
+            replayer = try {
+                RecordingReplayer(root.context, audioFile!!, vvVoiceVisualizer)
+            } catch (e: Exception) {
+                infoLog("오디오 재생 실패: ${e.localizedMessage}\n${e.stackTrace.joinToString("\n")}")
+                return@run
+            }
+            vvCount = 0
             replayer?.replay()
 
             ivReplay.visibility = View.GONE
@@ -615,6 +704,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 tvRead.visibility = View.GONE
                 tvTime.visibility = View.GONE
 
+
                 val position = snapshot().items.indexOf(prevItem)
                 val prevPrevItem = if (position - 1 < 0) null
                 else snapshot().items[position - 1]
@@ -662,6 +752,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
         var timer: Timer? = null
         var replayTime: Long = 0
         var isPaused = false
+        var vvCount = 0
 
         override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
             val chat = item as VoiceChat
@@ -697,6 +788,15 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 }
                 ivPause.setOnClickListener { pause() }
 
+                CoroutineScope(Dispatchers.IO).launch {
+                    vvCount = 5
+                    while (vvCount > 0) {
+                        vvVoiceVisualizer.reset()
+                        vvVoiceVisualizer.drawDefaultView()
+                        vvCount--
+                        delay(50)
+                    }
+                }
 
                 makeContinuous(prevItem, item, nextItem)
             }
@@ -704,12 +804,39 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
         private fun init(chat: VoiceChat) = binding.run {
             if (audioFile == null) {
-                // TODO 나중에 오디오 파일 다운로드 해야댐
-                audioFile = File(root.context.cacheDir, chat.url)
-                audioFile = audioFile?.copyTo(
-                    target = File(root.context.cacheDir, chat.index.toString() + "" + chat.url),
-                    overwrite = true
-                )
+                CoroutineScope(Dispatchers.IO).launch {
+
+                    val cacheFile = File(root.context.cacheDir, "${chat.index}.wav")
+                    val serverFileSize = withContext(Dispatchers.IO) {
+                        getVoiceFileSize(chat)
+                    }
+
+                    runCatching {
+                        if (cacheFile.length() == serverFileSize.toLong()) {
+                            cacheFile
+                        } else {
+                            if (chat.url == "index") {
+                                File(root.context.cacheDir, "${chat.index}.wav")
+                            } else {
+                                downloadVoiceFile(chat)
+                            }
+                        }
+                    }.onSuccess {
+                        audioFile = it
+                    }.onFailure {
+                        infoLog("보이스 파일 다운로드 실패: ${it.localizedMessage}\n${
+                            it.stackTrace.joinToString("\n")
+                        }")
+                        audioFile = null
+                    }
+                    if (audioFile?.exists() == false || audioFile?.canRead() == false) {
+                        audioFile = null
+                    }
+
+                    withContext(Dispatchers.Main) {
+                        setAudioDuration()
+                    }
+                }
 
                 vvVoiceVisualizer.visibility = View.VISIBLE
                 vvVoiceVisualizer.numColumns = 8
@@ -718,7 +845,43 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 audioDuration = 0
                 replayTime = 0
-                setAudioDuration()
+            }
+        }
+
+        private suspend fun getVoiceFileSize(chat: VoiceChat): Int = withContext(Dispatchers.IO) {
+            if (chat.url.isBlank() || chat.url == "index") return@withContext -1
+
+            var conn: URLConnection? = null
+            val size = try {
+                val url = URL(chat.url)
+                conn = url.openConnection()
+                if (conn is HttpURLConnection) {
+                    conn.requestMethod = "HEAD"
+                }
+                conn?.getInputStream()
+                conn?.contentLength
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                null
+            } finally {
+                if (conn is HttpURLConnection) {
+                    conn.disconnect()
+                }
+            }
+            return@withContext size ?: -1
+        }
+
+        private suspend fun downloadVoiceFile(chat: VoiceChat) = suspendCoroutine { continuation ->
+            val policy = ThreadPolicy.Builder().permitAll().build()
+            StrictMode.setThreadPolicy(policy)
+
+            val file = File(binding.root.context.cacheDir, "${chat.index}.wav")
+            URL(chat.url).openStream().use { input ->
+                FileOutputStream(file).use { output ->
+                    input.copyTo(output)
+                    continuation.resume(file)
+                }
             }
         }
 
@@ -746,7 +909,13 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
         fun replay() = binding.run {
             if (audioFile == null || replayer?.isReplaying == true) return@run
 
-            replayer = RecordingReplayer(root.context, audioFile!!, vvVoiceVisualizer)
+            replayer = try {
+                RecordingReplayer(root.context, audioFile!!, vvVoiceVisualizer)
+            } catch (e: Exception) {
+                infoLog("오디오 재생 실패: ${e.localizedMessage}\n${e.stackTrace.joinToString("\n")}")
+                return@run
+            }
+            vvCount = 0
             replayer?.replay()
 
             ivReplay.visibility = View.GONE

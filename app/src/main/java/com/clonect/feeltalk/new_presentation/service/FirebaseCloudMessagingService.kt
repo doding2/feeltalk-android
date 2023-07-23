@@ -15,6 +15,7 @@ import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetUserIsActiveUseCase
 import com.clonect.feeltalk.domain.usecase.user.SetUserIsActiveUseCase
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
+import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.new_presentation.service.notification_observer.CreateCoupleObserver
@@ -94,6 +95,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         const val TYPE_CREATE_COUPLE = "createCouple"
         const val TYPE_CHAT_ROOM_STATE = "chatRoomStatusChange"
         const val TYPE_TEXT_CHATTING = "textChatting"
+        const val TYPE_VOICE_CHATTING = "voiceChatting"
     }
 
     override fun onNewToken(newToken: String) {
@@ -133,6 +135,8 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 TYPE_CREATE_COUPLE -> handleCreateCoupleData(data)
                 TYPE_CHAT_ROOM_STATE -> handleChatRoomStateData(data)
                 TYPE_TEXT_CHATTING -> handleTextChatData(data)
+                TYPE_VOICE_CHATTING -> handleVoiceChatData(data)
+
 //                TYPE_TODAY_QUESTION -> handleTodayQuestionData(data)
 //                TYPE_PARTNER_ANSWERED -> handlePartnerAnsweredData(data)
 //                TYPE_REQUEST_EMOTION_CHANGE -> handleRequestEmotionChangeData(data)
@@ -224,7 +228,51 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         )
     }
 
+    private fun handleVoiceChatData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+        val index = data["index"]?.toLong() ?: return@launch
+        val pageIndex = data["pageIndex"]?.toLong() ?: 0
+        val url = data["url"] ?: return@launch
+        val isRead = data["isRead"]?.toBoolean() ?: return@launch
+        val createAt = data["createAt"] ?: return@launch
 
+        NewChatObserver.getInstance()
+            .setNewChat(
+                VoiceChat(
+                    index = index,
+                    pageNo = pageIndex,
+                    chatSender = "partner",
+                    isRead = isRead,
+                    createAt = createAt,
+                    url = url
+                )
+            )
+
+        infoLog("isAppScreenRunning: ${FeeltalkApp.getAppScreenRunning()}, isUserInChat: ${FeeltalkApp.getUserInChat()}")
+        if (FeeltalkApp.getAppScreenRunning() && FeeltalkApp.getUserInChat()) {
+            return@launch
+        }
+
+        val pendingIntent = NavDeepLinkBuilder(applicationContext)
+            .setGraph(R.navigation.feeltalk_nav_graph)
+            .setDestination(R.id.mainNavigationFragment)
+            .setArguments(
+                bundleOf("showChat" to true)
+            )
+            .createPendingIntent()
+
+        val appSettings = getAppSettingsUseCase()
+        appSettings.activeChatNotification += 1
+        saveAppSettingsUseCase(appSettings)
+
+        showNotification(
+            title = "연인",
+            message = "보이스 채팅입니다.",
+            notificationID = CHAT_CHANNEL_ID.toBytesInt(),
+            channelID = CHAT_CHANNEL_ID,
+            pendingIntent = pendingIntent,
+            activeNotificationCount = appSettings.activeChatNotification
+        )
+    }
 
 
 

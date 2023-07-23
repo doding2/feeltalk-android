@@ -3,6 +3,7 @@ package com.clonect.feeltalk.new_data.mapper
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.ChatListDto
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
+import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
 
 fun ChatListDto.toChatList(): List<Chat> {
     val newChatList = mutableListOf<Chat>()
@@ -17,6 +18,18 @@ fun ChatListDto.toChatList(): List<Chat> {
                         isRead = isRead,
                         createAt = createAt,
                         message = message ?: ""
+                    )
+                }
+            }
+            "voice", "voiceChatting" -> {
+                chatDto.run {
+                    VoiceChat(
+                        index = index,
+                        pageNo = page,
+                        chatSender = if (mine) "me" else "partner",
+                        isRead = isRead,
+                        createAt = createAt,
+                        url = url ?: ""
                     )
                 }
             }

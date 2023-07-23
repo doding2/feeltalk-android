@@ -59,7 +59,7 @@ class ChatRemoteMediator(
             }
             infoLog("mediator loading done")
 
-            MediatorResult.Success(chatList.isEmpty() || chatList.size < Constants.PAGE_SIZE)
+            MediatorResult.Success(chatList.isEmpty() || chatList.size < Constants.CHAT_PAGE_SIZE)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {

@@ -43,7 +43,7 @@ class ChatFragment : Fragment() {
     private lateinit var binding: FragmentChatBinding
     private val viewModel: ChatViewModel by viewModels()
     private val navViewModel: MainNavigationViewModel by activityViewModels()
-    private lateinit var onBackCallback: OnBackPressedCallback
+//    private lateinit var onBackCallback: OnBackPressedCallback
     @Inject
     lateinit var adapter: ChatAdapter
 
@@ -55,6 +55,7 @@ class ChatFragment : Fragment() {
     ): View {
         binding = FragmentChatBinding.inflate(inflater, container, false)
         setKeyboardInsets()
+        requireActivity().onBackPressedDispatcher.addCallback(this.viewLifecycleOwner, onBackCallback)
         return binding.root
     }
 
@@ -112,7 +113,7 @@ class ChatFragment : Fragment() {
     }
 
 
-    private fun cancel() {
+    private fun cancel(includeVoiceChats: Boolean = true) {
         // 채팅 확장 취소
         viewModel.setExpandChatMedia(false)
         // 보이스 챗 셋업 취소
@@ -122,7 +123,9 @@ class ChatFragment : Fragment() {
         // 보이스 리플레이 취소
         viewModel.stopVoiceRecordingReplay()
         // 보이스 채팅 모두 중단
-        adapter.resetVoiceChats()
+        if (includeVoiceChats) {
+            adapter.resetVoiceChats()
+        }
 
         binding.run {
             ivCancel.visibility = View.GONE
@@ -143,7 +146,7 @@ class ChatFragment : Fragment() {
 
 
     private fun sendVoiceChat() {
-        viewModel.sendVoiceChat {
+        viewModel.sendVoiceChat(requireContext()) {
             cancel()
         }
     }
@@ -194,8 +197,8 @@ class ChatFragment : Fragment() {
         rvChat.setRecycledViewPool(RecyclerView.RecycledViewPool().apply {
             setMaxRecycledViews(ChatAdapter.TYPE_TEXT_MINE, 0)
             setMaxRecycledViews(ChatAdapter.TYPE_TEXT_PARTNER, 0)
-            setMaxRecycledViews(ChatAdapter.TYPE_VOICE_MINE, 0)
-            setMaxRecycledViews(ChatAdapter.TYPE_VOICE_PARTNER, 0)
+//            setMaxRecycledViews(ChatAdapter.TYPE_VOICE_MINE, 0)
+//            setMaxRecycledViews(ChatAdapter.TYPE_VOICE_PARTNER, 0)
             setMaxRecycledViews(ChatAdapter.TYPE_EMOJI_MINE, 0)
             setMaxRecycledViews(ChatAdapter.TYPE_EMOJI_PARTNER, 0)
             setMaxRecycledViews(ChatAdapter.TYPE_IMAGE_MINE, 0)
@@ -207,6 +210,7 @@ class ChatFragment : Fragment() {
             setMaxRecycledViews(ChatAdapter.TYPE_QUESTION_MINE, 0)
             setMaxRecycledViews(ChatAdapter.TYPE_QUESTION_PARTNER, 0)
         })
+        rvChat.setItemViewCacheSize(512)
         rvChat.adapter = adapter.apply {
             setMyNickname("me")
             setPartnerNickname("partner")
@@ -315,7 +319,7 @@ class ChatFragment : Fragment() {
     private fun applyKeyboardUp(isUp: Boolean) {
         if (isUp) {
             binding.etTextMessage.requestFocus()
-            cancel()
+            cancel(includeVoiceChats = false)
         } else {
             binding.etTextMessage.clearFocus()
         }
@@ -434,34 +438,29 @@ class ChatFragment : Fragment() {
     }
 
 
+    val onBackCallback = object: OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (viewModel.expandChat.value) {
+                cancel()
+                return
+            }
+            if (viewModel.isVoiceSetupMode.value) {
+                cancel()
+                return
+            }
+            if (viewModel.isVoiceRecordingMode.value) {
+                cancel()
+                return
+            }
+            if (navViewModel.showChatNavigation.value) {
+                navViewModel.toggleShowChatNavigation()
+                return
+            }
+        }
+    }
 
     private fun setBackCallback(isChatShown: Boolean) {
-        if (isChatShown) {
-            onBackCallback = object: OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    if (viewModel.expandChat.value) {
-                        cancel()
-                        return
-                    }
-                    if (viewModel.isVoiceSetupMode.value) {
-                        cancel()
-                        return
-                    }
-                    if (viewModel.isVoiceRecordingMode.value) {
-                        cancel()
-                        return
-                    }
-                    if (navViewModel.showChatNavigation.value) {
-                        navViewModel.toggleShowChatNavigation()
-                        cancel()
-                        return
-                    }
-                }
-            }
-            requireActivity().onBackPressedDispatcher.addCallback(this.viewLifecycleOwner, onBackCallback)
-        } else if (::onBackCallback.isInitialized) {
-            onBackCallback.remove()
-        }
+        onBackCallback.isEnabled = isChatShown
     }
 
     private fun collectViewModel() = lifecycleScope.launch {

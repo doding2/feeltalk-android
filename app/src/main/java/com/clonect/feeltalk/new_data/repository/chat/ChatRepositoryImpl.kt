@@ -102,7 +102,7 @@ class ChatRepositoryImpl(
     override fun getPagingChat(): Flow<PagingData<Chat>> {
         return Pager(
             PagingConfig(
-                pageSize = Constants.PAGE_SIZE,
+                pageSize = Constants.CHAT_PAGE_SIZE,
                 enablePlaceholders = false
             )
         ) {

@@ -32,7 +32,7 @@ public class VisualizerView extends FrameLayout {
     private static final int RENDAR_RANGE_BOTTOM = 1;
     private static final int RENDAR_RANGE_TOP_BOTTOM = 2;
 
-    private ArrayList<Float> barHeightList;
+    public ArrayList<Float> barHeightList;
     private int mNumColumns;
     private int mRenderColor;
     private int mType;

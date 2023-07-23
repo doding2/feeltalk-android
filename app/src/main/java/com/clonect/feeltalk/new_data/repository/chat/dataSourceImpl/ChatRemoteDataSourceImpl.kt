@@ -63,15 +63,15 @@ class ChatRemoteDataSourceImpl(
     }
 
     override suspend fun sendVoiceChat(accessToken: String, voiceFile: File): SendVoiceChatDto {
-        val voicePart = MultipartBody.Part.createFormData(
-            name = "audio",
+        val data = MultipartBody.Part.createFormData(
+            name = "voiceFile",
             filename = voiceFile.name,
             body = voiceFile.asRequestBody(
                 "audio/*".toMediaTypeOrNull()
             )
         )
 
-        val response = clonectService.sendVoiceChat("Bearer $accessToken", voicePart)
+        val response = clonectService.sendVoiceChat("Bearer $accessToken", data)
         if (!response.isSuccessful) throw HttpException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)

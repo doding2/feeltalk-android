@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
+import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.ChatType
@@ -212,6 +213,10 @@ class ChatViewModel @Inject constructor(
                             val textChat = newChat as? TextChat ?: return@collectLatest
                             textChat
                         }
+                        ChatType.VoiceChatting -> {
+                            val voiceChat = newChat as? VoiceChat ?: return@collectLatest
+                            voiceChat
+                        }
                         else -> return@collectLatest
                     }
 
@@ -277,9 +282,20 @@ class ChatViewModel @Inject constructor(
     val isVoiceRecordingReplayCompleted = _isVoiceRecordingReplayCompleted.asStateFlow()
 
 
-    fun sendVoiceChat(onComplete: () -> Unit) = viewModelScope.launch {
+    fun sendVoiceChat(context: Context, onSend: () -> Unit) = viewModelScope.launch {
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         val now = Date()
+
+        val voiceCacheFile = File(context.cacheDir, Constants.VOICE_CACHE_FILE_NAME)
+        if (!voiceCacheFile.exists() || !voiceCacheFile.canRead()) {
+            infoLog("보이스 캐시 파일을 읽을 수 없습니다.")
+            onSend()
+            return@launch
+        }
+        val voiceFile = voiceCacheFile.copyTo(
+            target = File(context.cacheDir, "${now.time}.wav"),
+            overwrite = true
+        )
 
         val loadingVoiceChat = VoiceChat(
             index = now.time,
@@ -287,7 +303,7 @@ class ChatViewModel @Inject constructor(
             chatSender = "me",
             isRead = true,
             createAt = format.format(Date()),
-            url = "voiceCache.wav",
+            url = "index",
         )
 
         launch {
@@ -296,12 +312,20 @@ class ChatViewModel @Inject constructor(
             delay(50)
             setScrollToBottom()
         }
-        
-        val audioFile = File("")
+        onSend()
 
-        when (val result = sendVoiceChatUseCase(audioFile)) {
+        when (val result = sendVoiceChatUseCase(voiceFile)) {
             is Resource.Success -> {
                 val voiceChat = result.data.run {
+
+                    withContext(Dispatchers.IO) {
+                        val file = voiceFile.copyTo(
+                            target = File(context.cacheDir, "${index}.wav"),
+                            overwrite = true
+                        )
+                        voiceFile.delete()
+                    }
+
                     VoiceChat(
                         index = index,
                         pageNo = pageIndex,
@@ -309,7 +333,7 @@ class ChatViewModel @Inject constructor(
                         isRead = isRead,
                         createAt = createAt,
                         isSending = false,
-                        url = audioFile.absolutePath
+                        url = "index"
                     )
                 }
 
@@ -321,8 +345,6 @@ class ChatViewModel @Inject constructor(
                 modifyPage(PageEvents.Remove(loadingVoiceChat))
             }
         }
-
-        onComplete()
     }
 
 

@@ -10,6 +10,8 @@ import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
+import com.clonect.feeltalk.common.Constants;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -116,7 +118,7 @@ public class RecordingSampler {
         }
 
         try {
-            voiceCacheFile = new File(context.getCacheDir(), "voiceCache.wav");
+            voiceCacheFile = new File(context.getCacheDir(), Constants.VOICE_CACHE_FILE_NAME);
             cacheStream = new FileOutputStream((voiceCacheFile));
             writeWavHeader((OutputStream) cacheStream, (short) 1, mAudioRecord.getSampleRate(), (short) 16);
         } catch (Exception e) {

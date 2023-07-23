@@ -97,7 +97,7 @@ interface ClonectService {
     @POST("/api/v1/chatting-message/voice")
     suspend fun sendVoiceChat(
         @Header("Authorization") token: String,
-        @Part voicePart: MultipartBody.Part
+        @Part data: MultipartBody.Part
     ): Response<ApiResponse<SendVoiceChatDto>>
 
 
