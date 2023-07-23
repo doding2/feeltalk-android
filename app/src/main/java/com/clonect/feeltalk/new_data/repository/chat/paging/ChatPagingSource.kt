@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_data.repository.paging
+package com.clonect.feeltalk.new_data.repository.chat.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
@@ -9,7 +9,7 @@ import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatRemoteDataSo
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.ChatListDto
 import com.clonect.feeltalk.new_domain.model.chat.LastChatPageNoDto
-import com.clonect.feeltalk.new_domain.repository.signIn.TokenRepository
+import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 import com.clonect.feeltalk.presentation.utils.infoLog
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers

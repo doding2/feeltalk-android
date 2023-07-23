@@ -5,6 +5,8 @@ import com.clonect.feeltalk.new_domain.model.token.TokenInfo
 
 interface TokenRemoteDataSource {
 
+    suspend fun updateFcmToken(accessToken: String, fcmToken: String)
+
     suspend fun renewToken(tokenInfo: TokenInfo): RenewTokenDto
 
 }

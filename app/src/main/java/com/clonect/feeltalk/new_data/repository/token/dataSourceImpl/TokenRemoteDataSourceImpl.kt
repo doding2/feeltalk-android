@@ -12,6 +12,15 @@ class TokenRemoteDataSourceImpl(
     private val clonectService: ClonectService
 ): TokenRemoteDataSource {
 
+    override suspend fun updateFcmToken(accessToken: String, fcmToken: String) {
+        val body = JsonObject().apply {
+            addProperty("fcmToken", fcmToken)
+        }
+        val response = clonectService.updateFcmToken("Bearer $accessToken", body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
+    }
+
     override suspend fun renewToken(tokenInfo: TokenInfo): RenewTokenDto {
         val body = JsonObject().apply {
             addProperty("refreshToken", tokenInfo.refreshToken)

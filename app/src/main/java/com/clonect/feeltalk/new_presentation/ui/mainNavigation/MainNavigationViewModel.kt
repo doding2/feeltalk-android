@@ -2,10 +2,12 @@ package com.clonect.feeltalk.new_presentation.ui.mainNavigation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.chat.ChatType
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.GetPartnerLastChatUseCase
 import com.clonect.feeltalk.new_presentation.service.notification_observer.NewChatObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,10 +21,11 @@ import javax.inject.Inject
 class MainNavigationViewModel @Inject constructor(
     private val getAppSettingsUseCase: GetAppSettingsUseCase,
     private val saveAppSettingsUseCase: SaveAppSettingsUseCase,
+    private val getPartnerLastChatUseCase: GetPartnerLastChatUseCase,
 ): ViewModel() {
 
-    private val _latestPartnerChat = MutableStateFlow<String?>(null)
-    val latestPartnerChat = _latestPartnerChat.asStateFlow()
+    private val _partnerLastChat = MutableStateFlow<String?>(null)
+    val partnerLastChat = _partnerLastChat.asStateFlow()
 
     private var isArgumentsInit = true
 
@@ -30,7 +33,19 @@ class MainNavigationViewModel @Inject constructor(
     val showChatNavigation = _showChatNavigation.asStateFlow()
 
     init {
+        getPartnerLastChat()
         collectNewChat()
+    }
+    
+    private fun getPartnerLastChat() = viewModelScope.launch { 
+        when (val result = getPartnerLastChatUseCase()) {
+            is Resource.Success -> {
+                _partnerLastChat.value = result.data.message
+            }
+            is Resource.Error -> {
+                infoLog("연인의 가장 최근 채팅 가져오기 실패: ${result.throwable.stackTrace.joinToString("\n")}")
+            }
+        }
     }
 
     fun toggleShowChatNavigation() {
@@ -66,7 +81,7 @@ class MainNavigationViewModel @Inject constructor(
                         else -> return@collectLatest
                     }
 
-                    _latestPartnerChat.value = message
+                    _partnerLastChat.value = message
                 }.onFailure {
                     infoLog("collectNewChat(): ${it.localizedMessage}")
                 }

@@ -87,20 +87,28 @@ class MainNavigationFragment : Fragment() {
             viewChatBehind.visibility = View.VISIBLE
             flChatContainer.visibility = View.VISIBLE
         } else {
-            flLatestChat.visibility = View.VISIBLE
+            flLatestChat.visibility =  if (viewModel.partnerLastChat.value == null) View.GONE
+            else View.VISIBLE
             viewChatBehind.visibility = View.GONE
             flChatContainer.visibility = View.GONE
         }
     }
 
     private fun changeLatestChatMessage(message: String?) = binding.run {
-        tvLatestChat.text = message ?: "(연인에게 온 채팅)"
+        tvLatestChat.text = message
+
+        if (message == null) {
+            flLatestChat.visibility = View.GONE
+        } else {
+            flLatestChat.visibility = if (viewModel.showChatNavigation.value) View.GONE
+            else View.VISIBLE
+        }
     }
 
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.showChatNavigation.collectLatest(::showChatSheet) }
-            launch { viewModel.latestPartnerChat.collectLatest(::changeLatestChatMessage) }
+            launch { viewModel.partnerLastChat.collectLatest(::changeLatestChatMessage) }
         }
     }
 }

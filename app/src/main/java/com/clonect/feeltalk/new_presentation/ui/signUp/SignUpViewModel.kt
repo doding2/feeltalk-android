@@ -5,11 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
-import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
-import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
-import com.clonect.feeltalk.new_domain.usecase.signIn.GetCoupleCodeUseCase
 import com.clonect.feeltalk.new_domain.usecase.signIn.ReLogInUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.CacheSocialTokenUseCase
+import com.clonect.feeltalk.new_domain.usecase.token.UpdateFcmTokenUseCase
+import com.clonect.feeltalk.new_presentation.service.FirebaseCloudMessagingService
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +24,7 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(
     private val reLogInUseCase: ReLogInUseCase,
     private val cacheSocialTokenUseCase: CacheSocialTokenUseCase,
-    private val getCoupleCodeUseCase: GetCoupleCodeUseCase,
+    private val updateFcmTokenUseCase: UpdateFcmTokenUseCase,
     private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
 ): ViewModel() {
 
@@ -57,10 +56,11 @@ class SignUpViewModel @Inject constructor(
                         _navigateToAgreement.emit(true)
                     }
                     "solo" -> {
-                        getCoupleCode()
+                        updateFcmToken()
                         _navigateToCoupleCode.emit(true)
                     }
                     "couple" -> {
+                        updateFcmToken()
                         _navigateToMain.emit(true)
                     }
                 }
@@ -83,12 +83,20 @@ class SignUpViewModel @Inject constructor(
             }
         }
     }
-
-    private suspend fun getCoupleCode() = withContext(Dispatchers.IO) {
-        val result = getCoupleCodeUseCase()
-        if (result is Resource.Error) {
-            infoLog("커플코드 로딩 실패: ${result.throwable.stackTrace.joinToString("\n")}")
-            result.throwable.localizedMessage?.let { sendErrorMessage(it) }
+    
+    private suspend fun updateFcmToken() = withContext(Dispatchers.IO) {
+        val fcmToken = FirebaseCloudMessagingService.getFcmToken() ?: run {
+            infoLog("fcmToken is null.")
+            _errorMessage.emit("잠시 후 다시 시도해주세요.")
+            return@withContext
+        }
+        
+        when (val result = updateFcmTokenUseCase(fcmToken)) {
+            is Resource.Success -> {  }
+            is Resource.Error -> {
+                infoLog("fcmToken 업데이트 실패: ${result.throwable.stackTrace.joinToString("\n")}")
+                result.throwable.localizedMessage?.let { _errorMessage.emit(it) }
+            }
         }
     }
 

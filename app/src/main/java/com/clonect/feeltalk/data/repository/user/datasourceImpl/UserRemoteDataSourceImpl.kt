@@ -196,7 +196,7 @@ class UserRemoteDataSourceImpl(
             addProperty("accessToken", accessToken)
             addProperty("fcmToken", fcmToken)
         }
-        val response = clonectService.updateFcmToken(body)
+        val response = clonectService.updateFcmToken2(body)
         if (!response.isSuccessful) throw HttpException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response

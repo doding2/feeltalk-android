@@ -16,13 +16,14 @@ import com.clonect.feeltalk.domain.usecase.user.*
 import com.clonect.feeltalk.new_data.util.AppLevelEncryptHelper
 import com.clonect.feeltalk.new_domain.repository.chat.ChatRepository
 import com.clonect.feeltalk.new_domain.repository.signIn.SignInRepository
-import com.clonect.feeltalk.new_domain.repository.signIn.TokenRepository
+import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.*
 import com.clonect.feeltalk.new_domain.usecase.signIn.*
 import com.clonect.feeltalk.new_domain.usecase.token.CacheSocialTokenUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.GetCachedSocialTokenUseCase
+import com.clonect.feeltalk.new_domain.usecase.token.UpdateFcmTokenUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -47,6 +48,12 @@ class UseCaseModule {
     @Provides
     fun providesGetCachedSocialTokenUseCase(tokenRepository: TokenRepository): GetCachedSocialTokenUseCase {
         return GetCachedSocialTokenUseCase(tokenRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesUpdateFcmTokenUseCase(tokenRepository: TokenRepository): UpdateFcmTokenUseCase {
+        return UpdateFcmTokenUseCase(tokenRepository)
     }
 
 
@@ -108,6 +115,12 @@ class UseCaseModule {
 
 
     /** Chat **/
+
+    @Singleton
+    @Provides
+    fun providesGetPartnerLastChatUseCase(tokenRepository: TokenRepository, chatRepository: ChatRepository): GetPartnerLastChatUseCase {
+        return GetPartnerLastChatUseCase(tokenRepository, chatRepository)
+    }
 
     @Singleton
     @Provides

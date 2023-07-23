@@ -1,13 +1,12 @@
 package com.clonect.feeltalk.new_domain.usecase.token
 
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.new_domain.model.token.SocialToken
 import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 
-class GetCachedSocialTokenUseCase(
+class UpdateFcmTokenUseCase(
     private val tokenRepository: TokenRepository
 ) {
-    operator fun invoke(): Resource<SocialToken> {
-        return tokenRepository.getCachedSocialToken()
+    suspend operator fun invoke(fcmToken: String): Resource<Unit> {
+        return tokenRepository.updateFcmToken(fcmToken)
     }
 }

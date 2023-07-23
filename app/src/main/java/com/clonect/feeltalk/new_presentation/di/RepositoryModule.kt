@@ -35,7 +35,7 @@ import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenLocalDataS
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenRemoteDataSource
 import com.clonect.feeltalk.new_domain.repository.chat.ChatRepository
 import com.clonect.feeltalk.new_domain.repository.signIn.SignInRepository
-import com.clonect.feeltalk.new_domain.repository.signIn.TokenRepository
+import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

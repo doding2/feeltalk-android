@@ -8,6 +8,8 @@ import java.io.File
 
 interface ChatRepository {
 
+    suspend fun getPartnerLastChat(accessToken: String): Resource<PartnerLastChatDto>
+
     suspend fun changeChatRoomState(accessToken: String, isInChat: Boolean): Resource<Unit>
     suspend fun getLastChatPageNo(accessToken: String): Resource<LastChatPageNoDto>
     suspend fun sendTextChat(accessToken: String, message: String): Resource<SendTextChatDto>

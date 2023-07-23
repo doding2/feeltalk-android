@@ -3,10 +3,7 @@ package com.clonect.feeltalk.new_data.repository.chat.dataSourceImpl
 import android.accounts.NetworkErrorException
 import com.clonect.feeltalk.new_data.api.ClonectService
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatRemoteDataSource
-import com.clonect.feeltalk.new_domain.model.chat.ChatListDto
-import com.clonect.feeltalk.new_domain.model.chat.LastChatPageNoDto
-import com.clonect.feeltalk.new_domain.model.chat.SendTextChatDto
-import com.clonect.feeltalk.new_domain.model.chat.SendVoiceChatDto
+import com.clonect.feeltalk.new_domain.model.chat.*
 import com.google.gson.JsonObject
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -17,6 +14,14 @@ import java.io.File
 class ChatRemoteDataSourceImpl(
     private val clonectService: ClonectService
 ): ChatRemoteDataSource {
+
+    override suspend fun getPartnerLastChat(accessToken: String): PartnerLastChatDto {
+        val response = clonectService.getPartnerLastChat("Bearer $accessToken")
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
+        return response.body()!!.data!!
+    }
 
     override suspend fun changeChatRoomState(accessToken: String, isInChat: Boolean) {
         val body = JsonObject().apply {

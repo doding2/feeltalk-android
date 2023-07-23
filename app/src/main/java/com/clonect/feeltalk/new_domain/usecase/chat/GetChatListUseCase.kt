@@ -3,7 +3,7 @@ package com.clonect.feeltalk.new_domain.usecase.chat
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.chat.ChatListDto
 import com.clonect.feeltalk.new_domain.repository.chat.ChatRepository
-import com.clonect.feeltalk.new_domain.repository.signIn.TokenRepository
+import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 
 class GetChatListUseCase(
     private val tokenRepository: TokenRepository,

@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_domain.repository.signIn
+package com.clonect.feeltalk.new_domain.repository.token
 
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
@@ -10,4 +10,6 @@ interface TokenRepository {
 
     fun saveTokenInfo(tokenInfo: TokenInfo): Resource<Unit>
     suspend fun getTokenInfo(): Resource<TokenInfo>
+
+    suspend fun updateFcmToken(fcmToken: String): Resource<Unit>
 }

@@ -3,7 +3,7 @@ package com.clonect.feeltalk.new_domain.usecase.signIn
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.token.TokenInfo
 import com.clonect.feeltalk.new_domain.repository.signIn.SignInRepository
-import com.clonect.feeltalk.new_domain.repository.signIn.TokenRepository
+import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 
 class SignUpUseCase(
     private val tokenRepository: TokenRepository,

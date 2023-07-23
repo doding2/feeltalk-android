@@ -23,6 +23,7 @@ import com.clonect.feeltalk.new_presentation.service.notification_observer.Partn
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
 import com.clonect.feeltalk.presentation.utils.infoLog
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
@@ -31,6 +32,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @AndroidEntryPoint
 class FirebaseCloudMessagingService: FirebaseMessagingService() {
@@ -52,6 +55,20 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
 
     companion object {
+
+        suspend fun getFcmToken() = suspendCoroutine { continuation ->
+            FirebaseMessaging.getInstance().apply {
+                token
+                    .addOnSuccessListener {
+                        continuation.resume(it)
+                    }
+                    .addOnFailureListener {
+                        continuation.resume(null)
+                    }
+            }
+        }
+
+
         const val NOTIFICATION_GROUP = "group"
         
 //        const val TODAY_QUESTION_CHANNEL_ID ="feeltalk_today_question_notification"

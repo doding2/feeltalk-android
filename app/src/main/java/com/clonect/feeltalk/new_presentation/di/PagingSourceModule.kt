@@ -2,8 +2,8 @@ package com.clonect.feeltalk.new_presentation.di
 
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatCacheDataSource
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatRemoteDataSource
-import com.clonect.feeltalk.new_data.repository.paging.ChatPagingSource
-import com.clonect.feeltalk.new_domain.repository.signIn.TokenRepository
+import com.clonect.feeltalk.new_data.repository.chat.paging.ChatPagingSource
+import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

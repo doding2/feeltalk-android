@@ -7,7 +7,7 @@ import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenLocalDataS
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenRemoteDataSource
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
 import com.clonect.feeltalk.new_domain.model.token.TokenInfo
-import com.clonect.feeltalk.new_domain.repository.signIn.TokenRepository
+import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 import java.util.*
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -55,6 +55,21 @@ class TokenRepositoryImpl(
             throw e
         } catch (e: Exception) {
             return Resource.Error(e)
+        }
+    }
+
+    override suspend fun updateFcmToken(fcmToken: String): Resource<Unit> {
+        return try {
+            val tokenInfo = getTokenInfo()
+            val accessToken = if (tokenInfo is Resource.Error) return Resource.Error(tokenInfo.throwable)
+            else (tokenInfo as Resource.Success).data.accessToken
+
+            val result = remoteDataSource.updateFcmToken(accessToken, fcmToken)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
         }
     }
 

@@ -2,7 +2,7 @@ package com.clonect.feeltalk.new_domain.usecase.chat
 
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.repository.chat.ChatRepository
-import com.clonect.feeltalk.new_domain.repository.signIn.TokenRepository
+import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 
 class ChangeChatRoomStateUseCase(
     private val tokenRepository: TokenRepository,
