@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.view.updateLayoutParams
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -248,7 +249,10 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
         override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
             val chat = item as TextChat
             binding.run {
-
+                root.setOnClickListener {
+                    Toast.makeText(root.context, "isRead: ${chat.isRead}", Toast.LENGTH_SHORT).show()
+                }
+                
                 tvRead.text = root.context.getString(
                     if (isPartnerInChat || chat.isRead) R.string.chat_read
                     else R.string.chat_unread

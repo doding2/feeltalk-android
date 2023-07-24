@@ -153,7 +153,7 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    fun sendTextChat(onStart: () -> Unit = {}, onEnd: () -> Unit = {}) = viewModelScope.launch {
+    fun sendTextChat(onStart: () -> Unit) = viewModelScope.launch {
         val message = _textChat.value
         _textChat.value = ""
         onStart()
@@ -243,6 +243,11 @@ class ChatViewModel @Inject constructor(
                     infoLog("collectPartnerChatRoomState(): ${it.localizedMessage}")
                 }
             }
+    }
+
+    fun toggleIsPartnerInChat() {
+        _isPartnerInChat.value = _isPartnerInChat.value?.not()
+        infoLog("isPartnerInChat: ${_isPartnerInChat.value}")
     }
 
 

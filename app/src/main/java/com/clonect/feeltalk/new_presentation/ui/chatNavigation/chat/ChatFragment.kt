@@ -43,7 +43,6 @@ class ChatFragment : Fragment() {
     private lateinit var binding: FragmentChatBinding
     private val viewModel: ChatViewModel by viewModels()
     private val navViewModel: MainNavigationViewModel by activityViewModels()
-//    private lateinit var onBackCallback: OnBackPressedCallback
     @Inject
     lateinit var adapter: ChatAdapter
 
@@ -137,11 +136,9 @@ class ChatFragment : Fragment() {
 
 
     private fun sendTextChat() {
-        viewModel.sendTextChat(
-            onStart =  {
-                binding.etTextMessage.setText("")
-            }
-        )
+        viewModel.sendTextChat {
+            binding.etTextMessage.setText("")
+        }
     }
 
 

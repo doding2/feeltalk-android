@@ -22,7 +22,6 @@ class SignInRepositoryImpl(
     override suspend fun autoLogIn(accessToken: String): Resource<AutoLogInDto> {
         return try {
             val result = remoteDataSource.autoLogIn(accessToken)
-            cacheDataSource.saveCoupleCode(null)
             Resource.Success(result)
         } catch (e: CancellationException) {
             throw e
@@ -45,7 +44,6 @@ class SignInRepositoryImpl(
                     snsType = socialToken.type
                 )
             }
-            cacheDataSource.saveCoupleCode(null)
             Resource.Success(Pair(result.signUpState, tokenInfo))
         } catch (e: CancellationException) {
             throw e
@@ -64,7 +62,6 @@ class SignInRepositoryImpl(
                 expiresAt = now.plusSecondsBy(result.expiresIn),
                 snsType = socialToken.type
             )
-            cacheDataSource.saveCoupleCode(null)
             Resource.Success(tokenInfo)
         } catch (e: CancellationException) {
             throw e
@@ -75,11 +72,7 @@ class SignInRepositoryImpl(
 
     override suspend fun getCoupleCode(accessToken: String): Resource<CoupleCodeDto> {
         return try {
-            val cache = cacheDataSource.getCoupleCode()
-            if (cache != null) return Resource.Success(CoupleCodeDto(cache))
-
             val result = remoteDataSource.getCoupleCode(accessToken)
-            cacheDataSource.saveCoupleCode(result.inviteCode)
             Resource.Success(result)
         } catch (e: CancellationException) {
             throw e
