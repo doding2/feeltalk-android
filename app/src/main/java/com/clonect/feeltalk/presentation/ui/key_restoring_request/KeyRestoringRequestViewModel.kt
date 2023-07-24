@@ -10,7 +10,7 @@ import com.clonect.feeltalk.domain.usecase.encryption.CheckKeyPairsExistUseCase
 import com.clonect.feeltalk.domain.usecase.encryption.CheckKeyPairsWorkWellUseCase
 import com.clonect.feeltalk.domain.usecase.encryption.RequestToRestoreKeysUseCase
 import com.clonect.feeltalk.domain.usecase.encryption.RestoreKeysUseCase
-import com.clonect.feeltalk.new_presentation.service.notification_observer.AcceptRestoringKeysRequestObserver
+import com.clonect.feeltalk.new_presentation.notification.notificationObserver.AcceptRestoringKeysRequestObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext

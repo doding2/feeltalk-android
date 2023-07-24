@@ -19,11 +19,13 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentHomeBinding
 import com.clonect.feeltalk.new_domain.model.signal.Signal
+import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.signal.SignalBottomSheetFragment
 import com.clonect.feeltalk.new_presentation.ui.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -51,6 +53,10 @@ class HomeFragment : Fragment() {
         super.onResume()
         setLightStatusBars(false, activity, binding.root)
     }
+
+
+    @Inject
+    lateinit var notificationHelper: NotificationHelper
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

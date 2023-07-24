@@ -15,8 +15,9 @@ import com.clonect.feeltalk.new_domain.usecase.chat.ChangeChatRoomStateUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPagingChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.SendTextChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.SendVoiceChatUseCase
-import com.clonect.feeltalk.new_presentation.service.notification_observer.NewChatObserver
-import com.clonect.feeltalk.new_presentation.service.notification_observer.PartnerChatRoomStateObserver
+import com.clonect.feeltalk.new_presentation.notification.notificationObserver.MyChatRoomStateObserver
+import com.clonect.feeltalk.new_presentation.notification.notificationObserver.NewChatObserver
+import com.clonect.feeltalk.new_presentation.notification.notificationObserver.PartnerChatRoomStateObserver
 import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.RecordingReplayer
 import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.RecordingSampler
 import com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat.audioVisualizer.VisualizerView
@@ -145,6 +146,7 @@ class ChatViewModel @Inject constructor(
 
         when (val result = changeChatRoomStateUseCase(isInChat)) {
             is Resource.Success -> {
+                MyChatRoomStateObserver.getInstance().setUserInChat(isInChat)
                 _isUserInChat.value = isInChat
             }
             is Resource.Error -> {
@@ -308,6 +310,7 @@ class ChatViewModel @Inject constructor(
             chatSender = "me",
             isRead = true,
             createAt = format.format(Date()),
+            isSending = true,
             url = "index",
         )
 

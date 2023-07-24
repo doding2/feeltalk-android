@@ -8,7 +8,7 @@ import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPartnerLastChatUseCase
-import com.clonect.feeltalk.new_presentation.service.notification_observer.NewChatObserver
+import com.clonect.feeltalk.new_presentation.notification.notificationObserver.NewChatObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,6 +50,12 @@ class MainNavigationViewModel @Inject constructor(
 
     fun toggleShowChatNavigation() {
         _showChatNavigation.value = _showChatNavigation.value.not()
+
+        if (_showChatNavigation.value) {
+            val appSettings = getAppSettingsUseCase()
+            appSettings.chatNotificationStack = 0
+            saveAppSettingsUseCase(appSettings)
+        }
     }
 
     fun setShowChatNavigation(showChat: Boolean) = viewModelScope.launch {
@@ -57,9 +63,11 @@ class MainNavigationViewModel @Inject constructor(
             isArgumentsInit = false
             _showChatNavigation.value = showChat
 
-            val appSettings = getAppSettingsUseCase()
-            appSettings.activeChatNotification = 0
-            saveAppSettingsUseCase(appSettings)
+            if (showChat) {
+                val appSettings = getAppSettingsUseCase()
+                appSettings.chatNotificationStack = 0
+                saveAppSettingsUseCase(appSettings)
+            }
         }
     }
 
@@ -70,6 +78,8 @@ class MainNavigationViewModel @Inject constructor(
             .newChat
             .collectLatest { newChat ->
                 runCatching {
+                    if (newChat?.chatSender == "me") return@collectLatest
+
                     val message  = when (newChat?.type) {
                         ChatType.TextChatting -> {
                             val textChat = newChat as? TextChat ?: return@collectLatest

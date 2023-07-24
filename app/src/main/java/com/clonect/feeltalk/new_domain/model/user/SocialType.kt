@@ -6,5 +6,5 @@ enum class SocialType(val raw: String): Serializable {
     Kakao("kakao"),
     Naver("naver"),
     Google("google"),
-    Apple("apple")
+    Apple("appleAndroid")
 }

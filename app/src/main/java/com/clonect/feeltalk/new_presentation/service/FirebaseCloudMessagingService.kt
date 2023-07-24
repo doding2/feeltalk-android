@@ -1,16 +1,8 @@
 package com.clonect.feeltalk.new_presentation.service
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.os.Build
-import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
-import androidx.navigation.NavDeepLinkBuilder
-import com.clonect.feeltalk.R
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetUserIsActiveUseCase
 import com.clonect.feeltalk.domain.usecase.user.SetUserIsActiveUseCase
@@ -18,9 +10,15 @@ import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
-import com.clonect.feeltalk.new_presentation.service.notification_observer.CreateCoupleObserver
-import com.clonect.feeltalk.new_presentation.service.notification_observer.NewChatObserver
-import com.clonect.feeltalk.new_presentation.service.notification_observer.PartnerChatRoomStateObserver
+import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
+import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.CREATE_COUPLE_CHANNEL_ID
+import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_CHAT_ROOM_STATE
+import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_CREATE_COUPLE
+import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_TEXT_CHATTING
+import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_VOICE_CHATTING
+import com.clonect.feeltalk.new_presentation.notification.notificationObserver.CreateCoupleObserver
+import com.clonect.feeltalk.new_presentation.notification.notificationObserver.NewChatObserver
+import com.clonect.feeltalk.new_presentation.notification.notificationObserver.PartnerChatRoomStateObserver
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
 import com.clonect.feeltalk.presentation.utils.infoLog
@@ -38,6 +36,10 @@ import kotlin.coroutines.suspendCoroutine
 
 @AndroidEntryPoint
 class FirebaseCloudMessagingService: FirebaseMessagingService() {
+
+    // Notification
+    @Inject
+    lateinit var notificationHelper: NotificationHelper
 
     // App Settings
     @Inject
@@ -68,9 +70,6 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                     }
             }
         }
-
-
-        const val NOTIFICATION_GROUP = "group"
         
 //        const val TODAY_QUESTION_CHANNEL_ID ="feeltalk_today_question_notification"
 //        const val PARTNER_ANSWERED_CHANNEL_ID ="feeltalk_partner_question_answer_notification"
@@ -88,14 +87,6 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 //        const val TYPE_REQUEST_EMOTION_CHANGE = "emotionRequest"
 //        const val TYPE_REQUEST_KEY_RESTORING = "KeyTrade"
 //        const val TYPE_ACCEPT_KEY_RESTORING = "KeyTradeOk"
-
-        const val CHAT_CHANNEL_ID ="feeltalk_chat_notification"
-        const val CREATE_COUPLE_CHANNEL_ID ="feeltalk_create_couple_notification"
-
-        const val TYPE_CREATE_COUPLE = "createCouple"
-        const val TYPE_CHAT_ROOM_STATE = "chatRoomStatusChange"
-        const val TYPE_TEXT_CHATTING = "textChatting"
-        const val TYPE_VOICE_CHATTING = "voiceChatting"
     }
 
     override fun onNewToken(newToken: String) {
@@ -151,7 +142,6 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
 
     private fun handleCreateCoupleData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
-
         CreateCoupleObserver.getInstance()
             .setCoupleCreated(true)
 
@@ -167,10 +157,9 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_ONE_SHOT)
         }
 
-        showNotification(
-            title = "연인 등록 완료",
-            message = "연인 등록에 성공했습니다",
-            notificationID = CREATE_COUPLE_CHANNEL_ID.toBytesInt(),
+        notificationHelper.showNormalNotification(
+            title = data["title"] ?: "연인 등록 완료",
+            message = data["message"] ?: "연인 등록에 성공했습니다",
             channelID = CREATE_COUPLE_CHANNEL_ID,
             pendingIntent = pendingIntent
         )
@@ -206,25 +195,9 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             return@launch
         }
 
-        val pendingIntent = NavDeepLinkBuilder(applicationContext)
-            .setGraph(R.navigation.feeltalk_nav_graph)
-            .setDestination(R.id.mainNavigationFragment)
-            .setArguments(
-                bundleOf("showChat" to true)
-            )
-            .createPendingIntent()
-
-        val appSettings = getAppSettingsUseCase()
-        appSettings.activeChatNotification += 1
-        saveAppSettingsUseCase(appSettings)
-
-        showNotification(
+        notificationHelper.showChatNotification(
             title = "연인",
-            message = message,
-            notificationID = CHAT_CHANNEL_ID.toBytesInt(),
-            channelID = CHAT_CHANNEL_ID,
-            pendingIntent = pendingIntent,
-            activeNotificationCount = appSettings.activeChatNotification
+            message = message
         )
     }
 
@@ -252,25 +225,9 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             return@launch
         }
 
-        val pendingIntent = NavDeepLinkBuilder(applicationContext)
-            .setGraph(R.navigation.feeltalk_nav_graph)
-            .setDestination(R.id.mainNavigationFragment)
-            .setArguments(
-                bundleOf("showChat" to true)
-            )
-            .createPendingIntent()
-
-        val appSettings = getAppSettingsUseCase()
-        appSettings.activeChatNotification += 1
-        saveAppSettingsUseCase(appSettings)
-
-        showNotification(
+        notificationHelper.showChatNotification(
             title = "연인",
-            message = "보이스 채팅입니다.",
-            notificationID = CHAT_CHANNEL_ID.toBytesInt(),
-            channelID = CHAT_CHANNEL_ID,
-            pendingIntent = pendingIntent,
-            activeNotificationCount = appSettings.activeChatNotification
+            message = "(보이스 채팅)"
         )
     }
 
@@ -561,95 +518,4 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 //            pendingIntent = pendingIntent
 //        )
 //    }
-
-
-    private fun String.toBytesInt(): Int {
-        val bytes = encodeToByteArray()
-        var result = 0
-        for (i in bytes.indices) {
-            result = result or (bytes[i].toInt() shl 8 * i)
-        }
-        return result
-    }
-
-
-
-    private fun showNotification(
-        title: String,
-        message: String,
-        notificationID: Int = System.currentTimeMillis().toInt(),
-        channelID: String,
-        pendingIntent: PendingIntent?,
-        activeNotificationCount: Int = 0
-    ) {
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        infoLog("activeCount: $activeNotificationCount")
-
-        createNotificationChannel(
-            notificationManager = notificationManager,
-            channelID = channelID
-        )
-
-        val count = if (activeNotificationCount <= 0) 1 else activeNotificationCount
-        val titleWithCount = "$title $count"
-
-        val notification = NotificationCompat.Builder(applicationContext, channelID)
-            .setContentTitle(titleWithCount)
-            .setContentText(message)
-            .setSmallIcon(R.mipmap.ic_launcher_round)
-            .setColor(ContextCompat.getColor(applicationContext, R.color.white))
-            .setOngoing(false)
-            .setAutoCancel(true)
-            .setContentIntent(pendingIntent)
-            .setGroup(NOTIFICATION_GROUP)
-            .setNumber(count)
-            .build()
-
-        val groupNotification = NotificationCompat.Builder(applicationContext, channelID)
-            .setSmallIcon(R.mipmap.ic_launcher_round)
-            .setColor(ContextCompat.getColor(applicationContext, R.color.white))
-            .setStyle(NotificationCompat.InboxStyle())
-            .setGroup(NOTIFICATION_GROUP)
-            .setGroupSummary(true)
-            .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_ALL)
-            .setNumber(count)
-            .build()
-
-        notificationManager.notify(notificationID, notification)
-        notificationManager.notify(NOTIFICATION_GROUP.toBytesInt(), groupNotification)
-    }
-
-
-    private fun createNotificationChannel(
-        notificationManager: NotificationManager,
-        channelID: String,
-        channelName: String = getChannelName(channelID),
-        channelDescription: String = getChannelDescription(channelID)
-    ) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelID,
-                channelName,
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = channelDescription
-                setShowBadge(true)
-            }
-            notificationManager.createNotificationChannel(channel)
-        }
-    }
-
-
-
-    private fun getChannelName(channelID: String): String = when (channelID) {
-        CREATE_COUPLE_CHANNEL_ID -> "커플 등록"
-        CHAT_CHANNEL_ID -> "채팅"
-        else -> "기타"
-    }
-
-    private fun getChannelDescription(channelID: String): String = when (channelID) {
-        CREATE_COUPLE_CHANNEL_ID -> "커플 등록"
-        CHAT_CHANNEL_ID -> "채팅"
-        else -> "기타"
-    }
 }

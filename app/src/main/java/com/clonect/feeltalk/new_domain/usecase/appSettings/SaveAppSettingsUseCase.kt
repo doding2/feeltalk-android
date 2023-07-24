@@ -9,25 +9,12 @@ class SaveAppSettingsUseCase(
     private val settingsPref: SharedPreferences,
     private val appLevelEncryptHelper: AppLevelEncryptHelper,
 ) {
-    suspend operator fun invoke(appSettings: AppSettings) {
-        val prefFcmToken = settingsPref.getString("fcmToken", null)
-            ?.let { appLevelEncryptHelper.decrypt("fcmToken", it)  }
-//        if (prefFcmToken != appSettings.fcmToken) {
-//            appSettings.fcmToken?.let {
-//                val result = userRepository.updateFcmToken(it)
-//                if (result is Resource.Success) {
-//                    infoLog("update fcm token: $it")
-//                } else {
-//                    appSettings.fcmToken = null
-//                }
-//            }
-//        }
-
+    operator fun invoke(appSettings: AppSettings) {
         settingsPref.edit {
             appSettings.run {
                 putBoolean("isAppSettingsNotChanged", false)
                 putBoolean("isPushNotificationEnabled", isPushNotificationEnabled)
-                putInt("activeChatNotification", activeChatNotification)
+                putInt("chatNotificationStack", chatNotificationStack)
                 putString("fcmToken", appSettings.fcmToken?.let { appLevelEncryptHelper.encrypt("fcmToken", it) })
             }
         }

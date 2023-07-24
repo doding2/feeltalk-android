@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.core.view.WindowCompat
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -38,6 +39,7 @@ class MainNavigationFragment : Fragment() {
         // set fullscreen
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             binding.clFloatingChatContainer.setPadding(0, getStatusBarHeight(), 0, 0)
+            WindowCompat.setDecorFitsSystemWindows(requireActivity().window, false)
         } else {
             activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         }

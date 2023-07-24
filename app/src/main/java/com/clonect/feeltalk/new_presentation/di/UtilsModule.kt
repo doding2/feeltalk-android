@@ -1,11 +1,14 @@
 package com.clonect.feeltalk.new_presentation.di
 
 import android.content.SharedPreferences
-import com.clonect.feeltalk.new_data.util.AppLevelEncryptHelper
 import com.clonect.feeltalk.data.utils.DatabaseEncryptHelper
 import com.clonect.feeltalk.data.utils.MessageEncryptHelper
 import com.clonect.feeltalk.data.utils.UserLevelEncryptHelper
 import com.clonect.feeltalk.domain.repository.EncryptionRepository
+import com.clonect.feeltalk.new_data.util.AppLevelEncryptHelper
+import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
+import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
+import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,6 +26,14 @@ class UtilsModule {
         return AppLevelEncryptHelper(pref)
     }
 
+    @Provides
+    @Singleton
+    fun providesNotificationHelper(
+        getAppSettingsUseCase: GetAppSettingsUseCase,
+        saveAppSettingsUseCase: SaveAppSettingsUseCase
+    ): NotificationHelper {
+        return NotificationHelper(getAppSettingsUseCase, saveAppSettingsUseCase)
+    }
 
 
 

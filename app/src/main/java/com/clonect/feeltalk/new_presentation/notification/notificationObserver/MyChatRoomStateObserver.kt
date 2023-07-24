@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.service.notification_observer
+package com.clonect.feeltalk.new_presentation.notification.notificationObserver
 
 class MyChatRoomStateObserver {
     private var isUserInChat = false

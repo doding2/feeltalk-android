@@ -7,9 +7,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -22,7 +22,6 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentSignUpNavigationBinding
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
-import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.presentation.utils.makeLoadingDialog
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,9 +44,7 @@ class SignUpNavigationFragment : Fragment() {
         binding = FragmentSignUpNavigationBinding.inflate(inflater, container, false)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
-        } else {
-            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            WindowCompat.setDecorFitsSystemWindows(requireActivity().window, true)
         }
 
         val navHostFragment = childFragmentManager.findFragmentById(R.id.fcv_fragment) as NavHostFragment
