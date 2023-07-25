@@ -1,14 +1,22 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation
 
+import android.content.Context
+import android.content.Intent
+import android.content.pm.ShortcutInfo
+import android.content.pm.ShortcutManager
+import android.os.Build
+import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.chat.ChatType
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
-import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
-import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPartnerLastChatUseCase
+import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.notification.notificationObserver.NewChatObserver
+import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
+import com.clonect.feeltalk.new_presentation.ui.util.toBytesInt
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,8 +27,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainNavigationViewModel @Inject constructor(
-    private val getAppSettingsUseCase: GetAppSettingsUseCase,
-    private val saveAppSettingsUseCase: SaveAppSettingsUseCase,
+    private val notificationHelper: NotificationHelper,
     private val getPartnerLastChatUseCase: GetPartnerLastChatUseCase,
 ): ViewModel() {
 
@@ -35,6 +42,33 @@ class MainNavigationViewModel @Inject constructor(
     init {
         getPartnerLastChat()
         collectNewChat()
+    }
+
+    fun setShortcut(context: Context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return
+
+        val intent = Intent(context, MainActivity::class.java).apply {
+            action = Intent.ACTION_VIEW
+            putExtra("showChat", true)
+        }
+
+        val partner = android.app.Person.Builder()
+            .setName(context.getString(R.string.notification_partner))
+            .setIcon(IconCompat.createWithResource(context, R.drawable.image_my_default_profile).toIcon(context))
+            .build()
+
+        val shortcut = ShortcutInfo.Builder(context, NotificationHelper.CHAT_SHORTCUT_ID).run {
+            setLongLived(true)
+            setShortLabel(context.getString(R.string.app_name))
+            setPerson(partner)
+            setIcon(IconCompat.createWithResource(context, R.drawable.n_image_bubble).toIcon(context))
+            setCategories(setOf(ShortcutInfo.SHORTCUT_CATEGORY_CONVERSATION))
+            setIntent(intent)
+            build()
+        }
+
+        val shortcutManager = context.getSystemService(Context.SHORTCUT_SERVICE) as ShortcutManager
+        shortcutManager.pushDynamicShortcut(shortcut)
     }
     
     private fun getPartnerLastChat() = viewModelScope.launch { 
@@ -52,9 +86,7 @@ class MainNavigationViewModel @Inject constructor(
         _showChatNavigation.value = _showChatNavigation.value.not()
 
         if (_showChatNavigation.value) {
-            val appSettings = getAppSettingsUseCase()
-            appSettings.chatNotificationStack = 0
-            saveAppSettingsUseCase(appSettings)
+            notificationHelper.cancelNotification(NotificationHelper.CHAT_CHANNEL_ID.toBytesInt())
         }
     }
 
@@ -64,9 +96,7 @@ class MainNavigationViewModel @Inject constructor(
             _showChatNavigation.value = showChat
 
             if (showChat) {
-                val appSettings = getAppSettingsUseCase()
-                appSettings.chatNotificationStack = 0
-                saveAppSettingsUseCase(appSettings)
+                notificationHelper.cancelNotification(NotificationHelper.CHAT_CHANNEL_ID.toBytesInt())
             }
         }
     }

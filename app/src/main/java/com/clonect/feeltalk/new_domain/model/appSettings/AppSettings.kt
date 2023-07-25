@@ -5,6 +5,5 @@ import java.io.Serializable
 data class AppSettings(
     var isAppSettingsNotChanged: Boolean = true,
     var isPushNotificationEnabled: Boolean = false,
-    var chatNotificationStack: Int = 0,
     var fcmToken: String? = null
 ): Serializable

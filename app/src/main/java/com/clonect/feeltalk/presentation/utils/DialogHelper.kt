@@ -1,7 +1,9 @@
 package com.clonect.feeltalk.presentation.utils
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
@@ -15,6 +17,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.clonect.feeltalk.R
@@ -38,6 +41,54 @@ fun Fragment.makeLoadingDialog(onDismiss: () -> Unit = {}): Dialog {
 }
 
 
+fun Context.showAlertDialog(
+    title: String,
+    message: String,
+    confirmButtonText: String,
+    onCancelClick: () -> Unit = {},
+    onConfirmClick: () -> Unit = {},
+    onDismiss: () -> Unit = {},
+) {
+    val dialog = Dialog(this).apply {
+        setContentView(R.layout.dialog_gradient_alert)
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val orientation = resources.configuration.orientation
+
+        val widthParam =
+            if (orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT) android.view.ViewGroup.LayoutParams.MATCH_PARENT
+            else android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+
+        window?.setLayout(widthParam, android.view.ViewGroup.LayoutParams.WRAP_CONTENT)
+    }
+
+    if (dialog.isShowing)
+        return
+
+    val titleText = dialog.findViewById<TextView>(com.clonect.feeltalk.R.id.text_title)
+    titleText.text = title
+
+    val messageText = dialog.findViewById<TextView>(com.clonect.feeltalk.R.id.text_message)
+    messageText.text = message
+
+    val btnConfirm = dialog.findViewById<TextView>(com.clonect.feeltalk.R.id.btn_confirm)
+    btnConfirm.text = confirmButtonText
+    btnConfirm.setOnClickListener {
+        onConfirmClick()
+        dialog.dismiss()
+    }
+
+    val btnCancel = dialog.findViewById<ImageView>(com.clonect.feeltalk.R.id.btn_cancel)
+    btnCancel.setOnClickListener {
+        onCancelClick()
+        dialog.dismiss()
+    }
+
+    dialog.setOnDismissListener {
+        onDismiss()
+    }
+
+    dialog.show()
+}
 
 fun Fragment.showAlertDialog(
     title: String,
@@ -173,6 +224,25 @@ fun Fragment.showBreakUpCoupleDialog(
 }
 
 
+fun Context.showPermissionRequestDialog(
+    title: String = "권한 설정",
+    message: String = "이 기능을 사용하기 위해서는 권한을 설정해주셔야 합니다.",
+    confirmButtonText: String = "설정하러 가기",
+) {
+    showAlertDialog(
+        title = title,
+        message = message,
+        confirmButtonText = confirmButtonText,
+        onConfirmClick = {
+            val intent = Intent().apply {
+                val uri = Uri.fromParts("package", this@showPermissionRequestDialog.packageName, null)
+                data = uri
+                action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+            }
+            startActivity(intent)
+        }
+    )
+}
 
 fun Fragment.showPermissionRequestDialog(
     title: String = "권한 설정",

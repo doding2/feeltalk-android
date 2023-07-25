@@ -63,7 +63,15 @@ class HomeFragment : Fragment() {
         collectViewModel()
 
         binding.run {
-            mcvMySignal.setOnClickListener { showSignalBottomSheet() }
+            mcvMySignal.setOnClickListener {
+//                showSignalBottomSheet()
+                notificationHelper.showChatNotification(title = "연인", message = "채팅 내용")
+//                notificationHelper.showNormalNotification(title = "일반 알림",
+//                    message = "일반 내용",
+//                    channelID = NotificationHelper.CREATE_COUPLE_CHANNEL_ID,
+//                    pendingIntent = null
+//                )
+            }
         }
     }
 

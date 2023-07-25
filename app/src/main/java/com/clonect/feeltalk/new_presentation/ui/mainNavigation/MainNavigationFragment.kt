@@ -47,6 +47,8 @@ class MainNavigationFragment : Fragment() {
         val showChat = arguments?.getBoolean("showChat", false) ?: false
         viewModel.setShowChatNavigation(showChat)
 
+        viewModel.setShortcut(requireContext())
+
         return binding.root
     }
 

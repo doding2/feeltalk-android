@@ -4,20 +4,22 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.Icon
 import android.os.Build
-import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.Person
 import androidx.core.app.RemoteInput
-import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.IconCompat
 import androidx.core.os.bundleOf
 import androidx.navigation.NavDeepLinkBuilder
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
+import com.clonect.feeltalk.new_presentation.ui.chatNavigation.bubble.BubbleActivity
 import com.navercorp.nid.NaverIdLoginSDK.applicationContext
-import java.text.SimpleDateFormat
 import java.util.*
 
 class NotificationHelper(
@@ -32,12 +34,14 @@ class NotificationHelper(
         const val TYPE_VOICE_CHATTING = "voiceChatting"
 
         const val KEY_TEXT_REPLY = "key_text_reply"
-        const val KEY_NOTIFICATION_ID = "key_notification_id"
 
-        const val NOTIFICATION_GROUP = "group"
+        const val NOTIFICATION_NORMAL_GROUP = "normal_group"
+        const val NOTIFICATION_CHAT_GROUP = "chat_group"
 
         const val CHAT_CHANNEL_ID ="feeltalk_chat_notification"
         const val CREATE_COUPLE_CHANNEL_ID ="feeltalk_create_couple_notification"
+
+        const val CHAT_SHORTCUT_ID = "chat_shortcut"
     }
 
     fun showNormalNotification(
@@ -52,11 +56,12 @@ class NotificationHelper(
         val notification = NotificationCompat.Builder(applicationContext, channelID)
             .setContentTitle(title)
             .setContentText(message)
-            .setSmallIcon(R.mipmap.ic_launcher_round)
-            .setColor(ContextCompat.getColor(applicationContext, R.color.white))
+            .setSmallIcon(R.drawable.n_ic_notification)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setColor(applicationContext.getColor(R.color.main_500))
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
-            .setGroup(NOTIFICATION_GROUP)
+            .setGroup(NOTIFICATION_NORMAL_GROUP)
             .build()
 
         createNotificationChannel(channelID)
@@ -69,15 +74,7 @@ class NotificationHelper(
         title: String,
         message: String
     ) {
-        val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_MUTABLE
-        else PendingIntent.FLAG_ONE_SHOT
-        val dismissResultIntent = Intent(applicationContext, NotificationDismissReceiver::class.java)
-        val dismissPendingIntent = PendingIntent.getBroadcast(
-            applicationContext,
-            0,
-            dismissResultIntent,
-            flag
-        )
+        val notificationID = CHAT_CHANNEL_ID.toBytesInt()
 
         val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
             .setGraph(R.navigation.feeltalk_nav_graph)
@@ -88,89 +85,161 @@ class NotificationHelper(
             .createPendingIntent()
 
         val remoteInput = RemoteInput.Builder(KEY_TEXT_REPLY)
-            .setLabel("답장")
+            .setLabel(applicationContext.getString(R.string.notification_reply))
             .build()
         val replyResultIntent = Intent(applicationContext, NotificationReplyReceiver::class.java)
         val replyPendingIntent = PendingIntent.getBroadcast(
             applicationContext,
             0,
             replyResultIntent,
-            flag
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_MUTABLE
+            else PendingIntent.FLAG_ONE_SHOT
         )
 
         val replyAction = NotificationCompat.Action.Builder(
             android.R.drawable.ic_input_add,
-            "답장",
+            applicationContext.getString(R.string.notification_reply),
             replyPendingIntent
         ).run {
             addRemoteInput(remoteInput)
             build()
         }
 
-        val appSettings = getAppSettingsUseCase().apply {
-            chatNotificationStack += 1
-        }
-        saveAppSettingsUseCase(appSettings)
-        val stackCount = appSettings.chatNotificationStack
-        val stackCountStr = if (stackCount <= 1) "" else "$stackCount"
 
-        val format = SimpleDateFormat("a h:mm", Locale.getDefault())
+        val bubble = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val target = Intent(applicationContext, BubbleActivity::class.java)
+            val bubbleIntent = PendingIntent.getActivity(
+                applicationContext,
+                0,
+                target,
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_MUTABLE
+                else PendingIntent.FLAG_ONE_SHOT
+            )
 
-        val customView = RemoteViews(applicationContext.packageName, R.layout.notification_chat).apply {
-            setTextViewText(R.id.tv_title, title)
-            setTextViewText(R.id.tv_message, message)
-            setTextViewText(R.id.tv_time, format.format(Date()))
-            setTextViewText(R.id.tv_stack_count, stackCountStr)
+            NotificationCompat.BubbleMetadata.Builder(bubbleIntent,
+                IconCompat.createWithResource(applicationContext, R.drawable.ic_emotion_happy))
+                .setDesiredHeight(600)
+                .build()
+        } else {
+            null
         }
 
-        val customViewExpanded = RemoteViews(applicationContext.packageName, R.layout.notification_chat_expanded).apply {
-            setTextViewText(R.id.tv_title, title)
-            setTextViewText(R.id.tv_message, message)
-            setTextViewText(R.id.tv_stack_count, stackCountStr)
-        }
+        val partner = Person.Builder()
+            .setName(applicationContext.getString(R.string.notification_partner))
+            .setIcon(IconCompat.createWithResource(applicationContext, R.drawable.image_my_default_profile))
+            .build()
+
+        val me = Person.Builder()
+            .setName(applicationContext.getString(R.string.notification_me))
+            .setIcon(IconCompat.createWithResource(applicationContext, R.drawable.image_partner_default_profile))
+            .build()
+
+        val messageStyle = restoreMessagingStyle(notificationID)
+            ?: NotificationCompat.MessagingStyle(me)
+                .setGroupConversation(true)
+        messageStyle.addMessage(message, Date().time, partner)
 
         val notification = NotificationCompat.Builder(applicationContext, CHAT_CHANNEL_ID)
             .setDefaults(Notification.DEFAULT_ALL)
-            .setSmallIcon(R.mipmap.ic_launcher_round)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setSmallIcon(R.drawable.n_ic_notification)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
             .setColor(applicationContext.getColor(R.color.main_500))
-            .setStyle(NotificationCompat.DecoratedCustomViewStyle())
-            .setGroup(NOTIFICATION_GROUP)
+            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+            .setStyle(messageStyle)
+            .setGroup(NOTIFICATION_CHAT_GROUP)
             .setAutoCancel(true)
-            .setContentTitle(title)
-            .setContentText(message)
-            .setCustomContentView(customView)
-            .setCustomBigContentView(customViewExpanded)
+            .setOnlyAlertOnce(true)
             .setContentIntent(deepLinkPendingIntent)
             .addAction(replyAction)
-            .setDeleteIntent(dismissPendingIntent)
+            .setShortcutId(CHAT_SHORTCUT_ID)
+            .setBubbleMetadata(bubble)
             .build()
-
-        val notificationID = CHAT_CHANNEL_ID.toBytesInt()
 
         createNotificationChannel(CHAT_CHANNEL_ID)
         NotificationManagerCompat.from(applicationContext).notify(notificationID, notification)
         groupNotifications(CHAT_CHANNEL_ID)
     }
 
-    private fun groupNotifications(channelID: String) {
-        val groupNotification = NotificationCompat.Builder(applicationContext, channelID)
-            .setSmallIcon(R.mipmap.ic_launcher_round)
-            .setAutoCancel(true)
-            .setGroup(NOTIFICATION_GROUP)
-            .setGroupSummary(true)
-            .setOnlyAlertOnce(true)
-            .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_ALL)
-            .build()
 
-        val manager = NotificationManagerCompat.from(applicationContext)
-        manager.notify(NOTIFICATION_GROUP.toBytesInt(), groupNotification)
+    private fun restoreMessagingStyle(notificationID: Int): NotificationCompat.MessagingStyle? {
+        return (applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
+            .activeNotifications
+            .find { it.id == notificationID }
+            ?.notification
+            ?.let { NotificationCompat.MessagingStyle.extractMessagingStyleFromNotification(it) }
     }
 
+    private fun findActiveNotification(notificationId: Int): Notification? {
+        return (applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
+            .activeNotifications
+            .find {
+                it.id == notificationId
+            }?.notification
+    }
+
+    fun addChatReply(message: CharSequence, notificationID: Int, isReplySuccess: Boolean = false) {
+        val activeNotification = findActiveNotification(notificationID) ?: return
+        val activeStyle = NotificationCompat.MessagingStyle.extractMessagingStyleFromNotification(activeNotification)
+
+        val recoveredBuilder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            Notification.Builder.recoverBuilder(applicationContext, activeNotification)
+        } else {
+            cancelNotification(notificationID)
+            return
+        }
+
+        val partner = android.app.Person.Builder()
+            .setName(applicationContext.getString(R.string.notification_partner))
+            .setIcon(Icon.createWithResource(applicationContext, R.drawable.image_my_default_profile))
+            .build()
+
+        val me = android.app.Person.Builder()
+            .setName(applicationContext.getString(R.string.notification_me))
+            .setIcon(Icon.createWithResource(applicationContext, R.drawable.image_partner_default_profile))
+            .build()
+
+        val newStyle = Notification.MessagingStyle(me)
+            .setGroupConversation(true)
+
+        activeStyle?.messages?.forEach {
+            newStyle.addMessage(
+                it.text.toString(),
+                it.timestamp,
+                if (it.person?.name == me.name) me
+                else partner
+            )
+        }
+        if (isReplySuccess) {
+            newStyle.addMessage(message, System.currentTimeMillis(), me)
+        }
+
+        recoveredBuilder.style = newStyle
+        NotificationManagerCompat.from(applicationContext).notify(notificationID, recoveredBuilder.build())
+    }
 
     fun cancelNotification(notificationID: Int) {
         val manager = NotificationManagerCompat.from(applicationContext)
         manager.cancel(notificationID)
+    }
+
+
+    private fun groupNotifications(channelID: String) {
+        val group =
+            if (channelID == CHAT_CHANNEL_ID) NOTIFICATION_CHAT_GROUP
+            else NOTIFICATION_NORMAL_GROUP
+
+        val groupNotification = NotificationCompat.Builder(applicationContext, channelID)
+            .setSmallIcon(R.drawable.n_ic_notification)
+            .setColor(applicationContext.getColor(R.color.main_500))
+            .setAutoCancel(true)
+            .setGroup(group)
+            .setGroupSummary(true)
+            .setOnlyAlertOnce(false)
+            .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_ALL)
+            .build()
+
+        val manager = NotificationManagerCompat.from(applicationContext)
+        manager.notify(group.toBytesInt(), groupNotification)
     }
 
 
@@ -188,7 +257,6 @@ class NotificationHelper(
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 description = channelDescription
-                setShowBadge(true)
             }
             manager.createNotificationChannel(channel)
         }
