@@ -64,8 +64,8 @@ class HomeFragment : Fragment() {
 
         binding.run {
             mcvMySignal.setOnClickListener {
-//                showSignalBottomSheet()
-                notificationHelper.showChatNotification(title = "연인", message = "채팅 내용")
+                showSignalBottomSheet()
+//                notificationHelper.showChatNotification(title = "연인", message = "채팅 내용")
             }
         }
     }

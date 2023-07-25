@@ -24,7 +24,7 @@ class NewChatObserver {
     private val _newChat = MutableStateFlow<Chat?>(null)
     val newChat = _newChat.asStateFlow()
 
-    fun setNewChat(chat: Chat) {
+    fun setNewChat(chat: Chat?) {
         _newChat.value = chat
     }
 }

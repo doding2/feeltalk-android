@@ -229,7 +229,7 @@ class NotificationHelper(
             else NOTIFICATION_NORMAL_GROUP
 
         val groupNotification = NotificationCompat.Builder(applicationContext, channelID)
-            .setSmallIcon(R.drawable.n_ic_notification)
+            .setSmallIcon(R.mipmap.ic_launcher_round)
             .setColor(applicationContext.getColor(R.color.main_500))
             .setAutoCancel(true)
             .setGroup(group)

@@ -205,7 +205,9 @@ class ChatViewModel @Inject constructor(
 
 
     private fun collectNewChat() = viewModelScope.launch {
-        NewChatObserver.onCleared()
+        NewChatObserver
+            .getInstance()
+            .setNewChat(null)
         NewChatObserver
             .getInstance()
             .newChat
