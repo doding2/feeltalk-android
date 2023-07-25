@@ -106,6 +106,9 @@ class BubbleActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.changeChatRoomState(true)
         }
+        if (viewModel.isUserInBottom.value) {
+            scrollToBottom()
+        }
     }
 
     override fun onPause() {

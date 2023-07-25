@@ -142,7 +142,7 @@ class NotificationHelper(
         val notification = NotificationCompat.Builder(applicationContext, CHAT_CHANNEL_ID)
             .setDefaults(Notification.DEFAULT_ALL)
             .setSmallIcon(R.drawable.n_ic_notification)
-            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setColor(applicationContext.getColor(R.color.main_500))
             .setCategory(NotificationCompat.CATEGORY_MESSAGE)
             .setStyle(messageStyle)

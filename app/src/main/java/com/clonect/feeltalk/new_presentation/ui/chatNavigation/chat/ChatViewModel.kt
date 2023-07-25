@@ -205,6 +205,7 @@ class ChatViewModel @Inject constructor(
 
 
     private fun collectNewChat() = viewModelScope.launch {
+        NewChatObserver.onCleared()
         NewChatObserver
             .getInstance()
             .newChat
@@ -223,6 +224,7 @@ class ChatViewModel @Inject constructor(
                     }
 
                     modifyPage(PageEvents.InsertItemFooter(chat))
+                    infoLog("new chat: ${chat}")
 
                     if (isUserInBottom.value) {
                         delay(50)
