@@ -124,7 +124,9 @@ class ChatViewModel @Inject constructor(
     }
 
     fun modifyPage(event: PageEvents<Chat>) {
-        pageModificationEvents.value += event
+        if (event !in pageModificationEvents.value) {
+            pageModificationEvents.value += event
+        }
     }
 
 
@@ -195,6 +197,8 @@ class ChatViewModel @Inject constructor(
 
                 modifyPage(PageEvents.Remove(loadingTextChat))
                 modifyPage(PageEvents.InsertItemFooter(textChat))
+
+                NewChatObserver.getInstance().setNewChat(textChat)
             }
             is Resource.Error -> {
                 infoLog("텍스트 채팅 전송 실패: ${result.throwable.stackTrace.joinToString("\n")}")
@@ -211,22 +215,22 @@ class ChatViewModel @Inject constructor(
         NewChatObserver
             .getInstance()
             .newChat
-            .collectLatest { newChat ->
+            .collect { newChat ->
                 runCatching {
                     val chat = when (newChat?.type) {
                         ChatType.TextChatting -> {
-                            val textChat = newChat as? TextChat ?: return@collectLatest
+                            val textChat = newChat as? TextChat ?: return@collect
                             textChat
                         }
                         ChatType.VoiceChatting -> {
-                            val voiceChat = newChat as? VoiceChat ?: return@collectLatest
+                            val voiceChat = newChat as? VoiceChat ?: return@collect
                             voiceChat
                         }
-                        else -> return@collectLatest
+                        else -> return@collect
                     }
 
                     modifyPage(PageEvents.InsertItemFooter(chat))
-                    infoLog("new chat: ${chat}")
+                    infoLog("new chat: $chat")
 
                     if (isUserInBottom.value) {
                         delay(50)
@@ -242,7 +246,7 @@ class ChatViewModel @Inject constructor(
         PartnerChatRoomStateObserver
             .getInstance()
             .isInChat
-            .collectLatest { isInChat ->
+            .collect { isInChat ->
                 runCatching {
                     _isPartnerInChat.value = isInChat
                 }.onFailure {

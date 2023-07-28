@@ -16,18 +16,15 @@ import com.clonect.feeltalk.new_domain.usecase.chat.GetPartnerLastChatUseCase
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.notification.notificationObserver.NewChatObserver
 import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
-import com.clonect.feeltalk.new_presentation.ui.util.toBytesInt
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainNavigationViewModel @Inject constructor(
-    private val notificationHelper: NotificationHelper,
     private val getPartnerLastChatUseCase: GetPartnerLastChatUseCase,
 ): ViewModel() {
 
@@ -84,20 +81,12 @@ class MainNavigationViewModel @Inject constructor(
 
     fun toggleShowChatNavigation() {
         _showChatNavigation.value = _showChatNavigation.value.not()
-
-        if (_showChatNavigation.value) {
-            notificationHelper.cancelNotification(NotificationHelper.CHAT_CHANNEL_ID.toBytesInt())
-        }
     }
 
     fun setShowChatNavigation(showChat: Boolean) = viewModelScope.launch {
         if (isArgumentsInit) {
             isArgumentsInit = false
             _showChatNavigation.value = showChat
-
-            if (showChat) {
-                notificationHelper.cancelNotification(NotificationHelper.CHAT_CHANNEL_ID.toBytesInt())
-            }
         }
     }
 
@@ -106,19 +95,19 @@ class MainNavigationViewModel @Inject constructor(
         NewChatObserver
             .getInstance()
             .newChat
-            .collectLatest { newChat ->
+            .collect { newChat ->
                 runCatching {
-                    if (newChat?.chatSender == "me") return@collectLatest
+                    if (newChat?.chatSender == "me") return@collect
 
                     val message  = when (newChat?.type) {
                         ChatType.TextChatting -> {
-                            val textChat = newChat as? TextChat ?: return@collectLatest
+                            val textChat = newChat as? TextChat ?: return@collect
                             textChat.message
                         }
                         ChatType.VoiceChatting -> {
                             "(보이스 채팅)"
                         }
-                        else -> return@collectLatest
+                        else -> return@collect
                     }
 
                     _partnerLastChat.value = message

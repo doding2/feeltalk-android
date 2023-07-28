@@ -26,9 +26,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentChatBinding
 import com.clonect.feeltalk.new_domain.model.chat.DividerChat
+import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
+import com.clonect.feeltalk.new_presentation.ui.util.toBytesInt
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,6 +47,8 @@ class ChatFragment : Fragment() {
     private val navViewModel: MainNavigationViewModel by activityViewModels()
     @Inject
     lateinit var adapter: ChatAdapter
+    @Inject
+    lateinit var notificationHelper: NotificationHelper
 
     private var scrollRemainHeight = 0
 
@@ -87,6 +91,9 @@ class ChatFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        if (navViewModel.showChatNavigation.value) {
+            notificationHelper.cancelNotification(NotificationHelper.CHAT_CHANNEL_ID.toBytesInt())
+        }
         if (navViewModel.showChatNavigation.value) {
             FeeltalkApp.setUserInChat(true)
         }
@@ -506,6 +513,7 @@ class ChatFragment : Fragment() {
                     setBackCallback(isShown)
                     FeeltalkApp.setUserInChat(isShown)
                     if (isShown) {
+                        notificationHelper.cancelNotification(NotificationHelper.CHAT_CHANNEL_ID.toBytesInt())
                         viewModel.changeChatRoomState(true)
                         if (viewModel.isUserInBottom.value) {
                             scrollToBottom()
