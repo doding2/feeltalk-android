@@ -129,6 +129,28 @@ class ChatViewModel @Inject constructor(
         }
     }
 
+    private fun insertLoadingChat(chat: Chat) {
+        pageModificationEvents.value += PageEvents.InsertItemFooter(chat)
+//        modifyPage(PageEvents.InsertItemFooter(chat))
+    }
+
+    private fun insertCompleteChat(chat: Chat) {
+        val event = PageEvents.InsertItemFooter(chat)
+        if (event in pageModificationEvents.value) return
+        
+        val firstSendingChatIndex = pageModificationEvents.value.indexOfFirst { it.item.isSending }
+        if (firstSendingChatIndex != -1) {
+            pageModificationEvents.value = pageModificationEvents.value.toMutableList().apply {
+                add(firstSendingChatIndex, event)
+            }
+        } else {
+            pageModificationEvents.value += event
+        }
+    }
+
+    private fun removeLoadingChat(chat: Chat) {
+        pageModificationEvents.value -= PageEvents.InsertItemFooter(chat)
+    }
 
     /** Text Chat **/
 
@@ -175,7 +197,7 @@ class ChatViewModel @Inject constructor(
             message = message
         )
         launch {
-            modifyPage(PageEvents.InsertItemFooter(loadingTextChat))
+            insertLoadingChat(loadingTextChat)
 
             delay(50)
             setScrollToBottom()
@@ -195,14 +217,14 @@ class ChatViewModel @Inject constructor(
                     )
                 }
 
-                modifyPage(PageEvents.Remove(loadingTextChat))
-                modifyPage(PageEvents.InsertItemFooter(textChat))
+                removeLoadingChat(loadingTextChat)
+                insertCompleteChat(textChat)
 
                 NewChatObserver.getInstance().setNewChat(textChat)
             }
             is Resource.Error -> {
                 infoLog("텍스트 채팅 전송 실패: ${result.throwable.stackTrace.joinToString("\n")}")
-                modifyPage(PageEvents.Remove(loadingTextChat))
+                removeLoadingChat(loadingTextChat)
             }
         }
     }
@@ -229,7 +251,7 @@ class ChatViewModel @Inject constructor(
                         else -> return@collect
                     }
 
-                    modifyPage(PageEvents.InsertItemFooter(chat))
+                    insertCompleteChat(chat)
                     infoLog("new chat: $chat")
 
                     if (isUserInBottom.value) {
@@ -323,7 +345,7 @@ class ChatViewModel @Inject constructor(
         )
 
         launch {
-            modifyPage(PageEvents.InsertItemFooter(loadingVoiceChat))
+            insertLoadingChat(loadingVoiceChat)
 
             delay(50)
             setScrollToBottom()
@@ -333,7 +355,6 @@ class ChatViewModel @Inject constructor(
         when (val result = sendVoiceChatUseCase(voiceFile)) {
             is Resource.Success -> {
                 val voiceChat = result.data.run {
-
                     withContext(Dispatchers.IO) {
                         val file = voiceFile.copyTo(
                             target = File(context.cacheDir, "${index}.wav"),
@@ -353,12 +374,15 @@ class ChatViewModel @Inject constructor(
                     )
                 }
 
-                modifyPage(PageEvents.Remove(loadingVoiceChat))
-                modifyPage(PageEvents.InsertItemFooter(voiceChat))
+                removeLoadingChat(loadingVoiceChat)
+                insertCompleteChat(voiceChat)
+
+                NewChatObserver.getInstance().setNewChat(voiceChat)
             }
             is Resource.Error -> {
                 infoLog("보이스 채팅 전송 실패: ${result.throwable.stackTrace.joinToString("\n")}")
-                modifyPage(PageEvents.Remove(loadingVoiceChat))
+
+                removeLoadingChat(loadingVoiceChat)
             }
         }
     }

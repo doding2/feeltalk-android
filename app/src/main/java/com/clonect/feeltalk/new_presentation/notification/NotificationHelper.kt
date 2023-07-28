@@ -84,6 +84,21 @@ class NotificationHelper(
             )
             .createPendingIntent()
 
+        val readResultIntent = Intent(applicationContext, NotificationReadReceiver::class.java)
+        val readPendingIntent = PendingIntent.getBroadcast(
+            applicationContext,
+            0,
+            readResultIntent,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_MUTABLE
+            else PendingIntent.FLAG_ONE_SHOT
+        )
+        val readAction = NotificationCompat.Action.Builder(
+            android.R.drawable.ic_notification_clear_all,
+            applicationContext.getString(R.string.notification_read),
+            readPendingIntent
+        ).build()
+
+
         val remoteInput = RemoteInput.Builder(KEY_TEXT_REPLY)
             .setLabel(applicationContext.getString(R.string.notification_reply))
             .build()
@@ -119,6 +134,7 @@ class NotificationHelper(
             NotificationCompat.BubbleMetadata.Builder(bubbleIntent,
                 IconCompat.createWithResource(applicationContext, R.drawable.ic_emotion_happy))
                 .setDesiredHeight(600)
+                .setSuppressNotification(false)
                 .build()
         } else {
             null
@@ -150,6 +166,7 @@ class NotificationHelper(
             .setAutoCancel(true)
             .setOnlyAlertOnce(true)
             .setContentIntent(deepLinkPendingIntent)
+            .addAction(readAction)
             .addAction(replyAction)
             .setShortcutId(CHAT_SHORTCUT_ID)
             .setBubbleMetadata(bubble)
