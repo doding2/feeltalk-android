@@ -54,7 +54,7 @@ class OngoingChallengeAdapter(): RecyclerView.Adapter<OngoingChallengeAdapter.On
 
     override fun onBindViewHolder(holder: OngoingChallengeViewHolder, position: Int) {
         val item = differ.currentList[position]
-        holder.onBind(item)
+        holder.bind(item)
     }
 
     override fun getItemCount() = differ.currentList.size
@@ -90,7 +90,7 @@ class OngoingChallengeAdapter(): RecyclerView.Adapter<OngoingChallengeAdapter.On
         val binding: ItemChallengeOngoingImminentBinding
     ): OngoingChallengeViewHolder(binding.root) {
 
-        override fun onBind(item: Challenge) {
+        override fun bind(item: Challenge) {
             binding.run {
                 root.layoutParams.width = imminentItemSize
 
@@ -109,7 +109,7 @@ class OngoingChallengeAdapter(): RecyclerView.Adapter<OngoingChallengeAdapter.On
         val binding: ItemChallengeOngoingEnoughBinding
     ): OngoingChallengeViewHolder(binding.root) {
 
-        override fun onBind(item: Challenge) {
+        override fun bind(item: Challenge) {
             binding.run {
                 root.layoutParams.width = enoughItemSize
 
@@ -125,6 +125,6 @@ class OngoingChallengeAdapter(): RecyclerView.Adapter<OngoingChallengeAdapter.On
     }
 
     abstract class OngoingChallengeViewHolder(root: View): RecyclerView.ViewHolder(root)  {
-        abstract fun onBind(item: Challenge)
+        abstract fun bind(item: Challenge)
     }
 }

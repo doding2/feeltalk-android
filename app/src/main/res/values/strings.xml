@@ -92,16 +92,18 @@
 
     <!--  Question  -->
     <string name="question_title">질문</string>
-    <string name="question_today_button_answer">답변하기</string>
-    <string name="question_today_button_chat">필톡 나누기</string>
-    <string name="question_list_title">우리의 필로우톡</string>
+    <string name="question_today_new">NEW</string>
+    <string name="question_today_button_answer">답변 하러가기</string>
+    <string name="question_today_button_answer_2">답변 보러가기</string>
+    <string name="question_list_title">우리가 나눈 필로우톡</string>
 
     <!--  Answer  -->
     <string name="answer_my_answer_deco">나의 답변</string>
     <string name="answer_my_answer_hint">질문에 대해 답변을 적어보세요 !</string>
     <string name="answer_partner_answer_deco">연인의 답변</string>
     <string name="answer_partner_answer_state_1">답변을 등록했어요 😍</string>
-    <string name="answer_partner_answer_state_2">쿡 찔러서 답변 요청하기</string>
+    <string name="answer_partner_answer_state_2">연인이 아직 답변을 작성하지 않았어요 😢</string>
+    <string name="answer_press_for">쿡 찔러서 답변 요청하기</string>
     <string name="answer_button_done">답변완료</string>
     <string name="answer_button_chat">필로우톡 나누기</string>
     <string name="answer_poke_partner_snack_bar">상대방을 쿡 찔렀어요  👉</string>

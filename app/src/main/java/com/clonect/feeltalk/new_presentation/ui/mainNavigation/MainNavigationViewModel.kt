@@ -12,6 +12,7 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.chat.ChatType
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
+import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPartnerLastChatUseCase
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.notification.notificationObserver.NewChatObserver
@@ -35,6 +36,14 @@ class MainNavigationViewModel @Inject constructor(
 
     private val _showChatNavigation = MutableStateFlow(false)
     val showChatNavigation = _showChatNavigation.asStateFlow()
+
+
+    private val _answerTargetQuestion = MutableStateFlow<Question?>(null)
+    val answerTargetQuestion = _answerTargetQuestion.asStateFlow()
+
+    private val _showAnswerSheet = MutableStateFlow(false)
+    val showAnswerSheet = _showAnswerSheet.asStateFlow()
+
 
     init {
         getPartnerLastChat()
@@ -83,11 +92,24 @@ class MainNavigationViewModel @Inject constructor(
         _showChatNavigation.value = _showChatNavigation.value.not()
     }
 
-    fun setShowChatNavigation(showChat: Boolean) = viewModelScope.launch {
+    fun setShowChatNavigation(showChat: Boolean) {
+        _showChatNavigation.value = showChat
+    }
+
+    fun initShowChatNavigation(showChat: Boolean) = viewModelScope.launch {
         if (isArgumentsInit) {
             isArgumentsInit = false
             _showChatNavigation.value = showChat
         }
+    }
+
+
+    fun setAnswerTargetQuestion(question: Question?) {
+        _answerTargetQuestion.value = question
+    }
+
+    fun setShowAnswerSheet(isShow: Boolean) {
+        _showAnswerSheet.value = isShow
     }
 
 

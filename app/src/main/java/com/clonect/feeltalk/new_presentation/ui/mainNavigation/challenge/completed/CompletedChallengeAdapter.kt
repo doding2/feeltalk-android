@@ -43,7 +43,7 @@ class CompletedChallengeAdapter(): RecyclerView.Adapter<CompletedChallengeAdapte
 
     override fun onBindViewHolder(holder: CompletedChallengeViewHolder, position: Int) {
         val item = differ.currentList[position]
-        holder.onBind(item)
+        holder.bind(item)
     }
 
     override fun getItemCount() = differ.currentList.size
@@ -77,7 +77,7 @@ class CompletedChallengeAdapter(): RecyclerView.Adapter<CompletedChallengeAdapte
         val binding: ItemChallengeCompletedBinding
     ): RecyclerView.ViewHolder(binding.root) {
 
-        fun onBind(item: Challenge) {
+        fun bind(item: Challenge) {
             binding.run {
                 root.layoutParams.width = itemSize
 

@@ -218,7 +218,7 @@ class ChatViewModel @Inject constructor(
                 }
 
                 removeLoadingChat(loadingTextChat)
-                insertCompleteChat(textChat)
+//                insertCompleteChat(textChat)
 
                 NewChatObserver.getInstance().setNewChat(textChat)
             }
@@ -375,7 +375,7 @@ class ChatViewModel @Inject constructor(
                 }
 
                 removeLoadingChat(loadingVoiceChat)
-                insertCompleteChat(voiceChat)
+//                insertCompleteChat(voiceChat)
 
                 NewChatObserver.getInstance().setNewChat(voiceChat)
             }

@@ -1,11 +1,13 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.WindowCompat
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
@@ -18,6 +20,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentMainNavigationBinding
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -26,6 +29,7 @@ class MainNavigationFragment : Fragment() {
 
     private lateinit var binding: FragmentMainNavigationBinding
     private val viewModel: MainNavigationViewModel by activityViewModels()
+    private lateinit var onBackCallback: OnBackPressedCallback
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,6 +38,7 @@ class MainNavigationFragment : Fragment() {
         binding = FragmentMainNavigationBinding.inflate(inflater, container, false)
 
         setUpBottomNavigation()
+        setUpAnswerSheet()
         binding.mcvChatRounder.setBackgroundResource(R.drawable.background_dialog_round_top)
 
         // set fullscreen
@@ -45,7 +50,7 @@ class MainNavigationFragment : Fragment() {
         }
 
         val showChat = arguments?.getBoolean("showChat", false) ?: false
-        viewModel.setShowChatNavigation(showChat)
+        viewModel.initShowChatNavigation(showChat)
 
         viewModel.setShortcut(requireContext())
 
@@ -55,15 +60,20 @@ class MainNavigationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         collectViewModel()
 
         binding.run {
-            ivFloatingChat.setOnClickListener {
+            mcvFloatingChat.setOnClickListener {
                 viewModel.toggleShowChatNavigation()
             }
 
             viewChatBehind.setOnClickListener {
                 viewModel.toggleShowChatNavigation()
+            }
+
+            viewAnswerBehind.setOnClickListener {
+                viewModel.setShowAnswerSheet(false)
             }
         }
     }
@@ -82,8 +92,27 @@ class MainNavigationFragment : Fragment() {
 //        bottomNav.setupWithMainNavController(navController)
     }
 
+    private fun setUpAnswerSheet() {
+        val behavior = BottomSheetBehavior.from(binding.flAnswerSheet).apply {
+            peekHeight = 0
+            skipCollapsed = true
+            addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                        viewModel.setShowAnswerSheet(false)
+                    }
+                }
+            })
+        }
+    }
+
 
     private fun showChatSheet(isShow: Boolean) = binding.run {
+        if (viewModel.showAnswerSheet.value) {
+            showAnswerSheet(false)
+        }
+
         if (isShow) {
             flLatestChat.visibility = View.GONE
             viewChatBehind.visibility = View.VISIBLE
@@ -93,6 +122,32 @@ class MainNavigationFragment : Fragment() {
             else View.VISIBLE
             viewChatBehind.visibility = View.GONE
             flChatContainer.visibility = View.GONE
+        }
+    }
+
+    private fun showAnswerSheet(isShow: Boolean) {
+        val behavior = BottomSheetBehavior.from(binding.flAnswerSheet)
+
+        if (isShow) {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+//                binding.clFloatingChatContainer.setPadding(0, 0, 0, 0)
+//                WindowCompat.setDecorFitsSystemWindows(requireActivity().window, true)
+//                requireActivity().setStatusBarColor(binding.root, requireContext().getColor(R.color.answer_status_bar),true)
+//            }
+
+            binding.viewAnswerBehind.visibility = View.VISIBLE
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+        else {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+//                binding.clFloatingChatContainer.setPadding(0, getStatusBarHeight(), 0, 0)
+//                WindowCompat.setDecorFitsSystemWindows(requireActivity().window, false)
+//                requireActivity().setStatusBarColor(binding.root, Color.TRANSPARENT, true)
+//            }
+
+            viewModel.setAnswerTargetQuestion(null)
+            binding.viewAnswerBehind.visibility = View.GONE
+            behavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
     }
 
@@ -111,6 +166,28 @@ class MainNavigationFragment : Fragment() {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.showChatNavigation.collectLatest(::showChatSheet) }
             launch { viewModel.partnerLastChat.collectLatest(::changeLatestChatMessage) }
+            launch { viewModel.showAnswerSheet.collectLatest(::showAnswerSheet) }
         }
+    }
+
+
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        onBackCallback = object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (viewModel.showAnswerSheet.value) {
+                    viewModel.setShowAnswerSheet(false)
+                    return
+                }
+                requireActivity().finish()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, onBackCallback)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        onBackCallback.remove()
     }
 }

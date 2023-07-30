@@ -34,6 +34,7 @@
     <color name="system_white">#FFFFFFFF</color>
     <color name="system_alert">#CC000000</color>
     <color name="system_error">#F10000</color>
+    <color name="answer_status_bar">#808080</color>
 
     <!--  Signal(임시)  -->
     <color name="signal_seduce">#FFC0CB</color>

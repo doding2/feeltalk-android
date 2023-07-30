@@ -5,15 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".new_presentation.ui.mainNavigation.answer.AnswerBottomSheetFragment">
+    android:background="@drawable/n_background_bottom_sheet_rounded"
+    tools:context=".new_presentation.ui.mainNavigation.answer.AnswerFragment">
 
     <ImageView
+        android:id="@+id/iv_dismiss_dialog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:layout_gravity="center"
-        android:src="@drawable/n_ic_bottom_sheet_handle" />
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="12dp"
+        android:padding="12dp"
+        android:layout_gravity="start|center_vertical"
+        android:src="@drawable/n_ic_exit" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -23,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fillViewport="true"
-            android:paddingTop="14dp"
+            android:paddingTop="16dp"
             android:clipToPadding="false"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true"
@@ -40,7 +43,6 @@
                     android:id="@+id/tv_question_header"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
                     android:layout_marginHorizontal="20dp"
                     android:text=""
                     android:textSize="24sp"
@@ -63,47 +65,50 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginTop="32dp"
-                    android:layout_marginBottom="4dp"
+                    android:layout_marginBottom="8dp"
                     android:text="@string/answer_my_answer_deco"
-                    android:textColor="@color/system_black"
-                    android:fontFamily="@font/pretendard_regular"/>
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_500"
+                    android:fontFamily="@font/pretendard_semi_bold"/>
 
                 <EditText
                     android:id="@+id/et_my_answer"
+                    android:background="@drawable/n_background_edit_text_answer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
                     android:gravity="top"
                     android:hint="@string/answer_my_answer_hint"
-                    android:imeOptions="actionDone"
                     android:inputType="textMultiLine"
                     android:minLines="4"
                     android:textColor="@color/system_black"
                     android:textColorHint="@color/gray_400"
-                    android:textSize="18sp"
-                    android:fontFamily="@font/pretendard_medium"/>
+                    android:textSize="16sp"
+                    android:fontFamily="@font/pretendard_regular"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginTop="32dp"
-                    android:layout_marginBottom="4dp"
+                    android:layout_marginBottom="8dp"
                     android:text="@string/answer_partner_answer_deco"
-                    android:textColor="@color/system_black"
-                    android:fontFamily="@font/pretendard_regular"/>
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_500"
+                    android:fontFamily="@font/pretendard_semi_bold"/>
 
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/mcv_partner_answer_state_container"
+                    android:id="@+id/mcv_partner_done"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
+                    android:visibility="visible"
                     app:cardCornerRadius="8dp"
                     app:cardBackgroundColor="@color/gray_200"
                     app:cardElevation="0dp">
 
                     <TextView
-                        android:id="@+id/tv_partner_answer_state"
+                        android:id="@+id/tv_partner_done"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -111,8 +116,8 @@
                         android:layout_marginVertical="16dp"
                         android:text="@string/answer_partner_answer_state_1"
                         android:textColor="@color/main_500"
-                        android:textSize="18sp"
-                        android:fontFamily="@font/pretendard_medium"/>
+                        android:textSize="16sp"
+                        android:fontFamily="@font/pretendard_regular"/>
                 </com.google.android.material.card.MaterialCardView>
 
                 <EditText
@@ -125,11 +130,62 @@
                     android:enabled="false"
                     android:layout_marginHorizontal="20dp"
                     android:textColorHint="@color/gray_400"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textColor="@color/system_black"
                     android:minLines="4"
                     android:gravity="top"
-                    android:fontFamily="@font/pretendard_medium"/>
+                    android:fontFamily="@font/pretendard_regular"/>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/mcv_partner_not_done"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_marginHorizontal="20dp"
+                    app:cardCornerRadius="8dp"
+                    app:cardBackgroundColor="@color/gray_200"
+                    app:cardElevation="0dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginVertical="41dp">
+
+                        <TextView
+                            android:id="@+id/tv_partner_not_done"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginHorizontal="20dp"
+                            android:layout_marginBottom="10dp"
+                            android:text="@string/answer_partner_answer_state_2"
+                            android:textColor="@color/gray_600"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/pretendard_regular"/>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/mcv_press_for_answer"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            app:cardElevation="0dp"
+                            app:cardBackgroundColor="@color/system_black"
+                            app:cardCornerRadius="24dp"
+                            app:rippleColor="@color/system_alert">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginVertical="12dp"
+                                android:layout_marginHorizontal="16dp"
+                                android:text="@string/answer_press_for"
+                                android:textSize="18sp"
+                                android:textColor="@color/system_white"
+                                android:fontFamily="@font/pretendard_medium"/>
+                        </com.google.android.material.card.MaterialCardView>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
                 <View
                     android:layout_width="match_parent"

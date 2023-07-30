@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
 
         val showChat = intent?.getBooleanExtra("showChat", false) ?: false
         if (showChat) {
-            mainNavViewModel.setShowChatNavigation(showChat)
+            mainNavViewModel.initShowChatNavigation(showChat)
         }
 
         collectToast()
