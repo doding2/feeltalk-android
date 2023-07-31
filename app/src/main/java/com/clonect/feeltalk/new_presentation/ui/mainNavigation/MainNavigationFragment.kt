@@ -109,19 +109,21 @@ class MainNavigationFragment : Fragment() {
 
 
     private fun showChatSheet(isShow: Boolean) = binding.run {
-        if (viewModel.showAnswerSheet.value) {
-            showAnswerSheet(false)
-        }
-
         if (isShow) {
             flLatestChat.visibility = View.GONE
             viewChatBehind.visibility = View.VISIBLE
             flChatContainer.visibility = View.VISIBLE
+
+            viewAnswerBehind.visibility = View.GONE
         } else {
             flLatestChat.visibility =  if (viewModel.partnerLastChat.value == null) View.GONE
             else View.VISIBLE
             viewChatBehind.visibility = View.GONE
             flChatContainer.visibility = View.GONE
+
+            if (viewModel.showAnswerSheet.value) {
+                viewAnswerBehind.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -129,22 +131,10 @@ class MainNavigationFragment : Fragment() {
         val behavior = BottomSheetBehavior.from(binding.flAnswerSheet)
 
         if (isShow) {
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-//                binding.clFloatingChatContainer.setPadding(0, 0, 0, 0)
-//                WindowCompat.setDecorFitsSystemWindows(requireActivity().window, true)
-//                requireActivity().setStatusBarColor(binding.root, requireContext().getColor(R.color.answer_status_bar),true)
-//            }
-
             binding.viewAnswerBehind.visibility = View.VISIBLE
             behavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
         else {
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-//                binding.clFloatingChatContainer.setPadding(0, getStatusBarHeight(), 0, 0)
-//                WindowCompat.setDecorFitsSystemWindows(requireActivity().window, false)
-//                requireActivity().setStatusBarColor(binding.root, Color.TRANSPARENT, true)
-//            }
-
             viewModel.setAnswerTargetQuestion(null)
             binding.viewAnswerBehind.visibility = View.GONE
             behavior.state = BottomSheetBehavior.STATE_HIDDEN

@@ -7,8 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updateMargins
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -23,7 +26,6 @@ import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationVie
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -212,13 +214,15 @@ class AnswerFragment : Fragment() {
             return@run
         }
 
-        if (enabled) {
-            lifecycleScope.launch {
-                delay(1)
-                etMyAnswer.requestFocus()
-                mcvDoneSquare.visibility = View.VISIBLE
-                mcvDoneRound.visibility = View.GONE
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            mcvDoneRound.updateLayoutParams<RelativeLayout.LayoutParams> {
+                updateMargins(left = 0, right = 0)
             }
+        }
+
+        if (enabled) {
+            mcvDoneSquare.visibility = View.VISIBLE
+            mcvDoneRound.visibility = View.GONE
         } else {
             etMyAnswer.clearFocus()
             mcvDoneSquare.visibility = View.GONE

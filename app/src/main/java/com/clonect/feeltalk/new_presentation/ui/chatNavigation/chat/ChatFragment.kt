@@ -322,7 +322,6 @@ class ChatFragment : Fragment() {
 
     private fun applyKeyboardUp(isUp: Boolean) {
         if (isUp) {
-            binding.etTextMessage.requestFocus()
             cancel(includeVoiceChats = false)
         } else {
             binding.etTextMessage.clearFocus()
@@ -517,6 +516,9 @@ class ChatFragment : Fragment() {
                         viewModel.changeChatRoomState(true)
                         if (viewModel.isUserInBottom.value) {
                             scrollToBottom()
+                        }
+                        if (viewModel.isKeyboardUp.value) {
+                            binding.etTextMessage.requestFocus()
                         }
                     }
                     else {
