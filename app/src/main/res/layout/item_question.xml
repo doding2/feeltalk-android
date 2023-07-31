@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="100"
-            android:textColor="@color/system_black"
+            android:textColor="@color/black"
             android:textSize="14sp"
             android:fontFamily="@font/montserrat_bold" />
     </com.google.android.material.card.MaterialCardView>
@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="12dp"
         android:text="연인이 가장 예뻐 보이는 순간은?"
-        android:textColor="@color/system_black"
+        android:textColor="@color/black"
         android:textSize="16sp"
         android:fontFamily="@font/pretendard_medium"
         android:lines="1"

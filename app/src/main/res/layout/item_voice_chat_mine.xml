@@ -75,7 +75,7 @@
                     android:layout_height="wrap_content"
                     android:padding="8dp"
                     android:src="@drawable/n_ic_voice_record_replay"
-                    app:tint="@color/system_black"
+                    app:tint="@color/black"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"/>
@@ -87,7 +87,7 @@
                     android:padding="8dp"
                     android:visibility="gone"
                     android:src="@drawable/n_ic_voice_record_replay_pause"
-                    app:tint="@color/system_black"
+                    app:tint="@color/black"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"/>
@@ -114,7 +114,7 @@
                     android:focusable="false"
                     android:text="@string/chat_voice_record_time_default"
                     android:textSize="14sp"
-                    android:textColor="@color/system_black"
+                    android:textColor="@color/black"
                     android:fontFamily="@font/pretendard_semi_bold"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"

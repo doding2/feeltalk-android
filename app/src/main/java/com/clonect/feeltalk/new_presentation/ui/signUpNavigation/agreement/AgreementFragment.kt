@@ -151,10 +151,10 @@ class AgreementFragment : Fragment() {
         } else {
             spacerAdult.visibility = View.VISIBLE
             tvAdultAnnounce.visibility = View.VISIBLE
-            mcvCertifyAdult.setCardBackgroundColor(requireContext().getColor(R.color.system_white))
+            mcvCertifyAdult.setCardBackgroundColor(requireContext().getColor(R.color.white))
             mcvCertifyAdult.strokeWidth = requireContext().dpToPx(1f).toInt()
             tvCertifyAdult.setText(R.string.agreement_certify_adult)
-            tvCertifyAdult.setTextColor(requireContext().getColor(R.color.system_black))
+            tvCertifyAdult.setTextColor(requireContext().getColor(R.color.black))
             ivCertifyAdultDone.visibility = View.GONE
 
             spacerAgreement.visibility = View.GONE
@@ -177,7 +177,7 @@ class AgreementFragment : Fragment() {
             else R.drawable.n_ic_disabled_check
         )
         text.setTextColor(requireContext().getColor(
-            if (isEnabled) R.color.system_black
+            if (isEnabled) R.color.black
             else R.color.gray_600
         ))
     }

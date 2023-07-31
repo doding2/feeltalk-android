@@ -14,7 +14,7 @@
         android:layout_marginTop="33dp"
         android:gravity="center"
         android:text="@string/couple_code_title"
-        android:textColor="@color/system_black"
+        android:textColor="@color/black"
         android:textSize="24sp"
         android:fontFamily="@font/pretendard_medium"
         app:layout_constraintTop_toTopOf="parent"
@@ -103,7 +103,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="10dp"
                     android:text="@string/couple_code_invitation"
-                    android:textColor="@color/system_white"
+                    android:textColor="@color/white"
                     android:textSize="14sp"
                     android:fontFamily="@font/pretendard_regular"/>
 
@@ -111,7 +111,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_gravity="center"
-                    app:cardBackgroundColor="@color/system_white"
+                    app:cardBackgroundColor="@color/white"
                     app:cardElevation="0dp"
                     app:cardCornerRadius="12dp"
                     android:layout_weight="1">
@@ -129,7 +129,7 @@
                             android:text="COUPLECODE"
                             android:layout_marginHorizontal="20dp"
                             android:textSize="24sp"
-                            android:textColor="@color/system_black"
+                            android:textColor="@color/black"
                             android:fontFamily="@font/pretendard_medium"/>
 
                         <com.google.android.material.card.MaterialCardView
@@ -137,7 +137,7 @@
                             android:layout_width="79dp"
                             android:layout_height="40dp"
                             android:layout_marginTop="10dp"
-                            app:cardBackgroundColor="@color/system_black"
+                            app:cardBackgroundColor="@color/black"
                             app:cardCornerRadius="20dp"
                             app:cardElevation="0dp"
                             android:layout_gravity="center">
@@ -147,7 +147,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:text="@string/couple_code_share"
-                                android:textColor="@color/system_white"
+                                android:textColor="@color/white"
                                 android:textSize="16sp"
                                 android:fontFamily="@font/pretendard_regular"/>
                         </com.google.android.material.card.MaterialCardView>
@@ -326,10 +326,10 @@
         android:layout_width="match_parent"
         android:layout_height="59dp"
         android:layout_marginHorizontal="20dp"
-        app:cardBackgroundColor="@color/system_white"
+        app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="30dp"
         app:cardElevation="0dp"
-        app:strokeColor="@color/system_black"
+        app:strokeColor="@color/black"
         app:strokeWidth="1dp"
         app:rippleColor="@color/gray_200"
         app:layout_constraintStart_toStartOf="parent"
@@ -342,7 +342,7 @@
             android:layout_gravity="center"
             android:fontFamily="@font/pretendard_medium"
             android:text="@string/couple_code_show_sheet"
-            android:textColor="@color/system_black"
+            android:textColor="@color/black"
             android:textSize="18sp" />
     </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

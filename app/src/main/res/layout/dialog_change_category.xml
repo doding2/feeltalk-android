@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:layout_marginHorizontal="12dp"
-    app:cardBackgroundColor="@color/system_white"
+    app:cardBackgroundColor="@color/white"
     app:cardCornerRadius="20dp"
     app:cardElevation="0dp"
     android:clipChildren="false">
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:text="@string/change_category_title"
             android:textSize="20sp"
-            android:textColor="@color/system_black"
+            android:textColor="@color/black"
             android:fontFamily="@font/pretendard_medium"/>
 
 
@@ -49,7 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="51dp"
             android:layout_marginHorizontal="20dp"
-            app:cardBackgroundColor="@color/system_black"
+            app:cardBackgroundColor="@color/black"
             app:cardCornerRadius="25dp"
             app:cardElevation="0dp"
             app:rippleColor="@color/system_alert">
@@ -60,7 +60,7 @@
                 android:layout_gravity="center"
                 android:fontFamily="@font/pretendard_regular"
                 android:text="@string/change_category_change_button"
-                android:textColor="@color/system_white"
+                android:textColor="@color/white"
                 android:textSize="16sp" />
         </com.google.android.material.card.MaterialCardView>
     </LinearLayout>

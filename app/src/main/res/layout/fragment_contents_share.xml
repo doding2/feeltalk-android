@@ -31,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/contents_share_title"
-            android:textColor="@color/system_black"
+            android:textColor="@color/black"
             android:textSize="18sp"
             android:fontFamily="@font/pretendard_medium"
             android:layout_gravity="center"

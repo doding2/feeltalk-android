@@ -89,8 +89,8 @@ class ContentsShareFragment : Fragment() {
             val dividerParams = divider.layoutParams as LinearLayout.LayoutParams
 
             if (enabled) {
-                tvBody.setTextColor(requireContext().getColor(R.color.system_black))
-                divider.setBackgroundColor(requireContext().getColor(R.color.system_black))
+                tvBody.setTextColor(requireContext().getColor(R.color.black))
+                divider.setBackgroundColor(requireContext().getColor(R.color.black))
                 dividerParams.height = activity.dpToPx(2f).toInt()
                 divider.layoutParams = dividerParams
             } else {

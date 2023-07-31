@@ -14,7 +14,7 @@
         android:layout_marginTop="29dp"
         android:layout_marginHorizontal="20dp"
         android:text="@string/agreement_title"
-        android:textColor="@color/system_black"
+        android:textColor="@color/black"
         android:textSize="24sp"
         android:fontFamily="@font/pretendard_medium"/>
 
@@ -37,7 +37,7 @@
         android:layout_marginTop="25dp"
         app:cardCornerRadius="8dp"
         app:cardElevation="0dp"
-        app:cardBackgroundColor="@color/system_white"
+        app:cardBackgroundColor="@color/white"
         app:strokeWidth="1dp"
         app:strokeColor="@color/gray_400">
 
@@ -90,10 +90,10 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="16dp"
-        app:cardBackgroundColor="@color/system_white"
+        app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="30dp"
         app:cardElevation="0dp"
-        app:strokeColor="@color/system_black"
+        app:strokeColor="@color/black"
         app:strokeWidth="1dp"
         app:rippleColor="@color/gray_200"
         android:animateLayoutChanges="true">
@@ -111,7 +111,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/agreement_certify_adult"
-                android:textColor="@color/system_black"
+                android:textColor="@color/black"
                 android:textSize="18sp"
                 android:fontFamily="@font/pretendard_medium"/>
 
@@ -156,7 +156,7 @@
             android:text="@string/agreement_agree_all"
             android:layout_marginHorizontal="12dp"
             android:textSize="16sp"
-            android:textColor="@color/system_black"
+            android:textColor="@color/black"
             android:fontFamily="@font/pretendard_semi_bold"
             app:layout_constrainedWidth="true"
             app:layout_constraintHorizontal_bias="0"
@@ -203,7 +203,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/agreement_agree_adult"
-                android:textColor="@color/system_black"
+                android:textColor="@color/black"
                 android:textSize="14sp"
                 android:fontFamily="@font/pretendard_regular"/>
         </LinearLayout>
@@ -368,7 +368,7 @@
             android:layout_gravity="center"
             android:fontFamily="@font/pretendard_medium"
             android:text="@string/sign_up_next_button"
-            android:textColor="@color/system_white"
+            android:textColor="@color/white"
             android:textSize="18sp" />
     </com.google.android.material.card.MaterialCardView>
 </LinearLayout>

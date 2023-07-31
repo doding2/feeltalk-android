@@ -62,7 +62,7 @@
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="10dp"
                 android:text=""
-                android:textColor="@color/system_white"
+                android:textColor="@color/white"
                 android:textSize="16sp"
                 android:fontFamily="@font/pretendard_regular"/>
         </com.google.android.material.card.MaterialCardView>

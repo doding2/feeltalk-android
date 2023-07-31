@@ -92,7 +92,7 @@
                         android:layout_marginStart="-18dp"
                         android:background="@drawable/n_ic_title_balloon"
                         android:layout_gravity="center_vertical"
-                        app:cardBackgroundColor="@color/system_white"
+                        app:cardBackgroundColor="@color/white"
                         app:cardCornerRadius="8dp"
                         app:cardElevation="0dp">
 
@@ -102,7 +102,7 @@
                             android:paddingHorizontal="10dp"
                             android:paddingVertical="8dp"
                             android:text="@string/home_answer_state_title_1"
-                            android:textColor="@color/system_black"
+                            android:textColor="@color/black"
                             android:textSize="14sp"
                             android:fontFamily="@font/pretendard_regular"
                             android:layout_gravity="center"/>
@@ -115,7 +115,7 @@
                     android:layout_marginTop="24dp"
                     android:layout_marginBottom="4dp"
                     android:text="@string/home_sub_title"
-                    android:textColor="@color/system_white"
+                    android:textColor="@color/white"
                     android:textSize="24sp"
                     android:fontFamily="@font/pretendard_regular"/>
 
@@ -124,7 +124,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/home_main_title_deco"
-                    android:textColor="@color/system_white"
+                    android:textColor="@color/white"
                     android:textSize="24sp"/>
 
                 <com.google.android.material.card.MaterialCardView
@@ -133,7 +133,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     app:cardElevation="0dp"
-                    app:cardBackgroundColor="@color/system_black"
+                    app:cardBackgroundColor="@color/black"
                     app:cardCornerRadius="24dp"
                     app:rippleColor="@color/system_alert" >
 
@@ -150,7 +150,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/home_main_answer_button"
                             android:textSize="18sp"
-                            android:textColor="@color/system_white"
+                            android:textColor="@color/white"
                             android:fontFamily="@font/pretendard_medium"/>
 
                         <ImageView
@@ -181,7 +181,7 @@
                 android:layout_marginBottom="12dp"
                 android:layout_marginHorizontal="20dp"
                 android:text="@string/home_signal_title"
-                android:textColor="@color/system_black"
+                android:textColor="@color/black"
                 android:textSize="20dp"
                 android:fontFamily="@font/pretendard_medium"/>
 
@@ -224,7 +224,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="나"
-                        android:textColor="@color/system_black"
+                        android:textColor="@color/black"
                         android:textSize="16sp"
                         android:fontFamily="@font/pretendard_regular"
                         android:lines="1"
@@ -258,7 +258,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="너"
-                        android:textColor="@color/system_black"
+                        android:textColor="@color/black"
                         android:textSize="16sp"
                         android:fontFamily="@font/pretendard_regular"
                         android:lines="1"

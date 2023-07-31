@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.question
 
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentQuestionBinding
 import com.clonect.feeltalk.new_domain.model.question.Question
@@ -50,8 +52,10 @@ class QuestionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        collectViewModel()
         initRecyclerView()
+        collectViewModel()
+        navViewModel.setShowQuestionPage(true)
+        navViewModel.setPartnerLastChatColor(requireContext().getColor(R.color.gray_200))
 
         binding.apply {
             ivScrollTop.setOnClickListener { scrollToTop() }
@@ -84,9 +88,17 @@ class QuestionFragment : Fragment() {
     }
 
 
-    private fun initRecyclerView() {
-        binding.rvQuestion.adapter = adapter
+    private fun initRecyclerView() = binding.run {
+        rvQuestion.adapter = adapter
         adapter.setOnItemClickListener(::onQuestionClick)
+
+        rvQuestion.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val isInTop = !recyclerView.canScrollVertically(-10)
+                navViewModel.setInQuestionTop(isInTop)
+            }
+        })
     }
 
     private fun scrollToTop() {
@@ -128,5 +140,11 @@ class QuestionFragment : Fragment() {
             launch { viewModel.todayQuestion.collectLatest(::changeTodayQuestionView) }
             launch { viewModel.questions.collectLatest(::changeRecyclerViewItems) }
         }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        navViewModel.setShowQuestionPage(false)
+        navViewModel.setPartnerLastChatColor(Color.WHITE)
     }
 }

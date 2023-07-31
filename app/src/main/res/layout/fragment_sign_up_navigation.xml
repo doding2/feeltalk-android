@@ -57,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sign_up_title_sign_up"
-            android:textColor="@color/system_black"
+            android:textColor="@color/black"
             android:textSize="18sp"
             android:fontFamily="@font/pretendard_medium"
             app:layout_constraintStart_toStartOf="parent"

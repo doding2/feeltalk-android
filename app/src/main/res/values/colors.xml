@@ -30,8 +30,6 @@
     <color name="gray_200">#F6F4F9</color>
     <color name="gray_100">#F8F7F9</color>
 
-    <color name="system_black">#FF000000</color>
-    <color name="system_white">#FFFFFFFF</color>
     <color name="system_alert">#CC000000</color>
     <color name="system_error">#F10000</color>
     <color name="answer_status_bar">#808080</color>

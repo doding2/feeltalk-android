@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
+import android.graphics.Color
 import android.os.Build
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.ViewModel
@@ -32,6 +33,17 @@ class MainNavigationViewModel @Inject constructor(
     private val _partnerLastChat = MutableStateFlow<String?>(null)
     val partnerLastChat = _partnerLastChat.asStateFlow()
 
+    private val _showPartnerLastChat = MutableStateFlow(true)
+    val showPartnerLastChat = _showPartnerLastChat.asStateFlow()
+
+    private val isShowQuestionPage = MutableStateFlow(false)
+
+    private val isInQuestionTop = MutableStateFlow(true)
+
+    private val _partnerLastChatColor = MutableStateFlow(Color.WHITE)
+    val partnerLastChatColor = _partnerLastChatColor.asStateFlow()
+
+
     private var isArgumentsInit = true
 
     private val _showChatNavigation = MutableStateFlow(false)
@@ -48,6 +60,7 @@ class MainNavigationViewModel @Inject constructor(
     init {
         getPartnerLastChat()
         collectNewChat()
+        calculateShowingPartnerLastChat()
     }
 
     fun setShortcut(context: Context) {
@@ -81,6 +94,7 @@ class MainNavigationViewModel @Inject constructor(
         when (val result = getPartnerLastChatUseCase()) {
             is Resource.Success -> {
                 _partnerLastChat.value = result.data.message
+                calculateShowingPartnerLastChat()
             }
             is Resource.Error -> {
                 infoLog("연인의 가장 최근 채팅 가져오기 실패: ${result.throwable.stackTrace.joinToString("\n")}")
@@ -88,18 +102,48 @@ class MainNavigationViewModel @Inject constructor(
         }
     }
 
+    fun setPartnerLastChatColor(color: Int) {
+        _partnerLastChatColor.value = color
+    }
+
+    fun setShowQuestionPage(isShow: Boolean) {
+        isShowQuestionPage.value = isShow
+        calculateShowingPartnerLastChat()
+    }
+
+    fun setInQuestionTop(isTop: Boolean) {
+        isInQuestionTop.value = isTop
+        calculateShowingPartnerLastChat()
+    }
+
+    private fun calculateShowingPartnerLastChat() {
+        _showPartnerLastChat.value = run {
+            if (_showChatNavigation.value) return@run false
+            if (_showAnswerSheet.value) return@run false
+            if (_partnerLastChat.value == null) return@run false
+            if (!isShowQuestionPage.value) return@run true
+            if (!isInQuestionTop.value) return@run false
+
+            return@run true
+        }
+    }
+
+
     fun toggleShowChatNavigation() {
         _showChatNavigation.value = _showChatNavigation.value.not()
+        calculateShowingPartnerLastChat()
     }
 
     fun setShowChatNavigation(showChat: Boolean) {
         _showChatNavigation.value = showChat
+        calculateShowingPartnerLastChat()
     }
 
     fun initShowChatNavigation(showChat: Boolean) = viewModelScope.launch {
         if (isArgumentsInit) {
             isArgumentsInit = false
             _showChatNavigation.value = showChat
+            calculateShowingPartnerLastChat()
         }
     }
 
@@ -110,6 +154,7 @@ class MainNavigationViewModel @Inject constructor(
 
     fun setShowAnswerSheet(isShow: Boolean) {
         _showAnswerSheet.value = isShow
+        calculateShowingPartnerLastChat()
     }
 
 
@@ -133,6 +178,7 @@ class MainNavigationViewModel @Inject constructor(
                     }
 
                     _partnerLastChat.value = message
+                    calculateShowingPartnerLastChat()
                 }.onFailure {
                     infoLog("collectNewChat(): ${it.localizedMessage}")
                 }

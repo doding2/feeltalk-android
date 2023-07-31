@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
             android:text="@string/challenge_tab_completed"
-            android:textColor="@color/system_black"
+            android:textColor="@color/black"
             android:textSize="16sp"
             android:fontFamily="@font/pretendard_semi_bold"/>
 
@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
-            android:textColor="@color/system_black"
+            android:textColor="@color/black"
             android:textSize="16sp"
             android:fontFamily="@font/pretendard_semi_bold"/>
     </LinearLayout>
@@ -40,5 +40,5 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:layout_marginBottom="2dp"
-        android:background="@color/system_black"/>
+        android:background="@color/black"/>
 </LinearLayout>

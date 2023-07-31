@@ -19,7 +19,7 @@
             android:layout_marginTop="29dp"
             android:layout_marginHorizontal="20dp"
             android:text="@string/nickname_title"
-            android:textColor="@color/system_black"
+            android:textColor="@color/black"
             android:textSize="24sp"
             android:fontFamily="@font/pretendard_medium"/>
 
@@ -41,14 +41,14 @@
             android:layout_marginHorizontal="20dp"
             android:text="@string/nickname_edit_text_label"
             android:textSize="12sp"
-            android:textColor="@color/system_black" />
+            android:textColor="@color/black" />
 
         <EditText
             android:id="@+id/et_nickname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
-            android:textColor="@color/system_black"
+            android:textColor="@color/black"
             android:textSize="16sp"
             android:fontFamily="@font/pretendard_regular"
             android:hint="@string/nickname_edit_text_hint"
@@ -82,7 +82,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/sign_up_next_button"
-            android:textColor="@color/system_white"
+            android:textColor="@color/white"
             android:textSize="18sp"
             android:fontFamily="@font/pretendard_medium"/>
     </com.google.android.material.card.MaterialCardView>

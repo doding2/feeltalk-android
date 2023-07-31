@@ -49,7 +49,7 @@
         <item name="bottomSheetStyle">@style/RoundModalStyle</item>
         <item name="android:windowIsFloating">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@color/system_white</item>
+        <item name="android:navigationBarColor">@color/white</item>
         <item name="android:windowSoftInputMode">adjustResize</item>
         <item name="editTextStyle">@style/GradientEditTextStyle</item>
     </style>

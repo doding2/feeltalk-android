@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="@string/contents_share_tab_question"
-        android:textColor="@color/system_black"
+        android:textColor="@color/black"
         android:textSize="16sp"
         android:fontFamily="@font/pretendard_semi_bold"/>
 
@@ -23,5 +23,5 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:layout_marginBottom="2dp"
-        android:background="@color/system_black"/>
+        android:background="@color/black"/>
 </LinearLayout>

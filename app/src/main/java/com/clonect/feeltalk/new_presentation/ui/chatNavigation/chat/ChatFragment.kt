@@ -220,8 +220,8 @@ class ChatFragment : Fragment() {
             setPartnerNickname("partner")
         }
         rvChat.addOnScrollListener(object: RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
                 val isInBottom = !recyclerView.canScrollVertically(10)
 
                 if (viewModel.isUserInChat.value == true) {

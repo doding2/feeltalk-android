@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:orientation="horizontal"
-        android:background="@color/system_white"
+        android:background="@color/white"
         android:elevation="2dp">
 
         <TextView
@@ -20,7 +20,7 @@
             android:layout_marginHorizontal="20dp"
             android:layout_gravity="center_vertical"
             android:text="@string/question_title"
-            android:textColor="@color/system_black"
+            android:textColor="@color/black"
             android:textSize="18sp"
             android:fontFamily="@font/pretendard_medium"/>
     </LinearLayout>
@@ -99,7 +99,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
                 android:text="난 이게 가장 좋더라!"
-                android:textColor="@color/system_white"
+                android:textColor="@color/white"
                 android:textSize="20sp"
                 android:fontFamily="@font/pretendard_medium"/>
 
@@ -108,7 +108,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="당신이 가장 좋아하는 스킨십은?"
-                android:textColor="@color/system_white"
+                android:textColor="@color/white"
                 android:textSize="20sp"
                 android:fontFamily="@font/pretendard_medium"/>
 
@@ -118,7 +118,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/system_black"
+                app:cardBackgroundColor="@color/black"
                 app:cardCornerRadius="24dp"
                 app:rippleColor="@color/system_alert">
 
@@ -130,7 +130,7 @@
                     android:layout_marginHorizontal="16dp"
                     android:text="@string/question_today_button_answer"
                     android:textSize="16sp"
-                    android:textColor="@color/system_white"
+                    android:textColor="@color/white"
                     android:fontFamily="@font/pretendard_regular"/>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
@@ -148,7 +148,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/question_list_title"
-            android:textColor="@color/system_black"
+            android:textColor="@color/black"
             android:textSize="18sp"
             android:fontFamily="@font/pretendard_medium"/>
 

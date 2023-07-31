@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/system_white">
+    android:background="@color/white">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_top_bar"
@@ -14,7 +14,7 @@
         android:layout_height="60dp"
         android:orientation="horizontal"
         android:elevation="1dp"
-        android:background="@color/system_white"
+        android:background="@color/white"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -27,7 +27,7 @@
             android:layout_gravity="center_vertical"
             android:text="UserName"
             android:textSize="18sp"
-            android:textColor="@color/system_black"
+            android:textColor="@color/black"
             android:fontFamily="@font/pretendard_medium"
             android:lines="1"
             android:ellipsize="end"
@@ -69,7 +69,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:elevation="5dp"
-        android:background="@color/system_white"
+        android:background="@color/white"
         android:animateLayoutChanges="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -123,7 +123,7 @@
                         android:paddingVertical="12dp"
                         android:paddingStart="12dp"
                         android:textSize="16sp"
-                        android:textColor="@color/system_black"
+                        android:textColor="@color/black"
                         android:fontFamily="@font/pretendard_regular"
                         android:maxLines="3"
                         android:background="@null"
@@ -270,7 +270,7 @@
                         android:padding="8dp"
                         android:background="@color/main_500"
                         android:src="@drawable/n_ic_voice_record_replay_pause"
-                        app:tint="@color/system_white"
+                        app:tint="@color/white"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"/>
@@ -285,7 +285,7 @@
                         android:focusable="false"
                         android:text="@string/chat_voice_record_time_default"
                         android:textSize="14sp"
-                        android:textColor="@color/system_white"
+                        android:textColor="@color/white"
                         android:fontFamily="@font/pretendard_semi_bold"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -357,7 +357,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/chat_camera"
-                    android:textColor="@color/system_black"
+                    android:textColor="@color/black"
                     android:textSize="14sp"
                     android:fontFamily="@font/pretendard_regular"/>
             </LinearLayout>
@@ -381,7 +381,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/chat_camera"
-                    android:textColor="@color/system_black"
+                    android:textColor="@color/black"
                     android:textSize="14sp"
                     android:fontFamily="@font/pretendard_regular"/>
             </LinearLayout>

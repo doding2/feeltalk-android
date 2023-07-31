@@ -22,7 +22,7 @@
             android:layout_marginHorizontal="20dp"
             android:layout_gravity="center_vertical"
             android:text="@string/challenge_title"
-            android:textColor="@color/system_black"
+            android:textColor="@color/black"
             android:textSize="18sp"
             android:fontFamily="@font/pretendard_medium"/>
     </LinearLayout>
@@ -34,7 +34,7 @@
         android:layout_marginHorizontal="21dp"
         android:text="@string/challenge_count_sub_title"
         android:textSize="24sp"
-        android:textColor="@color/system_black"
+        android:textColor="@color/black"
         android:fontFamily="@font/pretendard_regular"/>
 
     <TextView
@@ -45,7 +45,7 @@
         android:layout_marginBottom="28dp"
         android:text="@string/challenge_count_title_deco"
         android:textSize="24sp"
-        android:textColor="@color/system_black"
+        android:textColor="@color/black"
         android:fontFamily="@font/pretendard_medium"/>
 
     <com.google.android.material.tabs.TabLayout
@@ -97,12 +97,12 @@
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp"
                 android:text="@string/ongoing_add_challenge"
-                android:textColor="@color/system_white"
+                android:textColor="@color/white"
                 android:textSize="18sp"
                 android:fontFamily="@font/pretendard_medium"
                 android:stateListAnimator="@null"
                 app:icon="@drawable/n_ic_plus"
-                app:iconTint="@color/system_white"
+                app:iconTint="@color/white"
                 app:iconSize="20dp"
                 app:iconPadding="4dp"
                 app:iconGravity="textEnd"

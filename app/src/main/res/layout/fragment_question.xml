@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/system_white"
+    android:background="@color/white"
     tools:context=".new_presentation.ui.mainNavigation.question.QuestionFragment">
 
     <androidx.recyclerview.widget.RecyclerView

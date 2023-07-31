@@ -17,7 +17,7 @@
         android:gravity="center"
         android:text="@string/signal_title"
         android:textSize="20sp"
-        android:textColor="@color/system_black"
+        android:textColor="@color/black"
         android:fontFamily="@font/pretendard_medium" />
 
     <com.google.android.material.card.MaterialCardView
@@ -137,7 +137,7 @@
             android:layout_gravity="center"
             android:fontFamily="@font/pretendard_medium"
             android:text="@string/signal_send_button"
-            android:textColor="@color/system_white"
+            android:textColor="@color/white"
             android:textSize="18sp" />
     </com.google.android.material.card.MaterialCardView>
 </LinearLayout>

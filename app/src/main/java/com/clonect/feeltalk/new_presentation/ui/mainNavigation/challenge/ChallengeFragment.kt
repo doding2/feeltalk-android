@@ -9,7 +9,6 @@ import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -134,7 +133,7 @@ class ChallengeFragment : Fragment() {
             tvCount.text = viewModel.challenges.value.count { !it.isCompleted }.toString()
 
             if (enabled) {
-                tvBody.setTextColor(requireContext().getColor(R.color.system_black))
+                tvBody.setTextColor(requireContext().getColor(R.color.black))
                 tvCount.setTextColor(requireContext().getColor(R.color.main_500))
                 divider.setBackgroundColor(requireContext().getColor(R.color.main_500))
             } else {
@@ -151,9 +150,9 @@ class ChallengeFragment : Fragment() {
             tvCount.text = viewModel.challenges.value.count { it.isCompleted }.toString()
 
             if (enabled) {
-                tvBody.setTextColor(requireContext().getColor(R.color.system_black))
-                tvCount.setTextColor(requireContext().getColor(R.color.system_black))
-                divider.setBackgroundColor(requireContext().getColor(R.color.system_black))
+                tvBody.setTextColor(requireContext().getColor(R.color.black))
+                tvCount.setTextColor(requireContext().getColor(R.color.black))
+                divider.setBackgroundColor(requireContext().getColor(R.color.black))
             } else {
                 tvBody.setTextColor(requireContext().getColor(R.color.gray_600))
                 tvCount.setTextColor(requireContext().getColor(R.color.gray_600))

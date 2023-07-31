@@ -46,7 +46,7 @@
                     android:layout_marginHorizontal="20dp"
                     android:text=""
                     android:textSize="24sp"
-                    android:textColor="@color/system_black"
+                    android:textColor="@color/black"
                     android:fontFamily="@font/pretendard_regular"/>
 
 
@@ -57,7 +57,7 @@
                     android:layout_marginHorizontal="20dp"
                     android:text=""
                     android:textSize="24sp"
-                    android:textColor="@color/system_black"
+                    android:textColor="@color/black"
                     android:fontFamily="@font/pretendard_regular"/>
 
                 <TextView
@@ -81,7 +81,7 @@
                     android:hint="@string/answer_my_answer_hint"
                     android:inputType="textMultiLine"
                     android:minLines="4"
-                    android:textColor="@color/system_black"
+                    android:textColor="@color/black"
                     android:textColorHint="@color/gray_400"
                     android:textSize="16sp"
                     android:fontFamily="@font/pretendard_regular"/>
@@ -131,7 +131,7 @@
                     android:layout_marginHorizontal="20dp"
                     android:textColorHint="@color/gray_400"
                     android:textSize="16sp"
-                    android:textColor="@color/system_black"
+                    android:textColor="@color/black"
                     android:minLines="4"
                     android:gravity="top"
                     android:fontFamily="@font/pretendard_regular"/>
@@ -170,7 +170,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             app:cardElevation="0dp"
-                            app:cardBackgroundColor="@color/system_black"
+                            app:cardBackgroundColor="@color/black"
                             app:cardCornerRadius="24dp"
                             app:rippleColor="@color/system_alert">
 
@@ -181,7 +181,7 @@
                                 android:layout_marginHorizontal="16dp"
                                 android:text="@string/answer_press_for"
                                 android:textSize="18sp"
-                                android:textColor="@color/system_white"
+                                android:textColor="@color/white"
                                 android:fontFamily="@font/pretendard_medium"/>
                         </com.google.android.material.card.MaterialCardView>
                     </LinearLayout>
@@ -213,7 +213,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/answer_button_done"
-                android:textColor="@color/system_white"
+                android:textColor="@color/white"
                 android:textSize="18sp"
                 android:fontFamily="@font/pretendard_medium"/>
         </com.google.android.material.card.MaterialCardView>
@@ -238,7 +238,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/answer_button_done"
-                android:textColor="@color/system_white"
+                android:textColor="@color/white"
                 android:textSize="18sp"
                 android:fontFamily="@font/pretendard_medium"/>
         </com.google.android.material.card.MaterialCardView>

@@ -110,14 +110,11 @@ class MainNavigationFragment : Fragment() {
 
     private fun showChatSheet(isShow: Boolean) = binding.run {
         if (isShow) {
-            flLatestChat.visibility = View.GONE
             viewChatBehind.visibility = View.VISIBLE
             flChatContainer.visibility = View.VISIBLE
 
             viewAnswerBehind.visibility = View.GONE
         } else {
-            flLatestChat.visibility =  if (viewModel.partnerLastChat.value == null) View.GONE
-            else View.VISIBLE
             viewChatBehind.visibility = View.GONE
             flChatContainer.visibility = View.GONE
 
@@ -141,21 +138,26 @@ class MainNavigationFragment : Fragment() {
         }
     }
 
-    private fun changeLatestChatMessage(message: String?) = binding.run {
-        tvLatestChat.text = message
+    private fun changePartnerLastChatView(isShow: Boolean) = binding.run {
+        tvLatestChat.text = viewModel.partnerLastChat.value
 
-        if (message == null) {
-            flLatestChat.visibility = View.GONE
+        flLatestChat.visibility = if (isShow) {
+            View.VISIBLE
         } else {
-            flLatestChat.visibility = if (viewModel.showChatNavigation.value) View.GONE
-            else View.VISIBLE
+            View.GONE
         }
+    }
+
+    private fun changePartnerLastChatColor(color: Int) {
+        binding.mcvLatestChatBody.setCardBackgroundColor(color)
+        binding.ivLatestChatTail.setColorFilter(color)
     }
 
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.showChatNavigation.collectLatest(::showChatSheet) }
-            launch { viewModel.partnerLastChat.collectLatest(::changeLatestChatMessage) }
+            launch { viewModel.showPartnerLastChat.collectLatest(::changePartnerLastChatView) }
+            launch { viewModel.partnerLastChatColor.collectLatest(::changePartnerLastChatColor) }
             launch { viewModel.showAnswerSheet.collectLatest(::showAnswerSheet) }
         }
     }

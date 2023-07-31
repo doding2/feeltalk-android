@@ -21,7 +21,7 @@
             android:layout_marginHorizontal="20dp"
             android:text="@string/couple_connect_title"
             android:textSize="20sp"
-            android:textColor="@color/system_black"
+            android:textColor="@color/black"
             android:fontFamily="@font/pretendard_medium"/>
 
         <EditText
@@ -57,7 +57,7 @@
             android:layout_gravity="center"
             android:fontFamily="@font/pretendard_medium"
             android:text="@string/couple_connect_button"
-            android:textColor="@color/system_white"
+            android:textColor="@color/white"
             android:textSize="18sp" />
     </com.google.android.material.card.MaterialCardView>
 </LinearLayout>
