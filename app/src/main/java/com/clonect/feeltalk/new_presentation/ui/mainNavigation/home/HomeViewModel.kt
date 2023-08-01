@@ -6,6 +6,7 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.model.signal.Signal
 import com.clonect.feeltalk.new_domain.usecase.question.GetTodayQuestionUseCase
+import com.clonect.feeltalk.new_presentation.notification.notificationObserver.QuestionAnswerObserver
 import com.clonect.feeltalk.new_presentation.notification.notificationObserver.TodayQuestionObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,6 +33,7 @@ class HomeViewModel @Inject constructor(
     init {
         getTodayQuestion()
         collectTodayQuestion()
+        collectQuestionAnswer()
     }
 
     fun getTodayQuestion() = viewModelScope.launch {
@@ -62,6 +64,19 @@ class HomeViewModel @Inject constructor(
             .collectLatest {
                 if (it == null) return@collectLatest
                 _todayQuestion.value = it
+            }
+    }
+
+    private fun collectQuestionAnswer() = viewModelScope.launch {
+        QuestionAnswerObserver
+            .getInstance()
+            .answeredQuestion
+            .collectLatest {
+                if (it == null) return@collectLatest
+
+                if (it.index == _todayQuestion.value?.index) {
+                    _todayQuestion.value = it
+                }
             }
     }
 }

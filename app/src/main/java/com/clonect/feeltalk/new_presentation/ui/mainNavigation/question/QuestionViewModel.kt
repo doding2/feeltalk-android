@@ -6,6 +6,7 @@ import androidx.paging.*
 import com.clonect.feeltalk.new_domain.model.page.PageEvents
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.usecase.question.GetPagingQuestionUseCase
+import com.clonect.feeltalk.new_presentation.notification.notificationObserver.QuestionAnswerObserver
 import com.clonect.feeltalk.new_presentation.notification.notificationObserver.TodayQuestionObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -22,6 +23,7 @@ class QuestionViewModel @Inject constructor(
 
     init {
         collectTodayQuestion()
+        collectQuestionAnswer()
     }
 
     /** Page Modification **/
@@ -74,4 +76,16 @@ class QuestionViewModel @Inject constructor(
                 modifyPage(PageEvents.InsertItemHeader(it))
             }
     }
+
+    private fun collectQuestionAnswer() = viewModelScope.launch {
+        QuestionAnswerObserver
+            .getInstance()
+            .answeredQuestion
+            .collectLatest {
+                if (it == null) return@collectLatest
+
+                modifyPage(PageEvents.Edit(it))
+            }
+    }
+
 }

@@ -161,5 +161,6 @@ class MainActivity : AppCompatActivity() {
         NewChatObserver.onCleared()
         PartnerChatRoomStateObserver.onCleared()
         TodayQuestionObserver.onCleared()
+        QuestionAnswerObserver.onCleared()
     }
 }

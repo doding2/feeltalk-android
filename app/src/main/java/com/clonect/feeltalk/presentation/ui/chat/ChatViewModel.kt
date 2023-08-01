@@ -109,14 +109,14 @@ class ChatViewModel @Inject constructor(
     }
 
     private fun collectIsAnswerUpdated() = viewModelScope.launch(Dispatchers.IO) {
-        QuestionAnswerObserver
-            .getInstance()
-            .isAnswerUpdated
-            .collectLatest { isUpdated ->
-                if (isUpdated) {
-                    reloadChatListUseCase(_question2.value.question)
-                }
-            }
+//        QuestionAnswerObserver
+//            .getInstance()
+//            .isAnswerUpdated
+//            .collectLatest { isUpdated ->
+//                if (isUpdated) {
+//                    reloadChatListUseCase(_question2.value.question)
+//                }
+//            }
     }
 
     private fun collectFcmNewChat() = viewModelScope.launch(Dispatchers.IO) {

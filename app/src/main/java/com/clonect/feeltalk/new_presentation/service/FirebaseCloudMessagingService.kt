@@ -25,10 +25,7 @@ import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Com
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_TEXT_CHATTING
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_TODAY_QUESTION
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_VOICE_CHATTING
-import com.clonect.feeltalk.new_presentation.notification.notificationObserver.CreateCoupleObserver
-import com.clonect.feeltalk.new_presentation.notification.notificationObserver.NewChatObserver
-import com.clonect.feeltalk.new_presentation.notification.notificationObserver.PartnerChatRoomStateObserver
-import com.clonect.feeltalk.new_presentation.notification.notificationObserver.TodayQuestionObserver
+import com.clonect.feeltalk.new_presentation.notification.notificationObserver.*
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
 import com.clonect.feeltalk.presentation.utils.infoLog
@@ -311,6 +308,15 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 )
             )
             .createPendingIntent()
+
+        if (FeeltalkApp.getAppRunning()) {
+            val question = (getQuestionUseCase(index) as? Resource.Success)?.data
+            if (question != null) {
+                QuestionAnswerObserver
+                    .getInstance()
+                    .setAnsweredQuestion(question)
+            }
+        }
 
         notificationHelper.showNormalNotification(
             title = title,
