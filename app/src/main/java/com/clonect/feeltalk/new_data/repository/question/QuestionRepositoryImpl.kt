@@ -1,0 +1,119 @@
+package com.clonect.feeltalk.new_data.repository.question
+
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import com.clonect.feeltalk.common.Constants
+import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.new_data.mapper.toQuestion
+import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionCacheDataSource
+import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionLocalDataSource
+import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionRemoteDataSource
+import com.clonect.feeltalk.new_data.repository.question.paging.QuestionPagingSource
+import com.clonect.feeltalk.new_domain.model.question.LastQuestionPageNoDto
+import com.clonect.feeltalk.new_domain.model.question.Question
+import com.clonect.feeltalk.new_domain.model.question.QuestionListDto
+import com.clonect.feeltalk.new_domain.repository.question.QuestionRepository
+import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.Flow
+
+class QuestionRepositoryImpl(
+    private val cacheDataSource: QuestionCacheDataSource,
+    private val localDataSource: QuestionLocalDataSource,
+    private val remoteDataSource: QuestionRemoteDataSource,
+    private val tokenRepository: TokenRepository,
+): QuestionRepository {
+    override suspend fun getLastChatPageNo(accessToken: String): Resource<LastQuestionPageNoDto> {
+        return try {
+            val result = remoteDataSource.getLastQuestionPageNo(accessToken)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun getQuestionList(accessToken: String, pageNo: Long): Resource<QuestionListDto> {
+        return try {
+            val result = remoteDataSource.getQuestionList(accessToken, pageNo)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override fun getPagingQuestion(): Flow<PagingData<Question>> {
+        return Pager(
+            PagingConfig(
+                pageSize = Constants.CHAT_PAGE_SIZE,
+                enablePlaceholders = false
+            )
+        ) {
+            QuestionPagingSource(tokenRepository, cacheDataSource, remoteDataSource)
+        }.flow
+    }
+
+    override suspend fun getQuestion(accessToken: String, index: Long): Resource<Question> {
+        return try {
+            val result = remoteDataSource.getQuestion(accessToken, index)
+            Resource.Success(result.toQuestion())
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun getTodayQuestion(accessToken: String): Resource<Question> {
+        return try {
+            val cache = cacheDataSource.getTodayQuestion()
+            if (cache != null) {
+                return Resource.Success(cache)
+            }
+
+            val result = remoteDataSource
+                .getTodayQuestion(accessToken)
+                .toQuestion()
+            cacheDataSource.saveTodayQuestion(result)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override fun changeTodayQuestionCache(question: Question) {
+        cacheDataSource.saveTodayQuestion(question)
+    }
+
+    override suspend fun answerQuestion(
+        accessToken: String,
+        index: Long,
+        myAnswer: String,
+    ): Resource<Unit> {
+        return try {
+            val result = remoteDataSource.answerQuestion(accessToken, index, myAnswer)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun pressForAnswer(accessToken: String, index: Long): Resource<Unit> {
+        return try {
+            val result = remoteDataSource.pressForAnswer(accessToken, index)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+}

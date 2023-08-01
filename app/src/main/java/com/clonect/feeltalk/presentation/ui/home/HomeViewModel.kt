@@ -5,13 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.data.mapper.toStringLowercase
-import com.clonect.feeltalk.domain.model.data.question.Question
+import com.clonect.feeltalk.domain.model.data.question.Question2
 import com.clonect.feeltalk.domain.model.data.user.Emotion
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionAnswersFromServer
-import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionUseCase
+import com.clonect.feeltalk.domain.usecase.question.GetTodayQuestionUseCase2
 import com.clonect.feeltalk.domain.usecase.user.*
 import com.clonect.feeltalk.new_domain.model.appSettings.AppSettings
 import com.clonect.feeltalk.presentation.utils.infoLog
@@ -31,7 +31,7 @@ class HomeViewModel @Inject constructor(
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val getPartnerInfoFlowUseCase: GetPartnerInfoFlowUseCase,
     private val updateMyEmotionUseCase: UpdateMyEmotionUseCase,
-    private val getTodayQuestionUseCase: GetTodayQuestionUseCase,
+    private val getTodayQuestionUseCase2: GetTodayQuestionUseCase2,
     private val getTodayQuestionAnswersFromServer: GetTodayQuestionAnswersFromServer,
     private val getCoupleAnniversaryUseCase: GetCoupleAnniversaryUseCase,
     private val requestChangingPartnerEmotionUseCase: RequestChangingPartnerEmotionUseCase,
@@ -48,8 +48,8 @@ class HomeViewModel @Inject constructor(
     private val _dday = MutableStateFlow<Long?>(null)
     val dday = _dday.asStateFlow()
 
-    private val _todayQuestion = MutableStateFlow<Question?>(null)
-    val todayQuestion = _todayQuestion.asStateFlow()
+    private val _todayQuestion2 = MutableStateFlow<Question2?>(null)
+    val todayQuestion = _todayQuestion2.asStateFlow()
 
     private val _partnerClickCount = MutableStateFlow(0)
     val partnerClickCount = _partnerClickCount.asStateFlow()
@@ -148,30 +148,30 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getTodayQuestion() = viewModelScope.launch(Dispatchers.IO) {
-        val result = getTodayQuestionUseCase()
+        val result = getTodayQuestionUseCase2()
         when (result) {
             is Resource.Success -> {
                 getTodayQuestionAnswer(result.data)
-                infoLog("Today Question: ${_todayQuestion.value?.question}")
+                infoLog("Today Question: ${_todayQuestion2.value?.question}")
             }
             is Resource.Error -> {
-                _todayQuestion.value = Question("")
+                _todayQuestion2.value = Question2("")
                 infoLog("Fail to load today question: ${result.throwable.localizedMessage}")
             }
         }
     }
 
-    private suspend fun getTodayQuestionAnswer(question: Question) {
+    private suspend fun getTodayQuestionAnswer(question2: Question2) {
         val result = getTodayQuestionAnswersFromServer()
         when (result) {
             is Resource.Success -> {
-                _todayQuestion.value = question.copy(
+                _todayQuestion2.value = question2.copy(
                     myAnswer = result.data.myAnswer,
                     partnerAnswer = result.data.partnerAnswer
                 )
             }
             is Resource.Error -> {
-                _todayQuestion.value = question
+                _todayQuestion2.value = question2
                 infoLog("Fail to load today question answers: ${result.throwable.localizedMessage}")
             }
         }

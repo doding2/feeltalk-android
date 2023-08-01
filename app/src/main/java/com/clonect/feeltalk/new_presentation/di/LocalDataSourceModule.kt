@@ -7,13 +7,15 @@ import com.clonect.feeltalk.data.repository.chat.datasource.ChatLocalDataSource2
 import com.clonect.feeltalk.data.repository.chat.datasourceImpl.ChatLocalDataSource2Impl
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionLocalDataSource
 import com.clonect.feeltalk.data.repository.encryption.datasourceImpl.EncryptionLocalDataSourceImpl
-import com.clonect.feeltalk.data.repository.question.datasource.QuestionLocalDataSource
-import com.clonect.feeltalk.data.repository.question.datasourceImpl.QuestionLocalDataSourceImpl
+import com.clonect.feeltalk.data.repository.question.datasource.QuestionLocalDataSource2
+import com.clonect.feeltalk.data.repository.question.datasourceImpl.QuestionLocalDataSource2Impl
 import com.clonect.feeltalk.data.repository.user.datasource.UserLocalDataSource
 import com.clonect.feeltalk.data.repository.user.datasourceImpl.UserLocalDataSourceImpl
 import com.clonect.feeltalk.data.utils.MessageEncryptHelper
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatLocalDataSource
 import com.clonect.feeltalk.new_data.repository.chat.dataSourceImpl.ChatLocalDataSourceImpl
+import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionLocalDataSource
+import com.clonect.feeltalk.new_data.repository.question.dataSourceImpl.QuestionLocalDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.signIn.dataSource.SignInLocalDataSource
 import com.clonect.feeltalk.new_data.repository.signIn.dataSourceImpl.SignInLocalDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenLocalDataSource
@@ -51,6 +53,12 @@ class LocalDataSourceModule {
         return ChatLocalDataSourceImpl()
     }
 
+    @Singleton
+    @Provides
+    fun providesQuestionLocalDataSource(): QuestionLocalDataSource {
+        return QuestionLocalDataSourceImpl()
+    }
+
 
 
 
@@ -66,10 +74,10 @@ class LocalDataSourceModule {
 
     @Singleton
     @Provides
-    fun providesQuestionLocalDataSource(
+    fun providesQuestionLocalDataSource2(
         questionDao: QuestionDao
-    ): QuestionLocalDataSource {
-        return QuestionLocalDataSourceImpl(questionDao)
+    ): QuestionLocalDataSource2 {
+        return QuestionLocalDataSource2Impl(questionDao)
     }
 
     @Singleton

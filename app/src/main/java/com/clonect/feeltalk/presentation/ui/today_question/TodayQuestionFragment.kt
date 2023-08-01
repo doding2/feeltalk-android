@@ -25,7 +25,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentTodayQuestionBinding
-import com.clonect.feeltalk.domain.model.data.question.Question
+import com.clonect.feeltalk.domain.model.data.question.Question2
 import com.clonect.feeltalk.presentation.utils.makeLoadingDialog
 import com.clonect.feeltalk.presentation.utils.showAlertDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -101,8 +101,8 @@ class TodayQuestionFragment : Fragment() {
     }
 
 
-    private fun navigateToChatPage(question: Question) {
-        val bundle = bundleOf("selectedQuestion" to question)
+    private fun navigateToChatPage(question2: Question2) {
+        val bundle = bundleOf("selectedQuestion" to question2)
 
         requireParentFragment()
             .findNavController()
@@ -205,11 +205,11 @@ class TodayQuestionFragment : Fragment() {
 
 
 
-    private fun reassembleQuestionTitle(question: Question) {
+    private fun reassembleQuestionTitle(question2: Question2) {
         binding.layoutQuestionContent.removeAllViewsInLayout()
 
 //        question.contentPrefix.reassembleTextView(R.layout.text_view_question_content_prefix)
-        question.question.reassembleTextView(R.layout.text_view_question_content)
+        question2.question.reassembleTextView(R.layout.text_view_question_content)
 //        question.contentSuffix.reassembleTextView(R.layout.text_view_question_content_suffix)
     }
 

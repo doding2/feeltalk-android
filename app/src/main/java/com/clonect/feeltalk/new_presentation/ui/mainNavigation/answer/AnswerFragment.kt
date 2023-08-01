@@ -3,12 +3,14 @@ package com.clonect.feeltalk.new_presentation.ui.mainNavigation.answer
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.RelativeLayout
-import android.widget.Toast
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updateMargins
@@ -24,6 +26,7 @@ import com.clonect.feeltalk.databinding.FragmentAnswerBinding
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
+import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -67,25 +70,22 @@ class AnswerFragment : Fragment() {
 
             mcvDoneRound.setOnClickListener {
                 if (viewModel.isReadMode.value) showChatBottomSheet()
-                else answerDone()
+                else answerQuestion()
             }
             mcvDoneSquare.setOnClickListener {
                 if (viewModel.isReadMode.value) showChatBottomSheet()
-                else answerDone()
+                else answerQuestion()
             }
 
             mcvPressForAnswer.setOnClickListener { pokePartner() }
         }
     }
 
-    // TODO
-    private fun answerDone() {
+    private fun answerQuestion() {
         showAnswerConfirmDialog {
-            val question = viewModel.question.value ?: return@showAnswerConfirmDialog
-            question.myAnswer = viewModel.answer.value
-            navViewModel.setShowAnswerSheet(false)
-//            onAnswerQuestion(question)
-            Toast.makeText(requireContext(), "답변 완료", Toast.LENGTH_SHORT).show()
+            viewModel.answerQuestion {
+                navViewModel.setShowAnswerSheet(false)
+            }
         }
     }
 
@@ -94,26 +94,31 @@ class AnswerFragment : Fragment() {
         navViewModel.setShowChatNavigation(true)
     }
 
-    // TODO 상대에게 콕 찌르기 요청 보내기
     private fun pokePartner() {
-        val decorView = activity?.window?.decorView ?: return
-        Snackbar.make(
-            decorView,
-            requireContext().getString(R.string.answer_poke_partner_snack_bar),
-            Snackbar.LENGTH_SHORT
-        ).also {
-            val view = it.view
-            view.setOnClickListener { _ -> it.dismiss() }
-            it.show()
-        }
+        viewModel.pressForAnswer(requireContext())
     }
 
     private fun setQuestion(question: Question) {
         question.also {
             viewModel.setQuestion(it)
             binding.run {
+                val spanBody = SpannableString(question.body).apply {
+                    val mainColor = requireContext().getColor(R.color.main_500)
+                    val headerLength = question.header.length
+                    question.highlight
+                        .map { index ->
+                            index - headerLength
+                        }.forEach { index ->
+                            runCatching {
+                                if (index >= question.body.length) return@forEach
+                                setSpan(ForegroundColorSpan(mainColor), index.toInt() - 1, index.toInt(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+                            }.onFailure {
+                                infoLog("Question highlight index error: highlight list: ${question.highlight}\n${it.stackTrace.joinToString("\n")}")
+                            }
+                        }
+                }
+                tvQuestionBody.text = spanBody
                 tvQuestionHeader.text = it.header
-                tvQuestionBody.text = it.body
 
                 val isUsersAnswered = it.myAnswer != null
                 viewModel.setReadMode(isUsersAnswered)
@@ -218,6 +223,7 @@ class AnswerFragment : Fragment() {
             mcvDoneRound.updateLayoutParams<RelativeLayout.LayoutParams> {
                 updateMargins(left = 0, right = 0)
             }
+            mcvDoneRound.radius = 0f
         }
 
         if (enabled) {
@@ -248,8 +254,23 @@ class AnswerFragment : Fragment() {
     }
 
 
+    private fun showSnackBar(message: String) {
+        val decorView = activity?.window?.decorView ?: return
+        Snackbar.make(
+            decorView,
+            message,
+            Snackbar.LENGTH_SHORT
+        ).also {
+            val view = it.view
+            view.setOnClickListener { _ -> it.dismiss() }
+            it.show()
+        }
+    }
+
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch { viewModel.message.collect(::showSnackBar) }
+
             launch {
                 navViewModel.answerTargetQuestion.collectLatest {
                     if (it == null) {

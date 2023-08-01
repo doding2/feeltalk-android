@@ -26,7 +26,7 @@ class NotificationReadReceiver: BroadcastReceiver() {
         infoLog("Notification chat read action")
 
         CoroutineScope(Dispatchers.IO).launch {
-            notificationHelper.cancelNotification(NotificationHelper.CHAT_CHANNEL_ID.toBytesInt())
+            notificationHelper.cancelNotification(NotificationHelper.CHANNEL_ID_CHAT.toBytesInt())
             changeChatRoomState(true)
             changeChatRoomState(false)
         }

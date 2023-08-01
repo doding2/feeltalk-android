@@ -1,45 +1,77 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.question
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.*
+import com.clonect.feeltalk.new_domain.model.page.PageEvents
 import com.clonect.feeltalk.new_domain.model.question.Question
+import com.clonect.feeltalk.new_domain.usecase.question.GetPagingQuestionUseCase
+import com.clonect.feeltalk.new_presentation.notification.notificationObserver.TodayQuestionObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class QuestionViewModel @Inject constructor(
-
+    private val getPagingQuestionUseCase: GetPagingQuestionUseCase,
 ) : ViewModel() {
 
-    private val _questions = MutableStateFlow<List<Question>>(listOf(
-        Question(9, "난 이게 가장 좋더라!", "당신이 가장 좋아하는 스킨십은?", "2023.05.25", null, null),
-        Question(8, "이런 순간이 좋아!", "연인이 가장 예뻐 보이는 순간은?", "2023.05.24", "내 답변", "연인 답변"),
-        Question(7, "이런 순간이 좋아!", "연인이 가장 예뻐 보이는 순간은?", "2023.05.23", null, "연인 답변\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n연인 답변"),
-        Question(6, "이런 순간이 좋아!", "연인이 가장 예뻐 보이는 순간은?", "2023.05.22", "내 답변", null),
-        Question(5, "이런 순간이 좋아!", "연인이 가장 예뻐 보이는 순간은?", "2023.05.21", null, null),
-        Question(4, "이런 순간이 좋아!", "연인이 가장 예뻐 보이는 순간은?", "2023.05.20", "내 답변", "연인 답변"),
-        Question(3, "이런 순간이 좋아!", "연인이 가장 예뻐 보이는 순간은?", "2023.05.19", null, "연인 답변"),
-        Question(2, "이런 순간이 좋아!", "연인이 가장 예뻐 보이는 순간은?", "2023.05.18", "내 답변", null),
-        Question(1, "이런 순간이 좋아!", "연인이 가장 예뻐 보이는 순간은?", "2023.05.17", null, null),
-    ))
-    val questions = _questions.asStateFlow()
+    init {
+        collectTodayQuestion()
+    }
 
-    private val _todayQuestion = MutableStateFlow(
-        Question(
-            index = 9,
-            header = "난 이게 가장 좋더라!",
-            body = "당신이 가장 좋아하는 스킨십은?",
-            date = "2023.05.25",
-            myAnswer = null,
-            partnerAnswer = null
-        )
-    )
-    val todayQuestion = _todayQuestion.asStateFlow()
+    /** Page Modification **/
+    private val pageModificationEvents = MutableStateFlow<List<PageEvents<Question>>>(emptyList())
 
-    fun setTodayQuestionAnswer(answer: String) {
-        if (_todayQuestion.value.myAnswer == null) {
-            _todayQuestion.value = _todayQuestion.value.copy(myAnswer = null)
-            _todayQuestion.value =  _todayQuestion.value.copy(myAnswer = answer)
-        } }
+    private fun applyPageModification(paging: PagingData<Question>, event: PageEvents<Question>): PagingData<Question> {
+        return when (event) {
+            is PageEvents.Edit -> {
+                paging.map {
+                    return@map if (it.index == event.item.index)
+                        event.item.copy()
+                    else
+                        it
+                }
+            }
+            is PageEvents.Remove -> {
+                paging.filter { it.index != event.item.index }
+            }
+            is PageEvents.InsertItemFooter -> {
+                paging.insertFooterItem(item = event.item)
+            }
+            is PageEvents.InsertItemHeader -> {
+                paging.insertHeaderItem(item = event.item)
+            }
+        }
+    }
+
+    fun modifyPage(event: PageEvents<Question>) {
+        if (event !in pageModificationEvents.value) {
+            pageModificationEvents.value += event
+        }
+    }
+
+
+    val pagingQuestion: Flow<PagingData<Question>> = getPagingQuestionUseCase()
+        .cachedIn(viewModelScope)
+        .combine(pageModificationEvents) { pagingData, modifications ->
+            modifications.fold(pagingData) { acc, event ->
+                applyPageModification(acc, event)
+            }
+        }
+
+
+    private fun collectTodayQuestion() = viewModelScope.launch {
+        TodayQuestionObserver
+            .getInstance()
+            .todayQuestion
+            .collectLatest {
+                if (it == null) return@collectLatest
+                modifyPage(PageEvents.InsertItemHeader(it))
+            }
+    }
 }

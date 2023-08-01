@@ -151,4 +151,15 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
         FeeltalkApp.onAppScreenPaused()
     }
+
+    override fun onStop() {
+        super.onStop()
+        infoLog("onStop()")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        infoLog("onDestroy()")
+        FeeltalkApp.onAppDestroyed()
+    }
 }

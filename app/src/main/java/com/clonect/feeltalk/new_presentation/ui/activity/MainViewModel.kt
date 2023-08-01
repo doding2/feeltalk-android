@@ -5,14 +5,16 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
+import com.clonect.feeltalk.new_domain.model.appSettings.AppSettings
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
+import com.clonect.feeltalk.new_domain.usecase.question.GetTodayQuestionUseCase
 import com.clonect.feeltalk.new_domain.usecase.signIn.AutoLogInUseCase
-import com.clonect.feeltalk.new_domain.model.appSettings.AppSettings
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -24,6 +26,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val autoLogInUseCase: AutoLogInUseCase,
+    private val getTodayQuestionUseCase: GetTodayQuestionUseCase,
     private val getAppSettingsUseCase: GetAppSettingsUseCase,
     private val saveAppSettingsUseCase: SaveAppSettingsUseCase,
     private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
@@ -60,6 +63,7 @@ class MainViewModel @Inject constructor(
                         _isUserCouple.value = false
                     }
                     "couple" -> {
+                        preloadCoupleData()
                         _isUser.value = true
                         _isUserCouple.value = true
                     }
@@ -77,15 +81,24 @@ class MainViewModel @Inject constructor(
     }
 
 
+    private suspend fun preloadCoupleData() = withContext(Dispatchers.IO) {
+        val todayQuestion = async {
+            when (val result = getTodayQuestionUseCase()) {
+                is Resource.Success -> { }
+                is Resource.Error -> {
+                    infoLog("Fail to preload today question: ${result.throwable.localizedMessage}\n${result.throwable.stackTrace.joinToString("\n")}")
+                }
+            }
+        }
+
+        todayQuestion.await()
+    }
+
+
+
     fun enablePushNotificationEnabled(enabled: Boolean) {
         FirebaseMessaging.getInstance().apply {
             token.addOnSuccessListener {
-//                if (enabled) {
-//                    subscribeToTopic(Topics.Push.text)
-//                }
-//                else {
-//                    unsubscribeFromTopic(Topics.Push.text)
-//                }
                 val appSettings = getAppSettingsUseCase()
                 appSettings.fcmToken = it
                 appSettings.isPushNotificationEnabled = enabled

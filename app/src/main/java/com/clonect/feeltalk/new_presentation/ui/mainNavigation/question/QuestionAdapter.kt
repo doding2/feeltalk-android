@@ -4,7 +4,7 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.R
@@ -12,24 +12,23 @@ import com.clonect.feeltalk.databinding.ItemQuestionBinding
 import com.clonect.feeltalk.databinding.ItemQuestionTodayBinding
 import com.clonect.feeltalk.new_domain.model.question.Question
 
-class QuestionAdapter: RecyclerView.Adapter<QuestionAdapter.QuestionViewHolder>() {
+class QuestionAdapter: PagingDataAdapter<Question, QuestionAdapter.QuestionViewHolder>(callback) {
 
     companion object {
+        private val callback = object: DiffUtil.ItemCallback<Question>() {
+            override fun areItemsTheSame(oldItem: Question, newItem: Question): Boolean {
+                return oldItem.index == newItem.index
+            }
+
+            override fun areContentsTheSame(oldItem: Question, newItem: Question): Boolean {
+                return oldItem == newItem
+            }
+        }
+
         const val TYPE_NORMAL_QUESTION = 0
         const val TYPE_TODAY_QUESTION = 1
     }
 
-    private val callback = object: DiffUtil.ItemCallback<Question>() {
-        override fun areItemsTheSame(oldItem: Question, newItem: Question): Boolean {
-            return oldItem.index == newItem.index
-        }
-
-        override fun areContentsTheSame(oldItem: Question, newItem: Question): Boolean {
-            return oldItem == newItem
-        }
-    }
-
-    val differ = AsyncListDiffer(this, callback)
 
     private var onItemClick: ((Question) -> Unit) = {}
 
@@ -52,8 +51,10 @@ class QuestionAdapter: RecyclerView.Adapter<QuestionAdapter.QuestionViewHolder>(
     }
 
     override fun onBindViewHolder(holder: QuestionViewHolder, position: Int) {
-        val item = differ.currentList[position]
-        holder.bind(item)
+        val item = getItem(position)
+        if (item != null) {
+            holder.bind(item)
+        }
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -64,11 +65,10 @@ class QuestionAdapter: RecyclerView.Adapter<QuestionAdapter.QuestionViewHolder>(
     }
 
 
-    override fun getItemCount(): Int = differ.currentList.size
-
     fun setOnItemClickListener(listener: (Question) -> Unit) {
         onItemClick = listener
     }
+
 
 
     abstract class QuestionViewHolder(
@@ -86,15 +86,15 @@ class QuestionAdapter: RecyclerView.Adapter<QuestionAdapter.QuestionViewHolder>(
             tvTodayQuestionHeader.text = item.header
             tvTodayQuestionBody.text = item.body
 
-            mcvAnswerOrChat.setOnClickListener { onItemClick(item) }
+            mcvAnswer.setOnClickListener { onItemClick(item) }
 
             val isUserAnswered = item.myAnswer != null
             if (isUserAnswered) {
-                mcvAnswerOrChat.setCardBackgroundColor(Color.WHITE)
+                mcvAnswer.setCardBackgroundColor(Color.WHITE)
                 tvAnswerOrChat.setText(R.string.question_today_button_answer_2)
                 tvAnswerOrChat.setTextColor(root.context.getColor(R.color.main_500))
             } else {
-                mcvAnswerOrChat.setCardBackgroundColor(Color.BLACK)
+                mcvAnswer.setCardBackgroundColor(Color.BLACK)
                 tvAnswerOrChat.setText(R.string.question_today_button_answer)
                 tvAnswerOrChat.setTextColor(root.context.getColor(R.color.main_100))
             }

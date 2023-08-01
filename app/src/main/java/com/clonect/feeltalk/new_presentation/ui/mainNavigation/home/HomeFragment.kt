@@ -19,15 +19,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentHomeBinding
+import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.model.signal.Signal
-import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.signal.SignalBottomSheetFragment
 import com.clonect.feeltalk.new_presentation.ui.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -57,20 +56,22 @@ class HomeFragment : Fragment() {
         setLightStatusBars(false, activity, binding.root)
     }
 
-
-    @Inject
-    lateinit var notificationHelper: NotificationHelper
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         collectViewModel()
 
         binding.run {
-            mcvMySignal.setOnClickListener {
-                showSignalBottomSheet()
-//                notificationHelper.showChatNotification(title = "연인", message = "채팅 내용")
-            }
+            mcvAnswer.setOnClickListener { showAnswerBottomSheet() }
+            mcvMySignal.setOnClickListener { showSignalBottomSheet() }
         }
+    }
+
+
+    private fun showAnswerBottomSheet() {
+        val todayQuestion = viewModel.todayQuestion.value ?: return
+
+        navViewModel.setAnswerTargetQuestion(todayQuestion)
+        navViewModel.setShowAnswerSheet(true)
     }
 
 
@@ -86,16 +87,19 @@ class HomeFragment : Fragment() {
     }
 
 
-    private fun changeQuestionCountTitle(count: Int) {
-        val title = count.toString() + getString(R.string.home_main_title_deco)
+    private fun changeTodayQuestionView(todayQuestion: Question?) {
+        if (todayQuestion == null) return
+
+        val index = todayQuestion.index.toString()
+        val title = index + getString(R.string.home_main_title_deco)
         val countFont = ResourcesCompat.getFont(requireContext(), R.font.pretendard_bold)
         val decoFont = ResourcesCompat.getFont(requireContext(), R.font.pretendard_regular)
 
         val spanString = SpannableStringBuilder(title).apply {
-            setSpan(CustomTypefaceSpan("", countFont), 0, count.toString().length, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
-            setSpan(CustomTypefaceSpan("", decoFont), count.toString().length, title.length, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
-            setSpan(AbsoluteSizeSpan(activity.dpToPx(28f).toInt()), 0, count.toString().length, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
-            setSpan(CountCenterVerticalSpan(), 0, count.toString().length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(CustomTypefaceSpan("", countFont), 0, index.length, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
+            setSpan(CustomTypefaceSpan("", decoFont), index.length, title.length, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
+            setSpan(AbsoluteSizeSpan(activity.dpToPx(28f).toInt()), 0, index.length, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
+            setSpan(CountCenterVerticalSpan(), 0, index.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
         binding.tvQuestionCount.text = spanString
     }
@@ -123,7 +127,7 @@ class HomeFragment : Fragment() {
 
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-            launch { viewModel.questionCount.collectLatest(::changeQuestionCountTitle) }
+            launch { viewModel.todayQuestion.collectLatest(::changeTodayQuestionView) }
             launch { viewModel.mySignal.collectLatest(::changeMySignalView) }
             launch { viewModel.partnerSignal.collectLatest(::changePartnerSignalView) }
         }

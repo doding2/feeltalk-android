@@ -1,15 +1,15 @@
 package com.clonect.feeltalk.data.repository.question.datasourceImpl
 
 import com.clonect.feeltalk.new_data.api.ClonectService
-import com.clonect.feeltalk.data.repository.question.datasource.QuestionRemoteDataSource
+import com.clonect.feeltalk.data.repository.question.datasource.QuestionRemoteDataSource2
 import com.clonect.feeltalk.domain.model.dto.question.*
 import com.google.gson.JsonObject
 import retrofit2.HttpException
 import retrofit2.Response
 
-class QuestionRemoteDataSourceImpl(
+class QuestionRemoteDataSource2Impl(
     private val clonectService: ClonectService
-): QuestionRemoteDataSource {
+): QuestionRemoteDataSource2 {
 
     override suspend fun getTodayQuestion(accessToken: String): Response<TodayQuestionDto> {
         val body = JsonObject()
@@ -36,7 +36,7 @@ class QuestionRemoteDataSourceImpl(
         return response
     }
 
-    override suspend fun getQuestionList(accessToken: String): Response<QuestionListDto> {
+    override suspend fun getQuestionList(accessToken: String): Response<QuestionListDto2> {
         val response = clonectService.getChattingRoomList(accessToken)
         if (!response.isSuccessful) throw HttpException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")

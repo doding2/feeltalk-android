@@ -113,7 +113,7 @@
                 android:fontFamily="@font/pretendard_medium"/>
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/mcv_answer_or_chat"
+                android:id="@+id/mcv_answer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"

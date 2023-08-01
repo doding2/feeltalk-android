@@ -52,6 +52,10 @@ class MainNavigationFragment : Fragment() {
         val showChat = arguments?.getBoolean("showChat", false) ?: false
         viewModel.initShowChatNavigation(showChat)
 
+        val questionIndex = arguments?.getLong("questionIndex", -1) ?: -1
+        val isTodayQuestion = arguments?.getBoolean("isTodayQuestion", false) ?: false
+        viewModel.initShowQuestionAnswerSheet(questionIndex, isTodayQuestion)
+
         viewModel.setShortcut(requireContext())
 
         return binding.root
@@ -89,7 +93,6 @@ class MainNavigationFragment : Fragment() {
         val navHostFragment = childFragmentManager.findFragmentById(R.id.fcv_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         bottomNav.setupWithNavController(navController)
-//        bottomNav.setupWithMainNavController(navController)
     }
 
     private fun setUpAnswerSheet() {
@@ -153,8 +156,21 @@ class MainNavigationFragment : Fragment() {
         binding.ivLatestChatTail.setColorFilter(color)
     }
 
+    private fun navigateFragment(target: String) {
+        if (target == "home") {
+            binding.mnvBottomNavigation.selectedItemId = R.id.navigation_home
+        }
+        if (target == "question") {
+            binding.mnvBottomNavigation.selectedItemId = R.id.navigation_question
+        }
+        if (target == "challenge") {
+            binding.mnvBottomNavigation.selectedItemId = R.id.navigation_bucket_list
+        }
+    }
+
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch { viewModel.navigateTo.collectLatest(::navigateFragment) }
             launch { viewModel.showChatNavigation.collectLatest(::showChatSheet) }
             launch { viewModel.showPartnerLastChat.collectLatest(::changePartnerLastChatView) }
             launch { viewModel.partnerLastChatColor.collectLatest(::changePartnerLastChatColor) }

@@ -131,7 +131,6 @@ class ChatViewModel @Inject constructor(
 
     private fun insertLoadingChat(chat: Chat) {
         pageModificationEvents.value += PageEvents.InsertItemFooter(chat)
-//        modifyPage(PageEvents.InsertItemFooter(chat))
     }
 
     private fun insertCompleteChat(chat: Chat) {

@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import java.io.Serializable
 
 @Entity(tableName = "QuestionTable")
-data class Question(
+data class Question2(
     @PrimaryKey
     val question: String,
     var questionDate: String? = null,
@@ -17,7 +17,7 @@ data class Question(
     var isFirstOpen: Boolean = true,
 ): Serializable {
     override fun equals(other: Any?): Boolean {
-        if (other !is Question) return false
+        if (other !is Question2) return false
         if (other === this) return true
         return question == other.question
                 && viewType == other.viewType

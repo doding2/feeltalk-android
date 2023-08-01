@@ -15,12 +15,15 @@ import com.clonect.feeltalk.new_domain.model.chat.ChatType
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPartnerLastChatUseCase
+import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUseCase
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.notification.notificationObserver.NewChatObserver
 import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,7 +31,14 @@ import javax.inject.Inject
 @HiltViewModel
 class MainNavigationViewModel @Inject constructor(
     private val getPartnerLastChatUseCase: GetPartnerLastChatUseCase,
+    private val getQuestionUseCase: GetQuestionUseCase,
 ): ViewModel() {
+
+    private val _navigateTo = MutableSharedFlow<String>()
+    val navigateTo = _navigateTo.asSharedFlow()
+
+
+    private var isQuestionArgumentsInit = true
 
     private val _partnerLastChat = MutableStateFlow<String?>(null)
     val partnerLastChat = _partnerLastChat.asStateFlow()
@@ -44,7 +54,7 @@ class MainNavigationViewModel @Inject constructor(
     val partnerLastChatColor = _partnerLastChatColor.asStateFlow()
 
 
-    private var isArgumentsInit = true
+    private var isChatArgumentsInit = true
 
     private val _showChatNavigation = MutableStateFlow(false)
     val showChatNavigation = _showChatNavigation.asStateFlow()
@@ -62,6 +72,13 @@ class MainNavigationViewModel @Inject constructor(
         collectNewChat()
         calculateShowingPartnerLastChat()
     }
+
+    fun navigateTo(target: String) = viewModelScope.launch {
+        if (target == "home" || target == "question" || target == "challenge") {
+            _navigateTo.emit(target)
+        }
+    }
+
 
     fun setShortcut(context: Context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return
@@ -140,8 +157,8 @@ class MainNavigationViewModel @Inject constructor(
     }
 
     fun initShowChatNavigation(showChat: Boolean) = viewModelScope.launch {
-        if (isArgumentsInit) {
-            isArgumentsInit = false
+        if (isChatArgumentsInit) {
+            isChatArgumentsInit = false
             _showChatNavigation.value = showChat
             calculateShowingPartnerLastChat()
         }
@@ -156,6 +173,28 @@ class MainNavigationViewModel @Inject constructor(
         _showAnswerSheet.value = isShow
         calculateShowingPartnerLastChat()
     }
+
+    fun initShowQuestionAnswerSheet(index: Long, isTodayQuestion: Boolean) = viewModelScope.launch {
+        if (!isQuestionArgumentsInit) return@launch
+        isQuestionArgumentsInit = false
+
+        if (index < 0) return@launch
+
+        when (val result = getQuestionUseCase(index)) {
+            is Resource.Success -> {
+                setAnswerTargetQuestion(result.data)
+                setShowAnswerSheet(true)
+                if (!isTodayQuestion) {
+                    navigateTo("question")
+                }
+            }
+            is Resource.Error -> {
+                infoLog("Fail to get a question at deeplink: ${result.throwable.localizedMessage}\n${result.throwable.stackTrace.joinToString("\n")}")
+            }
+        }
+    }
+
+
 
 
     private fun collectNewChat() = viewModelScope.launch {

@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.domain.model.data.question.Question
+import com.clonect.feeltalk.domain.model.data.question.Question2
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.model.dto.question.QuestionDetailDto
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
@@ -42,10 +42,10 @@ class TodayQuestionViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ): ViewModel() {
 
-    private val homeQuestionReference = MutableStateFlow(Question(""))
+    private val homeQuestionReference2 = MutableStateFlow(Question2(""))
 
-    private val _questionStateFlow = MutableStateFlow(Question(""))
-    val questionStateFlow = _questionStateFlow.asStateFlow()
+    private val _question2StateFlow = MutableStateFlow(Question2(""))
+    val questionStateFlow = _question2StateFlow.asStateFlow()
 
     private val _questionDetail = MutableStateFlow<QuestionDetailDto?>(null)
     val questionDetail = _questionDetail.asStateFlow()
@@ -63,9 +63,9 @@ class TodayQuestionViewModel @Inject constructor(
     val isLoading = _isLoading.asStateFlow()
 
     init {
-        savedStateHandle.get<Question>("selectedQuestion")?.let {
+        savedStateHandle.get<Question2>("selectedQuestion")?.let {
             setQuestion(it.copy())
-            homeQuestionReference.value = it
+            homeQuestionReference2.value = it
         }
         getQuestionDetail()
         getQuestionAnswers()
@@ -74,14 +74,14 @@ class TodayQuestionViewModel @Inject constructor(
     }
 
     private fun getQuestionDetail() = viewModelScope.launch(Dispatchers.IO) {
-        val result = getQuestionDetailUseCase(_questionStateFlow.value.question)
+        val result = getQuestionDetailUseCase(_question2StateFlow.value.question)
         when (result) {
             is Resource.Success -> {
                 _questionDetail.value = result.data
                 infoLog("header: ${result.data.header}, body: ${result.data.body}")
             }
             is Resource.Error -> {
-                infoLog("Fail to get question detail: ${_questionStateFlow.value.question}, error: ${result.throwable.localizedMessage}")
+                infoLog("Fail to get question detail: ${_question2StateFlow.value.question}, error: ${result.throwable.localizedMessage}")
                 _questionDetail.value = null
             }
             else -> {
@@ -92,17 +92,17 @@ class TodayQuestionViewModel @Inject constructor(
     }
 
     private fun getQuestionAnswers() = viewModelScope.launch(Dispatchers.IO) {
-        val result = getQuestionAnswersUseCase(_questionStateFlow.value.question)
+        val result = getQuestionAnswersUseCase(_question2StateFlow.value.question)
         when (result) {
             is Resource.Success -> {
                 _partnerAnswer.value = result.data.partner ?: ""
             }
             is Resource.Error -> {
-                infoLog("Fail to get question answers: ${_questionStateFlow.value.question}, error: ${result.throwable.localizedMessage}")
+                infoLog("Fail to get question answers: ${_question2StateFlow.value.question}, error: ${result.throwable.localizedMessage}")
                 _partnerAnswer.value = null
             }
             else -> {
-                infoLog("Fail to get question answers: ${_questionStateFlow.value.question}")
+                infoLog("Fail to get question answers: ${_question2StateFlow.value.question}")
                 _partnerAnswer.value = null
             }
         }
@@ -124,27 +124,27 @@ class TodayQuestionViewModel @Inject constructor(
     }
 
 
-    private fun setQuestion(question: Question) {
-        _questionStateFlow.value = question
+    private fun setQuestion(question2: Question2) {
+        _question2StateFlow.value = question2
     }
 
     fun setMyAnswer(answer: String) {
         _myAnswerStateFlow.value = answer
-        _questionStateFlow.value.myAnswer = answer
+        _question2StateFlow.value.myAnswer = answer
     }
 
     suspend fun sendQuestionAnswer() = withContext(Dispatchers.IO) {
         _isLoading.value = true
         val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val date = format.format(Date())
-        val question = _questionStateFlow.value.apply {
+        val question = _question2StateFlow.value.apply {
             myAnswerDate = date
         }
         val result = sendQuestionAnswerUseCase(question)
         _isLoading.value = false
         return@withContext when (result) {
             is Resource.Success -> {
-                homeQuestionReference.value.apply {
+                homeQuestionReference2.value.apply {
                     myAnswer = question.myAnswer
                     myAnswerDate = question.myAnswerDate
                 }
@@ -163,7 +163,7 @@ class TodayQuestionViewModel @Inject constructor(
 
 
     private fun openQuestionFirsTimeMixpanel() = CoroutineScope(Dispatchers.IO).launch {
-        if (!_questionStateFlow.value.isFirstOpen) return@launch
+        if (!_question2StateFlow.value.isFirstOpen) return@launch
 
         val userInfo = getUserInfoUseCase()
         if (userInfo !is Resource.Success) return@launch
@@ -176,7 +176,7 @@ class TodayQuestionViewModel @Inject constructor(
 
         val feeltalkDateFormat = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
         val mixpanelDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-        val questionFeeltalkDate = _questionStateFlow.value.questionDate?.let { feeltalkDateFormat.parse(it) }
+        val questionFeeltalkDate = _question2StateFlow.value.questionDate?.let { feeltalkDateFormat.parse(it) }
         val questionMixpanelDate = questionFeeltalkDate?.let { mixpanelDateFormat.format(it) }
 
         mixpanel.track("Open Question First Time", JSONObject().apply {
@@ -184,8 +184,8 @@ class TodayQuestionViewModel @Inject constructor(
             put("questionDate", questionMixpanelDate)
         })
 
-        _questionStateFlow.value.isFirstOpen = false
-        saveQuestionToDatabaseUseCase(_questionStateFlow.value)
+        _question2StateFlow.value.isFirstOpen = false
+        saveQuestionToDatabaseUseCase(_question2StateFlow.value)
     }
 
     private fun answerQuestionMixpanel() = CoroutineScope(Dispatchers.IO).launch {
@@ -200,7 +200,7 @@ class TodayQuestionViewModel @Inject constructor(
 
         val feeltalkDateFormat = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
         val mixpanelDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-        val questionFeeltalkDate = _questionStateFlow.value.questionDate?.let { feeltalkDateFormat.parse(it) }
+        val questionFeeltalkDate = _question2StateFlow.value.questionDate?.let { feeltalkDateFormat.parse(it) }
         val questionMixpanelDate = questionFeeltalkDate?.let { mixpanelDateFormat.format(it) }
 
         mixpanel.track("Answer Question", JSONObject().apply {

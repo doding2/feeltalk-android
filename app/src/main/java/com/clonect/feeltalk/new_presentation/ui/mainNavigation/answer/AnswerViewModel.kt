@@ -1,11 +1,19 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.answer
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.R
+import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.question.Question
+import com.clonect.feeltalk.new_domain.usecase.question.AnswerQuestionUseCase
+import com.clonect.feeltalk.new_domain.usecase.question.PressForAnswerUseCase
+import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
@@ -13,7 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AnswerViewModel @Inject constructor(
-
+    private val answerQuestionUseCase: AnswerQuestionUseCase,
+    private val pressForAnswerUseCase: PressForAnswerUseCase,
 ) : ViewModel() {
 
     private val job = MutableStateFlow<Job?>(null)
@@ -30,6 +39,34 @@ class AnswerViewModel @Inject constructor(
 
     private val _isKeyboardUp = MutableStateFlow(false)
     val isKeyboardUp = _isKeyboardUp.asStateFlow()
+
+    private val _message = MutableSharedFlow<String>()
+    val message = _message.asSharedFlow()
+
+
+    fun answerQuestion(onComplete: () -> Unit = {}) = viewModelScope.launch {
+        when (val result = answerQuestionUseCase(_question.value?.index ?: return@launch, _answer.value)) {
+            is Resource.Success -> {
+                onComplete()
+            }
+            is Resource.Error -> {
+                _message.emit(result.throwable.localizedMessage ?: "질문 답변에 실패했습니다.")
+                infoLog("Fail to answer question: ${result.throwable.localizedMessage}\n${result.throwable.stackTrace.joinToString("\n")}")
+            }
+        }
+    }
+
+    fun pressForAnswer(context: Context) = viewModelScope.launch {
+        when (val result = pressForAnswerUseCase(_question.value?.index ?: return@launch)) {
+            is Resource.Success -> {
+                _message.emit(context.getString(R.string.answer_poke_partner_snack_bar))
+            }
+            is Resource.Error -> {
+                _message.emit(result.throwable.localizedMessage ?: "질문 답변에 실패했습니다.")
+                infoLog("Fail to answer question: ${result.throwable.localizedMessage}\n${result.throwable.stackTrace.joinToString("\n")}")
+            }
+        }
+    }
 
 
     fun setReadMode(isReadMode: Boolean) {

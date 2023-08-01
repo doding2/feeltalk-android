@@ -15,11 +15,13 @@ import com.clonect.feeltalk.domain.usecase.question.*
 import com.clonect.feeltalk.domain.usecase.user.*
 import com.clonect.feeltalk.new_data.util.AppLevelEncryptHelper
 import com.clonect.feeltalk.new_domain.repository.chat.ChatRepository
+import com.clonect.feeltalk.new_domain.repository.question.QuestionRepository
 import com.clonect.feeltalk.new_domain.repository.signIn.SignInRepository
 import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.*
+import com.clonect.feeltalk.new_domain.usecase.question.*
 import com.clonect.feeltalk.new_domain.usecase.signIn.*
 import com.clonect.feeltalk.new_domain.usecase.token.CacheSocialTokenUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.GetCachedSocialTokenUseCase
@@ -159,7 +161,43 @@ class UseCaseModule {
     }
 
 
+    /** Question **/
 
+    @Singleton
+    @Provides
+    fun providesGetTodayQuestionUseCase(tokenRepository: TokenRepository, questionRepository: QuestionRepository): GetTodayQuestionUseCase {
+        return GetTodayQuestionUseCase(tokenRepository, questionRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesChangeTodayQuestionCacheUseCase(questionRepository: QuestionRepository): ChangeTodayQuestionCacheUseCase {
+        return ChangeTodayQuestionCacheUseCase(questionRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetQuestionUseCase(tokenRepository: TokenRepository, questionRepository: QuestionRepository): GetQuestionUseCase {
+        return GetQuestionUseCase(tokenRepository, questionRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetPagingQuestionUseCase(questionRepository: QuestionRepository): GetPagingQuestionUseCase {
+        return GetPagingQuestionUseCase(questionRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesAnswerQuestionUseCase(tokenRepository: TokenRepository, questionRepository: QuestionRepository): AnswerQuestionUseCase {
+        return AnswerQuestionUseCase(tokenRepository, questionRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesPressForAnswerUseCase(tokenRepository: TokenRepository, questionRepository: QuestionRepository): PressForAnswerUseCase {
+        return PressForAnswerUseCase(tokenRepository, questionRepository)
+    }
 
 
 
@@ -192,20 +230,20 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesGetQuestionListUseCase(userRepository: UserRepository, questionRepository: QuestionRepository): GetQuestionListUseCase {
-        return GetQuestionListUseCase(userRepository, questionRepository)
+    fun providesGetQuestionListUseCase(userRepository: UserRepository, questionRepository2: QuestionRepository2): GetQuestionListUseCase {
+        return GetQuestionListUseCase(userRepository, questionRepository2)
     }
 
     @Singleton
     @Provides
-    fun providesGetTodayQuestionAnswersFromServer(userRepository: UserRepository, questionRepository: QuestionRepository): GetTodayQuestionAnswersFromServer {
-        return GetTodayQuestionAnswersFromServer(userRepository, questionRepository)
+    fun providesGetTodayQuestionAnswersFromServer(userRepository: UserRepository, questionRepository2: QuestionRepository2): GetTodayQuestionAnswersFromServer {
+        return GetTodayQuestionAnswersFromServer(userRepository, questionRepository2)
     }
 
     @Singleton
     @Provides
-    fun providesSendQuestionAnswerUseCase(userRepository: UserRepository, questionRepository: QuestionRepository, chatRepository2: ChatRepository2): SendQuestionAnswerUseCase {
-        return SendQuestionAnswerUseCase(userRepository, questionRepository, chatRepository2)
+    fun providesSendQuestionAnswerUseCase(userRepository: UserRepository, questionRepository2: QuestionRepository2, chatRepository2: ChatRepository2): SendQuestionAnswerUseCase {
+        return SendQuestionAnswerUseCase(userRepository, questionRepository2, chatRepository2)
     }
 
     @Singleton
@@ -300,8 +338,8 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesGetTodayQuestionUseCase(questionRepository: QuestionRepository, userRepository: UserRepository): GetTodayQuestionUseCase {
-        return GetTodayQuestionUseCase(questionRepository, userRepository)
+    fun providesGetTodayQuestionUseCase2(questionRepository2: QuestionRepository2, userRepository: UserRepository): GetTodayQuestionUseCase2 {
+        return GetTodayQuestionUseCase2(questionRepository2, userRepository)
     }
 
     @Singleton
@@ -330,8 +368,8 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesGetQuestionByContentFromDataBaseUseCase(questionRepository: QuestionRepository): GetQuestionByContentFromDataBaseUseCase {
-        return GetQuestionByContentFromDataBaseUseCase(questionRepository)
+    fun providesGetQuestionByContentFromDataBaseUseCase(questionRepository2: QuestionRepository2): GetQuestionByContentFromDataBaseUseCase {
+        return GetQuestionByContentFromDataBaseUseCase(questionRepository2)
     }
 
     @Singleton
@@ -372,8 +410,8 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesSaveQuestionToDatabaseUseCase(questionRepository: QuestionRepository): SaveQuestionToDatabaseUseCase {
-        return SaveQuestionToDatabaseUseCase(questionRepository)
+    fun providesSaveQuestionToDatabaseUseCase(questionRepository2: QuestionRepository2): SaveQuestionToDatabaseUseCase {
+        return SaveQuestionToDatabaseUseCase(questionRepository2)
     }
 
     @Singleton
@@ -444,8 +482,8 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesGetQuestionAnswersUseCase(userRepository: UserRepository, questionRepository: QuestionRepository): GetQuestionAnswersUseCase {
-        return GetQuestionAnswersUseCase(userRepository, questionRepository)
+    fun providesGetQuestionAnswersUseCase(userRepository: UserRepository, questionRepository2: QuestionRepository2): GetQuestionAnswersUseCase {
+        return GetQuestionAnswersUseCase(userRepository, questionRepository2)
     }
 
     @Singleton
@@ -504,8 +542,8 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesGetQuestionDetailUseCase(userRepository: UserRepository, questionRepository: QuestionRepository): GetQuestionDetailUseCase {
-        return GetQuestionDetailUseCase(userRepository, questionRepository)
+    fun providesGetQuestionDetailUseCase(userRepository: UserRepository, questionRepository2: QuestionRepository2): GetQuestionDetailUseCase {
+        return GetQuestionDetailUseCase(userRepository, questionRepository2)
     }
 
     @Singleton

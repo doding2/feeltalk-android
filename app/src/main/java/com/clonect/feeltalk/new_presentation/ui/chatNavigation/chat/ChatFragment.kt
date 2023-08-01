@@ -92,7 +92,7 @@ class ChatFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         if (navViewModel.showChatNavigation.value) {
-            notificationHelper.cancelNotification(NotificationHelper.CHAT_CHANNEL_ID.toBytesInt())
+            notificationHelper.cancelNotification(NotificationHelper.CHANNEL_ID_CHAT.toBytesInt())
         }
         if (navViewModel.showChatNavigation.value) {
             FeeltalkApp.setUserInChat(true)
@@ -512,7 +512,7 @@ class ChatFragment : Fragment() {
                     setBackCallback(isShown)
                     FeeltalkApp.setUserInChat(isShown)
                     if (isShown) {
-                        notificationHelper.cancelNotification(NotificationHelper.CHAT_CHANNEL_ID.toBytesInt())
+                        notificationHelper.cancelNotification(NotificationHelper.CHANNEL_ID_CHAT.toBytesInt())
                         viewModel.changeChatRoomState(true)
                         if (viewModel.isUserInBottom.value) {
                             scrollToBottom()

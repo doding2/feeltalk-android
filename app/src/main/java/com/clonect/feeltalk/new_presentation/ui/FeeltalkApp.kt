@@ -50,17 +50,26 @@ class FeeltalkApp: Application() {
 
 
     companion object {
-        private var isAppScreenRunning = false
+        private var isAppRunning = false
+        private var isAppScreenActive = false
         private var isUserInChat = false
 
-        fun getAppScreenRunning() = isAppScreenRunning
+        fun getAppRunning() = isAppRunning
+
+        fun getAppScreenActive() = isAppScreenActive
 
         fun onAppScreenResumed() {
-            isAppScreenRunning = true
+            isAppScreenActive = true
+            isAppRunning = true
         }
 
         fun onAppScreenPaused() {
-            isAppScreenRunning = false
+            isAppScreenActive = false
+        }
+
+        fun onAppDestroyed() {
+            isAppRunning = false
+            isAppScreenActive = false
         }
 
 

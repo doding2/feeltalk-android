@@ -3,6 +3,10 @@ package com.clonect.feeltalk.new_presentation.service
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
+import androidx.core.os.bundleOf
+import androidx.navigation.NavDeepLinkBuilder
+import com.clonect.feeltalk.R
+import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetUserIsActiveUseCase
 import com.clonect.feeltalk.domain.usecase.user.SetUserIsActiveUseCase
@@ -10,15 +14,20 @@ import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
+import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUseCase
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
-import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.CREATE_COUPLE_CHANNEL_ID
+import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.CHANEL_ID_CREATE_COUPLE
+import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_ANSWER_QUESTION
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_CHAT_ROOM_STATE
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_CREATE_COUPLE
+import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_PRESS_FOR_ANSWER
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_TEXT_CHATTING
+import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_TODAY_QUESTION
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_VOICE_CHATTING
 import com.clonect.feeltalk.new_presentation.notification.notificationObserver.CreateCoupleObserver
 import com.clonect.feeltalk.new_presentation.notification.notificationObserver.NewChatObserver
 import com.clonect.feeltalk.new_presentation.notification.notificationObserver.PartnerChatRoomStateObserver
+import com.clonect.feeltalk.new_presentation.notification.notificationObserver.TodayQuestionObserver
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
 import com.clonect.feeltalk.presentation.utils.infoLog
@@ -40,6 +49,10 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     // Notification
     @Inject
     lateinit var notificationHelper: NotificationHelper
+
+    // Question
+    @Inject
+    lateinit var getQuestionUseCase: GetQuestionUseCase
 
     // App Settings
     @Inject
@@ -102,7 +115,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         super.onMessageReceived(message)
         CoroutineScope(Dispatchers.Main).launch {
 
-            val isAppRunning = FeeltalkApp.getAppScreenRunning()
+            val isAppRunning = FeeltalkApp.getAppScreenActive()
             infoLog("isAppRunning: $isAppRunning")
 
             val data = if (message.data["data"] == null) {
@@ -127,15 +140,9 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 TYPE_CHAT_ROOM_STATE -> handleChatRoomStateData(data)
                 TYPE_TEXT_CHATTING -> handleTextChatData(data)
                 TYPE_VOICE_CHATTING -> handleVoiceChatData(data)
-
-//                TYPE_TODAY_QUESTION -> handleTodayQuestionData(data)
-//                TYPE_PARTNER_ANSWERED -> handlePartnerAnsweredData(data)
-//                TYPE_REQUEST_EMOTION_CHANGE -> handleRequestEmotionChangeData(data)
-//                TYPE_CHAT -> handleChatData(data)
-//                TYPE_COUPLE_REGISTRATION -> handleCoupleRegistrationData(data)
-//                TYPE_REQUEST_KEY_RESTORING -> handleRequestKeyRestoringData(data)
-//                TYPE_ACCEPT_KEY_RESTORING -> handleAcceptRequestKeyRestoringData(data)
-//                else -> handleOtherCases(data)
+                TYPE_TODAY_QUESTION -> handleTodayQuestionData(data)
+                TYPE_PRESS_FOR_ANSWER -> handlePressForAnswerData(data)
+                TYPE_ANSWER_QUESTION -> handleAnswerQuestionData(data)
             }
         }
     }
@@ -145,7 +152,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         CreateCoupleObserver.getInstance()
             .setCoupleCreated(true)
 
-        if (FeeltalkApp.getAppScreenRunning()) {
+        if (FeeltalkApp.getAppScreenActive()) {
             return@launch
         }
 
@@ -160,7 +167,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         notificationHelper.showNormalNotification(
             title = data["title"] ?: "연인 등록 완료",
             message = data["message"] ?: "연인 등록에 성공했습니다",
-            channelID = CREATE_COUPLE_CHANNEL_ID,
+            channelID = CHANEL_ID_CREATE_COUPLE,
             pendingIntent = pendingIntent
         )
     }
@@ -190,8 +197,8 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 )
             )
 
-        infoLog("isAppScreenRunning: ${FeeltalkApp.getAppScreenRunning()}, isUserInChat: ${FeeltalkApp.getUserInChat()}")
-        if (FeeltalkApp.getAppScreenRunning() && FeeltalkApp.getUserInChat()) {
+        infoLog("isAppScreenRunning: ${FeeltalkApp.getAppScreenActive()}, isUserInChat: ${FeeltalkApp.getUserInChat()}")
+        if (FeeltalkApp.getAppScreenActive() && FeeltalkApp.getUserInChat()) {
             return@launch
         }
 
@@ -220,8 +227,8 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 )
             )
 
-        infoLog("isAppScreenRunning: ${FeeltalkApp.getAppScreenRunning()}, isUserInChat: ${FeeltalkApp.getUserInChat()}")
-        if (FeeltalkApp.getAppScreenRunning() && FeeltalkApp.getUserInChat()) {
+        infoLog("isAppScreenRunning: ${FeeltalkApp.getAppScreenActive()}, isUserInChat: ${FeeltalkApp.getUserInChat()}")
+        if (FeeltalkApp.getAppScreenActive() && FeeltalkApp.getUserInChat()) {
             return@launch
         }
 
@@ -231,6 +238,84 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         )
     }
 
+    private fun handlePressForAnswerData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+        val index = data["index"]?.toLong() ?: return@launch
+
+        val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
+            .setGraph(R.navigation.feeltalk_nav_graph)
+            .setDestination(R.id.mainNavigationFragment)
+            .setArguments(
+                bundleOf(
+                    "questionIndex" to index,
+                    "isTodayQuestion" to false
+                )
+            )
+            .createPendingIntent()
+
+        notificationHelper.showNormalNotification(
+            title = "",
+            message = "",
+            channelID = NotificationHelper.CHANNEL_ID_PRESS_FOR_ANSWER,
+            notificationID = System.currentTimeMillis().toInt(),
+            pendingIntent = deepLinkPendingIntent
+        )
+    }
+
+    private fun handleTodayQuestionData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+        val title = data["title"] ?: return@launch
+        val message = data["message"] ?: return@launch
+        val index = data["index"]?.toLong() ?: return@launch
+
+        val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
+            .setGraph(R.navigation.feeltalk_nav_graph)
+            .setDestination(R.id.mainNavigationFragment)
+            .setArguments(
+                bundleOf(
+                    "questionIndex" to index,
+                    "isTodayQuestion" to true
+                )
+            )
+            .createPendingIntent()
+
+        if (FeeltalkApp.getAppRunning()) {
+            val todayQuestion = (getQuestionUseCase(index) as? Resource.Success)?.data
+            TodayQuestionObserver
+                .getInstance()
+                .setTodayQuestion(todayQuestion)
+        }
+
+        notificationHelper.showNormalNotification(
+            title = title,
+            message = message,
+            channelID = NotificationHelper.CHANNEL_ID_TODAY_QUESTION,
+            pendingIntent = deepLinkPendingIntent
+        )
+    }
+
+    private fun handleAnswerQuestionData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+        val title = data["title"] ?: return@launch
+        val message = data["message"] ?: return@launch
+        val index = data["index"]?.toLong() ?: return@launch
+
+        val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
+            .setGraph(R.navigation.feeltalk_nav_graph)
+            .setDestination(R.id.mainNavigationFragment)
+            .setArguments(
+                bundleOf(
+                    "questionIndex" to index,
+                    "isTodayQuestion" to false
+                )
+            )
+            .createPendingIntent()
+
+        notificationHelper.showNormalNotification(
+            title = title,
+            message = message,
+            channelID = NotificationHelper.CHANNEL_ID_ANSWER_QUESTION,
+            notificationID = System.currentTimeMillis().toInt(),
+            pendingIntent = deepLinkPendingIntent
+        )
+    }
 
 
 

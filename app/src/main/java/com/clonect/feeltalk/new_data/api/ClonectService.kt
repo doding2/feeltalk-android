@@ -13,6 +13,9 @@ import com.clonect.feeltalk.domain.model.dto.news.NewsDto
 import com.clonect.feeltalk.domain.model.dto.question.*
 import com.clonect.feeltalk.domain.model.dto.user.*
 import com.clonect.feeltalk.new_domain.model.chat.*
+import com.clonect.feeltalk.new_domain.model.question.LastQuestionPageNoDto
+import com.clonect.feeltalk.new_domain.model.question.QuestionDto
+import com.clonect.feeltalk.new_domain.model.question.QuestionListDto
 import com.clonect.feeltalk.new_domain.model.signIn.*
 import com.clonect.feeltalk.new_domain.model.token.RenewTokenDto
 import com.google.gson.JsonObject
@@ -64,11 +67,11 @@ interface ClonectService {
     ): Response<ApiResponse<Unit>>
 
     /** Chat **/
+
     @GET("/api/v1/chatting-message/partner/last")
     suspend fun getPartnerLastChat(
         @Header("Authorization") token: String
     ): Response<ApiResponse<PartnerLastChatDto>>
-
 
     @PUT("/api/v1/member/chatting-room-status")
     suspend fun changeChatRoomState(
@@ -101,7 +104,42 @@ interface ClonectService {
     ): Response<ApiResponse<SendVoiceChatDto>>
 
 
+    /** Question **/
 
+    @GET("/api/v1/couple-question/last/page-no")
+    suspend fun getLastQuestionPageNo(
+        @Header("Authorization") token: String
+    ): Response<ApiResponse<LastQuestionPageNoDto>>
+
+
+    @POST("/api/v1/couple-questions")
+    suspend fun getQuestionList(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<ApiResponse<QuestionListDto>>
+
+    @GET("/api/v1/couple-question/{index}")
+    suspend fun getQuestion(
+        @Header("Authorization") token: String,
+        @Path("{index}") index: Long
+    ): Response<ApiResponse<QuestionDto>>
+
+    @GET("/api/v1/couple-question/today")
+    suspend fun getTodayQuestion(
+        @Header("Authorization") token: String
+    ): Response<ApiResponse<QuestionDto>>
+
+    @PUT("/api/v1/couple-question")
+    suspend fun answerQuestion(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<ApiResponse<Unit>>
+
+    @POST("/api/v1/couple-question/chase-up")
+    suspend fun pressForAnswer(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<ApiResponse<Unit>>
 
 
 
@@ -235,7 +273,7 @@ interface ClonectService {
     @GET("/api/chattingRoom/{accessToken}")
     suspend fun getChattingRoomList(
         @Path("accessToken") accessToken: String,
-    ): Response<QuestionListDto>
+    ): Response<QuestionListDto2>
 
     @POST("/api/chattingMessageList")
     suspend fun getChatList(

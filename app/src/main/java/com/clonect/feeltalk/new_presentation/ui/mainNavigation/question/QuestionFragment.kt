@@ -74,12 +74,12 @@ class QuestionFragment : Fragment() {
 
     // TODO
     private fun onAnswerQuestion(question: Question) {
-        val answeredItemPosition = adapter.differ.currentList.indexOf(question)
-        adapter.notifyItemChanged(answeredItemPosition)
-
-        if (question.index == viewModel.todayQuestion.value.index) {
-            changeTodayQuestionView(question)
-        }
+//        val answeredItemPosition = adapter.differ.currentList.indexOf(question)
+//        adapter.notifyItemChanged(answeredItemPosition)
+//
+//        if (question.index == viewModel.todayQuestion.value.index) {
+//            changeTodayQuestionView(question)
+//        }
     }
 
     private fun onQuestionClick(question: Question) {
@@ -127,18 +127,21 @@ class QuestionFragment : Fragment() {
     }
 
     private fun changeRecyclerViewItems(items: List<Question>) {
-        val todayQuestion = viewModel.todayQuestion.value
-        val copyList = items.toMutableList()
-        copyList.removeAll { it.index == todayQuestion.index }
-        copyList.remove(todayQuestion)  // TODO
-        adapter.differ.submitList(copyList)
+//        val todayQuestion = viewModel.todayQuestion.value
+//        val copyList = items.toMutableList()
+//        copyList.removeAll { it.index == todayQuestion.index }
+//        copyList.remove(todayQuestion)  // TODO
+//        adapter.differ.submitList(copyList)
     }
 
 
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-            launch { viewModel.todayQuestion.collectLatest(::changeTodayQuestionView) }
-            launch { viewModel.questions.collectLatest(::changeRecyclerViewItems) }
+            launch {
+                viewModel.pagingQuestion.collectLatest {
+                    adapter.submitData(lifecycle, it)
+                }
+            }
         }
     }
 

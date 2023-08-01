@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.databinding.ItemQuestionListBinding
 import com.clonect.feeltalk.databinding.ItemQuestionListHeaderBinding
-import com.clonect.feeltalk.domain.model.data.question.Question
+import com.clonect.feeltalk.domain.model.data.question.Question2
 
 class QuestionListAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -16,19 +16,19 @@ class QuestionListAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private const val TYPE_ITEM = 1
     }
 
-    private val callback = object: DiffUtil.ItemCallback<Question>() {
-        override fun areItemsTheSame(oldItem: Question, newItem: Question): Boolean {
+    private val callback = object: DiffUtil.ItemCallback<Question2>() {
+        override fun areItemsTheSame(oldItem: Question2, newItem: Question2): Boolean {
             return oldItem.question == newItem.question
         }
 
-        override fun areContentsTheSame(oldItem: Question, newItem: Question): Boolean {
+        override fun areContentsTheSame(oldItem: Question2, newItem: Question2): Boolean {
             return oldItem == newItem
         }
     }
 
     val differ = AsyncListDiffer(this, callback)
 
-    private var onItemClickListener: ((Question) -> Unit)? = null
+    private var onItemClickListener: ((Question2) -> Unit)? = null
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -59,7 +59,7 @@ class QuestionListAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    fun setOnItemClickListener(listener: (Question) -> Unit) {
+    fun setOnItemClickListener(listener: (Question2) -> Unit) {
         onItemClickListener = listener
     }
 
@@ -68,10 +68,10 @@ class QuestionListAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val binding: ItemQuestionListBinding
     ): RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(question: Question) {
-            binding.textQuestionTitle.text = question.question
+        fun bind(question2: Question2) {
+            binding.textQuestionTitle.text = question2.question
             binding.root.setOnClickListener { _ ->
-                onItemClickListener?.let { it(question) }
+                onItemClickListener?.let { it(question2) }
             }
         }
     }

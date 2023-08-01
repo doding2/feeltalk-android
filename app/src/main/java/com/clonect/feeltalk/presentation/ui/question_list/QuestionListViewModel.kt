@@ -3,7 +3,7 @@ package com.clonect.feeltalk.presentation.ui.question_list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.domain.model.data.question.Question
+import com.clonect.feeltalk.domain.model.data.question.Question2
 import com.clonect.feeltalk.domain.usecase.question.GetQuestionListUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,8 +19,8 @@ class QuestionListViewModel @Inject constructor(
     private val getQuestionListUseCase: GetQuestionListUseCase
 ) : ViewModel() {
 
-    private val _questionListState = MutableStateFlow(listOf(Question(question = "", viewType = "header")))
-    val questionListState: StateFlow<List<Question>> = _questionListState.asStateFlow()
+    private val _question2ListState = MutableStateFlow(listOf(Question2(question = "", viewType = "header")))
+    val question2ListState: StateFlow<List<Question2>> = _question2ListState.asStateFlow()
 
     init {
         collectQuestionList()
@@ -33,11 +33,11 @@ class QuestionListViewModel @Inject constructor(
                     val newList = result.data.toMutableList()
                     newList.sortByDescending { it.questionDate }
                     newList.sortByDescending { it.question }
-                    newList.add(0, Question(
+                    newList.add(0, Question2(
                         question = "",
                         viewType = "header"
                     ))
-                    _questionListState.value = newList
+                    _question2ListState.value = newList
                 }
                 is Resource.Error -> { infoLog("Fail to get question list: ${result.throwable.localizedMessage}") }
                 else -> {}

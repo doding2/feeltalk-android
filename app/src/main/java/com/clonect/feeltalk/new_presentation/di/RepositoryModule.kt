@@ -9,10 +9,10 @@ import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionCach
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionLocalDataSource
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionRemoteDataSource
 import com.clonect.feeltalk.data.repository.news.NewsRepositoryImpl
-import com.clonect.feeltalk.data.repository.question.QuestionRepositoryImpl
-import com.clonect.feeltalk.data.repository.question.datasource.QuestionCacheDataSource
-import com.clonect.feeltalk.data.repository.question.datasource.QuestionLocalDataSource
-import com.clonect.feeltalk.data.repository.question.datasource.QuestionRemoteDataSource
+import com.clonect.feeltalk.data.repository.question.QuestionRepository2Impl
+import com.clonect.feeltalk.data.repository.question.datasource.QuestionCacheDataSource2
+import com.clonect.feeltalk.data.repository.question.datasource.QuestionLocalDataSource2
+import com.clonect.feeltalk.data.repository.question.datasource.QuestionRemoteDataSource2
 import com.clonect.feeltalk.data.repository.user.UserRepositoryImpl
 import com.clonect.feeltalk.data.repository.user.datasource.UserCacheDataSource
 import com.clonect.feeltalk.data.repository.user.datasource.UserLocalDataSource
@@ -25,6 +25,10 @@ import com.clonect.feeltalk.new_data.repository.chat.ChatRepositoryImpl
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatCacheDataSource
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatLocalDataSource
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatRemoteDataSource
+import com.clonect.feeltalk.new_data.repository.question.QuestionRepositoryImpl
+import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionCacheDataSource
+import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionLocalDataSource
+import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.signIn.SignInRepositoryImpl
 import com.clonect.feeltalk.new_data.repository.signIn.dataSource.SignInCacheDataSource
 import com.clonect.feeltalk.new_data.repository.signIn.dataSource.SignInLocalDataSource
@@ -34,6 +38,7 @@ import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenCacheDataS
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenLocalDataSource
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenRemoteDataSource
 import com.clonect.feeltalk.new_domain.repository.chat.ChatRepository
+import com.clonect.feeltalk.new_domain.repository.question.QuestionRepository
 import com.clonect.feeltalk.new_domain.repository.signIn.SignInRepository
 import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 import dagger.Module
@@ -77,6 +82,17 @@ class RepositoryModule {
         return ChatRepositoryImpl(cacheDataSource, localDataSource, remoteDataSource, tokenRepository)
     }
 
+    @Singleton
+    @Provides
+    fun providesQuestionRepository(
+        remoteDataSource: QuestionRemoteDataSource,
+        localDataSource: QuestionLocalDataSource,
+        cacheDataSource: QuestionCacheDataSource,
+        tokenRepository: TokenRepository,
+    ): QuestionRepository {
+        return QuestionRepositoryImpl(cacheDataSource, localDataSource, remoteDataSource, tokenRepository)
+    }
+
 
 
 
@@ -105,13 +121,13 @@ class RepositoryModule {
 
     @Singleton
     @Provides
-    fun providesQuestionRepository(
-        remoteDataSource: QuestionRemoteDataSource,
-        localDataSource: QuestionLocalDataSource,
-        cacheDataSource: QuestionCacheDataSource,
+    fun providesQuestionRepository2(
+        remoteDataSource: QuestionRemoteDataSource2,
+        localDataSource: QuestionLocalDataSource2,
+        cacheDataSource: QuestionCacheDataSource2,
         userLevelEncryptHelper: UserLevelEncryptHelper
-    ): QuestionRepository {
-        return QuestionRepositoryImpl(remoteDataSource, localDataSource, cacheDataSource, userLevelEncryptHelper)
+    ): QuestionRepository2 {
+        return QuestionRepository2Impl(remoteDataSource, localDataSource, cacheDataSource, userLevelEncryptHelper)
     }
 
     @Singleton

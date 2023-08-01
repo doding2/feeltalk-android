@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.chat.Chat2
-import com.clonect.feeltalk.domain.model.data.question.Question
+import com.clonect.feeltalk.domain.model.data.question.Question2
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.model.dto.question.QuestionDetailDto
 import com.clonect.feeltalk.domain.usecase.chat.GetChatListUseCase2
@@ -48,8 +48,8 @@ class ChatViewModel @Inject constructor(
     private val _partnerInfo = MutableStateFlow(UserInfo())
     val partnerInfo = _partnerInfo.asStateFlow()
 
-    private val _question = MutableStateFlow(Question(""))
-    val question = _question.asStateFlow()
+    private val _question2 = MutableStateFlow(Question2(""))
+    val question = _question2.asStateFlow()
 
     private val _questionDetail = MutableStateFlow<QuestionDetailDto?>(null)
     val questionDetail = _questionDetail.asStateFlow()
@@ -75,8 +75,8 @@ class ChatViewModel @Inject constructor(
 
 
     init {
-        savedStateHandle.get<Question>("selectedQuestion")?.let {
-            _question.value = it
+        savedStateHandle.get<Question2>("selectedQuestion")?.let {
+            _question2.value = it
 //            FeeltalkApp.setQuestionIdOfShowingChatFragment(it.question)
             infoLog("Chat Room Entered: $it")
         }
@@ -91,14 +91,14 @@ class ChatViewModel @Inject constructor(
 
 
     private fun getQuestionDetail() = viewModelScope.launch(Dispatchers.IO) {
-        val result = getQuestionDetailUseCase(_question.value.question)
+        val result = getQuestionDetailUseCase(_question2.value.question)
         when (result) {
             is Resource.Success -> {
                 _questionDetail.value = result.data
                 infoLog("header: ${result.data.header}, body: ${result.data.body}")
             }
             is Resource.Error -> {
-                infoLog("Fail to get question detail: ${_question.value.question}, error: ${result.throwable.localizedMessage}")
+                infoLog("Fail to get question detail: ${_question2.value.question}, error: ${result.throwable.localizedMessage}")
                 _questionDetail.value = null
             }
             else -> {
@@ -114,7 +114,7 @@ class ChatViewModel @Inject constructor(
             .isAnswerUpdated
             .collectLatest { isUpdated ->
                 if (isUpdated) {
-                    reloadChatListUseCase(_question.value.question)
+                    reloadChatListUseCase(_question2.value.question)
                 }
             }
     }
@@ -132,7 +132,7 @@ class ChatViewModel @Inject constructor(
     }
 
     private fun collectChatList() = viewModelScope.launch(Dispatchers.IO) {
-        val questionContent = _question.value.question
+        val questionContent = _question2.value.question
         getChatListUseCase2(questionContent)
             .catch { infoLog("collect chat list error: ${it.localizedMessage}") }
             .collectLatest { result ->
@@ -184,7 +184,7 @@ class ChatViewModel @Inject constructor(
         if (!isPartnerAnswered.value) {
             val waitingChat2 = Chat2(
                 id = -1,
-                question = _question.value.question,
+                question = _question2.value.question,
                 owner = "partner",
                 message = "",
                 date = "",
@@ -203,7 +203,7 @@ class ChatViewModel @Inject constructor(
         infoLog("날짜: ${date}")
 
         val chat2 = Chat2(
-            question = _question.value.question,
+            question = _question2.value.question,
             owner = "mine",
             message = content,
             date = date
@@ -249,7 +249,7 @@ class ChatViewModel @Inject constructor(
 
         val feeltalkDateFormat = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
         val mixpanelDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-        val questionFeeltalkDate = _question.value.questionDate?.let { feeltalkDateFormat.parse(it) }
+        val questionFeeltalkDate = _question2.value.questionDate?.let { feeltalkDateFormat.parse(it) }
         val questionMixpanelDate = questionFeeltalkDate?.let { mixpanelDateFormat.format(it) }
 
         mixpanel.track("Send Chat", JSONObject().apply {

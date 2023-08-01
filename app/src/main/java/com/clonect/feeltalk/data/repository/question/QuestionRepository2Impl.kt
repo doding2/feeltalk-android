@@ -3,30 +3,30 @@ package com.clonect.feeltalk.data.repository.question
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.data.mapper.toQuestion
 import com.clonect.feeltalk.data.mapper.toQuestionList
-import com.clonect.feeltalk.data.repository.question.datasource.QuestionCacheDataSource
-import com.clonect.feeltalk.data.repository.question.datasource.QuestionLocalDataSource
-import com.clonect.feeltalk.data.repository.question.datasource.QuestionRemoteDataSource
+import com.clonect.feeltalk.data.repository.question.datasource.QuestionCacheDataSource2
+import com.clonect.feeltalk.data.repository.question.datasource.QuestionLocalDataSource2
+import com.clonect.feeltalk.data.repository.question.datasource.QuestionRemoteDataSource2
 import com.clonect.feeltalk.data.utils.UserLevelEncryptHelper
-import com.clonect.feeltalk.domain.model.data.question.Question
+import com.clonect.feeltalk.domain.model.data.question.Question2
 import com.clonect.feeltalk.domain.model.dto.question.QuestionAnswersDto
 import com.clonect.feeltalk.domain.model.dto.question.QuestionDetailDto
 import com.clonect.feeltalk.domain.model.dto.question.SendQuestionDto
 import com.clonect.feeltalk.domain.model.dto.question.TodayQuestionAnswersDto
-import com.clonect.feeltalk.domain.repository.QuestionRepository
+import com.clonect.feeltalk.domain.repository.QuestionRepository2
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class QuestionRepositoryImpl(
-    private val remoteDataSource: QuestionRemoteDataSource,
-    private val localDataSource: QuestionLocalDataSource,
-    private val cacheDataSource: QuestionCacheDataSource,
+class QuestionRepository2Impl(
+    private val remoteDataSource: QuestionRemoteDataSource2,
+    private val localDataSource: QuestionLocalDataSource2,
+    private val cacheDataSource: QuestionCacheDataSource2,
     private val userLevelEncryptHelper: UserLevelEncryptHelper
-): QuestionRepository {
+): QuestionRepository2 {
 
-    override suspend fun getTodayQuestion(accessToken: String): Resource<Question> {
+    override suspend fun getTodayQuestion(accessToken: String): Resource<Question2> {
         try {
             val format = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
             val date = format.format(Date())
@@ -77,23 +77,23 @@ class QuestionRepositoryImpl(
 
     override suspend fun sendQuestionAnswer(
         accessToken: String,
-        question: Question,
+        question2: Question2,
     ): Resource<SendQuestionDto> {
         return try {
-            val encrypted = userLevelEncryptHelper.encryptMyText(question.myAnswer!!)
+            val encrypted = userLevelEncryptHelper.encryptMyText(question2.myAnswer!!)
             val response = remoteDataSource.sendQuestionAnswer(
                 accessToken = accessToken,
-                question = question.question,
+                question = question2.question,
                 answer = encrypted,
             )
 
-            localDataSource.saveOneQuestion(question)
+            localDataSource.saveOneQuestion(question2)
 
             val cacheTodayQuestion = cacheDataSource.getTodayQuestion()
-            if (cacheTodayQuestion?.question == question.question) {
-                cacheDataSource.saveTodayQuestion(question)
+            if (cacheTodayQuestion?.question == question2.question) {
+                cacheDataSource.saveTodayQuestion(question2)
             } else {
-                cacheDataSource.saveOneQuestion(question)
+                cacheDataSource.saveOneQuestion(question2)
             }
 
             Resource.Success(response.body()!!)
@@ -105,7 +105,7 @@ class QuestionRepositoryImpl(
     }
 
     @OptIn(FlowPreview::class)
-    override suspend fun getQuestionList(accessToken: String): Flow<Resource<List<Question>>> {
+    override suspend fun getQuestionList(accessToken: String): Flow<Resource<List<Question2>>> {
         val cacheFlow = channelFlow {
             val cache = cacheDataSource.getQuestionList()
             send(Resource.Success(cache))
@@ -141,7 +141,7 @@ class QuestionRepositoryImpl(
         return flowOf(cacheFlow, localFlow, remoteFlow).flattenMerge()
     }
 
-    override suspend fun getQuestionByContentFromDB(question: String): Resource<Question> {
+    override suspend fun getQuestionByContentFromDB(question: String): Resource<Question2> {
         return try {
             val local = localDataSource.getQuestionByContent(question)
                 ?: throw NullPointerException("Question is not saved in database: ${question}")
@@ -168,9 +168,9 @@ class QuestionRepositoryImpl(
     }
 
 
-    override suspend fun saveQuestionToDatabase(question: Question): Resource<Long> {
+    override suspend fun saveQuestionToDatabase(question2: Question2): Resource<Long> {
         return try {
-            val local = localDataSource.saveOneQuestion(question)
+            val local = localDataSource.saveOneQuestion(question2)
             Resource.Success(local)
         } catch (e: CancellationException) {
             throw e

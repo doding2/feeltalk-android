@@ -34,7 +34,7 @@ class NotificationReplyReceiver: BroadcastReceiver() {
         val remoteInput = RemoteInput.getResultsFromIntent(intent) ?: return
 
         val title = remoteInput.getCharSequence(NotificationHelper.KEY_TEXT_REPLY, null)?.toString() ?: return
-        val notificationID = NotificationHelper.CHAT_CHANNEL_ID.toBytesInt()
+        val notificationID = NotificationHelper.CHANNEL_ID_CHAT.toBytesInt()
         infoLog("Notification text reply action: $title")
 
         sendTextChat(notificationID, title)

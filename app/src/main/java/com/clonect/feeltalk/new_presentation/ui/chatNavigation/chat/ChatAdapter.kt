@@ -88,7 +88,6 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
         if (item != null) {
             viewHolders[item] = holder
             holder.bind(prevItem, item, nextItem)
-
         }
     }
 

@@ -4,13 +4,15 @@ import com.clonect.feeltalk.data.repository.chat.datasource.ChatRemoteDataSource
 import com.clonect.feeltalk.data.repository.chat.datasourceImpl.ChatRemoteDataSource2Impl
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionRemoteDataSource
 import com.clonect.feeltalk.data.repository.encryption.datasourceImpl.EncryptionRemoteDataSourceImpl
-import com.clonect.feeltalk.data.repository.question.datasource.QuestionRemoteDataSource
-import com.clonect.feeltalk.data.repository.question.datasourceImpl.QuestionRemoteDataSourceImpl
+import com.clonect.feeltalk.data.repository.question.datasource.QuestionRemoteDataSource2
+import com.clonect.feeltalk.data.repository.question.datasourceImpl.QuestionRemoteDataSource2Impl
 import com.clonect.feeltalk.data.repository.user.datasource.UserRemoteDataSource
 import com.clonect.feeltalk.data.repository.user.datasourceImpl.UserRemoteDataSourceImpl
 import com.clonect.feeltalk.new_data.api.ClonectService
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.chat.dataSourceImpl.ChatRemoteDataSourceImpl
+import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionRemoteDataSource
+import com.clonect.feeltalk.new_data.repository.question.dataSourceImpl.QuestionRemoteDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.signIn.dataSource.SignInRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.signIn.dataSourceImpl.SignInRemoteDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenRemoteDataSource
@@ -45,6 +47,18 @@ class RemoteDataSourceModule {
         return ChatRemoteDataSourceImpl(clonectService)
     }
 
+    @Singleton
+    @Provides
+    fun providesQuestionRemoteDataSource(
+        clonectService: ClonectService
+    ): QuestionRemoteDataSource {
+        return QuestionRemoteDataSourceImpl(clonectService)
+    }
+
+
+
+
+
 
     /** old **/
 
@@ -66,10 +80,10 @@ class RemoteDataSourceModule {
 
     @Singleton
     @Provides
-    fun providesQuestionRemoteDataSource(
+    fun providesQuestionRemoteDataSource2(
         clonectService: ClonectService
-    ): QuestionRemoteDataSource {
-        return QuestionRemoteDataSourceImpl(clonectService)
+    ): QuestionRemoteDataSource2 {
+        return QuestionRemoteDataSource2Impl(clonectService)
     }
 
     @Singleton

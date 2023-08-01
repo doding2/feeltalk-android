@@ -16,7 +16,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentQuestionListBinding
-import com.clonect.feeltalk.domain.model.data.question.Question
+import com.clonect.feeltalk.domain.model.data.question.Question2
 import com.clonect.feeltalk.presentation.ui.bottom_navigation.BottomNavigationViewModel
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.AndroidEntryPoint
@@ -63,23 +63,23 @@ class QuestionListFragment : Fragment() {
 
     private fun collectQuestionList() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.questionListState.collectLatest {
+            viewModel.question2ListState.collectLatest {
                 adapter.differ.submitList(it)
             }
         }
     }
 
-    private fun clickQuestionItem(question: Question) {
-        infoLog("클릭한 질문: $question")
-        if (question.myAnswer == null || question.myAnswer?.trim().isNullOrBlank()) {
-            navigateToTodayQuestionPage(question)
+    private fun clickQuestionItem(question2: Question2) {
+        infoLog("클릭한 질문: $question2")
+        if (question2.myAnswer == null || question2.myAnswer?.trim().isNullOrBlank()) {
+            navigateToTodayQuestionPage(question2)
             return
         }
-        navigateToChatPage(question)
+        navigateToChatPage(question2)
     }
 
-    private fun navigateToTodayQuestionPage(question: Question) {
-        val bundle = bundleOf("selectedQuestion" to question)
+    private fun navigateToTodayQuestionPage(question2: Question2) {
+        val bundle = bundleOf("selectedQuestion" to question2)
 
         requireParentFragment()
             .requireParentFragment()
@@ -90,8 +90,8 @@ class QuestionListFragment : Fragment() {
             )
     }
 
-    private fun navigateToChatPage(question: Question) {
-        val bundle = bundleOf("selectedQuestion" to question)
+    private fun navigateToChatPage(question2: Question2) {
+        val bundle = bundleOf("selectedQuestion" to question2)
 
         requireParentFragment()
             .requireParentFragment()
