@@ -206,7 +206,6 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         }
 
         notificationHelper.showChatNotification(
-            title = "연인",
             message = message
         )
     }
@@ -236,7 +235,6 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         }
 
         notificationHelper.showChatNotification(
-            title = "연인",
             message = "(보이스 채팅)"
         )
     }
@@ -256,8 +254,8 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             .createPendingIntent()
 
         notificationHelper.showNormalNotification(
-            title = "",
-            message = "",
+            title = "답변 요청",
+            message = "연인이 콕 찔렀음",
             channelID = NotificationHelper.CHANNEL_ID_PRESS_FOR_ANSWER,
             notificationID = System.currentTimeMillis().toInt(),
             pendingIntent = deepLinkPendingIntent

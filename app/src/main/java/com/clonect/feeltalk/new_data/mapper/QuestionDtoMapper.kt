@@ -24,8 +24,8 @@ fun QuestionDto.toQuestion(): Question {
             body = body,
             highlight = highlight,
             createAt = createAt,
-            myAnswer = myAnswer,
-            partnerAnswer = partnerAnswer
+            myAnswer = if (isMyAnswer) myAnswer ?: "" else null,
+            partnerAnswer = if (isPartnerAnswer) partnerAnswer ?: "" else null
         )
     }
 }

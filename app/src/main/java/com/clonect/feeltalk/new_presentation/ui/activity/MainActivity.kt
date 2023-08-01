@@ -19,6 +19,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.ActivityMainBinding
+import com.clonect.feeltalk.new_presentation.notification.notificationObserver.*
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
 import com.clonect.feeltalk.presentation.utils.infoLog
@@ -152,14 +153,13 @@ class MainActivity : AppCompatActivity() {
         FeeltalkApp.onAppScreenPaused()
     }
 
-    override fun onStop() {
-        super.onStop()
-        infoLog("onStop()")
-    }
-
     override fun onDestroy() {
         super.onDestroy()
-        infoLog("onDestroy()")
         FeeltalkApp.onAppDestroyed()
+        CreateCoupleObserver.onCleared()
+        MyChatRoomStateObserver.onCleared()
+        NewChatObserver.onCleared()
+        PartnerChatRoomStateObserver.onCleared()
+        TodayQuestionObserver.onCleared()
     }
 }

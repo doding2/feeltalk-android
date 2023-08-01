@@ -77,7 +77,6 @@ class NotificationHelper(
 
 
     fun showChatNotification(
-        title: String,
         message: String
     ) {
         val notificationID = CHANNEL_ID_CHAT.toBytesInt()
