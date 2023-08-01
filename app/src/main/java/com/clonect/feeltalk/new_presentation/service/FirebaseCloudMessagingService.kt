@@ -14,6 +14,7 @@ import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
+import com.clonect.feeltalk.new_domain.usecase.question.ChangeTodayQuestionCacheUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUseCase
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.CHANEL_ID_CREATE_COUPLE
@@ -53,6 +54,8 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     // Question
     @Inject
     lateinit var getQuestionUseCase: GetQuestionUseCase
+    @Inject
+    lateinit var changeTodayQuestionCacheUseCase: ChangeTodayQuestionCacheUseCase
 
     // App Settings
     @Inject
@@ -279,9 +282,12 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
         if (FeeltalkApp.getAppRunning()) {
             val todayQuestion = (getQuestionUseCase(index) as? Resource.Success)?.data
-            TodayQuestionObserver
-                .getInstance()
-                .setTodayQuestion(todayQuestion)
+            if (todayQuestion != null) {
+                changeTodayQuestionCacheUseCase(todayQuestion)
+                TodayQuestionObserver
+                    .getInstance()
+                    .setTodayQuestion(todayQuestion)
+            }
         }
 
         notificationHelper.showNormalNotification(
