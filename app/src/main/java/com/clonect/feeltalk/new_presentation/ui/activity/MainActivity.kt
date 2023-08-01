@@ -22,7 +22,6 @@ import com.clonect.feeltalk.databinding.ActivityMainBinding
 import com.clonect.feeltalk.new_presentation.notification.notificationObserver.*
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
-import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -58,7 +57,6 @@ class MainActivity : AppCompatActivity() {
         tryAutoLogIn()
 
         checkPostNotificationsPermission {
-            infoLog("Post Notification Permission is Granted: $it")
             viewModel.enablePushNotificationEnabled(it)
         }
     }

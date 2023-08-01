@@ -121,7 +121,7 @@ interface ClonectService {
     @GET("/api/v1/couple-question/{index}")
     suspend fun getQuestion(
         @Header("Authorization") token: String,
-        @Path("{index}") index: Long
+        @Path("index") index: Long
     ): Response<ApiResponse<QuestionDto>>
 
     @GET("/api/v1/couple-question/today")
