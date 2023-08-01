@@ -217,7 +217,6 @@ class ChatViewModel @Inject constructor(
                 }
 
                 removeLoadingChat(loadingTextChat)
-//                insertCompleteChat(textChat)
 
                 NewChatObserver.getInstance().setNewChat(textChat)
             }

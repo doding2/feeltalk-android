@@ -12,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.chat.ChatType
+import com.clonect.feeltalk.new_domain.model.chat.PartnerLastChatDto
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPartnerLastChatUseCase
@@ -40,7 +41,7 @@ class MainNavigationViewModel @Inject constructor(
 
     private var isQuestionArgumentsInit = true
 
-    private val _partnerLastChat = MutableStateFlow<String?>(null)
+    private val _partnerLastChat = MutableStateFlow<PartnerLastChatDto?>(null)
     val partnerLastChat = _partnerLastChat.asStateFlow()
 
     private val _showPartnerLastChat = MutableStateFlow(true)
@@ -110,13 +111,18 @@ class MainNavigationViewModel @Inject constructor(
     private fun getPartnerLastChat() = viewModelScope.launch { 
         when (val result = getPartnerLastChatUseCase()) {
             is Resource.Success -> {
-                _partnerLastChat.value = result.data.message
+                _partnerLastChat.value = result.data
                 calculateShowingPartnerLastChat()
             }
             is Resource.Error -> {
                 infoLog("연인의 가장 최근 채팅 가져오기 실패: ${result.throwable.stackTrace.joinToString("\n")}")
             }
         }
+    }
+
+    fun setPartnerLastChat(partnerLastChatDto: PartnerLastChatDto?) {
+        _partnerLastChat.value = partnerLastChatDto
+        calculateShowingPartnerLastChat()
     }
 
     fun setPartnerLastChatColor(color: Int) {
@@ -138,6 +144,7 @@ class MainNavigationViewModel @Inject constructor(
             if (_showChatNavigation.value) return@run false
             if (_showAnswerSheet.value) return@run false
             if (_partnerLastChat.value == null) return@run false
+            if (_partnerLastChat.value?.isRead == true) return@run false
             if (!isShowQuestionPage.value) return@run true
             if (!isInQuestionTop.value) return@run false
 
@@ -216,7 +223,8 @@ class MainNavigationViewModel @Inject constructor(
                         else -> return@collect
                     }
 
-                    _partnerLastChat.value = message
+                    infoLog("in main nav chat: $newChat")
+                    _partnerLastChat.value = PartnerLastChatDto(message, newChat.isRead)
                     calculateShowingPartnerLastChat()
                 }.onFailure {
                     infoLog("collectNewChat(): ${it.localizedMessage}")

@@ -19,6 +19,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentMainNavigationBinding
+import com.clonect.feeltalk.new_domain.model.chat.PartnerLastChatDto
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.flow.collectLatest
@@ -121,6 +122,8 @@ class MainNavigationFragment : Fragment() {
             viewChatBehind.visibility = View.GONE
             flChatContainer.visibility = View.GONE
 
+            viewModel.setPartnerLastChat(null)
+
             if (viewModel.showAnswerSheet.value) {
                 viewAnswerBehind.visibility = View.VISIBLE
             }
@@ -141,14 +144,16 @@ class MainNavigationFragment : Fragment() {
         }
     }
 
-    private fun changePartnerLastChatView(isShow: Boolean) = binding.run {
-        tvLatestChat.text = viewModel.partnerLastChat.value
-
+    private fun showPartnerLastChatView(isShow: Boolean) = binding.run {
         flLatestChat.visibility = if (isShow) {
             View.VISIBLE
         } else {
             View.GONE
         }
+    }
+
+    private fun changePartnerLastChatView(partnerLastChatDto: PartnerLastChatDto?) = binding.run {
+        tvLatestChat.text = partnerLastChatDto?.message
     }
 
     private fun changePartnerLastChatColor(color: Int) {
@@ -172,7 +177,8 @@ class MainNavigationFragment : Fragment() {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.navigateTo.collectLatest(::navigateFragment) }
             launch { viewModel.showChatNavigation.collectLatest(::showChatSheet) }
-            launch { viewModel.showPartnerLastChat.collectLatest(::changePartnerLastChatView) }
+            launch { viewModel.showPartnerLastChat.collectLatest(::showPartnerLastChatView) }
+            launch { viewModel.partnerLastChat.collectLatest(::changePartnerLastChatView) }
             launch { viewModel.partnerLastChatColor.collectLatest(::changePartnerLastChatColor) }
             launch { viewModel.showAnswerSheet.collectLatest(::showAnswerSheet) }
         }
