@@ -130,8 +130,8 @@ class AnswerFragment : Fragment() {
                 tvQuestionBody.text = spanBody
                 tvQuestionHeader.text = it.header
 
-                val isUsersAnswered = it.myAnswer != null
-                viewModel.setReadMode(isUsersAnswered)
+                val isUserAnswered = it.myAnswer != null
+                viewModel.setReadMode(isUserAnswered)
 
                 if (viewModel.isReadMode.value) {
                     etMyAnswer.setText(it.myAnswer)
@@ -147,6 +147,7 @@ class AnswerFragment : Fragment() {
 
 
                 val isPartnerAnswered = it.partnerAnswer != null
+
                 if (isPartnerAnswered) {
                     if (viewModel.isReadMode.value) {
                         mcvPartnerNotDone.visibility = View.GONE
@@ -182,6 +183,10 @@ class AnswerFragment : Fragment() {
                         mcvDoneSquare.visibility = View.GONE
                     }
                 }
+
+
+                val isButtonEnabled = (isUserAnswered && isPartnerAnswered) || viewModel.answer.value.isNotBlank()
+                enableDoneButton(isButtonEnabled)
             }
         }
     }
