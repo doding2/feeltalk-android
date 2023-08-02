@@ -34,7 +34,10 @@ class QuestionViewModel @Inject constructor(
             is PageEvents.Edit -> {
                 paging.map {
                     return@map if (it.index == event.item.index)
-                        event.item.copy()
+                        it.copy(
+                            myAnswer = it.myAnswer ?: event.item.myAnswer,
+                            partnerAnswer = it.partnerAnswer ?: event.item.partnerAnswer
+                        )
                     else
                         it
                 }
@@ -80,9 +83,12 @@ class QuestionViewModel @Inject constructor(
     private fun collectQuestionAnswer() = viewModelScope.launch {
         QuestionAnswerObserver
             .getInstance()
+            .setAnsweredQuestion(null)
+        QuestionAnswerObserver
+            .getInstance()
             .answeredQuestion
-            .collectLatest {
-                if (it == null) return@collectLatest
+            .collect {
+                if (it == null) return@collect
 
                 modifyPage(PageEvents.Edit(it))
             }

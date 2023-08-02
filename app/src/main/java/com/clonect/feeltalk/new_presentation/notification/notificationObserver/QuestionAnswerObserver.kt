@@ -24,7 +24,7 @@ class QuestionAnswerObserver {
     private val _answeredQuestion = MutableStateFlow<Question?>(null)
     val answeredQuestion = _answeredQuestion.asStateFlow()
 
-    fun setAnsweredQuestion(question: Question) {
+    fun setAnsweredQuestion(question: Question?) {
         _answeredQuestion.value = question
     }
 }

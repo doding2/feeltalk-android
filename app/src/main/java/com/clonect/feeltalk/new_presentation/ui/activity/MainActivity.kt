@@ -154,11 +154,5 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         FeeltalkApp.onAppDestroyed()
-        CreateCoupleObserver.onCleared()
-        MyChatRoomStateObserver.onCleared()
-        NewChatObserver.onCleared()
-        PartnerChatRoomStateObserver.onCleared()
-        TodayQuestionObserver.onCleared()
-        QuestionAnswerObserver.onCleared()
     }
 }

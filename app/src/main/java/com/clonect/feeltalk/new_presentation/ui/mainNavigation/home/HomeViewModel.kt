@@ -70,12 +70,20 @@ class HomeViewModel @Inject constructor(
     private fun collectQuestionAnswer() = viewModelScope.launch {
         QuestionAnswerObserver
             .getInstance()
+            .setAnsweredQuestion(null)
+        QuestionAnswerObserver
+            .getInstance()
             .answeredQuestion
-            .collectLatest {
-                if (it == null) return@collectLatest
+            .collect { answeredQuestion ->
+                if (answeredQuestion == null) return@collect
 
-                if (it.index == _todayQuestion.value?.index) {
-                    _todayQuestion.value = it
+                if (answeredQuestion.index == _todayQuestion.value?.index) {
+                    _todayQuestion.value = _todayQuestion.value?.let {
+                        it.copy(
+                            myAnswer = it.myAnswer ?: answeredQuestion.myAnswer,
+                            partnerAnswer = it.partnerAnswer ?: answeredQuestion.partnerAnswer
+                        )
+                    }
                 }
             }
     }

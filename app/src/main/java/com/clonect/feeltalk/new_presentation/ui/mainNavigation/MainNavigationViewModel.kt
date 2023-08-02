@@ -223,7 +223,6 @@ class MainNavigationViewModel @Inject constructor(
                         else -> return@collect
                     }
 
-                    infoLog("in main nav chat: $newChat")
                     _partnerLastChat.value = PartnerLastChatDto(message, newChat.isRead)
                     calculateShowingPartnerLastChat()
                 }.onFailure {

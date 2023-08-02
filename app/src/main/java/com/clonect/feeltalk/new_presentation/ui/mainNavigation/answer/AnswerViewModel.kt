@@ -8,6 +8,7 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.usecase.question.AnswerQuestionUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.PressForAnswerUseCase
+import com.clonect.feeltalk.new_presentation.notification.notificationObserver.QuestionAnswerObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -45,8 +46,16 @@ class AnswerViewModel @Inject constructor(
 
 
     fun answerQuestion(onComplete: () -> Unit = {}) = viewModelScope.launch {
-        when (val result = answerQuestionUseCase(_question.value?.index ?: return@launch, _answer.value)) {
+        val index = _question.value?.index ?: return@launch
+        val answer = _answer.value
+        when (val result = answerQuestionUseCase(index, answer)) {
             is Resource.Success -> {
+                _question.value = _question.value?.copy(myAnswer = answer)
+                QuestionAnswerObserver
+                    .getInstance()
+                    .setAnsweredQuestion(
+                        _question.value
+                    )
                 onComplete()
             }
             is Resource.Error -> {
