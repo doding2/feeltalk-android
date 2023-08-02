@@ -269,6 +269,9 @@ class ChatViewModel @Inject constructor(
     private fun collectPartnerChatRoomState() = viewModelScope.launch {
         PartnerChatRoomStateObserver
             .getInstance()
+            .setInChat(false)
+        PartnerChatRoomStateObserver
+            .getInstance()
             .isInChat
             .collect { isInChat ->
                 runCatching {

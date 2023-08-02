@@ -9,8 +9,8 @@ import com.clonect.feeltalk.new_domain.usecase.signIn.GetCoupleCodeUseCase
 import com.clonect.feeltalk.new_domain.usecase.signIn.MatchCoupleUseCase
 import com.clonect.feeltalk.new_domain.usecase.signIn.SignUpUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.GetCachedSocialTokenUseCase
-import com.clonect.feeltalk.new_presentation.service.FirebaseCloudMessagingService
 import com.clonect.feeltalk.new_presentation.notification.notificationObserver.CreateCoupleObserver
+import com.clonect.feeltalk.new_presentation.service.FirebaseCloudMessagingService
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -209,6 +209,9 @@ class SignUpNavigationViewModel @Inject constructor(
     val isCoupleConnected = _isCoupleConnected.asStateFlow()
 
     fun registerService() = viewModelScope.launch {
+        CreateCoupleObserver
+            .getInstance()
+            .setCoupleCreated(false)
         CreateCoupleObserver
             .getInstance()
             .isCoupleCreated

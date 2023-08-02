@@ -73,6 +73,9 @@ class QuestionViewModel @Inject constructor(
     private fun collectTodayQuestion() = viewModelScope.launch {
         TodayQuestionObserver
             .getInstance()
+            .setTodayQuestion(null)
+        TodayQuestionObserver
+            .getInstance()
             .todayQuestion
             .collectLatest {
                 if (it == null) return@collectLatest
