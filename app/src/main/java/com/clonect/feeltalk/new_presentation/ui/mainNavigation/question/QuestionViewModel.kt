@@ -9,10 +9,8 @@ import com.clonect.feeltalk.new_domain.usecase.question.GetPagingQuestionUseCase
 import com.clonect.feeltalk.new_presentation.notification.notificationObserver.QuestionAnswerObserver
 import com.clonect.feeltalk.new_presentation.notification.notificationObserver.TodayQuestionObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,10 +19,24 @@ class QuestionViewModel @Inject constructor(
     private val getPagingQuestionUseCase: GetPagingQuestionUseCase,
 ) : ViewModel() {
 
+    private val isInQuestionTop = MutableStateFlow(true)
+
+    private val _scrollToTop = MutableSharedFlow<Boolean>()
+    val scrollToTop = _scrollToTop.asSharedFlow()
+
     init {
         collectTodayQuestion()
         collectQuestionAnswer()
     }
+
+    fun setInQuestionTop(isTop: Boolean) {
+        isInQuestionTop.value = isTop
+    }
+
+    fun setScrollToTop() = viewModelScope.launch {
+        _scrollToTop.emit(true)
+    }
+
 
     /** Page Modification **/
     private val pageModificationEvents = MutableStateFlow<List<PageEvents<Question>>>(emptyList())
@@ -77,9 +89,16 @@ class QuestionViewModel @Inject constructor(
         TodayQuestionObserver
             .getInstance()
             .todayQuestion
-            .collectLatest {
-                if (it == null) return@collectLatest
+            .collect {
+                if (it == null) return@collect
                 modifyPage(PageEvents.InsertItemHeader(it))
+
+                if (isInQuestionTop.value) {
+                    launch {
+                        delay(50)
+                        setScrollToTop()
+                    }
+                }
             }
     }
 

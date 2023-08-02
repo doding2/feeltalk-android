@@ -107,9 +107,10 @@ class AnswerFragment : Fragment() {
         viewModel.pressForAnswer(requireContext())
     }
 
-    private fun setQuestion(question: Question) {
+    private fun changeQuestionView(question: Question?) {
+        if (question == null) return
+
         question.also {
-            viewModel.setQuestion(it)
             binding.run {
                 val spanBody = SpannableString(question.body).apply {
                     val mainColor = requireContext().getColor(R.color.main_500)
@@ -279,6 +280,7 @@ class AnswerFragment : Fragment() {
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.message.collect(::showSnackBar) }
+            launch { viewModel.question.collectLatest(::changeQuestionView) }
 
             launch {
                 navViewModel.answerTargetQuestion.collectLatest {
@@ -287,7 +289,7 @@ class AnswerFragment : Fragment() {
                         hideKeyboard()
                         binding.etMyAnswer.clearFocus()
                     } else {
-                        setQuestion(it)
+                        viewModel.setQuestion(it)
                     }
                 }
             }

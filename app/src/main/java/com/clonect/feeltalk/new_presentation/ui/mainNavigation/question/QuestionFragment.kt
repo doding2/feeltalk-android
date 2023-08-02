@@ -72,15 +72,6 @@ class QuestionFragment : Fragment() {
         navViewModel.setShowAnswerSheet(true)
     }
 
-    // TODO
-    private fun onAnswerQuestion(question: Question) {
-//        val answeredItemPosition = adapter.differ.currentList.indexOf(question)
-//        adapter.notifyItemChanged(answeredItemPosition)
-//
-//        if (question.index == viewModel.todayQuestion.value.index) {
-//            changeTodayQuestionView(question)
-//        }
-    }
 
     private fun onQuestionClick(question: Question) {
         showAnswerBottomSheet(question)
@@ -96,6 +87,7 @@ class QuestionFragment : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val isInTop = !recyclerView.canScrollVertically(-10)
+                viewModel.setInQuestionTop(isInTop)
                 navViewModel.setInQuestionTop(isInTop)
             }
         })
@@ -106,37 +98,13 @@ class QuestionFragment : Fragment() {
     }
 
 
-    private fun changeTodayQuestionView(question: Question) = binding.run {
-//         TODO 나중에 어답터로 이 코드들 옮기기
-//        tvTodayQuestionHeader.text = question.header
-//        tvTodayQuestionBody.text = question.body
-//        tvTodayQuestionDate.text = question.date
-//
-//        val isUserAnswered = question.myAnswer != null
-//        if (isUserAnswered) {
-//            mcvAnswerOrChat.setOnClickListener { navigateToChat() }
-//            mcvAnswerOrChat.setCardBackgroundColor(Color.WHITE)
-//            tvAnswerOrChat.setText(R.string.question_today_button_chat)
-//            tvAnswerOrChat.setTextColor(requireContext().getColor(R.color.main_500))
-//        } else {
-//            mcvAnswerOrChat.setOnClickListener { showAnswerBottomSheet(question) }
-//            mcvAnswerOrChat.setCardBackgroundColor(Color.BLACK)
-//            tvAnswerOrChat.setText(R.string.question_today_button_answer)
-//            tvAnswerOrChat.setTextColor(Color.WHITE)
-//        }
-    }
-
-    private fun changeRecyclerViewItems(items: List<Question>) {
-//        val todayQuestion = viewModel.todayQuestion.value
-//        val copyList = items.toMutableList()
-//        copyList.removeAll { it.index == todayQuestion.index }
-//        copyList.remove(todayQuestion)  // TODO
-//        adapter.differ.submitList(copyList)
-    }
-
-
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch {
+                viewModel.scrollToTop.collectLatest {
+                    if (it) scrollToTop()
+                }
+            }
             launch {
                 viewModel.pagingQuestion.collectLatest {
                     adapter.submitData(lifecycle, it)

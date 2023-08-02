@@ -13,7 +13,6 @@ import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -66,8 +65,8 @@ class HomeViewModel @Inject constructor(
         TodayQuestionObserver
             .getInstance()
             .todayQuestion
-            .collectLatest {
-                if (it == null) return@collectLatest
+            .collect {
+                if (it == null) return@collect
                 _todayQuestion.value = it
             }
     }

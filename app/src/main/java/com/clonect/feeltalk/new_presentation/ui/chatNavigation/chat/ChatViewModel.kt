@@ -256,9 +256,11 @@ class ChatViewModel @Inject constructor(
                     insertCompleteChat(chat)
                     infoLog("new chat: $chat")
 
-                    if (isUserInBottom.value) {
-                        delay(50)
-                        setScrollToBottom()
+                    if (isUserInBottom.value && chat.chatSender == "partner") {
+                        launch {
+                            delay(50)
+                            setScrollToBottom()
+                        }
                     }
                 }.onFailure {
                     infoLog("collectNewChat(): ${it.localizedMessage}")
@@ -380,7 +382,6 @@ class ChatViewModel @Inject constructor(
                 }
 
                 removeLoadingChat(loadingVoiceChat)
-//                insertCompleteChat(voiceChat)
 
                 NewChatObserver.getInstance().setNewChat(voiceChat)
             }

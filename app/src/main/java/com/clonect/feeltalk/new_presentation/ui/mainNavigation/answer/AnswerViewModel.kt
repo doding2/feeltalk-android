@@ -44,17 +44,19 @@ class AnswerViewModel @Inject constructor(
     private val _message = MutableSharedFlow<String>()
     val message = _message.asSharedFlow()
 
+    init {
+        collectQuestionAnswer()
+    }
 
     fun answerQuestion(onComplete: () -> Unit = {}) = viewModelScope.launch {
         val index = _question.value?.index ?: return@launch
         val answer = _answer.value
         when (val result = answerQuestionUseCase(index, answer)) {
             is Resource.Success -> {
-                _question.value = _question.value?.copy(myAnswer = answer)
                 QuestionAnswerObserver
                     .getInstance()
                     .setAnsweredQuestion(
-                        _question.value
+                        _question.value?.copy(myAnswer = answer)
                     )
                 onComplete()
             }
@@ -108,5 +110,23 @@ class AnswerViewModel @Inject constructor(
         _question.value = null
         _answer.value = ""
         _isKeyboardUp.value = false
+    }
+
+
+    private fun collectQuestionAnswer() = viewModelScope.launch {
+        QuestionAnswerObserver
+            .getInstance()
+            .setAnsweredQuestion(null)
+        QuestionAnswerObserver
+            .getInstance()
+            .answeredQuestion
+            .collect { new ->
+                val old = _question.value
+                if (new == null || old == null) return@collect
+
+                if (new.index == old.index && old.partnerAnswer == null && new.partnerAnswer != null) {
+                    _question.value = old.copy(partnerAnswer = new.partnerAnswer)
+                }
+            }
     }
 }
