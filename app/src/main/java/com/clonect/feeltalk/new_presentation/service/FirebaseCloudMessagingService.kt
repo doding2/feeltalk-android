@@ -275,14 +275,12 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             )
             .createPendingIntent()
 
-        if (FeeltalkApp.getAppRunning()) {
-            val todayQuestion = (getQuestionUseCase(index) as? Resource.Success)?.data
-            if (todayQuestion != null) {
-                changeTodayQuestionCacheUseCase(todayQuestion)
-                TodayQuestionObserver
-                    .getInstance()
-                    .setTodayQuestion(todayQuestion)
-            }
+        val todayQuestion = (getQuestionUseCase(index) as? Resource.Success)?.data
+        if (todayQuestion != null) {
+            changeTodayQuestionCacheUseCase(todayQuestion)
+            TodayQuestionObserver
+                .getInstance()
+                .setTodayQuestion(todayQuestion)
         }
 
         notificationHelper.showNormalNotification(
@@ -309,13 +307,11 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             )
             .createPendingIntent()
 
-        if (FeeltalkApp.getAppRunning()) {
-            val question = (getQuestionUseCase(index) as? Resource.Success)?.data
-            if (question != null) {
-                QuestionAnswerObserver
-                    .getInstance()
-                    .setAnsweredQuestion(question)
-            }
+        val question = (getQuestionUseCase(index) as? Resource.Success)?.data
+        if (question != null) {
+            QuestionAnswerObserver
+                .getInstance()
+                .setAnsweredQuestion(question)
         }
 
         notificationHelper.showNormalNotification(
