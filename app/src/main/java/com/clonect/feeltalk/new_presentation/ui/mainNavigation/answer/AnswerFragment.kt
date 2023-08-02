@@ -62,8 +62,15 @@ class AnswerFragment : Fragment() {
 
         binding.run {
             ivDismissDialog.setOnClickListener {
-                navViewModel.setShowAnswerSheet(false)
+                if (navViewModel.isUserAnswering.value) {
+                    showAnswerCancelDialog {
+                        navViewModel.setShowAnswerSheet(false)
+                    }
+                } else {
+                    navViewModel.setShowAnswerSheet(false)
+                }
             }
+
             etMyAnswer.addTextChangedListener {
                 val answer = it?.toString() ?: ""
                 viewModel.setAnswer(answer)
