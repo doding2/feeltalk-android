@@ -15,6 +15,10 @@ class AddChallengeViewModel @Inject constructor(
 
 ): ViewModel() {
 
+    private val _isKeyboardUp = MutableStateFlow(false)
+    val isKeyboardUp = _isKeyboardUp.asStateFlow()
+
+
     private val _category = MutableStateFlow(ChallengeCategory.one)
     val category = _category.asStateFlow()
 
@@ -26,6 +30,11 @@ class AddChallengeViewModel @Inject constructor(
 
     private val _deadline = MutableStateFlow(Date().plusDayBy(1))
     val deadline = _deadline.asStateFlow()
+
+
+    fun setKeyboardUp(isUp: Boolean) {
+        _isKeyboardUp.value = isUp
+    }
 
 
     fun setCategory(category: ChallengeCategory) {

@@ -19,7 +19,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.ActivityMainBinding
-import com.clonect.feeltalk.new_presentation.notification.notificationObserver.*
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -47,7 +46,8 @@ class MainActivity : AppCompatActivity() {
 
         val showChat = intent?.getBooleanExtra("showChat", false) ?: false
         if (showChat) {
-            mainNavViewModel.initShowChatNavigation(showChat)
+            mainNavViewModel.setShowChatNavigation(showChat)
+            intent?.extras?.clear()
         }
 
         collectToast()

@@ -52,11 +52,17 @@ class MainNavigationFragment : Fragment() {
         }
 
         val showChat = arguments?.getBoolean("showChat", false) ?: false
-        viewModel.initShowChatNavigation(showChat)
+        if (showChat) {
+            viewModel.setShowChatNavigation(showChat)
+        }
 
         val questionIndex = arguments?.getLong("questionIndex", -1) ?: -1
         val isTodayQuestion = arguments?.getBoolean("isTodayQuestion", false) ?: false
-        viewModel.initShowQuestionAnswerSheet(questionIndex, isTodayQuestion)
+        if (questionIndex >= 0) {
+            viewModel.initShowQuestionAnswerSheet(questionIndex, isTodayQuestion)
+        }
+
+        arguments?.clear()
 
         viewModel.setShortcut(requireContext())
 

@@ -39,8 +39,6 @@ class MainNavigationViewModel @Inject constructor(
     val navigateTo = _navigateTo.asSharedFlow()
 
 
-    private var isQuestionArgumentsInit = true
-
     private val _partnerLastChat = MutableStateFlow<PartnerLastChatDto?>(null)
     val partnerLastChat = _partnerLastChat.asStateFlow()
 
@@ -54,8 +52,6 @@ class MainNavigationViewModel @Inject constructor(
     private val _partnerLastChatColor = MutableStateFlow(Color.WHITE)
     val partnerLastChatColor = _partnerLastChatColor.asStateFlow()
 
-
-    private var isChatArgumentsInit = true
 
     private val _showChatNavigation = MutableStateFlow(false)
     val showChatNavigation = _showChatNavigation.asStateFlow()
@@ -166,14 +162,6 @@ class MainNavigationViewModel @Inject constructor(
         calculateShowingPartnerLastChat()
     }
 
-    fun initShowChatNavigation(showChat: Boolean) = viewModelScope.launch {
-        if (isChatArgumentsInit) {
-            isChatArgumentsInit = false
-            _showChatNavigation.value = showChat
-            calculateShowingPartnerLastChat()
-        }
-    }
-
 
     fun setUserAnswering(isAnswering: Boolean) {
         _isUserAnswering.value = isAnswering
@@ -189,9 +177,6 @@ class MainNavigationViewModel @Inject constructor(
     }
 
     fun initShowQuestionAnswerSheet(index: Long, isTodayQuestion: Boolean) = viewModelScope.launch {
-        if (!isQuestionArgumentsInit) return@launch
-        isQuestionArgumentsInit = false
-
         if (index < 0) return@launch
 
         when (val result = getQuestionUseCase(index)) {

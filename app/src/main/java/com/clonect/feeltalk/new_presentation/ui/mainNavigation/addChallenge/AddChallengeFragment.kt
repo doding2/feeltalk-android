@@ -6,11 +6,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
-import android.widget.FrameLayout
 import androidx.activity.OnBackPressedCallback
-import androidx.core.view.WindowCompat
-import androidx.core.view.isVisible
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.*
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -20,8 +20,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentAddChallengeBinding
-import com.clonect.feeltalk.new_presentation.ui.util.SoftKeyboardDetectorView
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
+import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
+import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -41,7 +42,10 @@ class AddChallengeFragment : Fragment() {
     ): View {
         binding = FragmentAddChallengeBinding.inflate(inflater, container, false)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            WindowCompat.setDecorFitsSystemWindows(requireActivity().window, true)
+            binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
+            WindowCompat.setDecorFitsSystemWindows(requireActivity().window, false)
+        } else {
+            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         }
         return binding.root
     }
@@ -50,7 +54,7 @@ class AddChallengeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setDatePickerListener()
-        setKeyboardListeners()
+        setKeyboardInsets()
         collectViewModel()
 
         binding.run {
@@ -122,17 +126,29 @@ class AddChallengeFragment : Fragment() {
         }
     }
 
-    private fun setKeyboardListeners() = binding.run {
+    private fun setKeyboardInsets() = binding.run {
         svScroll.setOnClickListener { hideKeyboard() }
 
-        val keyboardListener = SoftKeyboardDetectorView(requireActivity())
-        requireActivity().addContentView(keyboardListener, FrameLayout.LayoutParams(-1, -1))
-        keyboardListener.setOnShownKeyboard {
-            expandAddButton(true)
-            enableDeadlinePicker(false)
-        }
-        keyboardListener.setOnHiddenKeyboard {
-            expandAddButton(false)
+        binding.root.setOnApplyWindowInsetsListener { v, insets ->
+            val imeHeight = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            } else {
+                insets.systemWindowInsetBottom
+            }
+
+            viewModel.setKeyboardUp(imeHeight != 0)
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                return@setOnApplyWindowInsetsListener insets
+            }
+
+            if (imeHeight == 0) {
+                binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
+            } else {
+                binding.root.setPadding(0, getStatusBarHeight(), 0, imeHeight)
+            }
+
+            insets
         }
     }
 
@@ -145,6 +161,15 @@ class AddChallengeFragment : Fragment() {
 
 
     private fun expandAddButton(enabled: Boolean) = binding.run {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            mcvAddRound.visibility = View.VISIBLE
+            mcvAddRound.radius = 0f
+            mcvAddRound.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                updateMargins(left = 0, right = 0)
+            }
+            return@run
+        }
+
         if (enabled) {
             mcvAddSquare.visibility = View.VISIBLE
             mcvAddRound.visibility = View.GONE
@@ -178,8 +203,20 @@ class AddChallengeFragment : Fragment() {
         binding.tvDeadline.text = str
     }
 
+    private fun changeViewWhenKeyboardUp(isUp: Boolean) {
+        if (isUp) {
+            expandAddButton(true)
+            enableDeadlinePicker(false)
+        } else {
+            expandAddButton(false)
+        }
+    }
+
+
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch { viewModel.isKeyboardUp.collectLatest(::changeViewWhenKeyboardUp) }
+
             launch {
                 viewModel.title.collectLatest {
                     enableAddButton(!it.isNullOrBlank())
