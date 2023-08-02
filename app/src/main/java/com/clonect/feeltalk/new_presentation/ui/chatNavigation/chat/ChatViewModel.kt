@@ -246,6 +246,7 @@ class ChatViewModel @Inject constructor(
                             val voiceChat = newChat as? VoiceChat ?: return@collect
                             voiceChat
                         }
+                        null -> return@collect
                         else -> {
                             infoLog("아직 미지원")
                             return@collect

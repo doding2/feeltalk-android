@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.model.signal.Signal
+import com.clonect.feeltalk.new_domain.usecase.question.ChangeTodayQuestionCacheUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetTodayQuestionUseCase
 import com.clonect.feeltalk.new_presentation.notification.notificationObserver.QuestionAnswerObserver
 import com.clonect.feeltalk.new_presentation.notification.notificationObserver.TodayQuestionObserver
@@ -19,6 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getTodayQuestionUseCase: GetTodayQuestionUseCase,
+    private val saveTodayQuestionCacheUseCase: ChangeTodayQuestionCacheUseCase,
 ) : ViewModel() {
 
     private val _todayQuestion = MutableStateFlow<Question?>(null)
@@ -74,16 +76,19 @@ class HomeViewModel @Inject constructor(
         QuestionAnswerObserver
             .getInstance()
             .answeredQuestion
-            .collect { answeredQuestion ->
-                if (answeredQuestion == null) return@collect
+            .collect { new ->
+                if (new == null) return@collect
 
-                if (answeredQuestion.index == _todayQuestion.value?.index) {
-                    _todayQuestion.value = _todayQuestion.value?.let {
-                        it.copy(
-                            myAnswer = it.myAnswer ?: answeredQuestion.myAnswer,
-                            partnerAnswer = it.partnerAnswer ?: answeredQuestion.partnerAnswer
-                        )
+                if (new.index == _todayQuestion.value?.index) {
+                    _todayQuestion.value = _todayQuestion.value?.let { old ->
+                        old.copy(
+                            myAnswer = old.myAnswer ?: new.myAnswer,
+                            partnerAnswer = old.partnerAnswer ?: new.partnerAnswer
+                        ).also {
+                            saveTodayQuestionCacheUseCase(it)
+                        }
                     }
+
                 }
             }
     }
