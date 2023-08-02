@@ -23,8 +23,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/answer_confirm_title"
-            android:textSize="20sp"
+            android:text="@string/answer_cancel_title"
+            android:textSize="18sp"
             android:textColor="@color/black"
             android:fontFamily="@font/pretendard_medium"/>
 
@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:layout_marginBottom="20dp"
-            android:text="@string/answer_confirm_message"
+            android:text="@string/answer_cancel_message"
             android:textSize="14sp"
             android:textColor="@color/black"
             android:fontFamily="@font/pretendard_regular"/>
@@ -62,7 +62,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="12dp"
                     android:layout_gravity="center"
-                    android:text="@string/answer_confirm_cancel"
+                    android:text="@string/answer_cancel_cancel"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     android:fontFamily="@font/pretendard_regular"/>
@@ -83,7 +83,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="12dp"
                     android:layout_gravity="center"
-                    android:text="@string/answer_confirm_confirm"
+                    android:text="@string/answer_cancel_confirm"
                     android:textColor="@color/white"
                     android:textSize="16sp"
                     android:fontFamily="@font/pretendard_regular"/>

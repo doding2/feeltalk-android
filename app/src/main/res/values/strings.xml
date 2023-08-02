@@ -114,6 +114,12 @@
     <string name="answer_confirm_cancel">취소</string>
     <string name="answer_confirm_confirm">보내기</string>
 
+    <!--  AnswerCancel  -->
+    <string name="answer_cancel_title">답변 작성을 그만두시겠어요?</string>
+    <string name="answer_cancel_message">현재 작성된 내용은 삭제돼요.</string>
+    <string name="answer_cancel_cancel">취소</string>
+    <string name="answer_cancel_confirm">나가기</string>
+
 
     <!--  Challenge  -->
     <string name="challenge_title">섹스챌린지</string>

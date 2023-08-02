@@ -20,6 +20,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentMainNavigationBinding
 import com.clonect.feeltalk.new_domain.model.chat.PartnerLastChatDto
+import com.clonect.feeltalk.new_presentation.ui.mainNavigation.answer.showAnswerCancelDialog
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.flow.collectLatest
@@ -104,6 +105,7 @@ class MainNavigationFragment : Fragment() {
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {}
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                        viewModel.setUserAnswering(false)
                         viewModel.setShowAnswerSheet(false)
                     }
                 }
@@ -190,6 +192,13 @@ class MainNavigationFragment : Fragment() {
         super.onAttach(context)
         onBackCallback = object: OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
+                if (viewModel.isUserAnswering.value) {
+                    showAnswerCancelDialog {
+                        viewModel.setShowAnswerSheet(false)
+                    }
+                    return
+                }
+
                 if (viewModel.showAnswerSheet.value) {
                     viewModel.setShowAnswerSheet(false)
                     return

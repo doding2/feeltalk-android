@@ -20,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getTodayQuestionUseCase: GetTodayQuestionUseCase,
-    private val saveTodayQuestionCacheUseCase: ChangeTodayQuestionCacheUseCase,
+    private val changeTodayQuestionCacheUseCase: ChangeTodayQuestionCacheUseCase,
 ) : ViewModel() {
 
     private val _todayQuestion = MutableStateFlow<Question?>(null)
@@ -85,7 +85,7 @@ class HomeViewModel @Inject constructor(
                             myAnswer = old.myAnswer ?: new.myAnswer,
                             partnerAnswer = old.partnerAnswer ?: new.partnerAnswer
                         ).also {
-                            saveTodayQuestionCacheUseCase(it)
+                            changeTodayQuestionCacheUseCase(it)
                         }
                     }
 

@@ -30,3 +30,27 @@ fun Fragment.showAnswerConfirmDialog(
 
     dialog.show()
 }
+
+fun Fragment.showAnswerCancelDialog(
+    onConfirm: () -> Unit
+) {
+    val dialog = Dialog(requireContext()).apply {
+        setContentView(R.layout.dialog_answer_cancel)
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    }
+
+    if (dialog.isShowing) return
+
+    val btnConfirm = dialog.findViewById<MaterialCardView>(R.id.mcv_confirm)
+    btnConfirm.setOnClickListener {
+        onConfirm()
+        dialog.dismiss()
+    }
+
+    val btnCancel = dialog.findViewById<MaterialCardView>(R.id.mcv_cancel)
+    btnCancel.setOnClickListener {
+        dialog.dismiss()
+    }
+
+    dialog.show()
+}

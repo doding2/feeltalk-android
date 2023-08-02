@@ -65,7 +65,9 @@ class AnswerFragment : Fragment() {
                 navViewModel.setShowAnswerSheet(false)
             }
             etMyAnswer.addTextChangedListener {
-                viewModel.setAnswer(it?.toString() ?: "")
+                val answer = it?.toString() ?: ""
+                viewModel.setAnswer(answer)
+                navViewModel.setUserAnswering(!viewModel.isReadMode.value && answer.isNotEmpty())
             }
 
             mcvDoneRound.setOnClickListener {

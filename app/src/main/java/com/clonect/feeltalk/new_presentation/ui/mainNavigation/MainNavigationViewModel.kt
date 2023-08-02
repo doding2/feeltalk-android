@@ -61,6 +61,9 @@ class MainNavigationViewModel @Inject constructor(
     val showChatNavigation = _showChatNavigation.asStateFlow()
 
 
+    private val _isUserAnswering = MutableStateFlow(false)
+    val isUserAnswering = _isUserAnswering.asStateFlow()
+
     private val _answerTargetQuestion = MutableStateFlow<Question?>(null)
     val answerTargetQuestion = _answerTargetQuestion.asStateFlow()
 
@@ -171,6 +174,10 @@ class MainNavigationViewModel @Inject constructor(
         }
     }
 
+
+    fun setUserAnswering(isAnswering: Boolean) {
+        _isUserAnswering.value = isAnswering
+    }
 
     fun setAnswerTargetQuestion(question: Question?) {
         _answerTargetQuestion.value = question
