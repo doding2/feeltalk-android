@@ -48,7 +48,7 @@ class AnswerViewModel @Inject constructor(
         collectQuestionAnswer()
     }
 
-    fun answerQuestion(onComplete: () -> Unit = {}) = viewModelScope.launch {
+    fun answerQuestion(context: Context, onComplete: () -> Unit = {}) = viewModelScope.launch {
         val index = _question.value?.index ?: return@launch
         val answer = _answer.value
         when (val result = answerQuestionUseCase(index, answer)) {
@@ -58,6 +58,7 @@ class AnswerViewModel @Inject constructor(
                     .setAnsweredQuestion(
                         _question.value?.copy(myAnswer = answer)
                     )
+                sendSnackbar("UserName" + context.getString(R.string.answer_done_snack_bar))
                 onComplete()
             }
             is Resource.Error -> {
@@ -70,10 +71,10 @@ class AnswerViewModel @Inject constructor(
     fun pressForAnswer(context: Context) = viewModelScope.launch {
         when (val result = pressForAnswerUseCase(_question.value?.index ?: return@launch)) {
             is Resource.Success -> {
-                _message.emit(context.getString(R.string.answer_poke_partner_snack_bar))
+                sendSnackbar(context.getString(R.string.answer_poke_partner_snack_bar))
             }
             is Resource.Error -> {
-                _message.emit(result.throwable.localizedMessage ?: "질문 답변에 실패했습니다.")
+                sendSnackbar(result.throwable.localizedMessage ?: "질문 답변에 실패했습니다.")
                 infoLog("Fail to answer question: ${result.throwable.localizedMessage}\n${result.throwable.stackTrace.joinToString("\n")}")
             }
         }
@@ -94,6 +95,10 @@ class AnswerViewModel @Inject constructor(
 
     fun setKeyboardUp(isUp: Boolean) {
         _isKeyboardUp.value = isUp
+    }
+
+    fun sendSnackbar(message: String) = viewModelScope.launch {
+        _message.emit(message)
     }
 
 

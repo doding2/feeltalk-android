@@ -25,6 +25,7 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentAnswerBinding
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
+import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.material.snackbar.Snackbar
@@ -92,8 +93,8 @@ class AnswerFragment : Fragment() {
 
     private fun answerQuestion() {
         showAnswerConfirmDialog {
-            viewModel.answerQuestion {
-                navViewModel.setShowAnswerSheet(false)
+            viewModel.answerQuestion(requireContext()) {
+                showChatBottomSheet()
             }
         }
     }
@@ -121,7 +122,7 @@ class AnswerFragment : Fragment() {
                         }.forEach { index ->
                             runCatching {
                                 if (index >= question.body.length) return@forEach
-                                setSpan(ForegroundColorSpan(mainColor), index.toInt() - 1, index.toInt(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+                                setSpan(ForegroundColorSpan(mainColor), index.toInt() - 1, index.toInt(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
                             }.onFailure {
                                 infoLog("Question highlight index error: highlight list: ${question.highlight}\n${it.stackTrace.joinToString("\n")}")
                             }
@@ -271,15 +272,15 @@ class AnswerFragment : Fragment() {
 
     private fun showSnackBar(message: String) {
         val decorView = activity?.window?.decorView ?: return
-        Snackbar.make(
-            decorView,
-            message,
-            Snackbar.LENGTH_SHORT
-        ).also {
-            val view = it.view
-            view.setOnClickListener { _ -> it.dismiss() }
-            it.show()
-        }
+
+        TextSnackbar.make(
+            view = decorView,
+            message = message,
+            duration = Snackbar.LENGTH_SHORT,
+            onClick = {
+                it.dismiss()
+            }
+        ).show()
     }
 
     private fun collectViewModel() = lifecycleScope.launch {

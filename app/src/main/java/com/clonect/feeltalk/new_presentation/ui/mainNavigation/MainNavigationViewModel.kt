@@ -31,6 +31,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainNavigationViewModel @Inject constructor(
+    private val notificationHelper: NotificationHelper,
     private val getPartnerLastChatUseCase: GetPartnerLastChatUseCase,
     private val getQuestionUseCase: GetQuestionUseCase,
 ): ViewModel() {
@@ -217,6 +218,7 @@ class MainNavigationViewModel @Inject constructor(
 
                     _partnerLastChat.value = PartnerLastChatDto(message, newChat.isRead)
                     calculateShowingPartnerLastChat()
+
                 }.onFailure {
                     infoLog("collectNewChat(): ${it.localizedMessage}")
                 }

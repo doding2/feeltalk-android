@@ -20,6 +20,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentSignUpNavigationBinding
+import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.presentation.utils.makeLoadingDialog
@@ -114,18 +115,15 @@ class SignUpNavigationFragment : Fragment() {
 
     private fun showErrorSnackBar(message: String) {
         val decorView = activity?.window?.decorView ?: return
-        Snackbar.make(
-            decorView,
-            message,
-            Snackbar.LENGTH_LONG
-        ).also {
-            val view = it.view
-            view.setOnClickListener { _ -> it.dismiss() }
-            val layoutParams = view.layoutParams as FrameLayout.LayoutParams
-            layoutParams.bottomMargin = getNavigationBarHeight()
-            view.layoutParams = layoutParams
-            it.show()
-        }
+        TextSnackbar.make(
+            view = decorView,
+            message = message,
+            duration = Snackbar.LENGTH_SHORT,
+            bottomMargin = getNavigationBarHeight(),
+            onClick = {
+                it.dismiss()
+            }
+        ).show()
     }
 
     private fun showLoading(isLoading: Boolean) {

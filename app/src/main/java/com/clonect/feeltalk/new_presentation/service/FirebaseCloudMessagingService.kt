@@ -1,6 +1,8 @@
 package com.clonect.feeltalk.new_presentation.service
 
+import android.app.ActivityManager
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.os.bundleOf
@@ -40,6 +42,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+
 
 @AndroidEntryPoint
 class FirebaseCloudMessagingService: FirebaseMessagingService() {
@@ -83,24 +86,8 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                     }
             }
         }
-        
-//        const val TODAY_QUESTION_CHANNEL_ID ="feeltalk_today_question_notification"
-//        const val PARTNER_ANSWERED_CHANNEL_ID ="feeltalk_partner_question_answer_notification"
-//        const val REQUEST_EMOTION_CHANGE_CHANNEL_ID ="feeltalk_emotion_change_notification"
-//        const val CHAT_CHANNEL_ID ="feeltalk_chat_notification"
-//        const val COUPLE_REGISTRATION_CHANNEL_ID ="feeltalk_couple_registration_completed_notification"
-//        const val ADVERTISING_CHANNEL_ID ="feeltalk_advertising_notification"
-//        const val REQUEST_KEY_RESTORING_CHANNEL_ID ="feeltalk_request_key_restoring_notification"
-//        const val ACCEPT_KEY_RESTORING_CHANNEL_ID = "feeltalk_accept_key_restoring_notification"
-
-//        const val TYPE_CHAT = "chat"
-//        const val TYPE_COUPLE_REGISTRATION = "coupleMatch"
-//        const val TYPE_TODAY_QUESTION = "newQuestion"
-//        const val TYPE_PARTNER_ANSWERED = "isAnswer"
-//        const val TYPE_REQUEST_EMOTION_CHANGE = "emotionRequest"
-//        const val TYPE_REQUEST_KEY_RESTORING = "KeyTrade"
-//        const val TYPE_ACCEPT_KEY_RESTORING = "KeyTradeOk"
     }
+
 
     override fun onNewToken(newToken: String) {
         super.onNewToken(newToken)
@@ -197,7 +184,6 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 )
             )
 
-        infoLog("isAppScreenRunning: ${FeeltalkApp.getAppScreenActive()}, isUserInChat: ${FeeltalkApp.getUserInChat()}")
         if (FeeltalkApp.getAppScreenActive() && FeeltalkApp.getUserInChat()) {
             return@launch
         }
@@ -226,7 +212,6 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 )
             )
 
-        infoLog("isAppScreenRunning: ${FeeltalkApp.getAppScreenActive()}, isUserInChat: ${FeeltalkApp.getUserInChat()}")
         if (FeeltalkApp.getAppScreenActive() && FeeltalkApp.getUserInChat()) {
             return@launch
         }
@@ -275,12 +260,14 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             )
             .createPendingIntent()
 
-        val todayQuestion = (getQuestionUseCase(index) as? Resource.Success)?.data
-        if (todayQuestion != null) {
-            changeTodayQuestionCacheUseCase(todayQuestion)
-            TodayQuestionObserver
-                .getInstance()
-                .setTodayQuestion(todayQuestion)
+        if (getAppRunning()) {
+            val todayQuestion = (getQuestionUseCase(index) as? Resource.Success)?.data
+            if (todayQuestion != null) {
+                changeTodayQuestionCacheUseCase(todayQuestion)
+                TodayQuestionObserver
+                    .getInstance()
+                    .setTodayQuestion(todayQuestion)
+            }
         }
 
         notificationHelper.showNormalNotification(
@@ -307,11 +294,13 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             )
             .createPendingIntent()
 
-        val question = (getQuestionUseCase(index) as? Resource.Success)?.data
-        if (question != null) {
-            QuestionAnswerObserver
-                .getInstance()
-                .setAnsweredQuestion(question)
+        if (getAppRunning()) {
+            val question = (getQuestionUseCase(index) as? Resource.Success)?.data
+            if (question != null) {
+                QuestionAnswerObserver
+                    .getInstance()
+                    .setAnsweredQuestion(question)
+            }
         }
 
         notificationHelper.showNormalNotification(
@@ -324,13 +313,18 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     }
 
 
-
-
-
-
-
-
-
+    fun getAppRunning(): Boolean {
+        val activityManager = applicationContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val procInfos = activityManager.runningAppProcesses
+        if (procInfos != null) {
+            for (processInfo in procInfos) {
+                if (processInfo.processName == applicationContext.packageName) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
 
 
 

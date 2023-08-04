@@ -1,5 +1,7 @@
 package com.clonect.feeltalk.new_presentation.ui.chatNavigation.chat
 
+import android.content.ClipData
+import android.content.Context
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.StrictMode
@@ -8,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.view.updateLayoutParams
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -248,10 +249,6 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
         override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
             val chat = item as TextChat
             binding.run {
-                root.setOnClickListener {
-                    Toast.makeText(root.context, "isRead: ${chat.isRead}", Toast.LENGTH_SHORT).show()
-                }
-                
                 tvRead.text = root.context.getString(
                     if (isPartnerInChat || chat.isRead) R.string.chat_read
                     else R.string.chat_unread
@@ -267,10 +264,21 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                     tvTime.visibility = View.VISIBLE
                 }
 
+                root.setOnLongClickListener {
+                    copyText(chat)
+                    false
+                }
+
                 makeContinuous(prevItem, item, nextItem)
             }
         }
 
+
+        private fun copyText(chat: TextChat) {
+            val clipboard = binding.root.context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+            val clip = ClipData.newPlainText("채팅", chat.message)
+            clipboard.setPrimaryClip(clip)
+        }
 
         override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
             root.updateLayoutParams<RecyclerView.LayoutParams> {
@@ -342,7 +350,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
     inner class TextChatPartnerViewHolder(
         val binding: ItemTextChatPartnerBinding,
-    ) : ChatAdapter.ChatViewHolder(binding.root) {
+    ) : ChatViewHolder(binding.root) {
 
         override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
             val chat = item as TextChat
@@ -358,10 +366,21 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 //            tvPartnerNickname.text = "연인 닉네임"
 //            ivPartnerProfile.setImageResource()
 
+                root.setOnLongClickListener {
+                    copyText(chat)
+                    false
+                }
+
                 makeContinuous(prevItem, item, nextItem)
             }
         }
 
+
+        private fun copyText(chat: TextChat) {
+            val clipboard = binding.root.context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+            val clip = ClipData.newPlainText("채팅", chat.message)
+            clipboard.setPrimaryClip(clip)
+        }
 
         override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
             root.updateLayoutParams<RecyclerView.LayoutParams> {
@@ -461,6 +480,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 tvTime.text = getFormatted(chat.createAt)
 
                 ivReplay.setOnClickListener {
+                    if (chat.isSending) return@setOnClickListener
                     if (isPaused) resume()
                     else replay()
                 }

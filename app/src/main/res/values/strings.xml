@@ -107,6 +107,7 @@
     <string name="answer_button_done">답변완료</string>
     <string name="answer_button_chat">필로우톡 나누기</string>
     <string name="answer_poke_partner_snack_bar">상대방을 쿡 찔렀어요  👉</string>
+    <string name="answer_done_snack_bar">님에게 답변을 전송했어요!</string>
 
     <!--  AnswerConfirm  -->
     <string name="answer_confirm_title">답변을 보내시겠어요?</string>

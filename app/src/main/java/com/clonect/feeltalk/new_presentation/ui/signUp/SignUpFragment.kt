@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.core.view.WindowCompat
@@ -28,6 +27,7 @@ import com.clonect.feeltalk.new_presentation.ui.signUp.authHelper.AppleAuthHelpe
 import com.clonect.feeltalk.new_presentation.ui.signUp.authHelper.GoogleAuthHelper
 import com.clonect.feeltalk.new_presentation.ui.signUp.authHelper.KakaoAuthHelper
 import com.clonect.feeltalk.new_presentation.ui.signUp.authHelper.NaverAuthHelper
+import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.clonect.feeltalk.presentation.utils.makeLoadingDialog
@@ -223,18 +223,15 @@ class SignUpFragment : Fragment() {
 
     private fun showSnackBar(message: String) {
         val decorView = activity?.window?.decorView ?: return
-        Snackbar.make(
-            decorView,
-            message,
-            Snackbar.LENGTH_SHORT
-        ).also {
-            val view = it.view
-            view.setOnClickListener { _ -> it.dismiss() }
-            val layoutParams = view.layoutParams as FrameLayout.LayoutParams
-            layoutParams.bottomMargin = getNavigationBarHeight()
-            view.layoutParams = layoutParams
-            it.show()
-        }
+        TextSnackbar.make(
+            view = decorView,
+            message = message,
+            duration = Snackbar.LENGTH_SHORT,
+            bottomMargin = getNavigationBarHeight(),
+            onClick = {
+                it.dismiss()
+            }
+        ).show()
     }
 
     private fun collectViewModel() = lifecycleScope.launch {

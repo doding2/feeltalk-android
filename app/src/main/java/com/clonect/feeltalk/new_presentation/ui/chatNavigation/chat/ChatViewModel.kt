@@ -257,10 +257,8 @@ class ChatViewModel @Inject constructor(
                     infoLog("new chat: $chat")
 
                     if (isUserInBottom.value && chat.chatSender == "partner") {
-                        launch {
-                            delay(50)
-                            setScrollToBottom()
-                        }
+                        delay(50)
+                        setScrollToBottom()
                     }
                 }.onFailure {
                     infoLog("collectNewChat(): ${it.localizedMessage}")

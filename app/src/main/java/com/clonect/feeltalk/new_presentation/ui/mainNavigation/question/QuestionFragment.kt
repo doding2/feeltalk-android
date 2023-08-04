@@ -21,6 +21,7 @@ import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
 import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -101,13 +102,17 @@ class QuestionFragment : Fragment() {
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch {
-                viewModel.scrollToTop.collectLatest {
-                    if (it) scrollToTop()
+                viewModel.pagingQuestion.collectLatest {
+                    adapter.submitData(lifecycle, it)
                 }
             }
             launch {
-                viewModel.pagingQuestion.collectLatest {
-                    adapter.submitData(lifecycle, it)
+                viewModel.scrollToTop.collectLatest {
+                    if (it) {
+                        delay(50)
+                        scrollToTop()
+                        viewModel.setScrollToTop(false)
+                    }
                 }
             }
         }
