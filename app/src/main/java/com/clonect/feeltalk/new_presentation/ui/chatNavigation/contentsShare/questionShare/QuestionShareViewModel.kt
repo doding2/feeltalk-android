@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.ui.mainNavigation.question
+package com.clonect.feeltalk.new_presentation.ui.chatNavigation.contentsShare.questionShare
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,11 +17,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class QuestionViewModel @Inject constructor(
+class QuestionShareViewModel @Inject constructor(
     getPagingQuestionUseCase: GetPagingQuestionUseCase,
 ) : ViewModel() {
 
-    private val isInQuestionTop = MutableStateFlow(true)
+    private val isInTop = MutableStateFlow(true)
 
     private val _scrollToTop = MutableStateFlow(false)
     val scrollToTop = _scrollToTop.asStateFlow()
@@ -31,8 +31,8 @@ class QuestionViewModel @Inject constructor(
         collectQuestionAnswer()
     }
 
-    fun setInQuestionTop(isTop: Boolean) {
-        isInQuestionTop.value = isTop
+    fun setInTop(isTop: Boolean) {
+        isInTop.value = isTop
     }
 
     fun setScrollToTop(scrollTop: Boolean) = viewModelScope.launch {
@@ -95,7 +95,7 @@ class QuestionViewModel @Inject constructor(
                 if (it == null) return@collect
                 modifyPage(PageEvents.InsertItemHeader(it))
 
-                if (isInQuestionTop.value) {
+                if (isInTop.value) {
                     setScrollToTop(true)
                 }
             }
@@ -114,5 +114,6 @@ class QuestionViewModel @Inject constructor(
                 modifyPage(PageEvents.Edit(it))
             }
     }
+
 
 }

@@ -62,7 +62,7 @@ class NotificationHelper(
         val notification = NotificationCompat.Builder(applicationContext, channelID)
             .setContentTitle(title)
             .setContentText(message)
-            .setSmallIcon(R.drawable.n_ic_notification)
+            .setSmallIcon(R.mipmap.ic_launcher_round)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setColor(applicationContext.getColor(R.color.main_500))
             .setAutoCancel(true)

@@ -92,7 +92,7 @@
 
     <!--  Question  -->
     <string name="question_title">질문</string>
-    <string name="question_today_new">NEW</string>
+    <string name="question_today_new">New</string>
     <string name="question_today_button_answer">답변 하러가기</string>
     <string name="question_today_button_answer_2">답변 보러가기</string>
     <string name="question_list_title">우리가 나눈 필로우톡</string>
@@ -164,9 +164,17 @@
     <string name="chat_voice_guide">연인에게 음성메시지를 보내보세요 !</string>
     <string name="chat_voice_record_time_default">00:00</string>
 
+    <!--  ContentsShare  -->
     <string name="contents_share_title">챗메뉴</string>
     <string name="contents_share_tab_question">질문</string>
     <string name="contents_share_tab_challenge">챌린지</string>
+    <string name="contents_share_button">공유하기</string>
+
+    <string name="contents_share_question_new">New</string>
+
+
+
+
 
 
     <!--  old ui  -->

@@ -25,10 +25,12 @@ import com.clonect.feeltalk.new_data.repository.chat.ChatRepositoryImpl
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatCacheDataSource
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatLocalDataSource
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatRemoteDataSource
+import com.clonect.feeltalk.new_data.repository.chat.paging.ChatPagingSource
 import com.clonect.feeltalk.new_data.repository.question.QuestionRepositoryImpl
 import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionCacheDataSource
 import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionLocalDataSource
 import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionRemoteDataSource
+import com.clonect.feeltalk.new_data.repository.question.paging.QuestionPagingSource
 import com.clonect.feeltalk.new_data.repository.signIn.SignInRepositoryImpl
 import com.clonect.feeltalk.new_data.repository.signIn.dataSource.SignInCacheDataSource
 import com.clonect.feeltalk.new_data.repository.signIn.dataSource.SignInLocalDataSource
@@ -77,9 +79,9 @@ class RepositoryModule {
         remoteDataSource: ChatRemoteDataSource,
         localDataSource: ChatLocalDataSource,
         cacheDataSource: ChatCacheDataSource,
-        tokenRepository: TokenRepository,
+        pagingSource: ChatPagingSource,
     ): ChatRepository {
-        return ChatRepositoryImpl(cacheDataSource, localDataSource, remoteDataSource, tokenRepository)
+        return ChatRepositoryImpl(cacheDataSource, localDataSource, remoteDataSource, pagingSource)
     }
 
     @Singleton
@@ -88,9 +90,9 @@ class RepositoryModule {
         remoteDataSource: QuestionRemoteDataSource,
         localDataSource: QuestionLocalDataSource,
         cacheDataSource: QuestionCacheDataSource,
-        tokenRepository: TokenRepository,
+        pagingSource: QuestionPagingSource,
     ): QuestionRepository {
-        return QuestionRepositoryImpl(cacheDataSource, localDataSource, remoteDataSource, tokenRepository)
+        return QuestionRepositoryImpl(cacheDataSource, localDataSource, remoteDataSource, pagingSource)
     }
 
 

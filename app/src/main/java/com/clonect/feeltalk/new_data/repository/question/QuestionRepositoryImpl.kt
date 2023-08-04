@@ -14,7 +14,6 @@ import com.clonect.feeltalk.new_domain.model.question.LastQuestionPageNoDto
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.model.question.QuestionListDto
 import com.clonect.feeltalk.new_domain.repository.question.QuestionRepository
-import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 
@@ -22,7 +21,7 @@ class QuestionRepositoryImpl(
     private val cacheDataSource: QuestionCacheDataSource,
     private val localDataSource: QuestionLocalDataSource,
     private val remoteDataSource: QuestionRemoteDataSource,
-    private val tokenRepository: TokenRepository,
+    private val pagingSource: QuestionPagingSource,
 ): QuestionRepository {
     override suspend fun getLastChatPageNo(accessToken: String): Resource<LastQuestionPageNoDto> {
         return try {
@@ -53,7 +52,7 @@ class QuestionRepositoryImpl(
                 enablePlaceholders = false
             )
         ) {
-            QuestionPagingSource(tokenRepository, cacheDataSource, remoteDataSource)
+            pagingSource
         }.flow
     }
 

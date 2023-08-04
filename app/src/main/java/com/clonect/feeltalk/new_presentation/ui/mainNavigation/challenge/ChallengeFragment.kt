@@ -85,7 +85,7 @@ class ChallengeFragment : Fragment() {
     private fun initTabLayout() = binding.run {
         tbChallengeTabs.addTab(tbChallengeTabs.newTab())
         tbChallengeTabs.addTab(tbChallengeTabs.newTab())
-        vpNavigation.adapter = ChallengePageAdapter(childFragmentManager, lifecycle)
+        vp2Navigation.adapter = ChallengePageAdapter(childFragmentManager, lifecycle)
 
         tbChallengeTabs.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {}
@@ -113,7 +113,7 @@ class ChallengeFragment : Fragment() {
             }
         })
 
-        TabLayoutMediator(tbChallengeTabs, vpNavigation) { tab, position ->
+        TabLayoutMediator(tbChallengeTabs, vp2Navigation) { tab, position ->
             when (position) {
                 0 -> {
                     tab.setCustomView(R.layout.tab_item_ongoing)

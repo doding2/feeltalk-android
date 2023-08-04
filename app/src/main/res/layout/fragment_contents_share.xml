@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:animateLayoutChanges="true"
-    android:background="@color/gray_200"
+    android:background="@color/white"
     tools:context=".new_presentation.ui.mainNavigation.addChallenge.AddChallengeFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -41,22 +41,49 @@
             app:layout_constraintBottom_toBottomOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/vp_navigation"
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tb_contents_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/white"
+        app:tabRippleColor="@color/gray_400"
+        app:tabIndicator="@null"
+        app:tabIndicatorHeight="0dp"
+        app:tabPaddingBottom="0dp"
+        app:tabPaddingEnd="0dp"
+        app:tabPaddingStart="0dp"
+        app:tabPaddingTop="0dp"/>
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tb_contents_tabs"
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/vp2_navigation"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@color/gray_200"
-            app:tabRippleColor="@color/gray_400"
-            app:tabIndicator="@null"
-            app:tabIndicatorHeight="0dp"
-            app:tabPaddingBottom="0dp"
-            app:tabPaddingEnd="0dp"
-            app:tabPaddingStart="0dp"
-            app:tabPaddingTop="0dp"/>
-    </androidx.viewpager.widget.ViewPager>
+            android:layout_height="match_parent" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/mcv_share"
+            android:layout_width="match_parent"
+            android:layout_height="59dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_gravity="bottom"
+            app:cardBackgroundColor="@color/main_400"
+            app:cardCornerRadius="30dp"
+            app:cardElevation="0dp"
+            app:rippleColor="@color/main_600">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/pretendard_medium"
+                android:text="@string/contents_share_button"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+        </com.google.android.material.card.MaterialCardView>
+    </FrameLayout>
+
 </LinearLayout>

@@ -11,7 +11,6 @@ import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatRemoteDataSo
 import com.clonect.feeltalk.new_data.repository.chat.paging.ChatPagingSource
 import com.clonect.feeltalk.new_domain.model.chat.*
 import com.clonect.feeltalk.new_domain.repository.chat.ChatRepository
-import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import java.io.File
@@ -20,7 +19,7 @@ class ChatRepositoryImpl(
     private val cacheDataSource: ChatCacheDataSource,
     private val localDataSource: ChatLocalDataSource,
     private val remoteDataSource: ChatRemoteDataSource,
-    private val tokenRepository: TokenRepository,
+    private val pagingSource: ChatPagingSource,
 ): ChatRepository {
 
     override suspend fun getPartnerLastChat(accessToken: String): Resource<PartnerLastChatDto> {
@@ -106,7 +105,7 @@ class ChatRepositoryImpl(
                 enablePlaceholders = false
             )
         ) {
-            ChatPagingSource(tokenRepository, cacheDataSource, remoteDataSource)
+            pagingSource
         }.flow
     }
 }

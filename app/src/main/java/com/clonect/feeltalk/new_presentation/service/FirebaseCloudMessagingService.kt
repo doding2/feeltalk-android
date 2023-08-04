@@ -313,7 +313,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     }
 
 
-    fun getAppRunning(): Boolean {
+    private fun getAppRunning(): Boolean {
         val activityManager = applicationContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val procInfos = activityManager.runningAppProcesses
         if (procInfos != null) {

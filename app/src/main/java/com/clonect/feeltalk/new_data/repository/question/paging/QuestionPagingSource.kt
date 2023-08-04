@@ -4,7 +4,6 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_data.mapper.toQuestionList
-import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionCacheDataSource
 import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionRemoteDataSource
 import com.clonect.feeltalk.new_domain.model.question.LastQuestionPageNoDto
 import com.clonect.feeltalk.new_domain.model.question.Question
@@ -17,7 +16,6 @@ import kotlinx.coroutines.runBlocking
 
 class QuestionPagingSource(
     private val tokenRepository: TokenRepository,
-    private val questionCacheDataSource: QuestionCacheDataSource,
     private val questionRemoteDataSource: QuestionRemoteDataSource,
 ): PagingSource<Long, Question>() {
 

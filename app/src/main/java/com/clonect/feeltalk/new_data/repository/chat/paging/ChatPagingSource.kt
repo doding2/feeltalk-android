@@ -4,7 +4,6 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_data.mapper.toChatList
-import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatCacheDataSource
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatRemoteDataSource
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.ChatListDto
@@ -17,7 +16,6 @@ import kotlinx.coroutines.runBlocking
 
 class ChatPagingSource(
     private val tokenRepository: TokenRepository,
-    private val chatCacheDataSource: ChatCacheDataSource,
     private val chatRemoteDataSource: ChatRemoteDataSource,
 ): PagingSource<Long, Chat>() {
 

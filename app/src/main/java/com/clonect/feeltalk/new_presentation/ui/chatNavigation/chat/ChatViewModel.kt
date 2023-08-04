@@ -98,7 +98,7 @@ class ChatViewModel @Inject constructor(
     }
 
 
-    /** Page Modification **/
+    /** Pagination **/
     private val pageModificationEvents = MutableStateFlow<List<PageEvents<Chat>>>(emptyList())
 
     private fun applyPageModification(paging: PagingData<Chat>, event: PageEvents<Chat>): PagingData<Chat> {
