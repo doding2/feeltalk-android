@@ -1,6 +1,7 @@
 package com.clonect.feeltalk.new_presentation.ui.util
 
 import android.graphics.Color
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import com.clonect.feeltalk.databinding.SnackbarTextBinding
@@ -33,7 +34,11 @@ class TextSnackbar(view: View, private val message: String, duration: Int, priva
     private fun initView() {
         view.apply {
             removeAllViews()
-            setPadding(0, 0, 0, bottomMargin)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                setPadding(0, 0, 0, bottomMargin)
+            } else {
+                setPadding(0, 0, 0, bottomMargin + getNavigationBarHeight())
+            }
             setBackgroundColor(Color.TRANSPARENT)
             addView(binding.root, 0)
         }

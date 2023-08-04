@@ -47,6 +47,7 @@ class CoupleConnectBottomSheetFragment(
         val behavior = (dialog as? BottomSheetDialog)?.behavior
         behavior?.state = BottomSheetBehavior.STATE_EXPANDED
         behavior?.skipCollapsed = true
+        setKeyboardInsets()
         return binding.root
     }
 
@@ -54,7 +55,6 @@ class CoupleConnectBottomSheetFragment(
         super.onViewCreated(view, savedInstanceState)
 
         collectViewModel()
-        setKeyboardInsets()
 
         binding.run {
             etPartnerCoupleCode.addTextChangedListener {
@@ -66,6 +66,8 @@ class CoupleConnectBottomSheetFragment(
     }
 
     private fun matchCoupleCode() {
+        val decorView = activity?.window?.decorView
+        decorView?.setOnApplyWindowInsetsListener(null)
         dialog?.dismiss()
         viewModel.matchCoupleCode()
     }

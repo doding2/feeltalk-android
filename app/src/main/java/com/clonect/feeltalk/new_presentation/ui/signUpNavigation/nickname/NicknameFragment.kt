@@ -37,6 +37,7 @@ class NicknameFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentNicknameBinding.inflate(inflater, container, false)
+        setKeyboardInsets()
         return binding.root
     }
 
@@ -44,10 +45,8 @@ class NicknameFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         collectViewModel()
-        setKeyboardInsets()
         viewModel.setSignUpProcess(66)
         viewModel.setCurrentPage("nickname")
-
 
         binding.run {
             etNickname.setText(viewModel.nickname.value)
@@ -77,6 +76,10 @@ class NicknameFragment : Fragment() {
         llClearFocusArea.setOnClickListener { hideKeyboard() }
         viewClearFocusArea.setOnClickListener { hideKeyboard() }
 
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            setNextButtonMargin(0)
+            mcvNext.radius = 0f
+        }
 
         binding.root.setOnApplyWindowInsetsListener { v, insets ->
             val imeHeight = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
