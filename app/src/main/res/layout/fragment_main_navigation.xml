@@ -121,7 +121,7 @@
                     android:layout_height="wrap_content"
                     android:paddingVertical="10dp"
                     android:paddingHorizontal="12dp"
-                    android:text="연인에게 채팅이 오면 여기에 표시됩니당 구ㅡㄹ자나나"
+                    android:text=""
                     android:textColor="#505050"
                     android:textSize="14sp"
                     android:fontFamily="@font/pretendard_regular"

@@ -34,6 +34,13 @@ class ContentsShareFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentContentsShareBinding.inflate(inflater, container, false)
+
+        val fromBubble = arguments?.getBoolean("fromBubble", false) ?: false
+        if (fromBubble) {
+            binding.root.setPadding(0, 0, 0, requireContext().dpToPx(20f).toInt())
+            return binding.root
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
             setLightStatusBars(true, activity, binding.root)

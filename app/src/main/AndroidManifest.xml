@@ -23,9 +23,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Feeltalk"
         android:usesCleartextTraffic="true"
-       android:enableOnBackInvokedCallback="true"
+        android:enableOnBackInvokedCallback="true"
         tools:replace="android:allowBackup, android:fullBackupOnly"
         tools:targetApi="tiramisu" >
+
         <activity
             android:name=".new_presentation.ui.chatNavigation.bubble.BubbleActivity"
             android:label="@string/notification_bubble"

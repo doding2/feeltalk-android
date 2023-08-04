@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bubble_nav_graph"
+    app:startDestination="@id/bubbleChatFragment">
+
+    <fragment
+        android:id="@+id/bubbleChatFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.chatNavigation.bubble.BubbleChatFragment"
+        android:label="BubbleChatFragment"
+        tools:layout="@layout/fragment_chat">
+        <action
+            android:id="@+id/action_bubbleChatFragment_to_contentsShareFragment2"
+            app:destination="@id/contentsShareFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/contentsShareFragment2"
+        android:name="com.clonect.feeltalk.new_presentation.ui.chatNavigation.contentsShare.ContentsShareFragment"
+        android:label="ContentsShareFragment"
+        tools:layout="@layout/fragment_contents_share" />
+</navigation>

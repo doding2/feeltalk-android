@@ -6,23 +6,19 @@ import android.os.Build
 import android.os.Bundle
 import android.view.ViewTreeObserver
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.ActivityMainBinding
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -50,22 +46,11 @@ class MainActivity : AppCompatActivity() {
             intent?.extras?.clear()
         }
 
-        collectToast()
-
         waitForSplash()
-
         tryAutoLogIn()
 
         checkPostNotificationsPermission {
             viewModel.enablePushNotificationEnabled(it)
-        }
-    }
-
-    private fun collectToast() = lifecycleScope.launch {
-        repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.toast.collectLatest {
-                Toast.makeText(applicationContext, it, Toast.LENGTH_SHORT).show()
-            }
         }
     }
 
