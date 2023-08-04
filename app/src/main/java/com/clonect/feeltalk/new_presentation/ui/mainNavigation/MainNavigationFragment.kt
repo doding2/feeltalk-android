@@ -140,7 +140,11 @@ class MainNavigationFragment : Fragment() {
         val behavior = BottomSheetBehavior.from(binding.flAnswerSheet)
 
         if (isShow) {
-            binding.viewAnswerBehind.visibility = View.VISIBLE
+            if (viewModel.showChatNavigation.value) {
+                binding.viewAnswerBehind.visibility = View.GONE
+            } else {
+                binding.viewAnswerBehind.visibility = View.VISIBLE
+            }
             behavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
         else {
