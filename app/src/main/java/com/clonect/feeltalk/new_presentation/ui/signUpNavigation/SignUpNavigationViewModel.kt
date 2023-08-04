@@ -74,6 +74,8 @@ class SignUpNavigationViewModel @Inject constructor(
 
         _partnerCoupleCode.value = null
 
+        _isAgreementProcessed.value = false
+        _isNicknameProcessed.value = false
         _isCoupleConnected.value = false
 
         CreateCoupleObserver.onCleared()
@@ -102,8 +104,8 @@ class SignUpNavigationViewModel @Inject constructor(
     private val _isMarketingAgreed = MutableStateFlow(false)
     val isMarketingAgreed = _isMarketingAgreed.asStateFlow()
 
-    private val _isAgreementProcessed = MutableSharedFlow<Boolean>()
-    val isAgreementProcessed = _isAgreementProcessed.asSharedFlow()
+    private val _isAgreementProcessed = MutableStateFlow(false)
+    val isAgreementProcessed = _isAgreementProcessed.asStateFlow()
 
     fun getSocialToken() = viewModelScope.launch {
         when (val result = getCachedSocialTokenUseCase()) {
@@ -141,7 +143,7 @@ class SignUpNavigationViewModel @Inject constructor(
     }
 
     fun setAgreementProcessed(processed: Boolean) = viewModelScope.launch {
-        _isAgreementProcessed.emit(processed)
+        _isAgreementProcessed.value = processed
     }
 
 
@@ -149,15 +151,15 @@ class SignUpNavigationViewModel @Inject constructor(
     private val _nickname = MutableStateFlow("")
     val nickname = _nickname.asStateFlow()
 
-    private val _isNicknameProcessed = MutableSharedFlow<Boolean>()
-    val isNicknameProcessed = _isNicknameProcessed.asSharedFlow()
+    private val _isNicknameProcessed = MutableStateFlow(false)
+    val isNicknameProcessed = _isNicknameProcessed.asStateFlow()
 
     fun setNickname(nickname: String) {
         _nickname.value = nickname
     }
 
     fun setNicknameProcessed(processed: Boolean) = viewModelScope.launch {
-        _isNicknameProcessed.emit(processed)
+        _isNicknameProcessed.value = processed
     }
 
     fun signUp() = viewModelScope.launch(Dispatchers.IO) {

@@ -37,6 +37,9 @@ class TextSnackbar(view: View, private val message: String, duration: Int, priva
             setBackgroundColor(Color.TRANSPARENT)
             addView(binding.root, 0)
         }
+        snackbar.view.setOnClickListener {
+            onClick(snackbar)
+        }
     }
 
     private fun initData() {

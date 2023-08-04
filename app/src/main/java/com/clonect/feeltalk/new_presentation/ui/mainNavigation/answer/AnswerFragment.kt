@@ -272,7 +272,6 @@ class AnswerFragment : Fragment() {
 
     private fun showSnackBar(message: String) {
         val decorView = activity?.window?.decorView ?: return
-
         TextSnackbar.make(
             view = decorView,
             message = message,

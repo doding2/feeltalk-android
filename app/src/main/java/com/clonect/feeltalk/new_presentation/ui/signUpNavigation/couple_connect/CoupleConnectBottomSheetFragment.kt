@@ -1,14 +1,15 @@
 package com.clonect.feeltalk.new_presentation.ui.signUpNavigation.couple_connect
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.FrameLayout
 import android.widget.LinearLayout
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -17,7 +18,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentCoupleConnectBottomSheetBinding
 import com.clonect.feeltalk.new_presentation.ui.signUpNavigation.SignUpNavigationViewModel
-import com.clonect.feeltalk.new_presentation.ui.util.SoftKeyboardDetectorView
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -54,7 +54,7 @@ class CoupleConnectBottomSheetFragment(
         super.onViewCreated(view, savedInstanceState)
 
         collectViewModel()
-        setKeyboardListeners()
+        setKeyboardInsets()
 
         binding.run {
             etPartnerCoupleCode.addTextChangedListener {
@@ -71,7 +71,7 @@ class CoupleConnectBottomSheetFragment(
     }
 
 
-    private fun setKeyboardListeners() = binding.run {
+    private fun setKeyboardInsets() = binding.run {
         etPartnerCoupleCode.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 etPartnerCoupleCode.clearFocus()
@@ -81,18 +81,35 @@ class CoupleConnectBottomSheetFragment(
 
         llClearFocusArea.setOnClickListener { hideKeyboard() }
 
-        val keyboardListener = SoftKeyboardDetectorView(requireActivity())
-        requireActivity().addContentView(keyboardListener, FrameLayout.LayoutParams(-1, -1))
-        keyboardListener.setOnShownKeyboard {
-            setConnectButtonMargin(0)
-            mcvConnect.radius = 0f
-            onKeyboardUp()
-        }
-        keyboardListener.setOnHiddenKeyboard {
-            etPartnerCoupleCode.clearFocus()
-            setConnectButtonMargin(activity.dpToPx(20f).toInt())
-            mcvConnect.radius = activity.dpToPx(30f)
-            onKeyboardDown()
+        val decorView = activity?.window?.decorView
+            ?: return
+        decorView.setOnApplyWindowInsetsListener { v, insets ->
+            val imeHeight = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            } else {
+                insets.systemWindowInsetBottom
+            }
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                setConnectButtonMargin(0)
+                mcvConnect.radius = 0f
+                onKeyboardUp()
+                return@setOnApplyWindowInsetsListener insets
+            }
+
+            val isKeyboardUp = imeHeight != 0
+            if (isKeyboardUp) {
+                setConnectButtonMargin(0)
+                mcvConnect.radius = 0f
+                onKeyboardUp()
+            } else {
+                etPartnerCoupleCode.clearFocus()
+                setConnectButtonMargin(activity.dpToPx(20f).toInt())
+                mcvConnect.radius = activity.dpToPx(30f)
+                onKeyboardDown()
+            }
+
+            insets
         }
     }
 

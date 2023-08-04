@@ -28,14 +28,14 @@ class SignUpViewModel @Inject constructor(
     private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
 ): ViewModel() {
 
-    private val _navigateToAgreement = MutableSharedFlow<Boolean>()
-    val navigateToAgreement = _navigateToAgreement.asSharedFlow()
+    private val _navigateToAgreement = MutableStateFlow(false)
+    val navigateToAgreement = _navigateToAgreement.asStateFlow()
 
-    private val _navigateToCoupleCode = MutableSharedFlow<Boolean>()
-    val navigateToCoupleCode = _navigateToCoupleCode.asSharedFlow()
+    private val _navigateToCoupleCode = MutableStateFlow(false)
+    val navigateToCoupleCode = _navigateToCoupleCode.asStateFlow()
 
-    private val _navigateToMain = MutableSharedFlow<Boolean>()
-    val navigateToMain = _navigateToMain.asSharedFlow()
+    private val _navigateToMain = MutableStateFlow(false)
+    val navigateToMain = _navigateToMain.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
@@ -53,15 +53,15 @@ class SignUpViewModel @Inject constructor(
                 when (result.data.lowercase()) {
                     "newbie" -> {
                         cacheSocialToken(socialToken)
-                        _navigateToAgreement.emit(true)
+                        _navigateToAgreement.value = true
                     }
                     "solo" -> {
                         updateFcmToken()
-                        _navigateToCoupleCode.emit(true)
+                        _navigateToCoupleCode.value = true
                     }
                     "couple" -> {
                         updateFcmToken()
-                        _navigateToMain.emit(true)
+                        _navigateToMain.value = true
                     }
                 }
             }

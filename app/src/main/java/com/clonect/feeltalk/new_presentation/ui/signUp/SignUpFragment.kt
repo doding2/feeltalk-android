@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
-import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -29,6 +28,7 @@ import com.clonect.feeltalk.new_presentation.ui.signUp.authHelper.KakaoAuthHelpe
 import com.clonect.feeltalk.new_presentation.ui.signUp.authHelper.NaverAuthHelper
 import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
+import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.clonect.feeltalk.presentation.utils.makeLoadingDialog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -51,7 +51,7 @@ class SignUpFragment : Fragment() {
     ): View {
         binding = FragmentSignUpBinding.inflate(inflater, container, false)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            WindowCompat.setDecorFitsSystemWindows(requireActivity().window, true)
+            binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
         }
         loadingDialog = makeLoadingDialog()
         return binding.root
@@ -227,7 +227,6 @@ class SignUpFragment : Fragment() {
             view = decorView,
             message = message,
             duration = Snackbar.LENGTH_SHORT,
-            bottomMargin = getNavigationBarHeight(),
             onClick = {
                 it.dismiss()
             }

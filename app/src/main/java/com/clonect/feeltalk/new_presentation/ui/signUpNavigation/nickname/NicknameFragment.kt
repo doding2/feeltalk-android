@@ -1,15 +1,15 @@
 package com.clonect.feeltalk.new_presentation.ui.signUpNavigation.nickname
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.FrameLayout
 import android.widget.LinearLayout
-import androidx.activity.OnBackPressedCallback
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -19,8 +19,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentNicknameBinding
 import com.clonect.feeltalk.new_presentation.ui.signUpNavigation.SignUpNavigationViewModel
-import com.clonect.feeltalk.new_presentation.ui.util.SoftKeyboardDetectorView
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
+import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -44,7 +44,7 @@ class NicknameFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         collectViewModel()
-        setKeyboardListeners()
+        setKeyboardInsets()
         viewModel.setSignUpProcess(66)
         viewModel.setCurrentPage("nickname")
 
@@ -66,7 +66,7 @@ class NicknameFragment : Fragment() {
     }
 
 
-    private fun setKeyboardListeners() = binding.run {
+    private fun setKeyboardInsets() = binding.run {
         etNickname.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 etNickname.clearFocus()
@@ -77,16 +77,37 @@ class NicknameFragment : Fragment() {
         llClearFocusArea.setOnClickListener { hideKeyboard() }
         viewClearFocusArea.setOnClickListener { hideKeyboard() }
 
-        val keyboardListener = SoftKeyboardDetectorView(requireActivity())
-        requireActivity().addContentView(keyboardListener, FrameLayout.LayoutParams(-1, -1))
-        keyboardListener.setOnShownKeyboard {
-            setNextButtonMargin(0)
-            mcvNext.radius = 0f
-        }
-        keyboardListener.setOnHiddenKeyboard {
-            etNickname.clearFocus()
-            setNextButtonMargin((activity.dpToPx(20f).toInt()))
-            mcvNext.radius = activity.dpToPx(30f)
+
+        binding.root.setOnApplyWindowInsetsListener { v, insets ->
+            val imeHeight = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            } else {
+                insets.systemWindowInsetBottom
+            }
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                setNextButtonMargin(0)
+                mcvNext.radius = 0f
+                return@setOnApplyWindowInsetsListener insets
+            }
+
+            val isKeyboardUp = imeHeight != 0
+            if (isKeyboardUp) {
+                setNextButtonMargin(0)
+                mcvNext.radius = 0f
+            } else {
+                etNickname.clearFocus()
+                setNextButtonMargin((activity.dpToPx(20f).toInt()))
+                mcvNext.radius = activity.dpToPx(30f)
+            }
+
+            if (imeHeight == 0) {
+                binding.root.setPadding(0, 0, 0, 0)
+            } else {
+                binding.root.setPadding(0, 0, 0, imeHeight - getNavigationBarHeight())
+            }
+
+            insets
         }
     }
 
