@@ -41,6 +41,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 
@@ -76,15 +77,26 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     companion object {
 
         suspend fun getFcmToken() = suspendCoroutine { continuation ->
-            FirebaseMessaging.getInstance().apply {
-                token
-                    .addOnSuccessListener {
-                        continuation.resume(it)
-                    }
-                    .addOnFailureListener {
-                        continuation.resume(null)
-                    }
-            }
+            FirebaseMessaging.getInstance()
+                .token
+                .addOnSuccessListener {
+                    continuation.resume(it)
+                }
+                .addOnFailureListener {
+                    continuation.resume(null)
+                }
+
+        }
+
+        suspend fun clearFcmToken() = suspendCoroutine { continuation ->
+            FirebaseMessaging.getInstance()
+                .deleteToken()
+                .addOnSuccessListener {
+                    continuation.resume(Unit)
+                }
+                .addOnFailureListener {
+                    continuation.resumeWithException(it)
+                }
         }
     }
 

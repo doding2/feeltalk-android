@@ -56,7 +56,7 @@
             android:ellipsize="end"
             app:layout_constrainedWidth="true"
             app:layout_constraintStart_toEndOf="@id/mcv_index"
-            app:layout_constraintEnd_toStartOf="@id/view_spacer"
+            app:layout_constraintEnd_toStartOf="@id/tv_new"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 

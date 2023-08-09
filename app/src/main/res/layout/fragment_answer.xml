@@ -80,7 +80,8 @@
                     android:gravity="top"
                     android:hint="@string/answer_my_answer_hint"
                     android:inputType="textMultiLine"
-                    android:minLines="4"
+                    android:lines="4"
+                    android:scrollbars="vertical"
                     android:textColor="@color/black"
                     android:textColorHint="@color/gray_400"
                     android:textSize="16sp"
@@ -132,7 +133,8 @@
                     android:textColorHint="@color/gray_400"
                     android:textSize="16sp"
                     android:textColor="@color/black"
-                    android:minLines="4"
+                    android:lines="4"
+                    android:scrollbars="vertical"
                     android:gravity="top"
                     android:fontFamily="@font/pretendard_regular"/>
 

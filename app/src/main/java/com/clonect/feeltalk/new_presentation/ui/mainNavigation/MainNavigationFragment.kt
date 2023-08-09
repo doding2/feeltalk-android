@@ -40,7 +40,6 @@ class MainNavigationFragment : Fragment() {
 
         setUpBottomNavigation()
         setUpAnswerSheet()
-        binding.mcvChatRounder.setBackgroundResource(R.drawable.background_dialog_round_top)
 
         // set fullscreen
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {

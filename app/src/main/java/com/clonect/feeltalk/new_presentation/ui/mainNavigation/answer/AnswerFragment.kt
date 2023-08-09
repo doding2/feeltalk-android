@@ -7,6 +7,7 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
@@ -50,6 +51,7 @@ class AnswerFragment : Fragment() {
             binding.root.setPadding(0, 0, 0, getNavigationBarHeight())
         }
         setKeyboardInsets()
+        setEditTextScroll()
         return binding.root
     }
 
@@ -189,6 +191,45 @@ class AnswerFragment : Fragment() {
                 val isButtonEnabled = (isUserAnswered && isPartnerAnswered) || viewModel.answer.value.isNotBlank()
                 enableDoneButton(isButtonEnabled)
             }
+        }
+    }
+
+    private fun setEditTextScroll() = binding.run {
+//        var isMyEtInTop = false
+//        var isMyEtInBottom = false
+//
+//        etMyAnswer.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+//            isMyEtInTop = !etMyAnswer.canScrollVertically(-10)
+//            isMyEtInBottom = !etMyAnswer.canScrollVertically(10)
+//        }
+
+        etMyAnswer.setOnTouchListener { v, event ->
+            if (etMyAnswer.lineCount <= 4) return@setOnTouchListener false
+
+            v.parent.requestDisallowInterceptTouchEvent(true)
+            if (event.action and MotionEvent.ACTION_MASK == MotionEvent.ACTION_UP) {
+                v.parent.requestDisallowInterceptTouchEvent(false)
+            }
+            return@setOnTouchListener false
+        }
+
+
+//        var isPartnerEtInTop = false
+//        var isPartnerEtInBottom = false
+//
+//        etPartnerAnswer.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+//            isPartnerEtInTop = !etPartnerAnswer.canScrollVertically(-10)
+//            isPartnerEtInBottom = !etPartnerAnswer.canScrollVertically(10)
+//        }
+
+        etPartnerAnswer.setOnTouchListener { v, event ->
+            if (etPartnerAnswer.lineCount <= 4) return@setOnTouchListener false
+
+            v.parent.requestDisallowInterceptTouchEvent(true)
+            if (event.action and MotionEvent.ACTION_MASK == MotionEvent.ACTION_UP) {
+                v.parent.requestDisallowInterceptTouchEvent(false)
+            }
+            return@setOnTouchListener false
         }
     }
 

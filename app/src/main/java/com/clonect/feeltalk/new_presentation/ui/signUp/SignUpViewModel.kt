@@ -85,17 +85,20 @@ class SignUpViewModel @Inject constructor(
     }
     
     private suspend fun updateFcmToken() = withContext(Dispatchers.IO) {
+        FirebaseCloudMessagingService.clearFcmToken()
+
         val fcmToken = FirebaseCloudMessagingService.getFcmToken() ?: run {
             infoLog("fcmToken is null.")
             _errorMessage.emit("잠시 후 다시 시도해주세요.")
-            return@withContext
+            throw NullPointerException("FcmToken is null.")
         }
-        
+
         when (val result = updateFcmTokenUseCase(fcmToken)) {
             is Resource.Success -> {  }
             is Resource.Error -> {
                 infoLog("fcmToken 업데이트 실패: ${result.throwable.stackTrace.joinToString("\n")}")
                 result.throwable.localizedMessage?.let { _errorMessage.emit(it) }
+                throw result.throwable
             }
         }
     }

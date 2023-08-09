@@ -142,7 +142,7 @@ class NicknameFragment : Fragment() {
 
     private fun validateNickname(nickname: String): Boolean {
         if (nickname.isBlank()) return false
-        if (nickname.length >= 20) return false
+        if (nickname.length >= 10) return false
 
         val nicknamePattern = Pattern.compile("^[ㄱ-ㅣ가-힣a-zA-Z0-9\\s]*$")
         val isNoSpecialCharacter = nicknamePattern.matcher(nickname).matches()

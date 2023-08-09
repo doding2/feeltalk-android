@@ -184,7 +184,7 @@
         android:id="@+id/fl_chat_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:visibility="gone"
+        android:visibility="visible"
         android:elevation="11dp"
         android:outlineProvider="none"
         app:layout_constraintStart_toStartOf="parent"
@@ -193,20 +193,21 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="20dp"
+            android:layout_height="10dp"
             android:src="@drawable/n_ic_chat_sheet_triangle"
             android:layout_gravity="end"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="48dp"/>
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/mcv_chat_rounder"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="14dp"
             android:clickable="true"
             app:rippleColor="@android:color/transparent"
-            app:cardCornerRadius="0dp"
+            app:cardCornerRadius="20dp"
             app:cardElevation="0dp"
             app:cardBackgroundColor="@color/white">
 

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:animateLayoutChanges="true"
-    android:background="@color/white"
+    android:background="@color/gray_200"
     tools:context=".new_presentation.ui.mainNavigation.addChallenge.AddChallengeFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -46,7 +46,7 @@
         android:id="@+id/tb_contents_tabs"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@color/white"
+        android:background="@color/gray_200"
         app:tabRippleColor="@color/gray_400"
         app:tabIndicator="@null"
         app:tabIndicatorHeight="0dp"
