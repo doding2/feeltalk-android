@@ -25,6 +25,11 @@
         android:label="fragment_sign_up_navigation"
         tools:layout="@layout/fragment_sign_up_navigation" >
         <action
+            android:id="@+id/action_signUpFragment_pop_back"
+            app:destination="@id/signUpFragment"
+            app:popUpTo="@id/signUpFragment"
+            app:popUpToInclusive="true"/>
+        <action
             android:id="@+id/action_signUpNavigationFragment_to_mainNavigationFragment"
             app:destination="@id/mainNavigationFragment"
             app:popUpTo="@id/signUpFragment"

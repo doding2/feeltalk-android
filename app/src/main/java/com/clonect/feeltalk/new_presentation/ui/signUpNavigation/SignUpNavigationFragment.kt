@@ -192,9 +192,8 @@ class SignUpNavigationFragment : Fragment() {
         super.onAttach(context)
         onBackCallback = object: OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (!navController.popBackStack()) {
-                    findNavController().popBackStack()
-                }
+                if (navController.popBackStack()) return
+                findNavController().navigate(R.id.action_signUpFragment_pop_back)
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, onBackCallback)

@@ -9,75 +9,36 @@
     tools:context=".new_presentation.ui.signUpNavigation.agreement.AgreementFragment">
 
     <TextView
+        android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="29dp"
-        android:layout_marginHorizontal="20dp"
-        android:text="@string/agreement_title"
+        android:layout_marginTop="28dp"
+        android:layout_marginStart="20dp"
+        android:text="@string/agreement_title_need_adult"
         android:textColor="@color/black"
         android:textSize="24sp"
         android:fontFamily="@font/pretendard_medium"/>
 
-    <TextView
-        android:id="@+id/tv_nickname_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="4dp"
-        android:text="@string/agreement_sub_title"
-        android:textSize="16sp"
-        android:fontFamily="@font/pretendard_regular"
-        android:textColor="@color/gray_600"/>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/mcv_sns_email_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="25dp"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="0dp"
-        app:cardBackgroundColor="@color/white"
-        app:strokeWidth="1dp"
-        app:strokeColor="@color/gray_400">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/iv_sns_icon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginVertical="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="10dp"
-                android:src="@drawable/n_image_google"/>
-
-            <TextView
-                android:id="@+id/tv_email"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:textColor="@color/gray_700"
-                android:textSize="16sp"
-                android:fontFamily="@font/pretendard_regular"/>
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
     <View
-        android:id="@+id/spacer_adult"
+        android:id="@+id/spacer_top"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="0.615"/>
+
+    <ImageView
+        android:id="@+id/iv_profile_deco"
+        android:layout_width="291dp"
+        android:layout_height="180dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/n_ic_profile_deco" />
 
     <TextView
         android:id="@+id/tv_adult_announce"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="47dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginHorizontal="20dp"
         android:gravity="center"
         android:text="@string/agreement_adult_announce"
         android:textSize="16sp"
@@ -89,13 +50,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="16dp"
-        app:cardBackgroundColor="@color/white"
+        app:cardBackgroundColor="@color/main_500"
         app:cardCornerRadius="30dp"
         app:cardElevation="0dp"
-        app:strokeColor="@color/black"
-        app:strokeWidth="1dp"
-        app:rippleColor="@color/gray_200"
+        app:rippleColor="@color/main_600"
         android:animateLayoutChanges="true">
 
         <LinearLayout
@@ -111,7 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/agreement_certify_adult"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="18sp"
                 android:fontFamily="@font/pretendard_medium"/>
 
@@ -124,6 +82,37 @@
                 android:layout_marginStart="10dp"/>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
+
+    <View
+        android:id="@+id/spacer_adult"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <LinearLayout
+        android:id="@+id/ll_certify_adult_done"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="18dp"
+        android:visibility="gone"
+        android:layout_gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/agreement_certify_adult_done"
+            android:textSize="16sp"
+            android:fontFamily="@font/pretendard_regular"
+            android:textColor="@color/gray_700"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:src="@drawable/n_ic_certify_adult_done"
+            android:layout_gravity="center"/>
+    </LinearLayout>
 
     <View
         android:id="@+id/spacer_agreement"

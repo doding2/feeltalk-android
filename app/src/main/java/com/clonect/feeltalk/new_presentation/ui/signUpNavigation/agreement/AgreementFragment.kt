@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -13,8 +15,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentAgreementBinding
-import com.clonect.feeltalk.new_domain.model.token.SocialToken
-import com.clonect.feeltalk.new_domain.model.user.SocialType
 import com.clonect.feeltalk.new_presentation.ui.signUpNavigation.SignUpNavigationViewModel
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import dagger.hilt.android.AndroidEntryPoint
@@ -136,27 +136,37 @@ class AgreementFragment : Fragment() {
 
     private fun changeAdultView(isAdult: Boolean) = binding.run {
         if (isAdult) {
-            spacerAdult.visibility = View.GONE
+            tvTitle.setText(R.string.agreement_title_need_agree)
+            spacerTop.updateLayoutParams<LinearLayout.LayoutParams> {
+                weight = 1.644f
+            }
+            ivProfileDeco.updateLayoutParams<LinearLayout.LayoutParams> {
+                width = requireContext().dpToPx(214f).toInt()
+                height = requireContext().dpToPx(132f).toInt()
+            }
             tvAdultAnnounce.visibility = View.GONE
-            mcvCertifyAdult.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
-            mcvCertifyAdult.strokeWidth = 0
-            tvCertifyAdult.setText(R.string.agreement_certify_adult_done)
-            tvCertifyAdult.setTextColor(requireContext().getColor(R.color.gray_400))
-            ivCertifyAdultDone.visibility = View.VISIBLE
+            mcvCertifyAdult.visibility = View.GONE
+            spacerAdult.visibility = View.GONE
 
-            mcvNext.visibility = View.VISIBLE
+            llCertifyAdultDone.visibility = View.VISIBLE
             spacerAgreement.visibility = View.VISIBLE
             clAgreeAll.visibility = View.VISIBLE
+            mcvNext.visibility = View.VISIBLE
             llSubAgreements.visibility = View.VISIBLE
         } else {
-            spacerAdult.visibility = View.VISIBLE
+            tvTitle.setText(R.string.agreement_title_need_adult)
+            spacerTop.updateLayoutParams<LinearLayout.LayoutParams> {
+                weight = 0.615f
+            }
+            ivProfileDeco.updateLayoutParams<LinearLayout.LayoutParams> {
+                width = requireContext().dpToPx(291f).toInt()
+                height = requireContext().dpToPx(180f).toInt()
+            }
             tvAdultAnnounce.visibility = View.VISIBLE
-            mcvCertifyAdult.setCardBackgroundColor(requireContext().getColor(R.color.white))
-            mcvCertifyAdult.strokeWidth = requireContext().dpToPx(1f).toInt()
-            tvCertifyAdult.setText(R.string.agreement_certify_adult)
-            tvCertifyAdult.setTextColor(requireContext().getColor(R.color.black))
-            ivCertifyAdultDone.visibility = View.GONE
+            mcvCertifyAdult.visibility = View.VISIBLE
+            spacerAdult.visibility = View.VISIBLE
 
+            llCertifyAdultDone.visibility = View.GONE
             spacerAgreement.visibility = View.GONE
             clAgreeAll.visibility = View.GONE
             mcvNext.visibility = View.GONE
@@ -182,30 +192,8 @@ class AgreementFragment : Fragment() {
         ))
     }
 
-    private fun changeSocialEmailView(socialToken: SocialToken?) = binding.run {
-        if (socialToken?.email != null) {
-            mcvSnsEmailContainer.visibility = View.VISIBLE
-            tvNicknameTitle.visibility = View.VISIBLE
-
-            tvEmail.text = socialToken.email
-            tvNicknameTitle.text = "${socialToken.name ?: socialToken.email} ${requireContext().getString(R.string.agreement_sub_title)}"
-            ivSnsIcon.setImageResource(
-                when (socialToken.type) {
-                    SocialType.Kakao -> R.drawable.n_image_kakao
-                    SocialType.Naver -> R.drawable.n_image_naver
-                    SocialType.Google -> R.drawable.n_image_google
-                    SocialType.Apple -> R.drawable.n_image_apple
-                }
-            )
-        } else {
-            mcvSnsEmailContainer.visibility = View.GONE
-            tvNicknameTitle.visibility = View.GONE
-        }
-    }
-
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-            launch { viewModel.socialToken.collectLatest(::changeSocialEmailView) }
             launch { viewModel.isAdult.collectLatest(::changeAdultView) }
             launch { viewModel.isAgreeAll.collectLatest(::changeAgreeAllView) }
             launch {

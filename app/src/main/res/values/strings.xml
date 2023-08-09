@@ -27,11 +27,11 @@
     <string name="sign_up_succeed">연인과 연결되었어요 !</string>
 
     <!--  Agreement  -->
-    <string name="agreement_title">필로우톡을 시작해볼까요?</string>
-    <string name="agreement_sub_title">계정으로 필로우톡을 이용할 수 있어요</string>
+    <string name="agreement_title_need_adult">서비스 이용을 위해\n성인인증을 진행해주세요</string>
+    <string name="agreement_title_need_agree">이용약관에 동의해주세요</string>
     <string name="agreement_adult_announce">만 19세 이상임을 인증하면\n연인과 함께 필로우톡을 이용할 수 있어요</string>
     <string name="agreement_certify_adult">성인인증 하기</string>
-    <string name="agreement_certify_adult_done">성인인증을 완료했어요</string>
+    <string name="agreement_certify_adult_done">성인인증 완료</string>
     <string name="agreement_agree_all">약관 및 개인, 민감정보 수집, 이용 동의</string>
     <string name="agreement_requirement">[필수]</string>
     <string name="agreement_option">[선택]</string>
