@@ -213,6 +213,8 @@ class ChatFragment : Fragment() {
             setMaxRecycledViews(ChatAdapter.TYPE_CHALLENGE_PARTNER, 0)
             setMaxRecycledViews(ChatAdapter.TYPE_QUESTION_MINE, 0)
             setMaxRecycledViews(ChatAdapter.TYPE_QUESTION_PARTNER, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_QUESTION_EMPTY_ANSWER_MINE, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_QUESTION_EMPTY_ANSWER_PARTNER, 0)
         })
         rvChat.setItemViewCacheSize(512)
         rvChat.adapter = adapter.apply {

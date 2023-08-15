@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.new_data.repository.question.dataSource
 
+import com.clonect.feeltalk.new_domain.model.chat.ShareQuestionChatDto
 import com.clonect.feeltalk.new_domain.model.question.LastQuestionPageNoDto
 import com.clonect.feeltalk.new_domain.model.question.QuestionDto
 import com.clonect.feeltalk.new_domain.model.question.QuestionListDto
@@ -13,4 +14,6 @@ interface QuestionRemoteDataSource {
 
     suspend fun answerQuestion(accessToken: String, index: Long, myAnswer: String)
     suspend fun pressForAnswer(accessToken: String, index: Long)
+
+    suspend fun shareQuestion(accessToken: String, index: Long): ShareQuestionChatDto
 }

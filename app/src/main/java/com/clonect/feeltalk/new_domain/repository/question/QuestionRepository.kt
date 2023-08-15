@@ -2,6 +2,7 @@ package com.clonect.feeltalk.new_domain.repository.question
 
 import androidx.paging.PagingData
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.new_domain.model.chat.ShareQuestionChatDto
 import com.clonect.feeltalk.new_domain.model.question.LastQuestionPageNoDto
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.model.question.QuestionListDto
@@ -18,4 +19,6 @@ interface QuestionRepository {
 
     suspend fun answerQuestion(accessToken: String, index: Long, myAnswer: String): Resource<Unit>
     suspend fun pressForAnswer(accessToken: String, index: Long): Resource<Unit>
+
+    suspend fun shareQuestion(accessToken: String, index: Long): Resource<ShareQuestionChatDto>
 }

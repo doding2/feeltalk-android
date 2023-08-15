@@ -163,6 +163,7 @@ class SignUpNavigationViewModel @Inject constructor(
     }
 
     fun signUp() = viewModelScope.launch(Dispatchers.IO) {
+        FirebaseCloudMessagingService.clearFcmToken()
         val fcmToken = FirebaseCloudMessagingService.getFcmToken() ?: run {
             infoLog("fcmToken is null.")
             _errorMessage.emit("잠시 후 다시 시도해주세요.")

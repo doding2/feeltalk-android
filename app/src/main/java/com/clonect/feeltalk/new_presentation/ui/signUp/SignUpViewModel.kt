@@ -52,6 +52,7 @@ class SignUpViewModel @Inject constructor(
                 setLoading(false)
                 when (result.data.lowercase()) {
                     "newbie" -> {
+                        FirebaseCloudMessagingService.clearFcmToken()
                         cacheSocialToken(socialToken)
                         _navigateToAgreement.value = true
                     }

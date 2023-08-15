@@ -3,6 +3,7 @@ package com.clonect.feeltalk.new_data.repository.question.dataSourceImpl
 import android.accounts.NetworkErrorException
 import com.clonect.feeltalk.new_data.api.ClonectService
 import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionRemoteDataSource
+import com.clonect.feeltalk.new_domain.model.chat.ShareQuestionChatDto
 import com.clonect.feeltalk.new_domain.model.question.LastQuestionPageNoDto
 import com.clonect.feeltalk.new_domain.model.question.QuestionDto
 import com.clonect.feeltalk.new_domain.model.question.QuestionListDto
@@ -64,5 +65,16 @@ class QuestionRemoteDataSourceImpl(
         val response = clonectService.pressForAnswer("Bearer $accessToken", body)
         if (!response.isSuccessful) throw HttpException(response)
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
+    }
+
+    override suspend fun shareQuestion(accessToken: String, index: Long): ShareQuestionChatDto {
+        val body = JsonObject().apply {
+            addProperty("index", index)
+        }
+        val response = clonectService.shareQuestion("Bearer $accessToken", body)
+        if (!response.isSuccessful) throw HttpException(response)
+        if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
+        return response.body()!!.data!!
     }
 }

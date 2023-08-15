@@ -199,6 +199,12 @@ class UseCaseModule {
         return PressForAnswerUseCase(tokenRepository, questionRepository)
     }
 
+    @Singleton
+    @Provides
+    fun providesShareQuestionUseCase(tokenRepository: TokenRepository, questionRepository: QuestionRepository): ShareQuestionUseCase {
+        return ShareQuestionUseCase(tokenRepository, questionRepository)
+    }
+
 
 
 

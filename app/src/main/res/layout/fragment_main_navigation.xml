@@ -184,7 +184,7 @@
         android:id="@+id/fl_chat_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:visibility="visible"
+        android:visibility="gone"
         android:elevation="11dp"
         android:outlineProvider="none"
         app:layout_constraintStart_toStartOf="parent"

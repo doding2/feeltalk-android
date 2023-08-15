@@ -13,6 +13,7 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.chat.ChatType
 import com.clonect.feeltalk.new_domain.model.chat.PartnerLastChatDto
+import com.clonect.feeltalk.new_domain.model.chat.QuestionChat
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPartnerLastChatUseCase
@@ -212,6 +213,9 @@ class MainNavigationViewModel @Inject constructor(
                         }
                         ChatType.VoiceChatting -> {
                             "(보이스 채팅)"
+                        }
+                        ChatType.QuestionChatting -> {
+                            "(질문 공유 채팅)"
                         }
                         else -> return@collect
                     }

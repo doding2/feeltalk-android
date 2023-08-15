@@ -173,6 +173,14 @@
     <string name="contents_share_question_new">New</string>
 
 
+    <!--  QuestionChat  -->
+    <string name="question_chat_header_deco">Q. </string>
+    <string name="question_chat_my_answer">나의 답변</string>
+    <string name="question_chat_partner_answer">연인의 답변</string>
+    <string name="question_chat_wait_answer">연인이 답변을 기다리고 있어요.\n아래의 버튼을 눌러\n오늘의 질문에 답해보세요!</string>
+    <string name="question_chat_go_to_answer">답변 하러가기</string>
+
+
     <!--  old ui  -->
 
     <!--  dialog_couple_divorce.xml  -->

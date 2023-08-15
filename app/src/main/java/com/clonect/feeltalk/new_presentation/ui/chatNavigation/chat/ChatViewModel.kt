@@ -6,10 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.new_domain.model.chat.Chat
-import com.clonect.feeltalk.new_domain.model.chat.ChatType
-import com.clonect.feeltalk.new_domain.model.chat.TextChat
-import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
+import com.clonect.feeltalk.new_domain.model.chat.*
 import com.clonect.feeltalk.new_domain.model.page.PageEvents
 import com.clonect.feeltalk.new_domain.usecase.chat.ChangeChatRoomStateUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPagingChatUseCase
@@ -246,6 +243,10 @@ class ChatViewModel @Inject constructor(
                             val voiceChat = newChat as? VoiceChat ?: return@collect
                             voiceChat
                         }
+                        ChatType.QuestionChatting -> {
+                            val questionChat = newChat as? QuestionChat ?: return@collect
+                            questionChat
+                        }
                         null -> return@collect
                         else -> {
                             infoLog("아직 미지원")
@@ -256,7 +257,7 @@ class ChatViewModel @Inject constructor(
                     insertCompleteChat(chat)
                     infoLog("new chat: $chat")
 
-                    if (isUserInBottom.value && chat.chatSender == "partner") {
+                    if (isUserInBottom.value && (chat.chatSender == "partner" || chat.type == ChatType.QuestionChatting)) {
                         delay(50)
                         setScrollToBottom()
                     }

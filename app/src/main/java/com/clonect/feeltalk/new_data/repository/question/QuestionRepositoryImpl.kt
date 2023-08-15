@@ -10,6 +10,7 @@ import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionCach
 import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionLocalDataSource
 import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.question.paging.QuestionPagingSource
+import com.clonect.feeltalk.new_domain.model.chat.ShareQuestionChatDto
 import com.clonect.feeltalk.new_domain.model.question.LastQuestionPageNoDto
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.model.question.QuestionListDto
@@ -108,6 +109,17 @@ class QuestionRepositoryImpl(
     override suspend fun pressForAnswer(accessToken: String, index: Long): Resource<Unit> {
         return try {
             val result = remoteDataSource.pressForAnswer(accessToken, index)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun shareQuestion(accessToken: String, index: Long): Resource<ShareQuestionChatDto> {
+        return try {
+            val result = remoteDataSource.shareQuestion(accessToken, index)
             Resource.Success(result)
         } catch (e: CancellationException) {
             throw e

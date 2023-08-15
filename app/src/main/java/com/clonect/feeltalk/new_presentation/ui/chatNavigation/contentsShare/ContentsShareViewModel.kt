@@ -2,8 +2,13 @@ package com.clonect.feeltalk.new_presentation.ui.chatNavigation.contentsShare
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
+import com.clonect.feeltalk.new_domain.model.chat.QuestionChat
 import com.clonect.feeltalk.new_domain.model.question.Question
+import com.clonect.feeltalk.new_domain.usecase.question.ShareQuestionUseCase
+import com.clonect.feeltalk.new_presentation.notification.notificationObserver.NewChatObserver
+import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ContentsShareViewModel @Inject constructor(
-
+    private val shareQuestionUseCase: ShareQuestionUseCase,
 ): ViewModel() {
 
     private val _selectedQuestion = MutableStateFlow<Question?>(null)
@@ -29,10 +34,28 @@ class ContentsShareViewModel @Inject constructor(
         _selectedChallenge.value = null
     }
 
-    // TODO
     fun shareQuestion(onComplete: () -> Unit) = viewModelScope.launch {
         val question = _selectedQuestion.value ?: return@launch
         onComplete()
+        when (val result = shareQuestionUseCase(question.index)) {
+            is Resource.Success -> {
+                val questionChat = result.data.run {
+                    QuestionChat(
+                        index = index,
+                        pageNo = pageNo,
+                        chatSender = "me",
+                        isRead = isRead,
+                        createAt = createAt,
+                        question = coupleQuestion
+                    )
+                }
+
+                NewChatObserver.getInstance().setNewChat(questionChat)
+            }
+            is Resource.Error -> {
+                infoLog("질문 공유 실패: ${result.throwable.stackTrace.joinToString("\n")}")
+            }
+        }
     }
 
 

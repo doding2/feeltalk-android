@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="30dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginVertical="8dp"
+    android:clipChildren="false">
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_read"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/chat_unread"
+            android:textSize="12sp"
+            android:fontFamily="@font/pretendard_regular"
+            android:textColor="@color/gray_600"
+            android:lines="1"
+            app:layout_constraintBottom_toTopOf="@id/tv_time"
+            app:layout_constraintEnd_toEndOf="@id/tv_time"/>
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textSize="12sp"
+            android:fontFamily="@font/pretendard_regular"
+            android:textColor="@color/gray_600"
+            android:lines="1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/mcv_chat_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="@color/gray_100"
+            app:cardElevation="0dp"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintStart_toEndOf="@id/tv_time"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginVertical="16dp"
+                android:layout_marginHorizontal="12dp"
+                android:gravity="center_horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:src="@drawable/n_ic_question_chat_deco"/>
+
+                <TextView
+                    android:id="@+id/tv_question_header"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Q. 난 이게 가장 좋더라!"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/pretendard_regular"/>
+
+
+                <TextView
+                    android:id="@+id/tv_question_body"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="당신이 가장 좋아하는 스킨십은?"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/pretendard_regular"/>
+
+                <TextView
+                    android:id="@+id/tv_question_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="2023.06.01"
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_500" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="18dp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/question_chat_wait_answer"
+                    android:textColor="@color/gray_600"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/pretendard_regular"/>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/mcv_go_to_answer"
+                    android:layout_width="226dp"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/main_500"
+                    app:cardCornerRadius="30dp"
+                    app:cardElevation="0dp"
+                    app:rippleColor="@color/main_600">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginVertical="8dp"
+                        android:text="@string/question_chat_go_to_answer"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:fontFamily="@font/pretendard_regular"/>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

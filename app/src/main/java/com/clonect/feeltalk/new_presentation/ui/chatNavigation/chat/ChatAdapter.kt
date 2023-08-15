@@ -121,8 +121,15 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 else TYPE_CHALLENGE_PARTNER
             }
             ChatType.QuestionChatting -> {
-                if (item.chatSender == myNickname) TYPE_QUESTION_MINE
-                else TYPE_QUESTION_PARTNER
+                val chat = item as? QuestionChat
+                    ?: return TYPE_DIVIDER
+                if (chat.question.selfAnswer == null || chat.question.partnerAnswer == null) {
+                    if (item.chatSender == myNickname) TYPE_QUESTION_EMPTY_ANSWER_MINE
+                    else TYPE_QUESTION_EMPTY_ANSWER_PARTNER
+                } else {
+                    if (item.chatSender == myNickname) TYPE_QUESTION_MINE
+                    else TYPE_QUESTION_PARTNER
+                }
             }
             else -> TYPE_DIVIDER
         }
@@ -210,6 +217,9 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
         const val TYPE_QUESTION_MINE = 13
         const val TYPE_QUESTION_PARTNER = 14
+
+        const val TYPE_QUESTION_EMPTY_ANSWER_MINE = 15
+        const val TYPE_QUESTION_EMPTY_ANSWER_PARTNER = 16
     }
 
 
@@ -1060,6 +1070,119 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 val prevPrevItem = if (position - 1 < 0) null
                 else snapshot().items[position - 1]
                 if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+            }
+        }
+    }
+
+
+    inner class QuestionChatMineViewHolder(
+        private val binding: ItemQuestionChatMineBinding
+    ): ChatViewHolder(binding.root) {
+
+        override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
+            val chat = item as QuestionChat
+            binding.run {
+                tvRead.text = root.context.getString(
+                    if (isPartnerInChat || chat.isRead) R.string.chat_read
+                    else R.string.chat_unread
+                )
+                tvTime.text = getFormatted(chat.createAt)
+
+                tvQuestionHeader.text = root.context.getString(R.string.question_chat_header_deco) + chat.question.title
+                tvQuestionBody.text = chat.question.title
+                tvMyAnswer.text = chat.question.selfAnswer
+                tvPartnerAnswer.text = chat.question.partnerAnswer
+
+                val questionFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
+
+                if (chat.isSending) {
+                    tvRead.visibility = View.GONE
+                    tvTime.visibility = View.GONE
+                } else {
+                    tvRead.visibility = View.VISIBLE
+                    tvTime.visibility = View.VISIBLE
+                }
+
+                root.setOnLongClickListener {
+//                    copyText(chat)
+                    false
+                }
+
+                makeContinuous(prevItem, item, nextItem)
+            }
+        }
+
+
+        private fun copyText(chat: TextChat) {
+            val clipboard = binding.root.context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+            val clip = ClipData.newPlainText("채팅", chat.message)
+            clipboard.setPrimaryClip(clip)
+        }
+
+        override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+            root.updateLayoutParams<RecyclerView.LayoutParams> {
+                topMargin = defaultVerticalMargin
+                bottomMargin = defaultVerticalMargin
+            }
+
+            tvRead.visibility = View.VISIBLE
+            tvTime.visibility = View.VISIBLE
+
+            if (item.isSending) {
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+                return
+            }
+
+            val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+
+            val isStartChat = !isTopSame && isBottomSame
+            val isEndChat = isTopSame && !isBottomSame
+            val isMiddleChat = isTopSame && isBottomSame
+
+            if (isMiddleChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+                return@run
+            }
+
+            if (isStartChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = defaultVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+            }
+
+            if (isEndChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = defaultVerticalMargin
+                }
+                tvRead.visibility = View.VISIBLE
+                tvTime.visibility = View.VISIBLE
+
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null) {
                     viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
                 }
             }

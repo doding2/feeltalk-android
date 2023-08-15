@@ -111,7 +111,6 @@ interface ClonectService {
         @Header("Authorization") token: String
     ): Response<ApiResponse<LastQuestionPageNoDto>>
 
-
     @POST("/api/v1/couple-questions")
     suspend fun getQuestionList(
         @Header("Authorization") token: String,
@@ -141,7 +140,11 @@ interface ClonectService {
         @Body body: JsonObject
     ): Response<ApiResponse<Unit>>
 
-
+    @POST("/api/v1/chatting-message/question")
+    suspend fun shareQuestion(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<ApiResponse<ShareQuestionChatDto>>
 
 
 
