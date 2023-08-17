@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.ui.mainNavigation.addChallenge
+package com.clonect.feeltalk.new_presentation.ui.mainNavigation.ongoingChallengeDetail
 
 import android.content.Context
 import android.graphics.Color
@@ -23,8 +23,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
-import com.clonect.feeltalk.databinding.FragmentAddChallengeBinding
+import com.clonect.feeltalk.databinding.FragmentOngoingChallengeDetailBinding
+import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.challenge.ChallengeCategory
+import com.clonect.feeltalk.new_presentation.ui.mainNavigation.addChallenge.showChangeCategoryDialog
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
@@ -37,20 +39,21 @@ import java.util.*
 import kotlin.math.ceil
 
 @AndroidEntryPoint
-class AddChallengeFragment : Fragment() {
+class OngoingChallengeDetailFragment : Fragment() {
 
-    private lateinit var binding: FragmentAddChallengeBinding
-    private val viewModel: AddChallengeViewModel by viewModels()
+    private lateinit var binding: FragmentOngoingChallengeDetailBinding
+    private val viewModel: OngoingChallengeDetailViewModel by viewModels()
     private lateinit var onBackCallback: OnBackPressedCallback
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentAddChallengeBinding.inflate(inflater, container, false)
+        binding = FragmentOngoingChallengeDetailBinding.inflate(inflater, container, false)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
         }
+        initChallenge()
         return binding.root
     }
 
@@ -62,6 +65,11 @@ class AddChallengeFragment : Fragment() {
         collectViewModel()
 
         binding.run {
+            ivBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
+            ivEdit.setOnClickListener { viewModel.setEditMode(true) }
+            ivDelete.setOnClickListener { deleteChallenge() }
+
+
             etTitle.addTextChangedListener { viewModel.setTitle(it?.toString()) }
             etBody.addTextChangedListener { viewModel.setBody(it?.toString()) }
 
@@ -72,17 +80,52 @@ class AddChallengeFragment : Fragment() {
 
             mcvDeadline.setOnClickListener { enableDeadlinePicker(true) }
 
-            ivBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
+            mcvEditSquare.setOnClickListener { editChallenge() }
+            mcvEditRound.setOnClickListener { editChallenge() }
 
-            mcvAddSquare.setOnClickListener { addChallenge() }
-            mcvAddRound.setOnClickListener { addChallenge() }
+            mcvCompleteRound.setOnClickListener { completeChallenge() }
         }
     }
 
+    private fun initChallenge() {
+        val challenge = if (viewModel.challenge.value == null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                arguments?.getSerializable("challenge", Challenge::class.java)
+            } else {
+                arguments?.getSerializable("challenge") as? Challenge
+            }
+        } else {
+            viewModel.challenge.value
+        }
+        if (challenge != null) {
+            viewModel.initChallenge(challenge)
+            binding.etTitle.setText(challenge.title)
+            binding.etBody.setText(challenge.body)
+        } else {
+            findNavController().popBackStack()
+        }
+    }
 
-    private fun addChallenge() {
-        viewModel.addNewChallenge()
+    private fun completeChallenge() {
+        viewModel.completeChallenge()
         onBackCallback.handleOnBackPressed()
+    }
+
+    private fun editChallenge() {
+        viewModel.editChallenge()
+        onBackCallback.handleOnBackPressed()
+    }
+
+    private fun deleteChallenge() {
+        showConfirmDialog(
+            title = requireContext().getString(R.string.delete_challenge_title),
+            body = requireContext().getString(R.string.delete_challenge_body),
+            cancelButton = requireContext().getString(R.string.delete_challenge_cancel),
+            confirmButton = requireContext().getString(R.string.delete_challenge_confirm),
+            onConfirm = {
+                viewModel.deleteChallenge()
+            }
+        )
     }
 
     private fun changeCategory() {
@@ -101,7 +144,7 @@ class AddChallengeFragment : Fragment() {
             mcvDeadline.setCardBackgroundColor(Color.WHITE)
 
             hideKeyboard()
-            expandAddButton(true)
+            expandEditButton(true)
         } else {
             dpDeadlinePicker.visibility = View.GONE
             mcvDeadline.strokeWidth = 0
@@ -141,7 +184,9 @@ class AddChallengeFragment : Fragment() {
                 insets.systemWindowInsetBottom
             }
 
-            viewModel.setKeyboardUp(imeHeight != 0)
+            if (viewModel.isEditMode.value) {
+                viewModel.setKeyboardUp(imeHeight != 0)
+            }
 
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
                 return@setOnApplyWindowInsetsListener insets
@@ -165,50 +210,89 @@ class AddChallengeFragment : Fragment() {
     }
 
 
-    private fun expandAddButton(enabled: Boolean) = binding.run {
+    private fun enableEditMode(enabled: Boolean) = binding.run {
+        if (enabled) {
+            tvDetailTitle1.setText(R.string.add_challenge_title_1)
+            tvDetailTitle2.setText(R.string.add_challenge_title_2)
+
+            ivEdit.visibility = View.GONE
+            ivDelete.visibility = View.GONE
+
+            etTitle.isEnabled = true
+            etBody.isEnabled = true
+            mcvCategory.isEnabled = true
+            mcvDeadline.isEnabled = true
+            mcvEditSquare.isEnabled = true
+            mcvEditRound.isEnabled = true
+
+            mcvCompleteRound.visibility = View.GONE
+            mcvEditRound.visibility = View.VISIBLE
+            mcvEditSquare.visibility = View.GONE
+        } else {
+            tvDetailTitle1.setText(R.string.challenge_detail_title_1)
+            tvDetailTitle2.setText(R.string.challenge_detail_title_2)
+
+            ivEdit.visibility = View.VISIBLE
+            ivDelete.visibility = View.VISIBLE
+
+            etTitle.isEnabled = false
+            etBody.isEnabled = false
+            mcvCategory.isEnabled = false
+            mcvDeadline.isEnabled = false
+            mcvEditSquare.isEnabled = false
+            mcvEditRound.isEnabled = false
+
+            mcvCompleteRound.visibility = View.VISIBLE
+            mcvEditRound.visibility = View.GONE
+            mcvEditSquare.visibility = View.GONE
+        }
+    }
+
+
+    private fun expandEditButton(enabled: Boolean) = binding.run {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-            mcvAddRound.visibility = View.VISIBLE
-            mcvAddRound.radius = 0f
-            mcvAddRound.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            mcvEditRound.visibility = View.VISIBLE
+            mcvEditRound.radius = 0f
+            mcvEditRound.updateLayoutParams<ConstraintLayout.LayoutParams> {
                 updateMargins(left = 0, right = 0)
             }
             return@run
         }
 
         if (dpDeadlinePicker.isVisible) {
-            mcvAddSquare.visibility = View.VISIBLE
-            mcvAddRound.visibility = View.GONE
+            mcvEditSquare.visibility = View.VISIBLE
+            mcvEditRound.visibility = View.GONE
             return@run
         }
 
         if (enabled) {
-            mcvAddSquare.visibility = View.VISIBLE
-            mcvAddRound.visibility = View.GONE
+            mcvEditSquare.visibility = View.VISIBLE
+            mcvEditRound.visibility = View.GONE
         } else {
-            mcvAddSquare.visibility = View.GONE
-            mcvAddRound.visibility = View.VISIBLE
+            mcvEditSquare.visibility = View.GONE
+            mcvEditRound.visibility = View.VISIBLE
         }
     }
 
-    private fun enableAddButton(enabled: Boolean) = binding.run {
-        mcvAddRound.isClickable = enabled
-        mcvAddRound.isFocusable = enabled
-        mcvAddRound.isEnabled = enabled
+    private fun enableEditButton(enabled: Boolean) = binding.run {
+        mcvEditRound.isClickable = enabled
+        mcvEditRound.isFocusable = enabled
+        mcvEditRound.isEnabled = enabled
 
-        mcvAddSquare.isClickable = enabled
-        mcvAddSquare.isFocusable = enabled
-        mcvAddSquare.isEnabled = enabled
+        mcvEditSquare.isClickable = enabled
+        mcvEditSquare.isFocusable = enabled
+        mcvEditSquare.isEnabled = enabled
 
         if (enabled) {
-            mcvAddRound.setCardBackgroundColor(resources.getColor(R.color.main_500, null))
-            mcvAddSquare.setCardBackgroundColor(resources.getColor(R.color.main_500, null))
-            tvAddRound.setTextColor(Color.WHITE)
-            tvAddSquare.setTextColor(Color.WHITE)
+            mcvEditRound.setCardBackgroundColor(resources.getColor(R.color.black, null))
+            mcvEditSquare.setCardBackgroundColor(resources.getColor(R.color.black, null))
+            tvEditRound.setTextColor(Color.WHITE)
+            tvEditSquare.setTextColor(Color.WHITE)
         } else {
-            mcvAddRound.setCardBackgroundColor(resources.getColor(R.color.gray_300, null))
-            mcvAddSquare.setCardBackgroundColor(resources.getColor(R.color.gray_300, null))
-            tvAddRound.setTextColor(requireContext().getColor(R.color.gray_500))
-            tvAddSquare.setTextColor(requireContext().getColor(R.color.gray_500))
+            mcvEditRound.setCardBackgroundColor(resources.getColor(R.color.gray_300, null))
+            mcvEditSquare.setCardBackgroundColor(resources.getColor(R.color.gray_300, null))
+            tvEditRound.setTextColor(requireContext().getColor(R.color.gray_500))
+            tvEditSquare.setTextColor(requireContext().getColor(R.color.gray_500))
         }
     }
 
@@ -226,10 +310,10 @@ class AddChallengeFragment : Fragment() {
 
     private fun changeViewWhenKeyboardUp(isUp: Boolean) {
         if (isUp) {
-            expandAddButton(true)
+            expandEditButton(true)
             enableDeadlinePicker(false)
         } else {
-            expandAddButton(false)
+            expandEditButton(false)
         }
     }
 
@@ -264,33 +348,40 @@ class AddChallengeFragment : Fragment() {
 
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch { viewModel.isEditMode.collectLatest(::enableEditMode) }
             launch { viewModel.isKeyboardUp.collectLatest(::changeViewWhenKeyboardUp) }
             launch { viewModel.category.collectLatest(::changeCategoryView) }
             launch { viewModel.deadline.collectLatest(::changeDeadlineView) }
-            launch { viewModel.isAddEnabled.collectLatest(::enableAddButton) }
+            launch { viewModel.isEditEnabled.collectLatest(::enableEditButton) }
         }
     }
 
-    
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         onBackCallback = object: OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (binding.dpDeadlinePicker.isVisible) {
                     enableDeadlinePicker(false)
-                    expandAddButton(false)
+                    expandEditButton(false)
                     return
                 }
-                if (viewModel.isEdited()) {
-                    showConfirmDialog(
-                        title = requireContext().getString(R.string.challenge_add_cancel_title),
-                        body = requireContext().getString(R.string.challenge_add_cancel_body),
-                        cancelButton = requireContext().getString(R.string.challenge_add_cancel_cancel),
-                        confirmButton = requireContext().getString(R.string.challenge_add_cancel_confirm),
-                        onConfirm = {
-                            findNavController().popBackStack()
-                        }
-                    )
+                if (viewModel.isEditMode.value) {
+                    if (viewModel.isEdited()) {
+                        showConfirmDialog(
+                            title = requireContext().getString(R.string.challenge_edit_cancel_title),
+                            body = requireContext().getString(R.string.challenge_edit_cancel_body),
+                            cancelButton = requireContext().getString(R.string.challenge_edit_cancel_cancel),
+                            confirmButton = requireContext().getString(R.string.challenge_edit_cancel_confirm),
+                            onConfirm = {
+                                viewModel.setEditMode(false)
+                                initChallenge()
+                            }
+                        )
+                    } else {
+                        viewModel.setEditMode(false)
+                        initChallenge()
+                    }
                     return
                 }
                 findNavController().popBackStack()

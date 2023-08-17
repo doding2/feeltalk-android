@@ -16,6 +16,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
+        android:layout_gravity="center"
         android:layout_marginHorizontal="19.5dp"
         android:layout_marginVertical="24dp"
         android:clipChildren="false">
@@ -34,21 +35,230 @@
             android:layout_height="208dp"
             android:layout_marginVertical="30dp">
 
+            <LinearLayout
+                android:id="@+id/ll_select_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintEnd_toStartOf="@id/ll_select_2"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/mcv_select_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp"
+                    app:strokeColor="@color/main_500">
+
+                    <ImageView
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        android:src="@color/gray_200"/>
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/change_category_select_1"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/pretendard_regular"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_select_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/mcv_select_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp"
+                    app:strokeColor="@color/main_500">
+
+                    <ImageView
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        android:src="@color/gray_200"/>
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/change_category_select_2"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/pretendard_regular"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_select_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintStart_toEndOf="@id/ll_select_2"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/mcv_select_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp"
+                    app:strokeColor="@color/main_500">
+
+                    <ImageView
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        android:src="@color/gray_200"/>
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/change_category_select_3"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/pretendard_regular"/>
+            </LinearLayout>
 
 
 
 
+            <LinearLayout
+                android:id="@+id/ll_select_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="4dp"
+                app:layout_constraintEnd_toStartOf="@id/ll_select_5"
+                app:layout_constraintBottom_toBottomOf="parent">
 
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/mcv_select_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp"
+                    app:strokeColor="@color/main_500">
 
+                    <ImageView
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        android:src="@color/gray_200"/>
+                </com.google.android.material.card.MaterialCardView>
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/change_category_select_4"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/pretendard_regular"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_select_5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="4dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/mcv_select_5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp"
+                    app:strokeColor="@color/main_500">
+
+                    <ImageView
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        android:src="@color/gray_200"/>
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/change_category_select_5"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/pretendard_regular"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_select_6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="4dp"
+                app:layout_constraintStart_toEndOf="@id/ll_select_5"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/mcv_select_6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp"
+                    app:strokeColor="@color/main_500">
+
+                    <ImageView
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        android:src="@color/gray_200"/>
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/change_category_select_6"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/pretendard_regular"/>
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/mcv_change_category"
-            android:layout_width="match_parent"
-            android:layout_height="51dp"
-            android:layout_marginHorizontal="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:cardBackgroundColor="@color/black"
             app:cardCornerRadius="25dp"
             app:cardElevation="0dp"
@@ -57,6 +267,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="28dp"
+                android:layout_marginVertical="13.5dp"
                 android:layout_gravity="center"
                 android:fontFamily="@font/pretendard_regular"
                 android:text="@string/change_category_change_button"

@@ -6,12 +6,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.databinding.ItemChallengeCompletedBinding
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
-import com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.ongoing.OngoingChallengeAdapter.Companion.CHALLENGE_ENOUGH
-import com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.ongoing.OngoingChallengeAdapter.Companion.CHALLENGE_IMMINENT
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getScreenWidth
 import java.util.*
@@ -48,15 +45,6 @@ class CompletedChallengeAdapter(): RecyclerView.Adapter<CompletedChallengeAdapte
 
     override fun getItemCount() = differ.currentList.size
 
-    override fun getItemViewType(position: Int): Int {
-        val item = differ.currentList[position]
-        val isImminentItem = differ.currentList.all { item.deadline <= it.deadline }
-        return if (isImminentItem)
-            CHALLENGE_IMMINENT
-        else
-            CHALLENGE_ENOUGH
-    }
-
 
     fun setOnItemClickListener(listener: (Challenge) -> Unit) {
         onItemClick = listener
@@ -79,15 +67,11 @@ class CompletedChallengeAdapter(): RecyclerView.Adapter<CompletedChallengeAdapte
 
         fun bind(item: Challenge) {
             binding.run {
+                root.setOnClickListener { onItemClick(item) }
                 root.layoutParams.width = itemSize
 
                 tvChallengeTitle.text = item.title
                 tvNickname.text = item.owner
-
-                val now = Date()
-                val dDay = calculateDDay(now, item.deadline)
-
-                tvDDay.text = binding.root.context.getString(R.string.completed_challenge_d_day_deco) + dDay.toString()
             }
         }
     }

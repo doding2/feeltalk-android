@@ -19,8 +19,8 @@ import androidx.navigation.ui.setupWithNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentMainNavigationBinding
 import com.clonect.feeltalk.new_domain.model.chat.PartnerLastChatDto
-import com.clonect.feeltalk.new_presentation.ui.mainNavigation.answer.showAnswerCancelDialog
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
+import com.clonect.feeltalk.new_presentation.ui.util.showConfirmDialog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -200,7 +200,11 @@ class MainNavigationFragment : Fragment() {
         onBackCallback = object: OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (viewModel.isUserAnswering.value) {
-                    showAnswerCancelDialog {
+                    showConfirmDialog(
+                        title = requireContext().getString(R.string.answer_cancel_title),
+                        body = requireContext().getString(R.string.answer_cancel_body),
+                        confirmButton = requireContext().getString(R.string.answer_cancel_confirm),
+                    ) {
                         viewModel.setShowAnswerSheet(false)
                     }
                     return

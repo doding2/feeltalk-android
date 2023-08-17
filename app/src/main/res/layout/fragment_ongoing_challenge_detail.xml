@@ -8,14 +8,41 @@
     android:animateLayoutChanges="true"
     tools:context=".new_presentation.ui.mainNavigation.addChallenge.AddChallengeFragment">
 
-    <ImageView
-        android:id="@+id/iv_back"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/n_ic_exit"
-        android:background="?selectableItemBackgroundBorderless"
-        android:padding="12dp"
-        android:layout_marginVertical="6dp"/>
+        android:orientation="horizontal"
+        android:layout_marginVertical="6dp">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/n_ic_exit"
+            android:background="?selectableItemBackgroundBorderless"
+            android:padding="12dp"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/iv_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/n_ic_edit_challenge"
+            android:background="?selectableItemBackgroundBorderless"
+            android:padding="12dp"/>
+
+        <ImageView
+            android:id="@+id/iv_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/n_ic_delete_challenge"
+            android:background="?selectableItemBackgroundBorderless"
+            android:padding="12dp"/>
+    </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -28,7 +55,7 @@
             android:scrollbars="none"
             android:nestedScrollingEnabled="true"
             android:fillViewport="true"
-            app:layout_constraintBottom_toTopOf="@id/mcv_add_square"
+            app:layout_constraintBottom_toTopOf="@id/mcv_edit_square"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
@@ -39,21 +66,23 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/tv_detail_title_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginTop="10dp"
-                    android:text="@string/add_challenge_title_1"
+                    android:text="@string/challenge_detail_title_1"
                     android:textSize="24sp"
                     android:textColor="@color/black"
                     android:fontFamily="@font/pretendard_regular"/>
 
                 <TextView
+                    android:id="@+id/tv_detail_title_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginBottom="32dp"
-                    android:text="@string/add_challenge_title_2"
+                    android:text="@string/challenge_detail_title_2"
                     android:textSize="24sp"
                     android:textColor="@color/black"
                     android:fontFamily="@font/pretendard_medium"/>
@@ -235,7 +264,7 @@
                     android:minLines="4"
                     android:inputType="textMultiLine"
                     android:scrollbars="vertical"/>
-                
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="59dp" />
@@ -243,48 +272,71 @@
         </ScrollView>
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/mcv_add_square"
+            android:id="@+id/mcv_edit_square"
             android:layout_width="match_parent"
             android:layout_height="59dp"
             android:visibility="gone"
-            app:cardBackgroundColor="@color/main_500"
+            app:cardBackgroundColor="@color/black"
             app:cardCornerRadius="0dp"
             app:cardElevation="0dp"
-            app:rippleColor="@color/main_600"
             app:layout_constraintBottom_toTopOf="@id/dp_deadline_picker"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
             <TextView
-                android:id="@+id/tv_add_square"
+                android:id="@+id/tv_edit_square"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/add_challenge_button"
+                android:text="@string/challenge_detail_edit"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:fontFamily="@font/pretendard_medium"/>
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/mcv_add_round"
+            android:id="@+id/mcv_edit_round"
+            android:layout_width="match_parent"
+            android:layout_height="59dp"
+            android:visibility="gone"
+            android:layout_marginHorizontal="20dp"
+            app:cardBackgroundColor="@color/black"
+            app:cardCornerRadius="30dp"
+            app:cardElevation="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/tv_edit_round"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/challenge_detail_edit"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:fontFamily="@font/pretendard_medium"/>
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/mcv_complete_round"
             android:layout_width="match_parent"
             android:layout_height="59dp"
             android:layout_marginHorizontal="20dp"
             app:cardBackgroundColor="@color/main_500"
             app:cardCornerRadius="30dp"
             app:cardElevation="0dp"
-            app:rippleColor="@color/main_600"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
             <TextView
-                android:id="@+id/tv_add_round"
+                android:id="@+id/tv_complete_round"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/add_challenge_button"
+                android:text="@string/challenge_detail_complete"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:fontFamily="@font/pretendard_medium"/>

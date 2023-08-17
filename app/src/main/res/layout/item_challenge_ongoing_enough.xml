@@ -7,6 +7,7 @@
     android:layout_margin="7.5dp">
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/mcv_ongoing"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:cardElevation="0dp"
@@ -16,14 +17,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintDimensionRatio="160: 185">
+        app:layout_constraintDimensionRatio="160: 181"
+        app:strokeColor="@color/main_500"
+        app:strokeWidth="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="20dp"
-            android:layout_marginVertical="12dp">
+            android:layout_marginVertical="16dp">
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/mcv_category"
@@ -76,7 +79,8 @@
                 android:id="@+id/tv_challenge_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
                 android:text="챌린지 제목챌린지 제목챌린지 제목챌린지 제목"
                 android:textColor="@color/black"
                 android:textSize="16sp"
@@ -100,15 +104,15 @@
                 android:lines="1"
                 android:ellipsize="end"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/tv_complete"
+                app:layout_constraintBottom_toTopOf="@id/iv_complete"
                 app:layout_constraintVertical_bias="1.0"/>
 
             <ImageView
-                android:id="@+id/tv_complete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/iv_complete"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:layout_gravity="bottom|end"
-                android:src="@drawable/n_ic_challenge_check"
+                android:src="@drawable/n_ic_challenge_check_ongoing"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>

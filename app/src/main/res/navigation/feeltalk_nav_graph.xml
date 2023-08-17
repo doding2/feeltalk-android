@@ -56,6 +56,12 @@
         <action
             android:id="@+id/action_mainNavigationFragment_to_contentsShareFragment"
             app:destination="@id/contentsShareFragment" />
+        <action
+            android:id="@+id/action_mainNavigationFragment_to_ongoingChallengeDetailFragment"
+            app:destination="@id/ongoingChallengeDetailFragment" />
+        <action
+            android:id="@+id/action_mainNavigationFragment_to_completedChallengeDetailFragment"
+            app:destination="@id/completedChallengeDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/agreementPrivacyDetailFragment"
@@ -75,5 +81,16 @@
     <fragment
         android:id="@+id/contentsShareFragment"
         android:name="com.clonect.feeltalk.new_presentation.ui.chatNavigation.contentsShare.ContentsShareFragment"
-        android:label="ContentsShareFragment" />
+        android:label="ContentsShareFragment"
+        tools:layout="@layout/fragment_contents_share"/>
+    <fragment
+        android:id="@+id/ongoingChallengeDetailFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.ongoingChallengeDetail.OngoingChallengeDetailFragment"
+        android:label="OngoingChallengeDetailFragment"
+        tools:layout="@layout/fragment_ongoing_challenge_detail" />
+    <fragment
+        android:id="@+id/completedChallengeDetailFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.completedChallengeDetail.CompletedChallengeDetailFragment"
+        android:label="CompletedChallengeDetailFragment"
+        tools:layout="@layout/fragment_completed_challenge_detail"/>
 </navigation>

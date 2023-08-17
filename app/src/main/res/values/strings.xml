@@ -3,6 +3,48 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="white_space">&#160;</string>
 
+
+    <!--  Dialog  -->
+    <string name="dialog_title">제목</string>
+    <string name="dialog_body">내용</string>
+    <string name="dialog_cancel">취소</string>
+    <string name="dialog_confirm">확인</string>
+
+    <!--  AnswerConfirm  -->
+    <string name="answer_confirm_title">답변을 보내시겠어요?</string>
+    <string name="answer_confirm_body">작성한 답변을 상대방에게 보낼게요.\n보낸 후에는 답변을 수정할 수 없어요.</string>
+    <string name="answer_confirm_confirm">보내기</string>
+
+    <!--  AnswerCancel  -->
+    <string name="answer_cancel_title">답변 작성을 그만두시겠어요?</string>
+    <string name="answer_cancel_body">현재 작성된 내용은 삭제돼요.</string>
+    <string name="answer_cancel_confirm">나가기</string>
+
+
+    <!--  ChallengeAddCancel  -->
+    <string name="challenge_add_cancel_title">챌린지 등록을 그만두시겠어요?</string>
+    <string name="challenge_add_cancel_body">현재 작성한 내용은 삭제돼요.</string>
+    <string name="challenge_add_cancel_cancel">계속하기</string>
+    <string name="challenge_add_cancel_confirm">삭제하기</string>
+
+    <!--  ChallengeEditCancel  -->
+    <string name="challenge_edit_cancel_title">챌린지 수정을 그만두시겠어요?</string>
+    <string name="challenge_edit_cancel_body">현재 수정한 내용은 저장되지 않아요.</string>
+    <string name="challenge_edit_cancel_cancel">계속하기</string>
+    <string name="challenge_edit_cancel_confirm">나가기</string>
+
+    <!--  DeleteChallenge  -->
+    <string name="delete_challenge_title">챌린지를 삭제하시겠어요?</string>
+    <string name="delete_challenge_body">삭제한 챌린지는 복구할 수 없어요.</string>
+    <string name="delete_challenge_cancel">유지하기</string>
+    <string name="delete_challenge_confirm">삭제하기</string>
+
+    <!--  CompleteChallenge  -->
+    <string name="complete_challenge_title">챌린지를 완료하셨나요?</string>
+    <string name="complete_challenge_cancel">아니요</string>
+    <string name="complete_challenge_confirm">네!</string>
+
+
     <!--  Notification  -->
     <string name="notification_read">읽음</string>
     <string name="notification_reply">답장</string>
@@ -109,18 +151,6 @@
     <string name="answer_poke_partner_snack_bar">상대방을 쿡 찔렀어요  👉</string>
     <string name="answer_done_snack_bar">님에게 답변을 전송했어요!</string>
 
-    <!--  AnswerConfirm  -->
-    <string name="answer_confirm_title">답변을 보내시겠어요?</string>
-    <string name="answer_confirm_message">작성한 답변을 상대방에게 보낼게요.\n보낸 후에는 답변을 수정할 수 없어요.</string>
-    <string name="answer_confirm_cancel">취소</string>
-    <string name="answer_confirm_confirm">보내기</string>
-
-    <!--  AnswerCancel  -->
-    <string name="answer_cancel_title">답변 작성을 그만두시겠어요?</string>
-    <string name="answer_cancel_message">현재 작성된 내용은 삭제돼요.</string>
-    <string name="answer_cancel_cancel">취소</string>
-    <string name="answer_cancel_confirm">나가기</string>
-
 
     <!--  Challenge  -->
     <string name="challenge_title">섹스챌린지</string>
@@ -136,25 +166,38 @@
     <!--  Completed  -->
     <string name="completed_challenge_d_day_deco">D+</string>
 
-    <!--  Add Challenge  -->
+    <!--  AddChallenge  -->
     <string name="add_challenge_title_1">자기야💋</string>
     <string name="add_challenge_title_2">우리 어떤 걸 해볼까?</string>
+    <string name="add_challenge_title">챌린지명</string>
+    <string name="add_challenge_d_day_today">D-Day</string>
+    <string name="add_challenge_d_day_deco">D-</string>
+    <string name="add_challenge_deadline">챌린지 마감일</string>
+    <string name="add_challenge_content">챌린지 내용</string>
     <string name="add_challenge_title_hint">챌린지 이름을 적어주세요 !</string>
-    <string name="add_challenge_body_hint">내용을 자세히 적어보세요 ! (선택)</string>
-    <string name="add_challenge_button">추가하기</string>
+    <string name="add_challenge_body_hint">내용을 자세히 적어보세요 !</string>
+    <string name="add_challenge_button">챌린지 추가</string>
 
-    <!--  Change Category  -->
+    <!--  ChangeCategory  -->
     <string name="change_category_title">카테고리</string>
-    <string name="change_category_change_button">확인</string>
-    <string name="change_category_select_1">일</string>
-    <string name="change_category_select_2">이</string>
-    <string name="change_category_select_3">삼</string>
-    <string name="change_category_select_4">사</string>
-    <string name="change_category_select_5">오</string>
-    <string name="change_category_select_6">육</string>
-    <string name="change_category_select_7">칠</string>
-    <string name="change_category_select_8">팔</string>
+    <string name="change_category_change_button">선택완료</string>
+    <string name="change_category_select_1">장소</string>
+    <string name="change_category_select_2">기구</string>
+    <string name="change_category_select_3">포즈</string>
+    <string name="change_category_select_4">코스튬</string>
+    <string name="change_category_select_5">채찍</string>
+    <string name="change_category_select_6">수갑</string>
+    <string name="change_category_select_7">영상통화</string>
+    <string name="change_category_select_8">야동</string>
 
+    <!--  OngoingChallengeDetail  -->
+    <string name="challenge_detail_title_1">자기랑</string>
+    <string name="challenge_detail_title_2">꼭 해보고 싶어🔥</string>
+    <string name="challenge_detail_complete">챌린지 완료</string>
+    <string name="challenge_detail_edit">챌린지 수정</string>
+
+    <!--  CompletedChallengeDetail  -->
+    <string name="challenge_detail_completed">이미 완료된 챌린지예요</string>
 
     <!--  Chat  -->
     <string name="chat_read" />

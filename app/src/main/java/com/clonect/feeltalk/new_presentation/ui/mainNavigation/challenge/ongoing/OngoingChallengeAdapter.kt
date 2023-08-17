@@ -2,15 +2,14 @@ package com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.ongoin
 
 import android.app.Activity
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
+import com.clonect.feeltalk.common.plusDayBy
 import com.clonect.feeltalk.databinding.ItemChallengeOngoingEnoughBinding
-import com.clonect.feeltalk.databinding.ItemChallengeOngoingImminentBinding
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getScreenWidth
@@ -19,11 +18,6 @@ import kotlin.math.absoluteValue
 import kotlin.math.ceil
 
 class OngoingChallengeAdapter(): RecyclerView.Adapter<OngoingChallengeAdapter.OngoingChallengeViewHolder>() {
-
-    companion object {
-        const val CHALLENGE_IMMINENT = 0
-        const val CHALLENGE_ENOUGH = 1
-    }
 
     private val callback = object: DiffUtil.ItemCallback<Challenge>() {
         override fun areItemsTheSame(oldItem: Challenge, newItem: Challenge): Boolean {
@@ -38,18 +32,14 @@ class OngoingChallengeAdapter(): RecyclerView.Adapter<OngoingChallengeAdapter.On
     val differ = AsyncListDiffer(this, callback)
 
     private var onItemClick: ((Challenge) -> Unit) = {}
+    private var onCompleteChallenge: (Challenge) -> Unit = {}
     private var enoughItemSize: Int = 0
     private var imminentItemSize: Int = 0
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OngoingChallengeViewHolder {
-        return if (viewType == CHALLENGE_IMMINENT) {
-            val binding = ItemChallengeOngoingImminentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            ImminentOngoingChallengeViewHolder((binding))
-        } else {
-            val binding = ItemChallengeOngoingEnoughBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            EnoughOngoingChallengeViewHolder((binding))
-        }
+        val binding = ItemChallengeOngoingEnoughBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return OngoingChallengeViewHolder((binding))
     }
 
     override fun onBindViewHolder(holder: OngoingChallengeViewHolder, position: Int) {
@@ -59,19 +49,15 @@ class OngoingChallengeAdapter(): RecyclerView.Adapter<OngoingChallengeAdapter.On
 
     override fun getItemCount() = differ.currentList.size
 
-    override fun getItemViewType(position: Int): Int {
-        val item = differ.currentList[position]
-        val isImminentItem = differ.currentList.all { item.deadline <= it.deadline }
-        return if (isImminentItem)
-            CHALLENGE_IMMINENT
-        else
-            CHALLENGE_ENOUGH
-    }
-
 
     fun setOnItemClickListener(listener: (Challenge) -> Unit) {
         onItemClick = listener
     }
+
+    fun setOnCompleteChallengeListener(listener: (Challenge) -> Unit) {
+        onCompleteChallenge = listener
+    }
+
 
     fun calculateDDay(from: Date, target: Date): Int {
         return ceil(((from.time - target.time).toDouble() / Constants.ONE_DAY).absoluteValue).toInt()
@@ -86,32 +72,22 @@ class OngoingChallengeAdapter(): RecyclerView.Adapter<OngoingChallengeAdapter.On
     }
 
 
-    inner class ImminentOngoingChallengeViewHolder(
-        val binding: ItemChallengeOngoingImminentBinding
-    ): OngoingChallengeViewHolder(binding.root) {
-
-        override fun bind(item: Challenge) {
-            binding.run {
-                root.layoutParams.width = imminentItemSize
-
-                tvChallengeTitle.text = item.title
-                tvNickname.text = item.owner
-
-                val now = Date()
-                val dDay = calculateDDay(now, item.deadline)
-
-                tvDDay.text = binding.root.context.getString(R.string.ongoing_challenge_d_day_deco) + dDay.toString()
-            }
-        }
-    }
-
-    inner class EnoughOngoingChallengeViewHolder(
+    inner class OngoingChallengeViewHolder(
         val binding: ItemChallengeOngoingEnoughBinding
-    ): OngoingChallengeViewHolder(binding.root) {
+    ): RecyclerView.ViewHolder(binding.root) {
 
-        override fun bind(item: Challenge) {
+        fun bind(item: Challenge) {
             binding.run {
+                root.setOnClickListener { onItemClick(item) }
+                ivComplete.setOnClickListener { onCompleteChallenge(item) }
+
                 root.layoutParams.width = enoughItemSize
+                val strokeWidth = if (item.deadline <= Date().plusDayBy(7)) {
+                    root.context.dpToPx(2f).toInt()
+                } else {
+                    0
+                }
+                mcvOngoing.strokeWidth = strokeWidth
 
                 tvChallengeTitle.text = item.title
                 tvNickname.text = item.owner
@@ -122,9 +98,5 @@ class OngoingChallengeAdapter(): RecyclerView.Adapter<OngoingChallengeAdapter.On
                 tvDDay.text = binding.root.context.getString(R.string.ongoing_challenge_d_day_deco) + dDay.toString()
             }
         }
-    }
-
-    abstract class OngoingChallengeViewHolder(root: View): RecyclerView.ViewHolder(root)  {
-        abstract fun bind(item: Challenge)
     }
 }

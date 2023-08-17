@@ -4,11 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentCompletedBinding
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.ChallengeViewModel
@@ -46,9 +49,17 @@ class CompletedFragment : Fragment() {
         binding.rvCompletedChallenge.smoothScrollToPosition(0)
     }
 
-    // TODO
     private fun onItemClick(item: Challenge) {
+        navigateToDetail(item)
+    }
 
+    private fun navigateToDetail(item: Challenge) {
+        val bundle = bundleOf("challenge" to item)
+        requireParentFragment()
+            .requireParentFragment()
+            .requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_mainNavigationFragment_to_completedChallengeDetailFragment, bundle)
     }
 
     private fun initRecyclerView() = binding.run {

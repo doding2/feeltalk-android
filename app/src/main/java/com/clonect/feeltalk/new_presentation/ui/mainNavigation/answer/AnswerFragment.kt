@@ -28,6 +28,7 @@ import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
 import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
+import com.clonect.feeltalk.new_presentation.ui.util.showConfirmDialog
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -66,7 +67,11 @@ class AnswerFragment : Fragment() {
         binding.run {
             ivDismissDialog.setOnClickListener {
                 if (navViewModel.isUserAnswering.value) {
-                    showAnswerCancelDialog {
+                    showConfirmDialog(
+                        title = requireContext().getString(R.string.answer_cancel_title),
+                        body = requireContext().getString(R.string.answer_cancel_body),
+                        confirmButton = requireContext().getString(R.string.answer_cancel_confirm),
+                    ) {
                         navViewModel.setShowAnswerSheet(false)
                     }
                 } else {
@@ -94,7 +99,12 @@ class AnswerFragment : Fragment() {
     }
 
     private fun answerQuestion() {
-        showAnswerConfirmDialog {
+
+        showConfirmDialog(
+            title = requireContext().getString(R.string.answer_confirm_title),
+            body = requireContext().getString(R.string.answer_confirm_body),
+            confirmButton = requireContext().getString(R.string.answer_confirm_confirm),
+        ) {
             viewModel.answerQuestion(requireContext()) {
                 showChatBottomSheet()
             }
