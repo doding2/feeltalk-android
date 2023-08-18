@@ -49,7 +49,7 @@ class QuestionRepositoryImpl(
     override fun getPagingQuestion(): Flow<PagingData<Question>> {
         return Pager(
             PagingConfig(
-                pageSize = Constants.CHAT_PAGE_SIZE,
+                pageSize = Constants.QUESTION_PAGE_SIZE,
                 enablePlaceholders = false
             )
         ) {

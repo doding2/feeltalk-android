@@ -8,7 +8,7 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.usecase.question.AnswerQuestionUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.PressForAnswerUseCase
-import com.clonect.feeltalk.new_presentation.notification.notificationObserver.QuestionAnswerObserver
+import com.clonect.feeltalk.new_presentation.notification.observer.QuestionAnswerObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job

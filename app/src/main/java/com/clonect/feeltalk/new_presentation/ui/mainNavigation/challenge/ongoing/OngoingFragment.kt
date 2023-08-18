@@ -27,7 +27,8 @@ import javax.inject.Inject
 class OngoingFragment : Fragment() {
 
     private lateinit var binding: FragmentOngoingBinding
-    private val viewModel: ChallengeViewModel by viewModels(ownerProducer = { requireParentFragment() })
+    private val challengeViewModel: ChallengeViewModel by viewModels(ownerProducer = { requireParentFragment() })
+    private val ongoingViewModel: OngoingChallengeViewModel by viewModels()
     @Inject
     lateinit var adapter: OngoingChallengeAdapter
 
@@ -89,20 +90,19 @@ class OngoingFragment : Fragment() {
     }
 
 
-    private fun changeAdapter(fullList: List<Challenge>) {
-        val filtered = fullList.filter { !it.isCompleted }
-        adapter.differ.submitList(filtered)
-    }
-
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch {
-                viewModel.ongoingFragmentScrollToTop.collectLatest {
+                challengeViewModel.ongoingFragmentScrollToTop.collectLatest {
                     if (it) scrollToTop()
                 }
             }
 
-            launch { viewModel.challenges.collectLatest(::changeAdapter) }
+            launch {
+                ongoingViewModel.pagingOngoingChallenge.collectLatest {
+                    adapter.submitData(it)
+                }
+            }
         }
     }
 }

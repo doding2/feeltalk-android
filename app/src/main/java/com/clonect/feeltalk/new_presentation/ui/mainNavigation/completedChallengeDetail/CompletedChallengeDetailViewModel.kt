@@ -1,18 +1,28 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.completedChallengeDetail
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.challenge.ChallengeCategory
+import com.clonect.feeltalk.new_domain.usecase.challenge.DeleteChallengeUseCase
+import com.clonect.feeltalk.new_presentation.notification.observer.DeleteCompletedChallengeObserver
+import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class CompletedChallengeDetailViewModel @Inject constructor(
-
+    private val deleteChallengeUseCase: DeleteChallengeUseCase
 ): ViewModel() {
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
 
     private val _challenge = MutableStateFlow<Challenge?>(null)
     val challenge = _challenge.asStateFlow()
@@ -59,7 +69,25 @@ class CompletedChallengeDetailViewModel @Inject constructor(
 
 
 
-    fun deleteChallenge() {
-
+    fun deleteChallenge(onSuccess: () -> Unit) = viewModelScope.launch {
+        _isLoading.value = true
+        val index = _challenge.value?.index ?: run {
+            _isLoading.value = false
+            return@launch
+        }
+        when (val result = deleteChallengeUseCase(index)) {
+            is Resource.Success -> {
+                DeleteCompletedChallengeObserver
+                    .getInstance()
+                    .setChallenge(
+                        challenge.value
+                    )
+                onSuccess()
+            }
+            is Resource.Error -> {
+                infoLog("Fail to delete completed challenge: ${result.throwable.localizedMessage}")
+            }
+        }
+        _isLoading.value = false
     }
 }

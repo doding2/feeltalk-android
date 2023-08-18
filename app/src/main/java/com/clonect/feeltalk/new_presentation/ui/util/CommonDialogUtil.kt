@@ -8,6 +8,18 @@ import androidx.fragment.app.Fragment
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.DialogConfirmBinding
 
+fun Fragment.makeLoadingDialog(onDismiss: () -> Unit = {}): Dialog {
+    val dialog = Dialog(requireContext()).apply {
+        setContentView(R.layout.dialog_loading)
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    }
+
+    dialog.setCancelable(false)
+    dialog.setOnDismissListener { onDismiss() }
+
+    return dialog
+}
+
 fun Fragment.showConfirmDialog(
     title: String,
     body: String?,

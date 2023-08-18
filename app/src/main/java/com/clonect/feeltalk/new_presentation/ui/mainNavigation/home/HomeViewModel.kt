@@ -7,8 +7,8 @@ import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.model.signal.Signal
 import com.clonect.feeltalk.new_domain.usecase.question.ChangeTodayQuestionCacheUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetTodayQuestionUseCase
-import com.clonect.feeltalk.new_presentation.notification.notificationObserver.QuestionAnswerObserver
-import com.clonect.feeltalk.new_presentation.notification.notificationObserver.TodayQuestionObserver
+import com.clonect.feeltalk.new_presentation.notification.observer.QuestionAnswerObserver
+import com.clonect.feeltalk.new_presentation.notification.observer.TodayQuestionObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

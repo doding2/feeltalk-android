@@ -19,7 +19,7 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentChallengeBinding
 import com.clonect.feeltalk.databinding.TabItemCompletedBinding
 import com.clonect.feeltalk.databinding.TabItemOngoingBinding
-import com.clonect.feeltalk.new_domain.model.challenge.Challenge
+import com.clonect.feeltalk.new_domain.model.challenge.ChallengeCountDto
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
 import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
@@ -130,7 +130,7 @@ class ChallengeFragment : Fragment() {
     private fun TabLayout.Tab.enableOngoingTabView(enabled: Boolean) {
         val tabBinding = TabItemOngoingBinding.bind(customView ?: return)
         tabBinding.run {
-            tvCount.text = viewModel.challenges.value.count { !it.isCompleted }.toString()
+            tvCount.text = viewModel.challengeCount.value.ongoingCount.toString()
 
             if (enabled) {
                 tvBody.setTextColor(requireContext().getColor(R.color.black))
@@ -147,7 +147,7 @@ class ChallengeFragment : Fragment() {
     private fun TabLayout.Tab.enableCompletedTabView(enabled: Boolean) {
         val tabBinding = TabItemCompletedBinding.bind(customView ?: return)
         tabBinding.run {
-            tvCount.text = viewModel.challenges.value.count { it.isCompleted }.toString()
+            tvCount.text = viewModel.challengeCount.value.completedCount.toString()
 
             if (enabled) {
                 tvBody.setTextColor(requireContext().getColor(R.color.black))
@@ -173,11 +173,19 @@ class ChallengeFragment : Fragment() {
 
 
 
-    private fun changeChallengeViews(list: List<Challenge>) = binding.run {
-        changeCountTitleText(list.size)
+    private fun changeChallengeCountViews(count: ChallengeCountDto) = binding.run {
+        changeCountTitleText(count.totalCount)
+        tbChallengeTabs.getTabAt(0)?.let {
+            val tabBinding = TabItemOngoingBinding.bind(it.customView ?: return@let)
+            tabBinding.tvCount.text = viewModel.challengeCount.value.ongoingCount.toString()
+        }
+        tbChallengeTabs.getTabAt(1)?.let {
+            val tabBinding = TabItemCompletedBinding.bind(it.customView ?: return@let)
+            tabBinding.tvCount.text = viewModel.challengeCount.value.completedCount.toString()
+        }
     }
 
-    private fun changeCountTitleText(count: Int) {
+    private fun changeCountTitleText(count: Long) {
         val text = count.toString() + requireContext().getString(R.string.challenge_count_title_deco)
         val span = SpannableStringBuilder(text).apply {
             setSpan(ForegroundColorSpan(requireContext().getColor(R.color.main_500)), 0, count.toString().length + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
@@ -188,7 +196,7 @@ class ChallengeFragment : Fragment() {
 
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-            launch { viewModel.challenges.collectLatest(::changeChallengeViews) }
+            launch { viewModel.challengeCount.collectLatest(::changeChallengeCountViews) }
         }
     }
 }

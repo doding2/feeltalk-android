@@ -4,7 +4,7 @@ import com.clonect.feeltalk.new_data.api.ClonectService
 import com.clonect.feeltalk.data.repository.question.datasource.QuestionRemoteDataSource2
 import com.clonect.feeltalk.domain.model.dto.question.*
 import com.google.gson.JsonObject
-import retrofit2.HttpException
+import com.clonect.feeltalk.common.FeelTalkException.ServerIsDownException
 import retrofit2.Response
 
 class QuestionRemoteDataSource2Impl(
@@ -15,7 +15,7 @@ class QuestionRemoteDataSource2Impl(
         val body = JsonObject()
         body.addProperty("accessToken", accessToken)
         val response = clonectService.getTodayQuestion(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -31,14 +31,14 @@ class QuestionRemoteDataSource2Impl(
             addProperty("answer", answer)
         }
         val response = clonectService.sendQuestionAnswer(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
 
     override suspend fun getQuestionList(accessToken: String): Response<QuestionListDto2> {
         val response = clonectService.getChattingRoomList(accessToken)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -48,7 +48,7 @@ class QuestionRemoteDataSource2Impl(
             addProperty("accessToken", accessToken)
         }
         val response = clonectService.getTodayQuestionAnswers(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -62,7 +62,7 @@ class QuestionRemoteDataSource2Impl(
             addProperty("title", question)
         }
         val response = clonectService.getQuestionAnswers(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -76,7 +76,7 @@ class QuestionRemoteDataSource2Impl(
             addProperty("title", question)
         }
         val response = clonectService.getQuestionDetail(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }

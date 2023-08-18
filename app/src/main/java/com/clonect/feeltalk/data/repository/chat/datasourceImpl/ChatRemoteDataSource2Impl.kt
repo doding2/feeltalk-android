@@ -6,7 +6,7 @@ import com.clonect.feeltalk.domain.model.dto.chat.ChatListItemDto2
 import com.clonect.feeltalk.domain.model.dto.chat.SendChatDto2
 import com.clonect.feeltalk.new_data.api.ClonectService
 import com.google.gson.JsonObject
-import retrofit2.HttpException
+import com.clonect.feeltalk.common.FeelTalkException.ServerIsDownException
 import retrofit2.Response
 
 class ChatRemoteDataSource2Impl(
@@ -19,7 +19,7 @@ class ChatRemoteDataSource2Impl(
             addProperty("question", questionContent)
         }
         val response = clonectService.getChatList(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -31,7 +31,7 @@ class ChatRemoteDataSource2Impl(
             addProperty("message", chat2.message)
         }
         val response = clonectService.sendChat(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }

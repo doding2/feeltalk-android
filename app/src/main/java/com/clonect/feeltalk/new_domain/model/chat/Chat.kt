@@ -173,7 +173,7 @@ data class ChallengeChat(
     override var isRead: Boolean,
     override val createAt: String,
     override var isSending: Boolean = false,
-    val challenge: ChatChallengeDto
+    val challenge: Long
 ): Chat(index, pageNo, ChatType.ChallengeChatting, chatSender, isRead, createAt, isSending)
 
 data class QuestionChat(
@@ -183,5 +183,5 @@ data class QuestionChat(
     override var isRead: Boolean,
     override val createAt: String,
     override var isSending: Boolean = false,
-    val question: ChatQuestionDto
+    val question: Long
 ): Chat(index, pageNo, ChatType.QuestionChatting, chatSender, isRead, createAt, isSending)

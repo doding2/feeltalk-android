@@ -8,8 +8,8 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.usecase.chat.ChangeChatRoomStateUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.SendTextChatUseCase
-import com.clonect.feeltalk.new_presentation.notification.notificationObserver.MyChatRoomStateObserver
-import com.clonect.feeltalk.new_presentation.notification.notificationObserver.NewChatObserver
+import com.clonect.feeltalk.new_presentation.notification.observer.MyChatRoomStateObserver
+import com.clonect.feeltalk.new_presentation.notification.observer.NewChatObserver
 import com.clonect.feeltalk.new_presentation.ui.util.toBytesInt
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.AndroidEntryPoint

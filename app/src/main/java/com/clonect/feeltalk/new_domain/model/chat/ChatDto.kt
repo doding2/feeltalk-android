@@ -8,8 +8,8 @@ data class ChatDto(
     val mine: Boolean,
     val createAt: String,
     val message: String?,
-    val coupleChallenge: ChatChallengeDto?,
-    val coupleQuestion: ChatQuestionDto?,
+    val coupleChallenge: Long?,
+    val coupleQuestion: Long?,
     val emoji: String?,
     val url: String?,
 ): java.io.Serializable

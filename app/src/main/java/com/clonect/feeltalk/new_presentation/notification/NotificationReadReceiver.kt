@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.usecase.chat.ChangeChatRoomStateUseCase
-import com.clonect.feeltalk.new_presentation.notification.notificationObserver.MyChatRoomStateObserver
+import com.clonect.feeltalk.new_presentation.notification.observer.MyChatRoomStateObserver
 import com.clonect.feeltalk.new_presentation.ui.util.toBytesInt
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.AndroidEntryPoint

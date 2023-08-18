@@ -27,20 +27,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
 
-
-fun Fragment.makeLoadingDialog(onDismiss: () -> Unit = {}): Dialog {
-    val dialog = Dialog(requireContext()).apply {
-        setContentView(R.layout.dialog_loading)
-        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-    }
-
-    dialog.setCancelable(false)
-    dialog.setOnDismissListener { onDismiss() }
-
-    return dialog
-}
-
-
 fun Context.showAlertDialog(
     title: String,
     message: String,

@@ -8,7 +8,7 @@ import com.clonect.feeltalk.domain.model.dto.common.StatusDto
 import com.clonect.feeltalk.domain.model.dto.user.*
 import com.google.gson.JsonObject
 import okhttp3.MultipartBody
-import retrofit2.HttpException
+import com.clonect.feeltalk.common.FeelTalkException.ServerIsDownException
 import retrofit2.Response
 
 class UserRemoteDataSourceImpl(
@@ -17,14 +17,14 @@ class UserRemoteDataSourceImpl(
 
     override suspend fun getUserInfo(accessToken: String): Response<UserInfoDto> {
         val response = clonectService.getUserInfo(accessToken)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
 
     override suspend fun getPartnerInfo(accessToken: String): Response<AccessTokenDto> {
         val response = clonectService.getPartnerInfo(accessToken)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -34,7 +34,7 @@ class UserRemoteDataSourceImpl(
             addProperty("accessToken", accessToken)
         }
         val response = clonectService.breakUpCouple(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -44,7 +44,7 @@ class UserRemoteDataSourceImpl(
             addProperty("accessToken", accessToken)
         }
         val response = clonectService.requestChangingPartnerEmotion(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -56,14 +56,14 @@ class UserRemoteDataSourceImpl(
             image = MultipartBody.Part.createFormData("image", "profile_image", bitmapRequestBody),
             accessToken = MultipartBody.Part.createFormData("accessToken", accessToken)
         )
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
 
     override suspend fun getUserProfileUrl(accessToken: String): Response<ProfileImageUrlDto> {
         val response = clonectService.getUserProfileUrl(accessToken)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -77,7 +77,7 @@ class UserRemoteDataSourceImpl(
             addProperty("nickName", nickname)
         }
         val response = clonectService.updateNickname(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -88,7 +88,7 @@ class UserRemoteDataSourceImpl(
             addProperty("birth", birth)
         }
         val response = clonectService.updateBirth(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -102,7 +102,7 @@ class UserRemoteDataSourceImpl(
             addProperty("createAt", coupleAnniversary)
         }
         val response = clonectService.updateCoupleAnniversary(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -110,7 +110,7 @@ class UserRemoteDataSourceImpl(
 
     override suspend fun getCoupleAnniversary(accessToken: String): Response<DDayDto> {
         val response = clonectService.getDDay(accessToken)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -118,14 +118,14 @@ class UserRemoteDataSourceImpl(
 
     override suspend fun checkUserIsCouple(accessToken: String): Response<CoupleCheckDto> {
         val response =  clonectService.checkUserIsCouple(accessToken)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
 
     override suspend fun checkUserInfoIsEntered(accessToken: String): Response<JsonObject> {
         val response = clonectService.checkUserInfoIsEntered(accessToken)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -147,7 +147,7 @@ class UserRemoteDataSourceImpl(
             addProperty("coupleDay", anniversary)
         }
         val response = clonectService.updateUserInfo(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -158,7 +158,7 @@ class UserRemoteDataSourceImpl(
             addProperty("emotion", emotion)
         }
         val response = clonectService.updateMyEmotion(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -168,7 +168,7 @@ class UserRemoteDataSourceImpl(
             addProperty("accessToken", accessToken)
         }
         val response = clonectService.getCoupleRegistrationCode(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -183,7 +183,7 @@ class UserRemoteDataSourceImpl(
             addProperty("coupleCode", partnerCode)
         }
         val response = clonectService.sendPartnerCoupleRegistrationCode(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -197,7 +197,7 @@ class UserRemoteDataSourceImpl(
             addProperty("fcmToken", fcmToken)
         }
         val response = clonectService.updateFcmToken2(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -214,7 +214,7 @@ class UserRemoteDataSourceImpl(
             addProperty("fcmToken", fcmToken)
         }
         val response = clonectService.signUpWithGoogle(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -224,7 +224,7 @@ class UserRemoteDataSourceImpl(
             addProperty("accessToken", accessToken)
         }
         val response = clonectService.autoLogIn(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -234,7 +234,7 @@ class UserRemoteDataSourceImpl(
             addProperty("idToken", idToken)
         }
         val response = clonectService.autoLogInWithGoogle(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -249,7 +249,7 @@ class UserRemoteDataSourceImpl(
             addProperty("fcmToken", fcmToken)
         }
         val response = clonectService.signUpWithKakao(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -259,7 +259,7 @@ class UserRemoteDataSourceImpl(
             addProperty("accessToken", accessToken)
         }
         val response = clonectService.autoLogInWithKakao(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -274,7 +274,7 @@ class UserRemoteDataSourceImpl(
             addProperty("fcmToken", fcmToken)
         }
         val response = clonectService.signUpWithNaver(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -284,7 +284,7 @@ class UserRemoteDataSourceImpl(
             addProperty("accessToken", accessToken)
         }
         val response = clonectService.autoLogInWithNaver(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -295,7 +295,7 @@ class UserRemoteDataSourceImpl(
             addProperty("fcmToken", fcmToken)
         }
         val response = clonectService.signUpWithApple(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
@@ -305,21 +305,21 @@ class UserRemoteDataSourceImpl(
             addProperty("accessToken", accessToken)
         }
         val response = clonectService.autoLogInWithApple(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
 
     override suspend fun getAppleAccessToken(uuid: String): Response<AccessTokenDto> {
         val response = clonectService.getAppleAccessToken(uuid)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }
 
     override suspend fun leaveFeeltalk(accessToken: String): Response<StatusCodeDto> {
         val response = clonectService.leaveFeeltalk(accessToken)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response
     }

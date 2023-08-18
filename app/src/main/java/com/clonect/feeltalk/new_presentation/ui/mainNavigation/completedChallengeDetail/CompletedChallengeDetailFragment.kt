@@ -20,10 +20,7 @@ import com.clonect.feeltalk.databinding.FragmentCompletedChallengeDetailBinding
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.challenge.ChallengeCategory
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.addChallenge.showChangeCategoryDialog
-import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
-import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
-import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
-import com.clonect.feeltalk.new_presentation.ui.util.showConfirmDialog
+import com.clonect.feeltalk.new_presentation.ui.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -36,6 +33,7 @@ class CompletedChallengeDetailFragment : Fragment() {
     private lateinit var binding: FragmentCompletedChallengeDetailBinding
     private val viewModel: CompletedChallengeDetailViewModel by viewModels()
     private lateinit var onBackCallback: OnBackPressedCallback
+    private val loadingDialog by lazy { makeLoadingDialog() }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -106,7 +104,9 @@ class CompletedChallengeDetailFragment : Fragment() {
             cancelButton = requireContext().getString(R.string.delete_challenge_cancel),
             confirmButton = requireContext().getString(R.string.delete_challenge_confirm),
             onConfirm = {
-                viewModel.deleteChallenge()
+                viewModel.deleteChallenge {
+                    findNavController().popBackStack()
+                }
             }
         )
     }
@@ -190,8 +190,17 @@ class CompletedChallengeDetailFragment : Fragment() {
         }
     }
 
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            loadingDialog.show()
+        } else {
+            loadingDialog.dismiss()
+        }
+    }
+
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch { viewModel.isLoading.collectLatest(::showLoading) }
             launch { viewModel.category.collectLatest(::changeCategoryView) }
             launch { viewModel.deadline.collectLatest(::changeDeadlineView) }
         }

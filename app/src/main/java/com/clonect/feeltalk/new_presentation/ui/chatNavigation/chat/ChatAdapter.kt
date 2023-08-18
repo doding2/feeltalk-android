@@ -72,6 +72,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 voiceViewHolders.add(holder)
                 holder
             }
+            // TODO
             else -> {
                 val binding = ItemChatDividerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 ChatDividerViewHolder(binding)
@@ -122,14 +123,16 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
             }
             ChatType.QuestionChatting -> {
                 val chat = item as? QuestionChat
-                    ?: return TYPE_DIVIDER
-                if (chat.question.selfAnswer == null || chat.question.partnerAnswer == null) {
-                    if (item.chatSender == myNickname) TYPE_QUESTION_EMPTY_ANSWER_MINE
-                    else TYPE_QUESTION_EMPTY_ANSWER_PARTNER
-                } else {
-                    if (item.chatSender == myNickname) TYPE_QUESTION_MINE
-                    else TYPE_QUESTION_PARTNER
-                }
+                    ?: return TYPE_QUESTION_MINE
+                // TODO
+                return TYPE_QUESTION_MINE
+//                if (chat.question.selfAnswer == null || chat.question.partnerAnswer == null) {
+//                    if (item.chatSender == myNickname) TYPE_QUESTION_EMPTY_ANSWER_MINE
+//                    else TYPE_QUESTION_EMPTY_ANSWER_PARTNER
+//                } else {
+//                    if (item.chatSender == myNickname) TYPE_QUESTION_MINE
+//                    else TYPE_QUESTION_PARTNER
+//                }
             }
             else -> TYPE_DIVIDER
         }
@@ -243,7 +246,13 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
     ): ChatViewHolder(binding.root) {
 
         override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
-            val chat = item as DividerChat
+            val chat = item as? DividerChat
+            if (chat == null) {
+                binding.root.visibility = View.GONE
+                return
+            } else {
+                binding.root.visibility = View.VISIBLE
+            }
             val itemFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val dividerFormat = SimpleDateFormat("yyyy년 M월 d일", Locale.getDefault())
             val date = itemFormat.parse(chat.createAt)
@@ -1090,10 +1099,10 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 )
                 tvTime.text = getFormatted(chat.createAt)
 
-                tvQuestionHeader.text = root.context.getString(R.string.question_chat_header_deco) + chat.question.title
-                tvQuestionBody.text = chat.question.title
-                tvMyAnswer.text = chat.question.selfAnswer
-                tvPartnerAnswer.text = chat.question.partnerAnswer
+//                tvQuestionHeader.text = root.context.getString(R.string.question_chat_header_deco) + chat.question.title
+//                tvQuestionBody.text = chat.question.title
+//                tvMyAnswer.text = chat.question.selfAnswer
+//                tvPartnerAnswer.text = chat.question.partnerAnswer
 
                 val questionFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
 

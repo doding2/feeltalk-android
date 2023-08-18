@@ -21,6 +21,12 @@ import com.clonect.feeltalk.data.utils.MessageEncryptHelper
 import com.clonect.feeltalk.data.utils.UserLevelEncryptHelper
 import com.clonect.feeltalk.domain.repository.*
 import com.clonect.feeltalk.new_data.api.ClonectService
+import com.clonect.feeltalk.new_data.repository.challenge.ChallengeRepositoryImpl
+import com.clonect.feeltalk.new_data.repository.challenge.dataSource.ChallengeCacheDataSource
+import com.clonect.feeltalk.new_data.repository.challenge.dataSource.ChallengeLocalDataSource
+import com.clonect.feeltalk.new_data.repository.challenge.dataSource.ChallengeRemoteDataSource
+import com.clonect.feeltalk.new_data.repository.challenge.paging.CompletedChallengePagingSource
+import com.clonect.feeltalk.new_data.repository.challenge.paging.OngoingChallengePagingSource
 import com.clonect.feeltalk.new_data.repository.chat.ChatRepositoryImpl
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatCacheDataSource
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatLocalDataSource
@@ -39,6 +45,7 @@ import com.clonect.feeltalk.new_data.repository.token.TokenRepositoryImpl
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenCacheDataSource
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenLocalDataSource
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenRemoteDataSource
+import com.clonect.feeltalk.new_domain.repository.challenge.ChallengeRepository
 import com.clonect.feeltalk.new_domain.repository.chat.ChatRepository
 import com.clonect.feeltalk.new_domain.repository.question.QuestionRepository
 import com.clonect.feeltalk.new_domain.repository.signIn.SignInRepository
@@ -93,6 +100,18 @@ class RepositoryModule {
         pagingSource: QuestionPagingSource,
     ): QuestionRepository {
         return QuestionRepositoryImpl(cacheDataSource, localDataSource, remoteDataSource, pagingSource)
+    }
+
+    @Singleton
+    @Provides
+    fun providesChallengeRepository(
+        remoteDataSource: ChallengeRemoteDataSource,
+        localDataSource: ChallengeLocalDataSource,
+        cacheDataSource: ChallengeCacheDataSource,
+        ongoingPagingSource: OngoingChallengePagingSource,
+        completedPagingSource: CompletedChallengePagingSource
+    ): ChallengeRepository {
+        return ChallengeRepositoryImpl(cacheDataSource, localDataSource, remoteDataSource, ongoingPagingSource, completedPagingSource)
     }
 
 

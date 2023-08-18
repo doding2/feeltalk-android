@@ -6,7 +6,7 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.usecase.encryption.*
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.user.*
-import com.clonect.feeltalk.new_presentation.notification.notificationObserver.CreateCoupleObserver
+import com.clonect.feeltalk.new_presentation.notification.observer.CreateCoupleObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope

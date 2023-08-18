@@ -6,7 +6,7 @@ import com.clonect.feeltalk.domain.repository.NewsRepository
 import com.clonect.feeltalk.new_data.api.ClonectService
 import com.google.gson.JsonObject
 import kotlinx.coroutines.CancellationException
-import retrofit2.HttpException
+import com.clonect.feeltalk.common.FeelTalkException.ServerIsDownException
 
 class NewsRepositoryImpl(
     private val clonectService: ClonectService,
@@ -18,7 +18,7 @@ class NewsRepositoryImpl(
                 addProperty("accessToken", accessToken)
             }
             val response = clonectService.getNewsList(body)
-            if (!response.isSuccessful) throw HttpException(response)
+            if (!response.isSuccessful) throw ServerIsDownException(response)
             if (response.body() == null) throw NullPointerException("Response body from server is null.")
             val newsDtoList = response.body()!!
 

@@ -93,4 +93,14 @@
         android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.completedChallengeDetail.CompletedChallengeDetailFragment"
         android:label="CompletedChallengeDetailFragment"
         tools:layout="@layout/fragment_completed_challenge_detail"/>
+    <fragment
+        android:id="@+id/serverDownFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.serverDown.ServerDownFragment"
+        android:label="fragment_server_down"
+        tools:layout="@layout/fragment_server_down" />
+    <fragment
+        android:id="@+id/networkErrorFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.networkError.NetworkErrorFragment"
+        android:label="fragment_network_error"
+        tools:layout="@layout/fragment_network_error" />
 </navigation>

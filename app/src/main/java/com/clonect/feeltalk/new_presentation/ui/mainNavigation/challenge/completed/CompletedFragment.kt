@@ -26,7 +26,8 @@ import javax.inject.Inject
 class CompletedFragment : Fragment() {
 
     private lateinit var binding: FragmentCompletedBinding
-    private val viewModel: ChallengeViewModel by viewModels(ownerProducer = { requireParentFragment() })
+    private val challengeViewModel: ChallengeViewModel by viewModels(ownerProducer = { requireParentFragment() })
+    private val completedViewModel: CompletedChallengeViewModel by viewModels()
     @Inject
     lateinit var adapter: CompletedChallengeAdapter
 
@@ -72,21 +73,19 @@ class CompletedFragment : Fragment() {
         rvCompletedChallenge.adapter = adapter
     }
 
-
-    private fun changeAdapter(fullList: List<Challenge>) {
-        val filtered = fullList.filter { it.isCompleted }
-        adapter.differ.submitList(filtered)
-    }
-
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch {
-                viewModel.completedFragmentScrollToTop.collectLatest {
+                challengeViewModel.completedFragmentScrollToTop.collectLatest {
                     if (it) scrollToTop()
                 }
             }
 
-            launch { viewModel.challenges.collectLatest(::changeAdapter) }
+            launch {
+                completedViewModel.pagingCompletedChallenge.collectLatest {
+                    adapter.submitData(it)
+                }
+            }
         }
     }
 }

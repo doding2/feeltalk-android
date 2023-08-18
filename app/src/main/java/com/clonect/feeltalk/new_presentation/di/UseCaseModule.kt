@@ -14,12 +14,14 @@ import com.clonect.feeltalk.domain.usecase.news.GetNewsListUseCase
 import com.clonect.feeltalk.domain.usecase.question.*
 import com.clonect.feeltalk.domain.usecase.user.*
 import com.clonect.feeltalk.new_data.util.AppLevelEncryptHelper
+import com.clonect.feeltalk.new_domain.repository.challenge.ChallengeRepository
 import com.clonect.feeltalk.new_domain.repository.chat.ChatRepository
 import com.clonect.feeltalk.new_domain.repository.question.QuestionRepository
 import com.clonect.feeltalk.new_domain.repository.signIn.SignInRepository
 import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
+import com.clonect.feeltalk.new_domain.usecase.challenge.*
 import com.clonect.feeltalk.new_domain.usecase.chat.*
 import com.clonect.feeltalk.new_domain.usecase.question.*
 import com.clonect.feeltalk.new_domain.usecase.signIn.*
@@ -204,6 +206,59 @@ class UseCaseModule {
     fun providesShareQuestionUseCase(tokenRepository: TokenRepository, questionRepository: QuestionRepository): ShareQuestionUseCase {
         return ShareQuestionUseCase(tokenRepository, questionRepository)
     }
+
+
+    /** Challenge **/
+
+    @Singleton
+    @Provides
+    fun providesGetPagingOngoingChallengeUseCase(challengeRepository: ChallengeRepository): GetPagingOngoingChallengeUseCase {
+        return GetPagingOngoingChallengeUseCase(challengeRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetPagingCompletedChallengeUseCase(challengeRepository: ChallengeRepository): GetPagingCompletedChallengeUseCase {
+        return GetPagingCompletedChallengeUseCase(challengeRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesAddChallengeUseCase(tokenRepository: TokenRepository, challengeRepository: ChallengeRepository): AddChallengeUseCase {
+        return AddChallengeUseCase(tokenRepository, challengeRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesModifyChallengeUseCase(tokenRepository: TokenRepository, challengeRepository: ChallengeRepository): ModifyChallengeUseCase {
+        return ModifyChallengeUseCase(tokenRepository, challengeRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesDeleteChallengeUseCase(tokenRepository: TokenRepository, challengeRepository: ChallengeRepository): DeleteChallengeUseCase {
+        return DeleteChallengeUseCase(tokenRepository, challengeRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesCompleteChallengeUseCase(tokenRepository: TokenRepository, challengeRepository: ChallengeRepository): CompleteChallengeUseCase {
+        return CompleteChallengeUseCase(tokenRepository, challengeRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetChallengeUseCase(tokenRepository: TokenRepository, challengeRepository: ChallengeRepository): GetChallengeUseCase {
+        return GetChallengeUseCase(tokenRepository, challengeRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetChallengeCountUseCase(tokenRepository: TokenRepository, challengeRepository: ChallengeRepository): GetChallengeCountUseCase {
+        return GetChallengeCountUseCase(tokenRepository, challengeRepository)
+    }
+
+
 
 
 

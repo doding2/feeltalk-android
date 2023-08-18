@@ -8,6 +8,8 @@ import com.clonect.feeltalk.data.repository.question.datasource.QuestionCacheDat
 import com.clonect.feeltalk.data.repository.question.datasourceImpl.QuestionCacheDataSource2Impl
 import com.clonect.feeltalk.data.repository.user.datasource.UserCacheDataSource
 import com.clonect.feeltalk.data.repository.user.datasourceImpl.UserCacheDataSourceImpl
+import com.clonect.feeltalk.new_data.repository.challenge.dataSource.ChallengeCacheDataSource
+import com.clonect.feeltalk.new_data.repository.challenge.dataSourceImpl.ChallengeCacheDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatCacheDataSource
 import com.clonect.feeltalk.new_data.repository.chat.dataSourceImpl.ChatCacheDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionCacheDataSource
@@ -48,6 +50,12 @@ class CacheDataSourceModule {
     @Provides
     fun providesQuestionCacheDataSource(): QuestionCacheDataSource {
         return QuestionCacheDataSourceImpl()
+    }
+
+    @Singleton
+    @Provides
+    fun providesChallengeCacheDataSource(): ChallengeCacheDataSource {
+        return ChallengeCacheDataSourceImpl()
     }
 
 

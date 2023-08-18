@@ -12,6 +12,7 @@ import com.clonect.feeltalk.domain.model.dto.encryption.TempPublicKeyDto
 import com.clonect.feeltalk.domain.model.dto.news.NewsDto
 import com.clonect.feeltalk.domain.model.dto.question.*
 import com.clonect.feeltalk.domain.model.dto.user.*
+import com.clonect.feeltalk.new_domain.model.challenge.*
 import com.clonect.feeltalk.new_domain.model.chat.*
 import com.clonect.feeltalk.new_domain.model.question.LastQuestionPageNoDto
 import com.clonect.feeltalk.new_domain.model.question.QuestionDto
@@ -145,6 +146,67 @@ interface ClonectService {
         @Header("Authorization") token: String,
         @Body body: JsonObject
     ): Response<ApiResponse<ShareQuestionChatDto>>
+
+
+    /** Challenge **/
+
+    @GET("/api/v1/challenge/in-progress/last/page-no")
+    suspend fun getLastOngoingChallengePageNo(
+        @Header("Authorization") token: String
+    ): Response<ApiResponse<LastChallengePageNoDto>>
+
+    @POST("/api/v1/challenges/in-progress")
+    suspend fun getOngoingChallengeList(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<ApiResponse<ChallengeListDto>>
+
+    @GET("/api/v1/challenge/done/last/page-no")
+    suspend fun getLastCompletedChallengePageNo(
+        @Header("Authorization") token: String
+    ): Response<ApiResponse<LastChallengePageNoDto>>
+
+    @POST("/api/v1/challenges/done")
+    suspend fun getCompletedChallengeList(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<ApiResponse<ChallengeListDto>>
+
+    @POST("/api/v1/challenge")
+    suspend fun addChallenge(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<ApiResponse<AddChallengeDto>>
+
+    @PUT("/api/v1/challenge")
+    suspend fun modifyChallenge(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<ApiResponse<Unit>>
+
+    @HTTP(method = "DELETE", path = "/api/v1/challenge", hasBody = true)
+    suspend fun deleteChallenge(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<ApiResponse<Unit>>
+
+    @PUT("/api/v1/challenge/complete")
+    suspend fun completeChallenge(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<ApiResponse<Unit>>
+
+    @GET("api/v1/challenge/{index}")
+    suspend fun getChallenge(
+        @Header("Authorization") token: String,
+        @Path("index") index: Long,
+    ): Response<ApiResponse<ChallengeDto>>
+
+    @GET("/api/v1/challenge/count")
+    suspend fun getChallengeCount(
+        @Header("Authorization") token: String,
+    ): Response<ApiResponse<ChallengeCountDto>>
+
 
 
 

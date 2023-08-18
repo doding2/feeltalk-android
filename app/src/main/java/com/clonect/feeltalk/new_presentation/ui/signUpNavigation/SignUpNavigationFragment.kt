@@ -18,11 +18,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentSignUpNavigationBinding
-import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
-import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
-import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
-import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
-import com.clonect.feeltalk.presentation.utils.makeLoadingDialog
+import com.clonect.feeltalk.new_presentation.ui.util.*
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest

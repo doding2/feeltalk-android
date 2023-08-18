@@ -12,6 +12,8 @@ import com.clonect.feeltalk.data.repository.question.datasourceImpl.QuestionLoca
 import com.clonect.feeltalk.data.repository.user.datasource.UserLocalDataSource
 import com.clonect.feeltalk.data.repository.user.datasourceImpl.UserLocalDataSourceImpl
 import com.clonect.feeltalk.data.utils.MessageEncryptHelper
+import com.clonect.feeltalk.new_data.repository.challenge.dataSource.ChallengeLocalDataSource
+import com.clonect.feeltalk.new_data.repository.challenge.dataSourceImpl.ChallengeLocalDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatLocalDataSource
 import com.clonect.feeltalk.new_data.repository.chat.dataSourceImpl.ChatLocalDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionLocalDataSource
@@ -57,6 +59,12 @@ class LocalDataSourceModule {
     @Provides
     fun providesQuestionLocalDataSource(): QuestionLocalDataSource {
         return QuestionLocalDataSourceImpl()
+    }
+
+    @Singleton
+    @Provides
+    fun providesChallengeLocalDataSource(): ChallengeLocalDataSource {
+        return ChallengeLocalDataSourceImpl()
     }
 
 

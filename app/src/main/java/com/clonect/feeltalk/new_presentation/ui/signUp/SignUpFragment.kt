@@ -29,8 +29,8 @@ import com.clonect.feeltalk.new_presentation.ui.signUp.authHelper.NaverAuthHelpe
 import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
+import com.clonect.feeltalk.new_presentation.ui.util.makeLoadingDialog
 import com.clonect.feeltalk.presentation.utils.infoLog
-import com.clonect.feeltalk.presentation.utils.makeLoadingDialog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint

@@ -25,8 +25,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentCoupleRegistrationBinding
+import com.clonect.feeltalk.new_presentation.ui.util.makeLoadingDialog
 import com.clonect.feeltalk.presentation.utils.addTextGradient
-import com.clonect.feeltalk.presentation.utils.makeLoadingDialog
 import com.clonect.feeltalk.presentation.utils.showAlertDialog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions

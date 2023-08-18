@@ -10,7 +10,7 @@ import com.clonect.feeltalk.new_domain.model.signIn.SignUpDto
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
 import com.clonect.feeltalk.new_domain.model.user.SocialType
 import com.google.gson.JsonObject
-import retrofit2.HttpException
+import com.clonect.feeltalk.common.FeelTalkException.ServerIsDownException
 
 class SignInRemoteDataSourceImpl(
     private val clonectService: ClonectService
@@ -18,7 +18,7 @@ class SignInRemoteDataSourceImpl(
 
     override suspend fun autoLogIn(accessToken: String): AutoLogInDto {
         val response = clonectService.autoLogIn("Bearer $accessToken")
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
         return response.body()!!.data!!
@@ -43,7 +43,7 @@ class SignInRemoteDataSourceImpl(
             }
         }
         val response = clonectService.reLogIn(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
         return response.body()!!.data!!
@@ -76,7 +76,7 @@ class SignInRemoteDataSourceImpl(
             }
         }
         val response = clonectService.signUp(body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
         return response.body()!!.data!!
@@ -84,7 +84,7 @@ class SignInRemoteDataSourceImpl(
 
     override suspend fun getCoupleCode(accessToken: String): CoupleCodeDto {
         val response = clonectService.getCoupleCode("Bearer $accessToken")
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
         return response.body()!!.data!!
@@ -95,7 +95,7 @@ class SignInRemoteDataSourceImpl(
             addProperty("inviteCode", coupleCode)
         }
         val response = clonectService.mathCouple("Bearer $accessToken", body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
     }

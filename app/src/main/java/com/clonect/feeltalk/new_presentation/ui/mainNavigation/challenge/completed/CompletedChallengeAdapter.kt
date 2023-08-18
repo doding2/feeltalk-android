@@ -3,7 +3,7 @@ package com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.comple
 import android.app.Activity
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.common.Constants
@@ -15,19 +15,19 @@ import java.util.*
 import kotlin.math.absoluteValue
 import kotlin.math.ceil
 
-class CompletedChallengeAdapter(): RecyclerView.Adapter<CompletedChallengeAdapter.CompletedChallengeViewHolder>() {
+class CompletedChallengeAdapter: PagingDataAdapter<Challenge, CompletedChallengeAdapter.CompletedChallengeViewHolder>(callback) {
 
-    private val callback = object: DiffUtil.ItemCallback<Challenge>() {
-        override fun areItemsTheSame(oldItem: Challenge, newItem: Challenge): Boolean {
-            return oldItem == newItem
-        }
+    companion object {
+        private val callback = object: DiffUtil.ItemCallback<Challenge>() {
+            override fun areItemsTheSame(oldItem: Challenge, newItem: Challenge): Boolean {
+                return oldItem.index == newItem.index
+            }
 
-        override fun areContentsTheSame(oldItem: Challenge, newItem: Challenge): Boolean {
-            return oldItem == newItem
+            override fun areContentsTheSame(oldItem: Challenge, newItem: Challenge): Boolean {
+                return oldItem == newItem
+            }
         }
     }
-
-    val differ = AsyncListDiffer(this, callback)
 
     private var onItemClick: ((Challenge) -> Unit) = {}
     private var itemSize: Int = 0
@@ -39,11 +39,11 @@ class CompletedChallengeAdapter(): RecyclerView.Adapter<CompletedChallengeAdapte
     }
 
     override fun onBindViewHolder(holder: CompletedChallengeViewHolder, position: Int) {
-        val item = differ.currentList[position]
-        holder.bind(item)
+        val item = getItem(position)
+        if (item != null) {
+            holder.bind(item)
+        }
     }
-
-    override fun getItemCount() = differ.currentList.size
 
 
     fun setOnItemClickListener(listener: (Challenge) -> Unit) {

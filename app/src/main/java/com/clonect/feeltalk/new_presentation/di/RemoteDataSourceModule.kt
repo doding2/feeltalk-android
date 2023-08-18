@@ -9,6 +9,8 @@ import com.clonect.feeltalk.data.repository.question.datasourceImpl.QuestionRemo
 import com.clonect.feeltalk.data.repository.user.datasource.UserRemoteDataSource
 import com.clonect.feeltalk.data.repository.user.datasourceImpl.UserRemoteDataSourceImpl
 import com.clonect.feeltalk.new_data.api.ClonectService
+import com.clonect.feeltalk.new_data.repository.challenge.dataSource.ChallengeRemoteDataSource
+import com.clonect.feeltalk.new_data.repository.challenge.dataSourceImpl.ChallengeRemoteDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.chat.dataSourceImpl.ChatRemoteDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionRemoteDataSource
@@ -53,6 +55,14 @@ class RemoteDataSourceModule {
         clonectService: ClonectService
     ): QuestionRemoteDataSource {
         return QuestionRemoteDataSourceImpl(clonectService)
+    }
+
+    @Singleton
+    @Provides
+    fun providesChallengeRemoteDataSource(
+        clonectService: ClonectService
+    ): ChallengeRemoteDataSource {
+        return ChallengeRemoteDataSourceImpl(clonectService)
     }
 
 

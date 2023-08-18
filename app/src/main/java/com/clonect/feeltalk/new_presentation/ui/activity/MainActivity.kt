@@ -76,7 +76,11 @@ class MainActivity : AppCompatActivity() {
 
         val navGraph = navController.navInflater.inflate(R.navigation.feeltalk_nav_graph)
         val startDestination = viewModel.run {
-            if (!isLoggedIn.value)
+            if (isNetworkErrorOccurred.value)
+                R.id.networkErrorFragment
+            else if (isServerDown.value)
+                R.id.serverDownFragment
+            else if (!isLoggedIn.value)
                 R.id.signUpFragment
             else if (!isUser.value)
                 R.id.signUpFragment

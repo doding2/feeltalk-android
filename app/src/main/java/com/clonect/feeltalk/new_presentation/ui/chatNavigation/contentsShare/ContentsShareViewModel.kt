@@ -7,7 +7,7 @@ import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.chat.QuestionChat
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.usecase.question.ShareQuestionUseCase
-import com.clonect.feeltalk.new_presentation.notification.notificationObserver.NewChatObserver
+import com.clonect.feeltalk.new_presentation.notification.observer.NewChatObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,7 +46,7 @@ class ContentsShareViewModel @Inject constructor(
                         chatSender = "me",
                         isRead = isRead,
                         createAt = createAt,
-                        question = coupleQuestion
+                        question = coupleQuestion.index
                     )
                 }
 

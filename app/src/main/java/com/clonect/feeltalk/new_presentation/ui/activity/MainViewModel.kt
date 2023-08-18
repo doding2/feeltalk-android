@@ -2,6 +2,7 @@ package com.clonect.feeltalk.new_presentation.ui.activity
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.common.FeelTalkException.ServerIsDownException
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -43,6 +45,14 @@ class MainViewModel @Inject constructor(
 
     private val _isUserCouple = MutableStateFlow(false)
     val isUserCouple = _isUserCouple.asStateFlow()
+
+
+    private val _isServerDown = MutableStateFlow(false)
+    val isServerDown = _isServerDown.asStateFlow()
+
+    private val _isNetworkErrorOccurred = MutableStateFlow(false)
+    val isNetworkErrorOccurred = _isNetworkErrorOccurred.asStateFlow()
+
 
     private val _toast = MutableSharedFlow<String>()
     val toast = _toast.asSharedFlow()
@@ -72,9 +82,15 @@ class MainViewModel @Inject constructor(
                 infoLog("Success to auto log in")
             }
             is Resource.Error -> {
+                if (result.throwable is ServerIsDownException) {
+                    _isServerDown.value = true
+                }
+                if (result.throwable is UnknownHostException) {
+                    _isNetworkErrorOccurred.value = true
+                }
                 _isLoggedIn.value = false
                 result.throwable.printStackTrace()
-                infoLog("Fail to auto log in: ${result.throwable.stackTrace.joinToString("\n")}")
+                infoLog("Fail to auto log in: ${result.throwable}\n${result.throwable.stackTrace.joinToString("\n")}")
                 setReady()
             }
         }
@@ -86,6 +102,12 @@ class MainViewModel @Inject constructor(
             when (val result = getTodayQuestionUseCase()) {
                 is Resource.Success -> { }
                 is Resource.Error -> {
+                    if (result.throwable is ServerIsDownException) {
+                        _isServerDown.value = true
+                    }
+                    if (result.throwable is UnknownHostException) {
+                        _isNetworkErrorOccurred.value = true
+                    }
                     infoLog("Fail to preload today question: ${result.throwable.localizedMessage}\n${result.throwable.stackTrace.joinToString("\n")}")
                 }
             }

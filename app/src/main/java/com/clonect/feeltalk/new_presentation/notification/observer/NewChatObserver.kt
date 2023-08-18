@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.notification.notificationObserver
+package com.clonect.feeltalk.new_presentation.notification.observer
 
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import kotlinx.coroutines.flow.MutableStateFlow

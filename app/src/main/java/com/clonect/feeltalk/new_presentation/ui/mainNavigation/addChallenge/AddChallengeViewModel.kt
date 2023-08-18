@@ -1,23 +1,32 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.addChallenge
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.challenge.ChallengeCategory
+import com.clonect.feeltalk.new_domain.usecase.challenge.AddChallengeUseCase
+import com.clonect.feeltalk.new_presentation.notification.observer.AddOngoingChallengeObserver
+import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class AddChallengeViewModel @Inject constructor(
-
+    private val addChallengeUseCase: AddChallengeUseCase
 ): ViewModel() {
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
 
     private val _isKeyboardUp = MutableStateFlow(false)
     val isKeyboardUp = _isKeyboardUp.asStateFlow()
-
 
     private val _isAddEnabled = MutableStateFlow(false)
     val isAddEnabled = _isAddEnabled.asStateFlow()
@@ -73,16 +82,40 @@ class AddChallengeViewModel @Inject constructor(
     }
 
 
-    fun addNewChallenge() {
-        val challenge = Challenge(
-            category = _category.value,
-            title = _title.value ?: return,
-            body = _body.value ?: return,
-            deadline = _deadline.value,
-            owner = "me",
-            isCompleted = false
-        )
-
-
+    fun addNewChallenge(onSuccess: () -> Unit) = viewModelScope.launch {
+        _isLoading.value = true
+        val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val category = category.value
+        val title = title.value ?: run {
+            _isLoading.value = false
+            return@launch
+        }
+        val content = body.value ?: run {
+            _isLoading.value = false
+            return@launch
+        }
+        val deadlineDate = deadline.value
+        val deadline = format.format(deadlineDate)
+        when (val result = addChallengeUseCase(category.raw, title, deadline, content)) {
+            is Resource.Success -> {
+                AddOngoingChallengeObserver
+                    .getInstance()
+                    .setChallenge(
+                        Challenge(index = result.data.index,
+                            category = category,
+                            title = title,
+                            body = content,
+                            deadline = deadlineDate,
+                            owner = "me",
+                            isCompleted = false
+                        )
+                    )
+                onSuccess()
+            }
+            is Resource.Error -> {
+                infoLog("Fail to add challenge: ${result.throwable.localizedMessage}")
+            }
+        }
+        _isLoading.value = false
     }
 }

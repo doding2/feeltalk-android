@@ -8,7 +8,7 @@ import com.google.gson.JsonObject
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import retrofit2.HttpException
+import com.clonect.feeltalk.common.FeelTalkException.ServerIsDownException
 import java.io.File
 
 class ChatRemoteDataSourceImpl(
@@ -17,7 +17,7 @@ class ChatRemoteDataSourceImpl(
 
     override suspend fun getPartnerLastChat(accessToken: String): PartnerLastChatDto {
         val response = clonectService.getPartnerLastChat("Bearer $accessToken")
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
         return response.body()!!.data!!
@@ -28,13 +28,13 @@ class ChatRemoteDataSourceImpl(
             addProperty("isInChat", isInChat)
         }
         val response = clonectService.changeChatRoomState("Bearer $accessToken", body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
     }
 
     override suspend fun getLastChatPageNo(accessToken: String): LastChatPageNoDto {
         val response = clonectService.getLastChatPageNo("Bearer $accessToken")
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
         return response.body()!!.data!!
@@ -45,7 +45,7 @@ class ChatRemoteDataSourceImpl(
             addProperty("pageNo", pageNo)
         }
         val response = clonectService.getChatList("Bearer $accessToken", body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
         return response.body()!!.data!!
@@ -56,7 +56,7 @@ class ChatRemoteDataSourceImpl(
             addProperty("message", message)
         }
         val response = clonectService.sendTextChat("Bearer $accessToken", body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
         return response.body()!!.data!!
@@ -72,7 +72,7 @@ class ChatRemoteDataSourceImpl(
         )
 
         val response = clonectService.sendVoiceChat("Bearer $accessToken", data)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
         return response.body()!!.data!!

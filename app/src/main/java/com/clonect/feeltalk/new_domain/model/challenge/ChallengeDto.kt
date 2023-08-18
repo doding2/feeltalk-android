@@ -1,0 +1,12 @@
+package com.clonect.feeltalk.new_domain.model.challenge
+
+data class ChallengeDto(
+    val index: Long,
+    val pageNo: Long,
+    val category: String,
+    val title: String,
+    val content: String?,
+    val creator: String,
+    val deadline: String,
+    val isCompleted: Boolean
+)

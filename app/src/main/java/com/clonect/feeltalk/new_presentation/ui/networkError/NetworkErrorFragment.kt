@@ -1,0 +1,28 @@
+package com.clonect.feeltalk.new_presentation.ui.networkError
+
+import android.os.Build
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import com.clonect.feeltalk.databinding.FragmentNetworkErrorBinding
+import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
+class NetworkErrorFragment : Fragment() {
+
+    private lateinit var binding: FragmentNetworkErrorBinding
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
+        binding = FragmentNetworkErrorBinding.inflate(inflater, container, false)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            binding.root.setPadding(0, getStatusBarHeight(), 0, 0)
+        }
+        return binding.root
+    }
+}

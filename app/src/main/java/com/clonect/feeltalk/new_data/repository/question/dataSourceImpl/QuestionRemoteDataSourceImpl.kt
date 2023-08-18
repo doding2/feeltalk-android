@@ -8,14 +8,14 @@ import com.clonect.feeltalk.new_domain.model.question.LastQuestionPageNoDto
 import com.clonect.feeltalk.new_domain.model.question.QuestionDto
 import com.clonect.feeltalk.new_domain.model.question.QuestionListDto
 import com.google.gson.JsonObject
-import retrofit2.HttpException
+import com.clonect.feeltalk.common.FeelTalkException.ServerIsDownException
 
 class QuestionRemoteDataSourceImpl(
     private val clonectService: ClonectService
 ): QuestionRemoteDataSource {
     override suspend fun getLastQuestionPageNo(accessToken: String): LastQuestionPageNoDto {
         val response = clonectService.getLastQuestionPageNo("Bearer $accessToken")
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
         return response.body()!!.data!!
@@ -26,7 +26,7 @@ class QuestionRemoteDataSourceImpl(
             addProperty("pageNo", pageNo)
         }
         val response = clonectService.getQuestionList("Bearer $accessToken", body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
         return response.body()!!.data!!
@@ -34,7 +34,7 @@ class QuestionRemoteDataSourceImpl(
 
     override suspend fun getQuestion(accessToken: String, index: Long): QuestionDto {
         val response = clonectService.getQuestion("Bearer $accessToken", index)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
         return response.body()!!.data!!
@@ -42,7 +42,7 @@ class QuestionRemoteDataSourceImpl(
 
     override suspend fun getTodayQuestion(accessToken: String): QuestionDto {
         val response = clonectService.getTodayQuestion("Bearer $accessToken")
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
         return response.body()!!.data!!
@@ -54,7 +54,7 @@ class QuestionRemoteDataSourceImpl(
             addProperty("myAnswer", myAnswer)
         }
         val response = clonectService.answerQuestion("Bearer $accessToken", body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
     }
 
@@ -63,7 +63,7 @@ class QuestionRemoteDataSourceImpl(
             addProperty("index", index)
         }
         val response = clonectService.pressForAnswer("Bearer $accessToken", body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
     }
 
@@ -72,7 +72,7 @@ class QuestionRemoteDataSourceImpl(
             addProperty("index", index)
         }
         val response = clonectService.shareQuestion("Bearer $accessToken", body)
-        if (!response.isSuccessful) throw HttpException(response)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
         return response.body()!!.data!!
