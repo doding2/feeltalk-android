@@ -27,7 +27,7 @@ class CompletedFragment : Fragment() {
 
     private lateinit var binding: FragmentCompletedBinding
     private val challengeViewModel: ChallengeViewModel by viewModels(ownerProducer = { requireParentFragment() })
-    private val completedViewModel: CompletedChallengeViewModel by viewModels()
+    private val completedViewModel: CompletedViewModel by viewModels()
     @Inject
     lateinit var adapter: CompletedChallengeAdapter
 

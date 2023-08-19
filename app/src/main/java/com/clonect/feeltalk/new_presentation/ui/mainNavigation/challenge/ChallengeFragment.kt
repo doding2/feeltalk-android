@@ -20,6 +20,7 @@ import com.clonect.feeltalk.databinding.FragmentChallengeBinding
 import com.clonect.feeltalk.databinding.TabItemCompletedBinding
 import com.clonect.feeltalk.databinding.TabItemOngoingBinding
 import com.clonect.feeltalk.new_domain.model.challenge.ChallengeCountDto
+import com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.completed.SnackbarState
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
 import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
@@ -58,6 +59,15 @@ class ChallengeFragment : Fragment() {
         binding.run {
             ivScrollTop.setOnClickListener { scrollTop() }
             efabAddChallenge.setOnClickListener { navigateToAddChallenge() }
+
+            snackbarDeadline.root.setOnClickListener {
+                viewModel.setSnackbarState(
+                    SnackbarState(
+                        isVisible = false,
+                        goneSoftly = true
+                    )
+                )
+            }
         }
     }
 
@@ -106,6 +116,12 @@ class ChallengeFragment : Fragment() {
                     0 -> {
                         tab.enableOngoingTabView(false)
                         setAddButtonHidden(true)
+                        viewModel.setSnackbarState(
+                            SnackbarState(
+                                isVisible = false,
+                                goneSoftly = false
+                            )
+                        )
                     }
                     1 -> tab.enableCompletedTabView(false)
                     else -> return
@@ -130,7 +146,7 @@ class ChallengeFragment : Fragment() {
     private fun TabLayout.Tab.enableOngoingTabView(enabled: Boolean) {
         val tabBinding = TabItemOngoingBinding.bind(customView ?: return)
         tabBinding.run {
-            tvCount.text = viewModel.challengeCount.value.ongoingCount.toString()
+            tvCount.text = viewModel.challengeCount.value?.ongoingCount?.toString() ?: ""
 
             if (enabled) {
                 tvBody.setTextColor(requireContext().getColor(R.color.black))
@@ -147,7 +163,7 @@ class ChallengeFragment : Fragment() {
     private fun TabLayout.Tab.enableCompletedTabView(enabled: Boolean) {
         val tabBinding = TabItemCompletedBinding.bind(customView ?: return)
         tabBinding.run {
-            tvCount.text = viewModel.challengeCount.value.completedCount.toString()
+            tvCount.text = viewModel.challengeCount.value?.completedCount?.toString() ?: ""
 
             if (enabled) {
                 tvBody.setTextColor(requireContext().getColor(R.color.black))
@@ -173,30 +189,57 @@ class ChallengeFragment : Fragment() {
 
 
 
-    private fun changeChallengeCountViews(count: ChallengeCountDto) = binding.run {
-        changeCountTitleText(count.totalCount)
+    private fun changeChallengeCountViews(count: ChallengeCountDto?) = binding.run {
+        changeCountTitleText(count?.totalCount?.toString() ?: "")
         tbChallengeTabs.getTabAt(0)?.let {
             val tabBinding = TabItemOngoingBinding.bind(it.customView ?: return@let)
-            tabBinding.tvCount.text = viewModel.challengeCount.value.ongoingCount.toString()
+            tabBinding.tvCount.text = count?.ongoingCount?.toString() ?: ""
         }
         tbChallengeTabs.getTabAt(1)?.let {
             val tabBinding = TabItemCompletedBinding.bind(it.customView ?: return@let)
-            tabBinding.tvCount.text = viewModel.challengeCount.value.completedCount.toString()
+            tabBinding.tvCount.text = count?.completedCount?.toString() ?: ""
         }
     }
 
-    private fun changeCountTitleText(count: Long) {
-        val text = count.toString() + requireContext().getString(R.string.challenge_count_title_deco)
+    private fun changeCountTitleText(count: String) {
+        val text = count + requireContext().getString(R.string.challenge_count_title_deco)
         val span = SpannableStringBuilder(text).apply {
-            setSpan(ForegroundColorSpan(requireContext().getColor(R.color.main_500)), 0, count.toString().length + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            setSpan(ForegroundColorSpan(Color.BLACK), count.toString().length + 1, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(ForegroundColorSpan(requireContext().getColor(R.color.main_500)), 0, count.length + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(ForegroundColorSpan(Color.BLACK), count.length + 1, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
         binding.tvCountTitle.text = span
+    }
+
+    private fun changeSnackbarView(state: SnackbarState) = binding.snackbarDeadline.root.run {
+        if (state.isVisible) {
+            animate()
+                .setDuration(200)
+                .alpha(1f)
+                .withStartAction {
+                    visibility = View.VISIBLE
+                }.start()
+
+        } else if (state.goneSoftly) {
+            animate()
+                .setDuration(200)
+                .alpha(0f)
+                .withEndAction {
+                    visibility = View.GONE
+                }.start()
+        } else {
+            animate()
+                .setDuration(0)
+                .alpha(0f)
+                .withEndAction {
+                    visibility = View.GONE
+                }.start()
+        }
     }
 
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.challengeCount.collectLatest(::changeChallengeCountViews) }
+            launch { viewModel.snackbarState.collectLatest(::changeSnackbarView) }
         }
     }
 }

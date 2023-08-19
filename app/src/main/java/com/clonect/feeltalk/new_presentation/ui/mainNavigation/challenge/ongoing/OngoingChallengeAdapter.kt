@@ -11,12 +11,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.common.plusDayBy
-import com.clonect.feeltalk.databinding.ItemChallengeOngoingEnoughBinding
+import com.clonect.feeltalk.databinding.ItemChallengeOngoingBinding
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getScreenWidth
 import java.util.*
-import kotlin.math.absoluteValue
 import kotlin.math.ceil
 
 class OngoingChallengeAdapter: PagingDataAdapter<Challenge, OngoingChallengeAdapter.OngoingChallengeViewHolder>(callback) {
@@ -33,13 +32,17 @@ class OngoingChallengeAdapter: PagingDataAdapter<Challenge, OngoingChallengeAdap
         }
     }
 
+    private var itemSize: Int = 0
+
     private var onItemClick: ((Challenge) -> Unit) = {}
     private var onCompleteChallenge: (Challenge) -> Unit = {}
-    private var enoughItemSize: Int = 0
+
+    private var isFirstImminentItem = true
+    private var onFirstImminentItemShow: () -> Unit = {}
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OngoingChallengeViewHolder {
-        val binding = ItemChallengeOngoingEnoughBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemChallengeOngoingBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return OngoingChallengeViewHolder((binding))
     }
 
@@ -59,20 +62,24 @@ class OngoingChallengeAdapter: PagingDataAdapter<Challenge, OngoingChallengeAdap
         onCompleteChallenge = listener
     }
 
+    fun setOnFirstImminentItemListener(listener: () -> Unit) {
+        onFirstImminentItemShow = listener
+    }
+
 
     fun calculateDDay(from: Date, target: Date): Int {
-        return ceil(((from.time - target.time).toDouble() / Constants.ONE_DAY).absoluteValue).toInt()
+        return ceil((target.time - from.time).toDouble() / Constants.ONE_DAY).toInt()
     }
 
     fun calculateItemSize(activity: Activity) {
         val screenWidth = activity.getScreenWidth()
         // 12.5 * 2 + 7.5 * 4 = 55
-        enoughItemSize = (screenWidth - activity.applicationContext.dpToPx(56f).toInt()) / 2
+        itemSize = (screenWidth - activity.applicationContext.dpToPx(56f).toInt()) / 2
     }
 
 
     inner class OngoingChallengeViewHolder(
-        val binding: ItemChallengeOngoingEnoughBinding
+        val binding: ItemChallengeOngoingBinding
     ): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Challenge) {
@@ -80,7 +87,7 @@ class OngoingChallengeAdapter: PagingDataAdapter<Challenge, OngoingChallengeAdap
                 root.setOnClickListener { onItemClick(item) }
                 ivComplete.setOnClickListener { onCompleteChallenge(item) }
 
-                root.layoutParams.width = enoughItemSize
+                root.layoutParams.width = itemSize
 
                 tvChallengeTitle.text = item.title
                 tvNickname.text = item.owner
@@ -88,13 +95,24 @@ class OngoingChallengeAdapter: PagingDataAdapter<Challenge, OngoingChallengeAdap
                 val now = Date()
                 val dDay = calculateDDay(now, item.deadline)
 
-                tvDDay.text = binding.root.context.getString(R.string.ongoing_challenge_d_day_deco) + dDay.toString()
+                tvDDay.text = if (dDay >= 999) {
+                    root.context.getString(R.string.add_challenge_d_day_over)
+                } else if (dDay == 0) {
+                    root.context.getString(R.string.add_challenge_d_day_today)
+                } else {
+                    root.context.getString(R.string.add_challenge_d_day_normal) + dDay
+                }
 
                 if (item.deadline <= Date().plusDayBy(7)) {
                     mcvDDay.setCardBackgroundColor(root.context.getColor(R.color.main_300))
                     tvDDay.setTextColor(root.context.getColor(R.color.main_500))
                     tvDDay.typeface = ResourcesCompat.getFont(root.context, R.font.pretendard_semi_bold)
                     mcvOngoing.strokeWidth = root.context.dpToPx(2f).toInt()
+
+                    if (isFirstImminentItem) {
+                        isFirstImminentItem = false
+                        onFirstImminentItemShow()
+                    }
                 } else {
                     mcvDDay.setCardBackgroundColor(root.context.getColor(R.color.gray_200))
                     tvDDay.setTextColor(Color.BLACK)

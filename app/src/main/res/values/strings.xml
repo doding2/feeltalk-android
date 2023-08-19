@@ -162,6 +162,7 @@
     <!--  Ongoing  -->
     <string name="ongoing_add_challenge">챌린지 추가</string>
     <string name="ongoing_challenge_d_day_deco">D-</string>
+    <string name="ongoing_challenge_deadline_imminent">기간 임박! 챌린지가 곧 사라져요!</string>
 
     <!--  Completed  -->
     <string name="completed_challenge_d_day_deco">D+</string>
@@ -171,7 +172,8 @@
     <string name="add_challenge_title_2">우리 어떤 걸 해볼까?</string>
     <string name="add_challenge_title">챌린지명</string>
     <string name="add_challenge_d_day_today">D-Day</string>
-    <string name="add_challenge_d_day_deco">D-</string>
+    <string name="add_challenge_d_day_normal">D-</string>
+    <string name="add_challenge_d_day_over">D-999+</string>
     <string name="add_challenge_deadline">챌린지 마감일</string>
     <string name="add_challenge_content">챌린지 내용</string>
     <string name="add_challenge_title_hint">챌린지 이름을 적어주세요 !</string>

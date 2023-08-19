@@ -12,12 +12,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CompletedChallengeViewModel @Inject constructor(
+class CompletedViewModel @Inject constructor(
     getPagingCompletedChallengeUseCase: GetPagingCompletedChallengeUseCase,
 ): ViewModel() {
 
@@ -48,21 +47,20 @@ class CompletedChallengeViewModel @Inject constructor(
                 paging.filter { it.index != event.item.index }
             }
             is PageEvents.InsertItemFooter, is PageEvents.InsertItemHeader -> {
-                var count = pagingCompletedChallenge.count()
-
+                var isAlreadyExist = false
                 paging.insertSeparators { before, after ->
-                    val newDeadline = event.item.deadline
-                    val beforeDeadline = before?.deadline
-                    val afterDeadline = after?.deadline
-                    return@insertSeparators if (beforeDeadline == null && afterDeadline == null) {
+                    val isFirst = before == null && after == null
+                    val isEnd = before != null && after == null
+
+                    if (!isEnd && before?.index == event.item.index || after?.index == event.item.index) {
+                        isAlreadyExist = true
+                    }
+
+                    return@insertSeparators if (isAlreadyExist) {
+                        null
+                    } else if (isFirst) {
                         event.item
-                    } else if (count == 1 && beforeDeadline == null && newDeadline <= afterDeadline) {
-                        count++
-                        event.item
-                    } else if (count == 1 && afterDeadline == null && newDeadline >= beforeDeadline) {
-                        count++
-                        event.item
-                    } else if (beforeDeadline != null && afterDeadline != null && newDeadline >= beforeDeadline && newDeadline <= afterDeadline) {
+                    } else if (isEnd) {
                         event.item
                     } else {
                         null

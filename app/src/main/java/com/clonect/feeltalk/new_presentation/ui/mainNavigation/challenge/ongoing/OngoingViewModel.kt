@@ -9,16 +9,17 @@ import com.clonect.feeltalk.new_domain.usecase.challenge.GetPagingOngoingChallen
 import com.clonect.feeltalk.new_presentation.notification.observer.AddOngoingChallengeObserver
 import com.clonect.feeltalk.new_presentation.notification.observer.DeleteOngoingChallengeObserver
 import com.clonect.feeltalk.new_presentation.notification.observer.EditOngoingChallengeObserver
+import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class OngoingChallengeViewModel @Inject constructor(
+class OngoingViewModel @Inject constructor(
     getPagingOngoingChallengeUseCase: GetPagingOngoingChallengeUseCase,
 ): ViewModel() {
 
@@ -50,21 +51,22 @@ class OngoingChallengeViewModel @Inject constructor(
                 paging.filter { it.index != event.item.index }
             }
             is PageEvents.InsertItemFooter, is PageEvents.InsertItemHeader -> {
-                var count = pagingOngoingChallenge.count()
-
                 paging.insertSeparators { before, after ->
-                    val newDeadline = event.item.deadline
-                    val beforeDeadline = before?.deadline
-                    val afterDeadline = after?.deadline
-                    return@insertSeparators if (beforeDeadline == null && afterDeadline == null) {
+                    val isAlreadyExist = before?.index == event.item.index || after?.index == event.item.index
+                    val isFirst = before == null && after == null
+                    val isStart = before == null && after != null
+                    val isEnd = before != null && after == null
+                    val isMiddle = before != null && after != null
+
+                    return@insertSeparators if (isAlreadyExist) {
+                        null
+                    } else if (isFirst) {
                         event.item
-                    } else if (count == 1 && beforeDeadline == null && newDeadline <= afterDeadline) {
-                        count++
+                    } else if (isStart && event.item.deadline < after!!.deadline) {
                         event.item
-                    } else if (count == 1 && afterDeadline == null && newDeadline >= beforeDeadline) {
-                        count++
+                    } else if (isEnd && event.item.deadline >= before!!.deadline) {
                         event.item
-                    } else if (beforeDeadline != null && afterDeadline != null && newDeadline >= beforeDeadline && newDeadline <= afterDeadline) {
+                    } else if (isMiddle && event.item.deadline >= before!!.deadline && event.item.deadline < after!!.deadline) {
                         event.item
                     } else {
                         null
@@ -97,6 +99,7 @@ class OngoingChallengeViewModel @Inject constructor(
             .getInstance()
             .challenge
             .collect {
+                infoLog("new add ongoing challenge: ${it}")
                 if (it == null) return@collect
                 modifyPage(PageEvents.InsertItemFooter(it))
             }

@@ -11,14 +11,18 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentOngoingBinding
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.ChallengeViewModel
+import com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.completed.SnackbarState
 import com.clonect.feeltalk.new_presentation.ui.util.showConfirmDialog
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,7 +32,7 @@ class OngoingFragment : Fragment() {
 
     private lateinit var binding: FragmentOngoingBinding
     private val challengeViewModel: ChallengeViewModel by viewModels(ownerProducer = { requireParentFragment() })
-    private val ongoingViewModel: OngoingChallengeViewModel by viewModels()
+    private val ongoingViewModel: OngoingViewModel by viewModels()
     @Inject
     lateinit var adapter: OngoingChallengeAdapter
 
@@ -77,6 +81,23 @@ class OngoingFragment : Fragment() {
         )
     }
 
+    private fun onFirstImminentItemShow() {
+        challengeViewModel.setSnackbarState(
+            SnackbarState(
+                isVisible = true
+            )
+        )
+        lifecycleScope.launch(Dispatchers.IO) {
+            delay(3000)
+            challengeViewModel.setSnackbarState(
+                SnackbarState(
+                    isVisible = false,
+                    goneSoftly = true
+                )
+            )
+        }
+    }
+
 
     private fun initRecyclerView() = binding.run {
         rvOngoingChallenge.layoutManager = FlexboxLayoutManager(requireContext()).apply {
@@ -86,9 +107,23 @@ class OngoingFragment : Fragment() {
         adapter.calculateItemSize(requireActivity())
         adapter.setOnItemClickListener(::onItemClick)
         adapter.setOnCompleteChallengeListener(::onCompleteChallenge)
+        adapter.setOnFirstImminentItemListener(::onFirstImminentItemShow)
         rvOngoingChallenge.adapter = adapter
-    }
 
+        rvOngoingChallenge.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                    challengeViewModel.setSnackbarState(
+                        SnackbarState(
+                            isVisible = false,
+                            goneSoftly = false
+                        )
+                    )
+                }
+            }
+        })
+    }
 
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {

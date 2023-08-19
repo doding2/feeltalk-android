@@ -219,7 +219,7 @@ class AddChallengeFragment : Fragment() {
         binding.tvDDay.text = if (dDay == 0) {
             requireContext().getString(R.string.add_challenge_d_day_today)
         } else {
-            requireContext().getString(R.string.add_challenge_d_day_deco) + dDay
+            requireContext().getString(R.string.add_challenge_d_day_normal) + dDay
         }
     }
 

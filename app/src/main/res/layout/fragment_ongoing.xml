@@ -15,5 +15,5 @@
         android:paddingHorizontal="12.5dp"
         android:paddingBottom="80dp"
         android:clipToPadding="false"
-        tools:listitem="@layout/item_challenge_ongoing_enough"/>
+        tools:listitem="@layout/item_challenge_ongoing"/>
 </FrameLayout>

@@ -98,10 +98,12 @@ class AddChallengeViewModel @Inject constructor(
         val deadline = format.format(deadlineDate)
         when (val result = addChallengeUseCase(category.raw, title, deadline, content)) {
             is Resource.Success -> {
+                onSuccess()
                 AddOngoingChallengeObserver
                     .getInstance()
                     .setChallenge(
-                        Challenge(index = result.data.index,
+                        Challenge(
+                            index = result.data.index,
                             category = category,
                             title = title,
                             body = content,
@@ -110,7 +112,6 @@ class AddChallengeViewModel @Inject constructor(
                             isCompleted = false
                         )
                     )
-                onSuccess()
             }
             is Resource.Error -> {
                 infoLog("Fail to add challenge: ${result.throwable.localizedMessage}")
