@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/n_background_bottom_sheet_rounded"
-    tools:context=".new_presentation.ui.mainNavigation.answer.AnswerFragment">
+    tools:context=".new_presentation.ui.mainNavigation.challenge.answer.AnswerFragment">
 
     <ImageView
         android:id="@+id/iv_dismiss_dialog"

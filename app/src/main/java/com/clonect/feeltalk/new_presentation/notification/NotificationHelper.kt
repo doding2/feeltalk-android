@@ -1,13 +1,16 @@
 package com.clonect.feeltalk.new_presentation.notification
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.drawable.Icon
 import android.os.Build
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.Person
@@ -18,9 +21,9 @@ import androidx.navigation.NavDeepLinkBuilder
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
-import com.clonect.feeltalk.new_presentation.ui.chatNavigation.bubble.BubbleActivity
+import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.bubble.BubbleActivity
 import com.navercorp.nid.NaverIdLoginSDK.applicationContext
-import java.util.*
+import java.util.Date
 
 class NotificationHelper(
     private val getAppSettingsUseCase: GetAppSettingsUseCase,
@@ -35,17 +38,25 @@ class NotificationHelper(
         const val TYPE_TODAY_QUESTION = "todayQuestion"
         const val TYPE_PRESS_FOR_ANSWER = "pressForAnswer"
         const val TYPE_ANSWER_QUESTION = "answerQuestion"
+        const val TYPE_ADD_CHALLENGE = "addChallenge"
+        const val TYPE_DELETE_CHALLENGE = "deleteChallenge"
+        const val TYPE_MODIFY_CHALLENGE = "modifyChallenge"
+        const val TYPE_COMPLETE_CHALLENGE = "completeChallenge"
 
         const val KEY_TEXT_REPLY = "key_text_reply"
 
         const val NOTIFICATION_NORMAL_GROUP = "normal_group"
         const val NOTIFICATION_CHAT_GROUP = "chat_group"
 
-        const val CHANEL_ID_CREATE_COUPLE ="feeltalk_create_couple_notification"
-        const val CHANNEL_ID_CHAT ="feeltalk_chat_notification"
-        const val CHANNEL_ID_TODAY_QUESTION ="feeltalk_today_question_notification"
-        const val CHANNEL_ID_PRESS_FOR_ANSWER ="feeltalk_press_for_answer_notification"
-        const val CHANNEL_ID_ANSWER_QUESTION ="feeltalk_answer_question_notification"
+        const val CHANEL_ID_CREATE_COUPLE = "feeltalk_create_couple_notification"
+        const val CHANNEL_ID_CHAT = "feeltalk_chat_notification"
+        const val CHANNEL_ID_TODAY_QUESTION = "feeltalk_today_question_notification"
+        const val CHANNEL_ID_PRESS_FOR_ANSWER = "feeltalk_press_for_answer_notification"
+        const val CHANNEL_ID_ANSWER_QUESTION = "feeltalk_answer_question_notification"
+        const val CHANNEL_ID_ADD_CHALLENGE = "feeltalk_add_challenge_notification"
+        const val CHANNEL_ID_DELETE_CHALLENGE = "feeltalk_delete_challenge_notification"
+        const val CHANNEL_ID_MODIFY_CHALLENGE = "feeltalk_modify_challenge_notification"
+        const val CHANNEL_ID_COMPLETE_CHALLENGE = "feeltalk_complete_challenge_notification"
 
         const val CHAT_SHORTCUT_ID = "chat_shortcut"
     }
@@ -57,6 +68,14 @@ class NotificationHelper(
         notificationID: Int = channelID.toBytesInt(),
         pendingIntent: PendingIntent? = null
     ) {
+        if (ActivityCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+
         val manager = NotificationManagerCompat.from(applicationContext)
 
         val notification = NotificationCompat.Builder(applicationContext, channelID)
@@ -79,6 +98,14 @@ class NotificationHelper(
     fun showChatNotification(
         message: String
     ) {
+        if (ActivityCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+
         val notificationID = CHANNEL_ID_CHAT.toBytesInt()
 
         val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
@@ -200,6 +227,14 @@ class NotificationHelper(
     }
 
     fun addChatReply(message: CharSequence, notificationID: Int, isReplySuccess: Boolean = false) {
+        if (ActivityCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+
         val activeNotification = findActiveNotification(notificationID) ?: return
         val activeStyle = NotificationCompat.MessagingStyle.extractMessagingStyleFromNotification(activeNotification)
 
@@ -246,6 +281,14 @@ class NotificationHelper(
 
 
     private fun groupNotifications(channelID: String) {
+        if (ActivityCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+
         val group =
             if (channelID == CHANNEL_ID_CHAT) NOTIFICATION_CHAT_GROUP
             else NOTIFICATION_NORMAL_GROUP
@@ -301,6 +344,10 @@ class NotificationHelper(
         CHANNEL_ID_TODAY_QUESTION -> "오늘의 질문"
         CHANNEL_ID_PRESS_FOR_ANSWER -> "답변 요청하기"
         CHANNEL_ID_ANSWER_QUESTION -> "연인의 답변"
+        CHANNEL_ID_ADD_CHALLENGE -> "챌린지 만들기"
+        CHANNEL_ID_DELETE_CHALLENGE -> "챌린지 삭제"
+        CHANNEL_ID_MODIFY_CHALLENGE -> "챌린지 수정"
+        CHANNEL_ID_COMPLETE_CHALLENGE -> "챌린지 완료"
         else -> "기타"
     }
 
@@ -310,6 +357,10 @@ class NotificationHelper(
         CHANNEL_ID_TODAY_QUESTION -> "오늘의 질문"
         CHANNEL_ID_PRESS_FOR_ANSWER -> "답변 요청하기"
         CHANNEL_ID_ANSWER_QUESTION -> "연인의 답변"
+        CHANNEL_ID_ADD_CHALLENGE -> "챌린지 만들기"
+        CHANNEL_ID_DELETE_CHALLENGE -> "챌린지 삭제"
+        CHANNEL_ID_MODIFY_CHALLENGE -> "챌린지 수정"
+        CHANNEL_ID_COMPLETE_CHALLENGE -> "챌린지 완료"
         else -> "기타"
     }
 }

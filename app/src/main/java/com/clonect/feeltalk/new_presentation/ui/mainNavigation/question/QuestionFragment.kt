@@ -1,6 +1,5 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.question
 
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -56,7 +55,6 @@ class QuestionFragment : Fragment() {
         initRecyclerView()
         collectViewModel()
         navViewModel.setShowQuestionPage(true)
-        navViewModel.setPartnerLastChatColor(requireContext().getColor(R.color.gray_200))
 
         binding.apply {
             ivScrollTop.setOnClickListener { scrollToTop() }
@@ -121,6 +119,5 @@ class QuestionFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         navViewModel.setShowQuestionPage(false)
-        navViewModel.setPartnerLastChatColor(Color.WHITE)
     }
 }

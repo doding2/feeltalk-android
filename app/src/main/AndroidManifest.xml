@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.clonect.feeltalk" >
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
@@ -28,7 +27,7 @@
         tools:targetApi="tiramisu" >
 
         <activity
-            android:name=".new_presentation.ui.chatNavigation.bubble.BubbleActivity"
+            android:name=".new_presentation.ui.mainNavigation.chatNavigation.bubble.BubbleActivity"
             android:label="@string/notification_bubble"
             android:allowEmbedded="true"
             android:resizeableActivity="true">

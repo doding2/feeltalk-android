@@ -9,17 +9,22 @@ import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.widget.ViewPager2
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentChallengeBinding
 import com.clonect.feeltalk.databinding.TabItemCompletedBinding
 import com.clonect.feeltalk.databinding.TabItemOngoingBinding
+import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.challenge.ChallengeCountDto
+import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.completed.SnackbarState
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
@@ -35,6 +40,7 @@ class ChallengeFragment : Fragment() {
 
     private lateinit var binding: FragmentChallengeBinding
     private val viewModel: ChallengeViewModel by viewModels()
+    private val navViewModel: MainNavigationViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -96,6 +102,21 @@ class ChallengeFragment : Fragment() {
         tbChallengeTabs.addTab(tbChallengeTabs.newTab())
         tbChallengeTabs.addTab(tbChallengeTabs.newTab())
         vp2Navigation.adapter = ChallengePageAdapter(childFragmentManager, lifecycle)
+        vp2Navigation.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int,
+            ) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
+                viewModel.setSnackbarState(
+                    SnackbarState(
+                        isVisible = false,
+                        goneSoftly = false
+                    )
+                )
+            }
+        })
 
         tbChallengeTabs.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {}
@@ -236,10 +257,41 @@ class ChallengeFragment : Fragment() {
         }
     }
 
+    private fun showChallengeDetail(challenge: Challenge?) {
+        if (challenge == null) return
+
+        if (challenge.isCompleted) {
+            binding.vp2Navigation.currentItem = 1
+            navigateToCompletedDetail(challenge)
+        } else {
+            binding.vp2Navigation.currentItem = 0
+            navigateToOngoingDetail(challenge)
+        }
+        navViewModel.setShowChallengeDetail(null)
+    }
+
+    private fun navigateToOngoingDetail(item: Challenge) {
+        val bundle = bundleOf("challenge" to item)
+        requireParentFragment()
+            .requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_mainNavigationFragment_to_ongoingChallengeDetailFragment, bundle)
+    }
+
+    private fun navigateToCompletedDetail(item: Challenge) {
+        val bundle = bundleOf("challenge" to item)
+        requireParentFragment()
+            .requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_mainNavigationFragment_to_completedChallengeDetailFragment, bundle)
+    }
+
+
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.challengeCount.collectLatest(::changeChallengeCountViews) }
             launch { viewModel.snackbarState.collectLatest(::changeSnackbarView) }
+            launch { navViewModel.showChallengeDetail.collectLatest(::showChallengeDetail) }
         }
     }
 }

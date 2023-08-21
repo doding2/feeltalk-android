@@ -39,6 +39,12 @@
 
 
     <!--  Custom EditText  -->
+    <style name="GradientTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeWidthFocused">0dp</item>
+        <item name="hintEnabled">false</item>
+    </style>
+
     <style name="GradientEditTextStyle" parent="@android:style/Widget.EditText">
         <item name="android:textCursorDrawable">@drawable/edit_text_cursor</item>
         <item name="android:background">@drawable/n_background_edit_text_filled</item>

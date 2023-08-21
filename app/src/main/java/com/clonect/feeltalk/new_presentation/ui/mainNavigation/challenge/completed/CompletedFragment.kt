@@ -29,7 +29,7 @@ class CompletedFragment : Fragment() {
     private val challengeViewModel: ChallengeViewModel by viewModels(ownerProducer = { requireParentFragment() })
     private val completedViewModel: CompletedViewModel by viewModels()
     @Inject
-    lateinit var adapter: CompletedChallengeAdapter
+    lateinit var adapter: CompletedAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

@@ -201,6 +201,11 @@
     <!--  CompletedChallengeDetail  -->
     <string name="challenge_detail_completed">이미 완료된 챌린지예요</string>
 
+    <!--  CompleteSheet  -->
+    <string name="complete_title">챌린지 성공 👏</string>
+    <string name="complete_content">기대하던 챌린지를 완료했어요.</string>
+    <string name="complete_button">우리 진짜 최고야!</string>
+
     <!--  Chat  -->
     <string name="chat_read" />
     <string name="chat_unread">안읽음</string>

@@ -40,6 +40,7 @@ class MainNavigationFragment : Fragment() {
 
         setUpBottomNavigation()
         setUpAnswerSheet()
+        setUpCompleteSheet()
 
         // set fullscreen
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -55,8 +56,15 @@ class MainNavigationFragment : Fragment() {
 
         val questionIndex = arguments?.getLong("questionIndex", -1) ?: -1
         val isTodayQuestion = arguments?.getBoolean("isTodayQuestion", false) ?: false
-        if (questionIndex >= 0) {
-            viewModel.initShowQuestionAnswerSheet(questionIndex, isTodayQuestion)
+        viewModel.initShowQuestionAnswerSheet(questionIndex)
+        if (questionIndex >= 0 && !isTodayQuestion) {
+            navigateFragment("question")
+        }
+
+        val challengeIndex = arguments?.getLong("challengeIndex", -1) ?: -1
+        viewModel.initShowChallengeDetail(challengeIndex)
+        if (challengeIndex >= 0) {
+            navigateFragment("challenge")
         }
 
         arguments?.clear()
@@ -68,7 +76,6 @@ class MainNavigationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         collectViewModel()
 
@@ -83,6 +90,10 @@ class MainNavigationFragment : Fragment() {
 
             viewAnswerBehind.setOnClickListener {
                 viewModel.setShowAnswerSheet(false)
+            }
+
+            lavCompleteChallenge.setOnClickListener {
+                viewModel.setChallengeCompleted(false)
             }
         }
     }
@@ -110,6 +121,21 @@ class MainNavigationFragment : Fragment() {
                     if (newState == BottomSheetBehavior.STATE_HIDDEN) {
                         viewModel.setUserAnswering(false)
                         viewModel.setShowAnswerSheet(false)
+                    }
+                }
+            })
+        }
+    }
+
+    private fun setUpCompleteSheet() {
+        val behavior = BottomSheetBehavior.from(binding.flCompleteSheet).apply {
+            peekHeight = 0
+            skipCollapsed = true
+            addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                        viewModel.setChallengeCompleted(false)
                     }
                 }
             })
@@ -165,11 +191,6 @@ class MainNavigationFragment : Fragment() {
         tvLatestChat.text = partnerLastChatDto?.message
     }
 
-    private fun changePartnerLastChatColor(color: Int) {
-        binding.mcvLatestChatBody.setCardBackgroundColor(color)
-        binding.ivLatestChatTail.setColorFilter(color)
-    }
-
     private fun navigateFragment(target: String) {
         if (target == "home") {
             binding.mnvBottomNavigation.selectedItemId = R.id.navigation_home
@@ -182,14 +203,27 @@ class MainNavigationFragment : Fragment() {
         }
     }
 
+    private fun changeCompleteChallengeView(isCompleted: Boolean) = binding.run {
+        val behavior = BottomSheetBehavior.from(binding.flCompleteSheet)
+        if (isCompleted) {
+            lavCompleteChallenge.visibility = View.VISIBLE
+            lavCompleteChallenge.playAnimation()
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        } else {
+            lavCompleteChallenge.visibility = View.GONE
+            lavCompleteChallenge.cancelAnimation()
+            behavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+    }
+
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.navigateTo.collectLatest(::navigateFragment) }
             launch { viewModel.showChatNavigation.collectLatest(::showChatSheet) }
             launch { viewModel.showPartnerLastChat.collectLatest(::showPartnerLastChatView) }
             launch { viewModel.partnerLastChat.collectLatest(::changePartnerLastChatView) }
-            launch { viewModel.partnerLastChatColor.collectLatest(::changePartnerLastChatColor) }
             launch { viewModel.showAnswerSheet.collectLatest(::showAnswerSheet) }
+            launch { viewModel.isChallengeCompleted.collectLatest(::changeCompleteChallengeView) }
         }
     }
 

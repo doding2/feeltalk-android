@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:animateLayoutChanges="true"
-    tools:context=".new_presentation.ui.mainNavigation.addChallenge.AddChallengeFragment">
+    tools:context=".new_presentation.ui.mainNavigation.challenge.addChallenge.AddChallengeFragment">
 
     <ImageView
         android:id="@+id/iv_back"
@@ -105,21 +105,31 @@
                     android:textSize="12sp"
                     android:fontFamily="@font/pretendard_regular"/>
 
-                <EditText
-                    android:id="@+id/et_title"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/n_background_edit_text_answer"
-                    android:layout_marginHorizontal="20dp"
-                    android:hint="@string/add_challenge_title_hint"
-                    android:textColorHint="@color/gray_400"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:fontFamily="@font/pretendard_regular"
-                    android:lines="1"
-                    android:inputType="text"
-                    android:imeOptions="flagNavigateNext"/>
+                    app:endIconMode="clear_text"
+                    style="@style/GradientTextInputLayout">
 
+                    <EditText
+                        android:id="@+id/et_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="20dp"
+                        android:paddingStart="12dp"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="16dp"
+                        android:textCursorDrawable="@drawable/edit_text_cursor"
+                        android:background="@drawable/n_background_edit_text_answer"
+                        android:hint="@string/add_challenge_title_hint"
+                        android:textColorHint="@color/gray_400"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:fontFamily="@font/pretendard_regular"
+                        android:lines="1"
+                        android:inputType="text"
+                        android:imeOptions="flagNavigateNext" />
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -168,6 +178,7 @@
                         android:layout_height="59dp"
                         android:layout_marginEnd="20dp"
                         android:layout_marginStart="12dp"
+                        app:rippleColor="@android:color/transparent"
                         app:cardCornerRadius="12dp"
                         app:cardBackgroundColor="@color/gray_200"
                         app:cardElevation="0dp"
@@ -183,28 +194,28 @@
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_marginHorizontal="12dp"
+                                android:fontFamily="@font/pretendard_regular"
+                                android:gravity="center_vertical"
+                                android:lines="1"
                                 android:textColor="@color/black"
                                 android:textSize="16sp"
-                                android:fontFamily="@font/pretendard_regular"
-                                android:lines="1"
-                                android:gravity="center_vertical"
                                 app:layout_constrainedWidth="true"
-                                app:layout_constraintTop_toTopOf="parent"
                                 app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toEndOf="@id/iv_calendar"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintStart_toEndOf="@id/iv_calendar"/>
+                                app:layout_constraintTop_toTopOf="parent" />
 
                             <ImageView
                                 android:id="@+id/iv_calendar"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:padding="12dp"
                                 android:layout_marginTop="5dp"
                                 android:layout_marginBottom="6dp"
+                                android:padding="12dp"
                                 android:src="@drawable/n_ic_calendar"
-                                app:layout_constraintTop_toTopOf="parent"
                                 app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"/>
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>

@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:animateLayoutChanges="true"
     android:background="@color/gray_200"
-    tools:context=".new_presentation.ui.mainNavigation.addChallenge.AddChallengeFragment">
+    tools:context=".new_presentation.ui.mainNavigation.challenge.addChallenge.AddChallengeFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

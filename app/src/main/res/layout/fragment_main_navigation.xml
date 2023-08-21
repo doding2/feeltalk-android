@@ -69,6 +69,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lav_complete_challenge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:scaleType="centerCrop"
+        app:lottie_rawRes="@raw/challenge_success_background"
+        app:lottie_loop="false"
+        app:lottie_autoPlay="false"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_floating_chat_container"
@@ -151,7 +163,6 @@
         </com.google.android.material.card.MaterialCardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -175,7 +186,7 @@
                 android:id="@+id/fl_fragment_answer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.answer.AnswerFragment"
+                android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.answer.AnswerFragment"
                 tools:layout="@layout/fragment_answer" />
         </FrameLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
@@ -220,4 +231,32 @@
                 app:navGraph="@navigation/chat_nav_graph" />
         </com.google.android.material.card.MaterialCardView>
     </FrameLayout>
+
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:elevation="11dp"
+        android:outlineProvider="none"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <FrameLayout
+            android:id="@+id/fl_complete_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+            app:behavior_peekHeight="0dp"
+            app:behavior_hideable="true">
+
+            <fragment
+                android:id="@+id/fl_fragment_complete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.complete.CompleteFragment"
+                tools:layout="@layout/fragment_complete" />
+        </FrameLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

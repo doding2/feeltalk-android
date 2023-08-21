@@ -12,22 +12,37 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetUserIsActiveUseCase
 import com.clonect.feeltalk.domain.usecase.user.SetUserIsActiveUseCase
+import com.clonect.feeltalk.new_data.mapper.toChallenge
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
+import com.clonect.feeltalk.new_domain.usecase.challenge.GetChallengeUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.ChangeTodayQuestionCacheUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUseCase
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.CHANEL_ID_CREATE_COUPLE
+import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_ADD_CHALLENGE
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_ANSWER_QUESTION
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_CHAT_ROOM_STATE
+import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_COMPLETE_CHALLENGE
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_CREATE_COUPLE
+import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_DELETE_CHALLENGE
+import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_MODIFY_CHALLENGE
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_PRESS_FOR_ANSWER
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_TEXT_CHATTING
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_TODAY_QUESTION
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_VOICE_CHATTING
-import com.clonect.feeltalk.new_presentation.notification.observer.*
+import com.clonect.feeltalk.new_presentation.notification.observer.AddCompletedChallengeObserver
+import com.clonect.feeltalk.new_presentation.notification.observer.AddOngoingChallengeObserver
+import com.clonect.feeltalk.new_presentation.notification.observer.CreateCoupleObserver
+import com.clonect.feeltalk.new_presentation.notification.observer.DeleteCompletedChallengeObserver
+import com.clonect.feeltalk.new_presentation.notification.observer.DeleteOngoingChallengeObserver
+import com.clonect.feeltalk.new_presentation.notification.observer.EditOngoingChallengeObserver
+import com.clonect.feeltalk.new_presentation.notification.observer.NewChatObserver
+import com.clonect.feeltalk.new_presentation.notification.observer.PartnerChatRoomStateObserver
+import com.clonect.feeltalk.new_presentation.notification.observer.QuestionAnswerObserver
+import com.clonect.feeltalk.new_presentation.notification.observer.TodayQuestionObserver
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
 import com.clonect.feeltalk.presentation.utils.infoLog
@@ -57,6 +72,10 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     lateinit var getQuestionUseCase: GetQuestionUseCase
     @Inject
     lateinit var changeTodayQuestionCacheUseCase: ChangeTodayQuestionCacheUseCase
+
+    // Challenge
+    @Inject
+    lateinit var getChallengeUseCase: GetChallengeUseCase
 
     // App Settings
     @Inject
@@ -142,6 +161,10 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 TYPE_TODAY_QUESTION -> handleTodayQuestionData(data)
                 TYPE_PRESS_FOR_ANSWER -> handlePressForAnswerData(data)
                 TYPE_ANSWER_QUESTION -> handleAnswerQuestionData(data)
+                TYPE_ADD_CHALLENGE -> handleAddChallengeData(data)
+                TYPE_DELETE_CHALLENGE -> handleDeleteChallengeData(data)
+                TYPE_MODIFY_CHALLENGE -> handleModifyChallengeData(data)
+                TYPE_COMPLETE_CHALLENGE -> handleCompleteChallengeData(data)
             }
         }
     }
@@ -160,7 +183,8 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         val pendingIntent: PendingIntent? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_MUTABLE)
         } else {
-            PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+            PendingIntent.getActivity(applicationContext, 0, intent,
+                PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_MUTABLE)
         }
 
         notificationHelper.showNormalNotification(
@@ -319,6 +343,116 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             title = title,
             message = message,
             channelID = NotificationHelper.CHANNEL_ID_ANSWER_QUESTION,
+            notificationID = System.currentTimeMillis().toInt(),
+            pendingIntent = deepLinkPendingIntent
+        )
+    }
+
+    private fun handleAddChallengeData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+        val index = data["index"]?.toLong() ?: return@launch
+        val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
+            .setGraph(R.navigation.feeltalk_nav_graph)
+            .setDestination(R.id.mainNavigationFragment)
+            .setArguments(
+                bundleOf(
+                    "challengeIndex" to index,
+                )
+            )
+            .createPendingIntent()
+
+        if (getAppRunning()) {
+            val challenge = (getChallengeUseCase(index) as? Resource.Success)?.data?.toChallenge()
+            if (challenge != null && !challenge.isCompleted) {
+                AddOngoingChallengeObserver
+                    .getInstance()
+                    .setChallenge(challenge)
+            }
+        }
+
+        notificationHelper.showNormalNotification(
+            title = "새 챌린지가 등록됐어요",
+            message = "야호~",
+            channelID = NotificationHelper.CHANNEL_ID_ADD_CHALLENGE,
+            notificationID = System.currentTimeMillis().toInt(),
+            pendingIntent = deepLinkPendingIntent
+        )
+    }
+
+    private fun handleDeleteChallengeData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+        val index = data["index"]?.toLong() ?: return@launch
+        if (getAppRunning()) {
+            val challenge = (getChallengeUseCase(index) as? Resource.Success)
+                ?.data?.toChallenge() ?: return@launch
+            if (challenge.isCompleted) {
+                DeleteCompletedChallengeObserver
+                    .getInstance()
+                    .setChallenge(challenge)
+            } else {
+                DeleteOngoingChallengeObserver
+                    .getInstance()
+                    .setChallenge(challenge)
+            }
+        }
+    }
+
+    private fun handleModifyChallengeData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+        val index = data["index"]?.toLong() ?: return@launch
+        val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
+            .setGraph(R.navigation.feeltalk_nav_graph)
+            .setDestination(R.id.mainNavigationFragment)
+            .setArguments(
+                bundleOf(
+                    "challengeIndex" to index,
+                )
+            )
+            .createPendingIntent()
+
+        if (getAppRunning()) {
+            val challenge = (getChallengeUseCase(index) as? Resource.Success)?.data?.toChallenge()
+            if (challenge != null && !challenge.isCompleted) {
+                EditOngoingChallengeObserver
+                    .getInstance()
+                    .setChallenge(challenge)
+            }
+        }
+
+        notificationHelper.showNormalNotification(
+            title = "헉 연인이 챌린지를 수정했어요",
+            message = "야호~",
+            channelID = NotificationHelper.CHANNEL_ID_ADD_CHALLENGE,
+            notificationID = System.currentTimeMillis().toInt(),
+            pendingIntent = deepLinkPendingIntent
+        )
+    }
+
+    private fun handleCompleteChallengeData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+        val index = data["index"]?.toLong() ?: return@launch
+        val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
+            .setGraph(R.navigation.feeltalk_nav_graph)
+            .setDestination(R.id.mainNavigationFragment)
+            .setArguments(
+                bundleOf(
+                    "challengeIndex" to index,
+                )
+            )
+            .createPendingIntent()
+
+        if (getAppRunning()) {
+            val challenge = (getChallengeUseCase(index) as? Resource.Success)?.data?.toChallenge()
+            if (challenge != null && challenge.isCompleted) {
+                DeleteOngoingChallengeObserver
+                    .getInstance()
+                    .setChallenge(challenge)
+                AddCompletedChallengeObserver
+                    .getInstance()
+                    .setChallenge(challenge)
+            }
+        }
+
+        notificationHelper.showNormalNotification(
+            title = "챌린지가 완료되었어요",
+            message = "야호~ 야호~",
+            channelID = NotificationHelper.CHANNEL_ID_ADD_CHALLENGE,
             notificationID = System.currentTimeMillis().toInt(),
             pendingIntent = deepLinkPendingIntent
         )

@@ -4,20 +4,23 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
-import android.graphics.Color
 import android.os.Build
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.new_data.mapper.toChallenge
+import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.chat.ChatType
 import com.clonect.feeltalk.new_domain.model.chat.PartnerLastChatDto
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.question.Question
+import com.clonect.feeltalk.new_domain.usecase.challenge.GetChallengeUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPartnerLastChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUseCase
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
+import com.clonect.feeltalk.new_presentation.notification.observer.CompleteChallengeObserver
 import com.clonect.feeltalk.new_presentation.notification.observer.NewChatObserver
 import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
 import com.clonect.feeltalk.presentation.utils.infoLog
@@ -26,6 +29,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,6 +38,7 @@ class MainNavigationViewModel @Inject constructor(
     private val notificationHelper: NotificationHelper,
     private val getPartnerLastChatUseCase: GetPartnerLastChatUseCase,
     private val getQuestionUseCase: GetQuestionUseCase,
+    private val getChallengeUseCase: GetChallengeUseCase,
 ): ViewModel() {
 
     private val _navigateTo = MutableSharedFlow<String>()
@@ -50,9 +55,6 @@ class MainNavigationViewModel @Inject constructor(
 
     private val isInQuestionTop = MutableStateFlow(true)
 
-    private val _partnerLastChatColor = MutableStateFlow(Color.WHITE)
-    val partnerLastChatColor = _partnerLastChatColor.asStateFlow()
-
 
     private val _showChatNavigation = MutableStateFlow(false)
     val showChatNavigation = _showChatNavigation.asStateFlow()
@@ -68,9 +70,16 @@ class MainNavigationViewModel @Inject constructor(
     val showAnswerSheet = _showAnswerSheet.asStateFlow()
 
 
+    private val _isChallengeCompleted = MutableStateFlow(false)
+    val isChallengeCompleted = _isChallengeCompleted.asStateFlow()
+
+    private val _showChallengeDetail = MutableStateFlow<Challenge?>(null)
+    val showChallengeDetail = _showChallengeDetail.asStateFlow()
+
     init {
         getPartnerLastChat()
         collectNewChat()
+        collectCompleteChallenge()
         calculateShowingPartnerLastChat()
     }
 
@@ -125,10 +134,6 @@ class MainNavigationViewModel @Inject constructor(
         calculateShowingPartnerLastChat()
     }
 
-    fun setPartnerLastChatColor(color: Int) {
-        _partnerLastChatColor.value = color
-    }
-
     fun setShowQuestionPage(isShow: Boolean) {
         isShowQuestionPage.value = isShow
         calculateShowingPartnerLastChat()
@@ -177,16 +182,23 @@ class MainNavigationViewModel @Inject constructor(
         calculateShowingPartnerLastChat()
     }
 
-    fun initShowQuestionAnswerSheet(index: Long, isTodayQuestion: Boolean) = viewModelScope.launch {
+
+    fun setShowChallengeDetail(challenge: Challenge?) {
+        _showChallengeDetail.value = challenge
+    }
+
+    fun setChallengeCompleted(isCompleted: Boolean) {
+        _isChallengeCompleted.value = isCompleted
+    }
+
+
+    fun initShowQuestionAnswerSheet(index: Long) = viewModelScope.launch {
         if (index < 0) return@launch
 
         when (val result = getQuestionUseCase(index)) {
             is Resource.Success -> {
                 setAnswerTargetQuestion(result.data)
                 setShowAnswerSheet(true)
-                if (!isTodayQuestion) {
-                    navigateTo("question")
-                }
             }
             is Resource.Error -> {
                 infoLog("Fail to get a question at deeplink: ${result.throwable.localizedMessage}\n${result.throwable.stackTrace.joinToString("\n")}")
@@ -194,6 +206,19 @@ class MainNavigationViewModel @Inject constructor(
         }
     }
 
+    fun initShowChallengeDetail(index: Long) = viewModelScope.launch {
+        if (index < 0) return@launch
+
+        when (val result = getChallengeUseCase(index)) {
+            is Resource.Success -> {
+                val challenge = result.data.toChallenge()
+                setShowChallengeDetail(challenge)
+            }
+            is Resource.Error -> {
+                infoLog("Fail to get a question at deeplink: ${result.throwable.localizedMessage}\n${result.throwable.stackTrace.joinToString("\n")}")
+            }
+        }
+    }
 
 
 
@@ -225,6 +250,19 @@ class MainNavigationViewModel @Inject constructor(
                 }.onFailure {
                     infoLog("collectNewChat(): ${it.localizedMessage}")
                 }
+            }
+    }
+
+    private fun collectCompleteChallenge() = viewModelScope.launch {
+        CompleteChallengeObserver
+            .getInstance()
+            .setCompleted(null)
+        CompleteChallengeObserver
+            .getInstance()
+            .isCompleted
+            .collectLatest {
+                if (it == null) return@collectLatest
+                _isChallengeCompleted.value = it
             }
     }
 }

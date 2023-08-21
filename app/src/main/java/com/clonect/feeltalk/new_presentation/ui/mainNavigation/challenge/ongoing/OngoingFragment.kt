@@ -34,7 +34,7 @@ class OngoingFragment : Fragment() {
     private val challengeViewModel: ChallengeViewModel by viewModels(ownerProducer = { requireParentFragment() })
     private val ongoingViewModel: OngoingViewModel by viewModels()
     @Inject
-    lateinit var adapter: OngoingChallengeAdapter
+    lateinit var adapter: OngoingAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

@@ -40,10 +40,6 @@
         <action
             android:id="@+id/action_signUpNavigationFragment_to_agreementPrivacyDetailFragment"
             app:destination="@id/agreementPrivacyDetailFragment" />
-        <argument
-            android:name="startPage"
-            android:defaultValue="coupleCode"
-            app:argType="string"/>
     </fragment>
     <fragment
         android:id="@+id/mainNavigationFragment"
@@ -75,24 +71,24 @@
         tools:layout="@layout/fragment_agreement_sensitive_detail" />
     <fragment
         android:id="@+id/addChallengeFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.addChallenge.AddChallengeFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.addChallenge.AddChallengeFragment"
         android:label="fragment_add_challenge"
         tools:layout="@layout/fragment_add_challenge" />
     <fragment
         android:id="@+id/contentsShareFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.chatNavigation.contentsShare.ContentsShareFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.contentsShare.ContentsShareFragment"
         android:label="ContentsShareFragment"
         tools:layout="@layout/fragment_contents_share"/>
     <fragment
         android:id="@+id/ongoingChallengeDetailFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.ongoingChallengeDetail.OngoingChallengeDetailFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.ongoingDetail.OngoingDetailFragment"
         android:label="OngoingChallengeDetailFragment"
-        tools:layout="@layout/fragment_ongoing_challenge_detail" />
+        tools:layout="@layout/fragment_ongoing_detail" />
     <fragment
         android:id="@+id/completedChallengeDetailFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.completedChallengeDetail.CompletedChallengeDetailFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.completedDetail.CompletedDetailFragment"
         android:label="CompletedChallengeDetailFragment"
-        tools:layout="@layout/fragment_completed_challenge_detail"/>
+        tools:layout="@layout/fragment_completed_detail"/>
     <fragment
         android:id="@+id/serverDownFragment"
         android:name="com.clonect.feeltalk.new_presentation.ui.serverDown.ServerDownFragment"

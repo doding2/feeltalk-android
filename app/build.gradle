@@ -8,12 +8,12 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.clonect.feeltalk"
         minSdk 23
-        targetSdk 33
+        targetSdk 34
         versionCode 4
         versionName "1.3"
 
@@ -69,6 +69,7 @@ android {
     buildFeatures{
         viewBinding = true
     }
+    namespace 'com.clonect.feeltalk'
 }
 
 // Allow references to generated code
@@ -87,12 +88,14 @@ dependencies {
     implementation 'com.github.santalu:maskara:1.0.0'
     // custom image indicator
     implementation 'com.github.martinstamenkovski:ARIndicatorView:2.0.0'
-    // androidx brower
+    // androidx browser
     implementation 'androidx.browser:browser:1.5.0'
     // insets helper
     implementation "dev.chrisbanes.insetter:insetter:0.6.1"
     // paging
     implementation "androidx.paging:paging-runtime:3.1.1"
+    // lottie animation
+    implementation 'com.airbnb.android:lottie:6.1.0'
 
     // 믹스패널 데이터 분석
     implementation "com.mixpanel.android:mixpanel-android:7.+"
