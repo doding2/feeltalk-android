@@ -18,8 +18,6 @@ import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentCompletedDetailBinding
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
-import com.clonect.feeltalk.new_domain.model.challenge.ChallengeCategory
-import com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.addChallenge.showChangeCategoryDialog
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
@@ -65,11 +63,6 @@ class CompletedDetailFragment : Fragment() {
             etTitle.addTextChangedListener { viewModel.setTitle(it?.toString()) }
             etBody.addTextChangedListener { viewModel.setBody(it?.toString()) }
 
-            mcvCategory.setOnClickListener {
-                enableDeadlinePicker(false)
-                changeCategory()
-            }
-
             mcvDeadline.setOnClickListener { enableDeadlinePicker(true) }
         }
     }
@@ -92,7 +85,6 @@ class CompletedDetailFragment : Fragment() {
 
                 etTitle.isEnabled = false
                 etBody.isEnabled = false
-                mcvCategory.isEnabled = false
                 mcvDeadline.isEnabled = false
                 mcvCompleteRound.isEnabled = false
             }
@@ -112,15 +104,6 @@ class CompletedDetailFragment : Fragment() {
                 viewModel.deleteChallenge {
                     findNavController().popBackStack()
                 }
-            }
-        )
-    }
-
-    private fun changeCategory() {
-        showChangeCategoryDialog(
-            previousCategory = viewModel.category.value,
-            onConfirm = {
-                viewModel.setCategory(it)
             }
         )
     }
@@ -160,39 +143,18 @@ class CompletedDetailFragment : Fragment() {
     }
 
 
+    private fun changeNumTitleView(title: String?) = binding.run {
+        tvNumTitle.text = title?.length?.toString() ?: requireContext().getString(R.string.add_challenge_default_num_title)
+    }
+
+    private fun changeNumBodyView(body: String?) = binding.run {
+        tvNumBody.text = body?.length?.toString() ?: requireContext().getString(R.string.add_challenge_default_num_body)
+    }
+
     private fun changeDeadlineView(deadline: Date) {
         val formatter = SimpleDateFormat("yyyy년 M월 dd일까지", Locale.getDefault())
         val str = formatter.format(deadline)
         binding.tvDeadline.text = str
-    }
-
-    private fun changeCategoryView(category: ChallengeCategory) {
-        when (category) {
-            ChallengeCategory.Place -> {
-                binding.tvCategory.setText(R.string.change_category_select_1)
-            }
-            ChallengeCategory.Toy ->  {
-                binding.tvCategory.setText(R.string.change_category_select_2)
-            }
-            ChallengeCategory.Pose -> {
-                binding.tvCategory.setText(R.string.change_category_select_3)
-            }
-            ChallengeCategory.Clothes -> {
-                binding.tvCategory.setText(R.string.change_category_select_4)
-            }
-            ChallengeCategory.Whip ->  {
-                binding.tvCategory.setText(R.string.change_category_select_5)
-            }
-            ChallengeCategory.Handcuffs -> {
-                binding.tvCategory.setText(R.string.change_category_select_6)
-            }
-            ChallengeCategory.VideoCall -> {
-                binding.tvCategory.setText(R.string.change_category_select_7)
-            }
-            ChallengeCategory.Porn -> {
-                binding.tvCategory.setText(R.string.change_category_select_8)
-            }
-        }
     }
 
     private fun showLoading(isLoading: Boolean) {
@@ -206,8 +168,9 @@ class CompletedDetailFragment : Fragment() {
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.isLoading.collectLatest(::showLoading) }
-            launch { viewModel.category.collectLatest(::changeCategoryView) }
             launch { viewModel.deadline.collectLatest(::changeDeadlineView) }
+            launch { viewModel.title.collectLatest(::changeNumTitleView) }
+            launch { viewModel.body.collectLatest(::changeNumBodyView) }
         }
     }
 

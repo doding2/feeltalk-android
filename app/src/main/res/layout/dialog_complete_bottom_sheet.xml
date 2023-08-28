@@ -4,20 +4,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/white"
     android:orientation="vertical"
-    android:background="@drawable/n_background_bottom_sheet_rounded"
-    tools:context=".new_presentation.ui.mainNavigation.challenge.complete.CompleteFragment">
+    android:elevation="5dp">
 
-    <com.airbnb.lottie.LottieAnimationView
+    <ImageView
         android:id="@+id/lav_complete_check"
-        android:layout_width="147dp"
-        android:layout_height="147dp"
-        android:padding="25dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_marginTop="20dp"
         android:layout_gravity="center"
-        app:lottie_rawRes="@raw/challenge_success_image"
-        app:lottie_autoPlay="false"
-        app:lottie_loop="false"/>
+        android:src="@drawable/n_image_challenge_complete"/>
 
     <TextView
         android:layout_width="wrap_content"

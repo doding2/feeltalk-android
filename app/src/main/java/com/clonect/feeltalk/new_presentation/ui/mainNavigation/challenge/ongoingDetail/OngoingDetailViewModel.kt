@@ -9,7 +9,6 @@ import com.clonect.feeltalk.new_domain.usecase.challenge.CompleteChallengeUseCas
 import com.clonect.feeltalk.new_domain.usecase.challenge.DeleteChallengeUseCase
 import com.clonect.feeltalk.new_domain.usecase.challenge.ModifyChallengeUseCase
 import com.clonect.feeltalk.new_presentation.notification.observer.AddCompletedChallengeObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.CompleteChallengeObserver
 import com.clonect.feeltalk.new_presentation.notification.observer.DeleteOngoingChallengeObserver
 import com.clonect.feeltalk.new_presentation.notification.observer.EditOngoingChallengeObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
@@ -37,6 +36,10 @@ class OngoingDetailViewModel @Inject constructor(
     val isKeyboardUp = _isKeyboardUp.asStateFlow()
 
 
+    private val _isChallengeCompleted = MutableStateFlow(false)
+    val isChallengeCompleted = _isChallengeCompleted.asStateFlow()
+
+
     private val _challenge = MutableStateFlow<Challenge?>(null)
     val challenge = _challenge.asStateFlow()
 
@@ -46,6 +49,10 @@ class OngoingDetailViewModel @Inject constructor(
 
     private val _isEditEnabled = MutableStateFlow(true)
     val isEditEnabled = _isEditEnabled.asStateFlow()
+
+
+    private val _focused = MutableStateFlow<String?>(null)
+    val focused = _focused.asStateFlow()
 
 
     private val _category = MutableStateFlow(ChallengeCategory.Place)
@@ -86,10 +93,14 @@ class OngoingDetailViewModel @Inject constructor(
         _isKeyboardUp.value = isUp
     }
 
-
-    fun setCategory(category: ChallengeCategory) {
-        _category.value = category
+    fun setFocusedEditText(et: String?) {
+        _focused.value = et
     }
+
+    fun setChallengeCompleted(isCompleted: Boolean) {
+        _isChallengeCompleted.value = isCompleted
+    }
+
 
     fun setTitle(title: String?) {
         _title.value = title
@@ -140,9 +151,6 @@ class OngoingDetailViewModel @Inject constructor(
                     .setChallenge(
                         completed
                     )
-                CompleteChallengeObserver
-                    .getInstance()
-                    .setCompleted(true)
                 onSuccess()
             }
             is Resource.Error -> {
@@ -246,4 +254,5 @@ class OngoingDetailViewModel @Inject constructor(
                 initChallenge(edited)
             }
     }
+
 }

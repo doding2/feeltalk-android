@@ -1,7 +1,6 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.ongoing
 
 import android.app.Activity
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
@@ -15,7 +14,7 @@ import com.clonect.feeltalk.databinding.ItemChallengeOngoingBinding
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getScreenWidth
-import java.util.*
+import java.util.Date
 import kotlin.math.ceil
 
 class OngoingAdapter: PagingDataAdapter<Challenge, OngoingAdapter.OngoingChallengeViewHolder>(callback) {
@@ -35,7 +34,6 @@ class OngoingAdapter: PagingDataAdapter<Challenge, OngoingAdapter.OngoingChallen
     private var itemSize: Int = 0
 
     private var onItemClick: ((Challenge) -> Unit) = {}
-    private var onCompleteChallenge: (Challenge) -> Unit = {}
 
     private var isFirstImminentItem = true
     private var onFirstImminentItemShow: () -> Unit = {}
@@ -56,10 +54,6 @@ class OngoingAdapter: PagingDataAdapter<Challenge, OngoingAdapter.OngoingChallen
 
     fun setOnItemClickListener(listener: (Challenge) -> Unit) {
         onItemClick = listener
-    }
-
-    fun setOnCompleteChallengeListener(listener: (Challenge) -> Unit) {
-        onCompleteChallenge = listener
     }
 
     fun setOnFirstImminentItemListener(listener: () -> Unit) {
@@ -85,7 +79,6 @@ class OngoingAdapter: PagingDataAdapter<Challenge, OngoingAdapter.OngoingChallen
         fun bind(item: Challenge) {
             binding.run {
                 root.setOnClickListener { onItemClick(item) }
-                ivComplete.setOnClickListener { onCompleteChallenge(item) }
 
                 root.layoutParams.width = itemSize
 
@@ -115,7 +108,7 @@ class OngoingAdapter: PagingDataAdapter<Challenge, OngoingAdapter.OngoingChallen
                     }
                 } else {
                     mcvDDay.setCardBackgroundColor(root.context.getColor(R.color.gray_200))
-                    tvDDay.setTextColor(Color.BLACK)
+                    tvDDay.setTextColor(root.context.getColor(R.color.gray_600))
                     tvDDay.typeface = ResourcesCompat.getFont(root.context, R.font.pretendard_regular)
                     mcvOngoing.strokeWidth = 0
                 }

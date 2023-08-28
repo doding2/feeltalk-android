@@ -13,7 +13,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,6 +31,10 @@ class AddChallengeViewModel @Inject constructor(
 
     private val _isAddEnabled = MutableStateFlow(false)
     val isAddEnabled = _isAddEnabled.asStateFlow()
+
+
+    private val _focused = MutableStateFlow<String?>(null)
+    val focused = _focused.asStateFlow()
 
 
     private val _category = MutableStateFlow(ChallengeCategory.Place)
@@ -50,8 +55,8 @@ class AddChallengeViewModel @Inject constructor(
     }
 
 
-    fun setCategory(category: ChallengeCategory) {
-        _category.value = category
+    fun setFocusedEditText(et: String) {
+        _focused.value = et
     }
 
     fun setTitle(title: String?) {

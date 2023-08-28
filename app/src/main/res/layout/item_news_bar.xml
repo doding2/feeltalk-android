@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="34dp"
+    android:orientation="horizontal"
+    android:paddingVertical="7dp">
+
+    <TextView
+        android:id="@+id/tv_highlight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="highlight"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/pretendard_semi_bold"
+        android:lines="1"
+        android:ellipsize="end" />
+
+    <TextView
+        android:id="@+id/tv_normal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="normal"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/pretendard_regular"
+        android:lines="1"
+        android:ellipsize="end"/>
+</LinearLayout>

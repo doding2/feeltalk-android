@@ -17,7 +17,6 @@ import com.clonect.feeltalk.databinding.FragmentOngoingBinding
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.ChallengeViewModel
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.completed.SnackbarState
-import com.clonect.feeltalk.new_presentation.ui.util.showConfirmDialog
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import dagger.hilt.android.AndroidEntryPoint
@@ -69,18 +68,6 @@ class OngoingFragment : Fragment() {
             .navigate(R.id.action_mainNavigationFragment_to_ongoingChallengeDetailFragment, bundle)
     }
 
-    private fun onCompleteChallenge(item: Challenge) {
-        showConfirmDialog(
-            title = requireContext().getString(R.string.complete_challenge_title),
-            body = null,
-            cancelButton = requireContext().getString(R.string.complete_challenge_cancel),
-            confirmButton = requireContext().getString(R.string.complete_challenge_confirm),
-            onConfirm = {
-                // TODO
-            }
-        )
-    }
-
     private fun onFirstImminentItemShow() {
         challengeViewModel.setSnackbarState(
             SnackbarState(
@@ -106,7 +93,6 @@ class OngoingFragment : Fragment() {
 
         adapter.calculateItemSize(requireActivity())
         adapter.setOnItemClickListener(::onItemClick)
-        adapter.setOnCompleteChallengeListener(::onCompleteChallenge)
         adapter.setOnFirstImminentItemListener(::onFirstImminentItemShow)
         rvOngoingChallenge.adapter = adapter
 

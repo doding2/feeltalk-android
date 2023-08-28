@@ -20,7 +20,6 @@ import com.clonect.feeltalk.new_domain.usecase.challenge.GetChallengeUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPartnerLastChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUseCase
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
-import com.clonect.feeltalk.new_presentation.notification.observer.CompleteChallengeObserver
 import com.clonect.feeltalk.new_presentation.notification.observer.NewChatObserver
 import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
 import com.clonect.feeltalk.presentation.utils.infoLog
@@ -29,7 +28,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -70,16 +68,12 @@ class MainNavigationViewModel @Inject constructor(
     val showAnswerSheet = _showAnswerSheet.asStateFlow()
 
 
-    private val _isChallengeCompleted = MutableStateFlow(false)
-    val isChallengeCompleted = _isChallengeCompleted.asStateFlow()
-
     private val _showChallengeDetail = MutableStateFlow<Challenge?>(null)
     val showChallengeDetail = _showChallengeDetail.asStateFlow()
 
     init {
         getPartnerLastChat()
         collectNewChat()
-        collectCompleteChallenge()
         calculateShowingPartnerLastChat()
     }
 
@@ -187,10 +181,6 @@ class MainNavigationViewModel @Inject constructor(
         _showChallengeDetail.value = challenge
     }
 
-    fun setChallengeCompleted(isCompleted: Boolean) {
-        _isChallengeCompleted.value = isCompleted
-    }
-
 
     fun initShowQuestionAnswerSheet(index: Long) = viewModelScope.launch {
         if (index < 0) return@launch
@@ -250,19 +240,6 @@ class MainNavigationViewModel @Inject constructor(
                 }.onFailure {
                     infoLog("collectNewChat(): ${it.localizedMessage}")
                 }
-            }
-    }
-
-    private fun collectCompleteChallenge() = viewModelScope.launch {
-        CompleteChallengeObserver
-            .getInstance()
-            .setCompleted(null)
-        CompleteChallengeObserver
-            .getInstance()
-            .isCompleted
-            .collectLatest {
-                if (it == null) return@collectLatest
-                _isChallengeCompleted.value = it
             }
     }
 }

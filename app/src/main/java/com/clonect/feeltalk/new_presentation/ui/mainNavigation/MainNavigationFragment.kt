@@ -40,7 +40,6 @@ class MainNavigationFragment : Fragment() {
 
         setUpBottomNavigation()
         setUpAnswerSheet()
-        setUpCompleteSheet()
 
         // set fullscreen
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -91,10 +90,6 @@ class MainNavigationFragment : Fragment() {
             viewAnswerBehind.setOnClickListener {
                 viewModel.setShowAnswerSheet(false)
             }
-
-            lavCompleteChallenge.setOnClickListener {
-                viewModel.setChallengeCompleted(false)
-            }
         }
     }
 
@@ -121,21 +116,6 @@ class MainNavigationFragment : Fragment() {
                     if (newState == BottomSheetBehavior.STATE_HIDDEN) {
                         viewModel.setUserAnswering(false)
                         viewModel.setShowAnswerSheet(false)
-                    }
-                }
-            })
-        }
-    }
-
-    private fun setUpCompleteSheet() {
-        val behavior = BottomSheetBehavior.from(binding.flCompleteSheet).apply {
-            peekHeight = 0
-            skipCollapsed = true
-            addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-                override fun onSlide(bottomSheet: View, slideOffset: Float) {}
-                override fun onStateChanged(bottomSheet: View, newState: Int) {
-                    if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                        viewModel.setChallengeCompleted(false)
                     }
                 }
             })
@@ -203,18 +183,6 @@ class MainNavigationFragment : Fragment() {
         }
     }
 
-    private fun changeCompleteChallengeView(isCompleted: Boolean) = binding.run {
-        val behavior = BottomSheetBehavior.from(binding.flCompleteSheet)
-        if (isCompleted) {
-            lavCompleteChallenge.visibility = View.VISIBLE
-            lavCompleteChallenge.playAnimation()
-            behavior.state = BottomSheetBehavior.STATE_EXPANDED
-        } else {
-            lavCompleteChallenge.visibility = View.GONE
-            lavCompleteChallenge.cancelAnimation()
-            behavior.state = BottomSheetBehavior.STATE_HIDDEN
-        }
-    }
 
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -223,7 +191,6 @@ class MainNavigationFragment : Fragment() {
             launch { viewModel.showPartnerLastChat.collectLatest(::showPartnerLastChatView) }
             launch { viewModel.partnerLastChat.collectLatest(::changePartnerLastChatView) }
             launch { viewModel.showAnswerSheet.collectLatest(::showAnswerSheet) }
-            launch { viewModel.isChallengeCompleted.collectLatest(::changeCompleteChallengeView) }
         }
     }
 

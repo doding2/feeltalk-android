@@ -165,10 +165,10 @@
     <string name="ongoing_challenge_deadline_imminent">기간 임박! 챌린지가 곧 사라져요!</string>
 
     <!--  Completed  -->
-    <string name="completed_challenge_d_day_deco">D+</string>
+    <string name="completed_challenge_d_day_deco">YY.MM.DD</string>
 
     <!--  AddChallenge  -->
-    <string name="add_challenge_title_1">자기야💋</string>
+    <string name="add_challenge_title_1">자기야💕</string>
     <string name="add_challenge_title_2">우리 어떤 걸 해볼까?</string>
     <string name="add_challenge_title">챌린지명</string>
     <string name="add_challenge_d_day_today">D-Day</string>
@@ -178,7 +178,24 @@
     <string name="add_challenge_content">챌린지 내용</string>
     <string name="add_challenge_title_hint">챌린지 이름을 적어주세요 !</string>
     <string name="add_challenge_body_hint">내용을 자세히 적어보세요 !</string>
-    <string name="add_challenge_button">챌린지 추가</string>
+    <string name="add_challenge_button">챌린지 만들기</string>
+    <string name="add_challenge_next">다음</string>
+    <string name="add_challenge_done">완료</string>
+    <string name="add_challenge_max_num_title">/20</string>
+    <string name="add_challenge_default_num_title">0</string>
+    <string name="add_challenge_max_num_body">/100</string>
+    <string name="add_challenge_default_num_body">0</string>
+    <string name="add_challenge_news_bar_recommend">추천</string>
+
+    <!--  NewsBarItem  -->
+    <string name="news_bar_highlight_1">새로운 체위</string>
+    <string name="news_bar_normal_1">를 찾아보는 건 어때요?</string>
+    <string name="news_bar_highlight_2">코스프레</string>
+    <string name="news_bar_normal_2"> 판타지가 있나요?</string>
+    <string name="news_bar_highlight_3">성인용품</string>
+    <string name="news_bar_normal_3">으로 색다른 경험을 해볼까요?</string>
+    <string name="news_bar_highlight_4">BDSM</string>
+    <string name="news_bar_normal_4">를 시도해 보는 건 어때요?</string>
 
     <!--  ChangeCategory  -->
     <string name="change_category_title">카테고리</string>

@@ -11,7 +11,9 @@ import com.clonect.feeltalk.databinding.ItemChallengeCompletedBinding
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getScreenWidth
-import java.util.*
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlin.math.absoluteValue
 import kotlin.math.ceil
 
@@ -70,6 +72,9 @@ class CompletedAdapter: PagingDataAdapter<Challenge, CompletedAdapter.CompletedC
                 root.setOnClickListener { onItemClick(item) }
                 root.layoutParams.width = itemSize
 
+                val format = SimpleDateFormat("yy.MM.dd", Locale.getDefault())
+
+                tvDDay.text = format.format(item.deadline)
                 tvChallengeTitle.text = item.title
                 tvNickname.text = item.owner
             }

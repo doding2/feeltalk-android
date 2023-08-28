@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -21,16 +22,19 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearSnapHelper
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.databinding.FragmentAddChallengeBinding
-import com.clonect.feeltalk.new_domain.model.challenge.ChallengeCategory
+import com.clonect.feeltalk.new_domain.model.challenge.NewsBarItem
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.makeLoadingDialog
 import com.clonect.feeltalk.new_presentation.ui.util.showConfirmDialog
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -60,6 +64,8 @@ class AddChallengeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setNewsBar()
+        setFocusListener()
         setDatePickerListener()
         setKeyboardInsets()
         collectViewModel()
@@ -68,17 +74,13 @@ class AddChallengeFragment : Fragment() {
             etTitle.addTextChangedListener { viewModel.setTitle(it?.toString()) }
             etBody.addTextChangedListener { viewModel.setBody(it?.toString()) }
 
-            mcvCategory.setOnClickListener {
-                enableDeadlinePicker(false)
-                changeCategory()
-            }
-
             mcvDeadline.setOnClickListener { enableDeadlinePicker(true) }
 
+            ivClear.setOnClickListener { etTitle.setText("") }
             ivBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
 
-            mcvAddSquare.setOnClickListener { addChallenge() }
             mcvAddRound.setOnClickListener { addChallenge() }
+            tvNext.setOnClickListener { changeFocus() }
         }
     }
 
@@ -90,30 +92,85 @@ class AddChallengeFragment : Fragment() {
         }
     }
 
-    private fun changeCategory() {
-        showChangeCategoryDialog(
-            previousCategory = viewModel.category.value,
-            onConfirm = {
-                viewModel.setCategory(it)
-            }
+    private fun setNewsBar() = binding.run {
+        val snapHelper = LinearSnapHelper()
+        snapHelper.attachToRecyclerView(rvNewsBar)
+
+        rvNewsBar.isClickable = false
+        rvNewsBar.isFocusable = false
+        rvNewsBar.isNestedScrollingEnabled = false
+        rvNewsBar.setOnTouchListener { _, _ -> true }
+        rvNewsBar.adapter = NewsBarAdapter(
+            listOf(
+                NewsBarItem(
+                    highlight = requireContext().getString(R.string.news_bar_highlight_1),
+                    normal = requireContext().getString(R.string.news_bar_normal_1)
+                ),
+                NewsBarItem(
+                    highlight = requireContext().getString(R.string.news_bar_highlight_2),
+                    normal = requireContext().getString(R.string.news_bar_normal_2)
+                ),
+                NewsBarItem(
+                    highlight = requireContext().getString(R.string.news_bar_highlight_3),
+                    normal = requireContext().getString(R.string.news_bar_normal_3)
+                ),
+                NewsBarItem(
+                    highlight = requireContext().getString(R.string.news_bar_highlight_4),
+                    normal = requireContext().getString(R.string.news_bar_normal_4)
+                ),
+            )
         )
+
+        val dy = requireContext().dpToPx(34f).toInt()
+        lifecycleScope.launch(Dispatchers.Main) {
+            while (true) {
+                delay(3000)
+                rvNewsBar.smoothScrollBy(0, dy, null, 1000)
+            }
+        }
+    }
+
+    private fun setFocusListener() = binding.run {
+        etTitle.setOnFocusChangeListener { view, isFocused ->
+            if (isFocused) {
+                viewModel.setFocusedEditText("title")
+            }
+        }
+        etBody.setOnFocusChangeListener { view, isFocused ->
+            if (isFocused) {
+                viewModel.setFocusedEditText("body")
+            }
+        }
+        etTitle.setOnEditorActionListener { textView, actionId, keyEvent ->
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                mcvDeadline.requestFocus()
+                mcvDeadline.performClick()
+                return@setOnEditorActionListener true
+            }
+            false
+        }
     }
 
     private fun enableDeadlinePicker(enabled: Boolean) = binding.run {
         if (enabled) {
-            dpDeadlinePicker.visibility = View.VISIBLE
-            mcvDeadline.strokeWidth = activity.dpToPx(2f).toInt()
-            mcvDeadline.setCardBackgroundColor(Color.WHITE)
+            lifecycleScope.launch {
+                viewModel.setFocusedEditText("deadline")
+                if (viewModel.isKeyboardUp.value) {
+                    hideKeyboard()
+                    delay(100)
+                }
+                dpDeadlinePicker.visibility = View.VISIBLE
+                mcvDeadline.strokeWidth = activity.dpToPx(2f).toInt()
+                mcvDeadline.setCardBackgroundColor(Color.WHITE)
 
-            hideKeyboard()
-            expandAddButton(true)
+                expandAddButton(true)
+            }
         } else {
             dpDeadlinePicker.visibility = View.GONE
             mcvDeadline.strokeWidth = 0
             mcvDeadline.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
         }
     }
-
 
     private fun setDatePickerListener() {
         val formatter = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
@@ -169,6 +226,40 @@ class AddChallengeFragment : Fragment() {
         binding.etBody.clearFocus()
     }
 
+    private fun showKeyboard(target: View) {
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(target, 0)
+    }
+
+
+    private fun changeFocus() = binding.run {
+        when (viewModel.focused.value) {
+            "title" -> {
+                mcvDeadline.requestFocus()
+                mcvDeadline.performClick()
+            }
+            "deadline" -> {
+                etBody.requestFocus()
+                showKeyboard(etBody)
+            }
+            "body" -> {
+                hideKeyboard()
+            }
+            else -> {
+                hideKeyboard()
+            }
+        }
+    }
+
+
+    private fun changeNumTitleView(title: String?) = binding.run {
+        tvNumTitle.text = title?.length?.toString() ?: requireContext().getString(R.string.add_challenge_default_num_title)
+    }
+
+    private fun changeNumBodyView(body: String?) = binding.run {
+        tvNumBody.text = body?.length?.toString() ?: requireContext().getString(R.string.add_challenge_default_num_body)
+    }
+
 
     private fun expandAddButton(enabled: Boolean) = binding.run {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
@@ -181,39 +272,34 @@ class AddChallengeFragment : Fragment() {
         }
 
         if (dpDeadlinePicker.isVisible) {
-            mcvAddSquare.visibility = View.VISIBLE
+            mcvNewsBar.visibility = View.VISIBLE
             mcvAddRound.visibility = View.GONE
             return@run
         }
 
         if (enabled) {
-            mcvAddSquare.visibility = View.VISIBLE
+            mcvNewsBar.visibility = View.VISIBLE
             mcvAddRound.visibility = View.GONE
         } else {
-            mcvAddSquare.visibility = View.GONE
+            mcvNewsBar.visibility = View.GONE
             mcvAddRound.visibility = View.VISIBLE
         }
     }
+
 
     private fun enableAddButton(enabled: Boolean) = binding.run {
         mcvAddRound.isClickable = enabled
         mcvAddRound.isFocusable = enabled
         mcvAddRound.isEnabled = enabled
 
-        mcvAddSquare.isClickable = enabled
-        mcvAddSquare.isFocusable = enabled
-        mcvAddSquare.isEnabled = enabled
+        mcvNewsBar.isClickable = enabled
+        mcvNewsBar.isFocusable = enabled
+        mcvNewsBar.isEnabled = enabled
 
         if (enabled) {
             mcvAddRound.setCardBackgroundColor(resources.getColor(R.color.main_500, null))
-            mcvAddSquare.setCardBackgroundColor(resources.getColor(R.color.main_500, null))
-            tvAddRound.setTextColor(Color.WHITE)
-            tvAddSquare.setTextColor(Color.WHITE)
         } else {
-            mcvAddRound.setCardBackgroundColor(resources.getColor(R.color.gray_300, null))
-            mcvAddSquare.setCardBackgroundColor(resources.getColor(R.color.gray_300, null))
-            tvAddRound.setTextColor(requireContext().getColor(R.color.gray_500))
-            tvAddSquare.setTextColor(requireContext().getColor(R.color.gray_500))
+            mcvAddRound.setCardBackgroundColor(resources.getColor(R.color.main_400, null))
         }
     }
 
@@ -222,7 +308,9 @@ class AddChallengeFragment : Fragment() {
         val formatter = SimpleDateFormat("yyyy년 M월 dd일까지", Locale.getDefault())
         val str = formatter.format(deadline)
         binding.tvDeadline.text = str
-        binding.tvDDay.text = if (dDay == 0) {
+        binding.tvDDay.text = if (dDay >= 999) {
+            requireContext().getString(R.string.add_challenge_d_day_over)
+        } else if (dDay == 0) {
             requireContext().getString(R.string.add_challenge_d_day_today)
         } else {
             requireContext().getString(R.string.add_challenge_d_day_normal) + dDay
@@ -238,35 +326,6 @@ class AddChallengeFragment : Fragment() {
         }
     }
 
-    private fun changeCategoryView(category: ChallengeCategory) {
-        when (category) {
-            ChallengeCategory.Place -> {
-                binding.tvCategory.setText(R.string.change_category_select_1)
-            }
-            ChallengeCategory.Toy ->  {
-                binding.tvCategory.setText(R.string.change_category_select_2)
-            }
-            ChallengeCategory.Pose -> {
-                binding.tvCategory.setText(R.string.change_category_select_3)
-            }
-            ChallengeCategory.Clothes -> {
-                binding.tvCategory.setText(R.string.change_category_select_4)
-            }
-            ChallengeCategory.Whip ->  {
-                binding.tvCategory.setText(R.string.change_category_select_5)
-            }
-            ChallengeCategory.Handcuffs -> {
-                binding.tvCategory.setText(R.string.change_category_select_6)
-            }
-            ChallengeCategory.VideoCall -> {
-                binding.tvCategory.setText(R.string.change_category_select_7)
-            }
-            ChallengeCategory.Porn -> {
-                binding.tvCategory.setText(R.string.change_category_select_8)
-            }
-        }
-    }
-
     private fun showLoading(isLoading: Boolean) {
         if (isLoading) {
             loadingDialog.show()
@@ -275,13 +334,68 @@ class AddChallengeFragment : Fragment() {
         }
     }
 
+    private fun changeFocusView(focused: String?) = binding.run {
+        when (focused) {
+            "title" -> {
+                mcvTitle.strokeWidth = requireContext().dpToPx(2f).toInt()
+                mcvTitle.setCardBackgroundColor(Color.WHITE)
+                ivClear.visibility = View.VISIBLE
+
+                enableDeadlinePicker(false)
+
+                mcvBody.strokeWidth = 0
+                mcvBody.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
+
+                tvNext.setText(R.string.add_challenge_next)
+            }
+            "deadline" -> {
+                mcvTitle.strokeWidth = 0
+                mcvTitle.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
+                ivClear.visibility = View.GONE
+
+                enableDeadlinePicker(true)
+
+                mcvBody.strokeWidth = 0
+                mcvBody.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
+
+                tvNext.setText(R.string.add_challenge_next)
+            }
+            "body" -> {
+                mcvTitle.strokeWidth = 0
+                mcvTitle.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
+                ivClear.visibility = View.GONE
+
+                enableDeadlinePicker(false)
+
+                mcvBody.strokeWidth = requireContext().dpToPx(2f).toInt()
+                mcvBody.setCardBackgroundColor(Color.WHITE)
+
+                tvNext.setText(R.string.add_challenge_done)
+            }
+            else -> {
+                mcvTitle.strokeWidth = 0
+                mcvTitle.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
+                ivClear.visibility = View.GONE
+
+                enableDeadlinePicker(false)
+
+                mcvBody.strokeWidth = 0
+                mcvBody.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
+
+                tvNext.setText(R.string.add_challenge_next)
+            }
+        }
+    }
+
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.isLoading.collectLatest(::showLoading) }
             launch { viewModel.isKeyboardUp.collectLatest(::changeViewWhenKeyboardUp) }
-            launch { viewModel.category.collectLatest(::changeCategoryView) }
             launch { viewModel.deadline.collectLatest(::changeDeadlineView) }
             launch { viewModel.isAddEnabled.collectLatest(::enableAddButton) }
+            launch { viewModel.title.collectLatest(::changeNumTitleView) }
+            launch { viewModel.body.collectLatest(::changeNumBodyView) }
+            launch { viewModel.focused.collectLatest(::changeFocusView) }
         }
     }
 
