@@ -28,9 +28,6 @@ class CompletedDetailViewModel @Inject constructor(
     val challenge = _challenge.asStateFlow()
 
 
-    private val _category = MutableStateFlow(ChallengeCategory.Place)
-    val category = _category.asStateFlow()
-
     private val _title = MutableStateFlow<String?>(null)
     val title = _title.asStateFlow()
 
@@ -43,15 +40,9 @@ class CompletedDetailViewModel @Inject constructor(
 
     fun initChallenge(challenge: Challenge) {
         _challenge.value = challenge
-        _category.value = challenge.category
         _title.value = challenge.title
         _body.value = challenge.body
         _deadline.value = challenge.deadline
-    }
-
-
-    fun setCategory(category: ChallengeCategory) {
-        _category.value = category
     }
 
     fun setTitle(title: String?) {

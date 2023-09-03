@@ -90,7 +90,6 @@ class AddChallengeViewModel @Inject constructor(
     fun addNewChallenge(onSuccess: () -> Unit) = viewModelScope.launch {
         _isLoading.value = true
         val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val category = category.value
         val title = title.value ?: run {
             _isLoading.value = false
             return@launch
@@ -101,7 +100,7 @@ class AddChallengeViewModel @Inject constructor(
         }
         val deadlineDate = deadline.value
         val deadline = format.format(deadlineDate)
-        when (val result = addChallengeUseCase(category.raw, title, deadline, content)) {
+        when (val result = addChallengeUseCase(title, deadline, content)) {
             is Resource.Success -> {
                 onSuccess()
                 AddOngoingChallengeObserver
@@ -109,7 +108,6 @@ class AddChallengeViewModel @Inject constructor(
                     .setChallenge(
                         Challenge(
                             index = result.data.index,
-                            category = category,
                             title = title,
                             body = content,
                             deadline = deadlineDate,

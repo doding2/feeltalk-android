@@ -38,7 +38,6 @@ class OngoingViewModel @Inject constructor(
                 paging.map {
                     return@map if (it.index == event.item.index)
                         it.copy(
-                            category = event.item.category,
                             title = event.item.title,
                             body = event.item.body,
                             deadline = event.item.deadline

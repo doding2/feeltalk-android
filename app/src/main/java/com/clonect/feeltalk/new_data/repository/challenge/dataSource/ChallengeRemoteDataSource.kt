@@ -9,8 +9,8 @@ interface ChallengeRemoteDataSource {
     suspend fun getLastCompletedChallengePageNo(accessToken: String): LastChallengePageNoDto
     suspend fun getCompletedChallengeList(accessToken: String, pageNo: Long): ChallengeListDto
 
-    suspend fun addChallenge(accessToken: String, category: String, title: String, deadline: String, content: String): AddChallengeDto
-    suspend fun modifyChallenge(accessToken: String, index: Long, category: String, title: String, deadline: String, content: String)
+    suspend fun addChallenge(accessToken: String, title: String, deadline: String, content: String): AddChallengeDto
+    suspend fun modifyChallenge(accessToken: String, index: Long, title: String, deadline: String, content: String)
     suspend fun deleteChallenge(accessToken: String, index: Long)
     suspend fun completeChallenge(accessToken: String, index: Long)
 

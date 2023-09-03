@@ -9,12 +9,12 @@ class AddChallengeUseCase(
     private val tokenRepository: TokenRepository,
     private val challengeRepository: ChallengeRepository,
 ) {
-    suspend operator fun invoke(category: String, title: String, deadline: String, content: String): Resource<AddChallengeDto> {
+    suspend operator fun invoke(title: String, deadline: String, content: String): Resource<AddChallengeDto> {
         val tokenInfo = tokenRepository.getTokenInfo()
         if (tokenInfo is Resource.Error) {
             return Resource.Error(tokenInfo.throwable)
         }
         val accessToken = (tokenInfo as Resource.Success).data.accessToken
-        return challengeRepository.addChallenge(accessToken, category, title, deadline, content)
+        return challengeRepository.addChallenge(accessToken, title, deadline, content)
     }
 }

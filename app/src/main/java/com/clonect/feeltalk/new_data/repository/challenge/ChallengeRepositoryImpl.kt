@@ -10,7 +10,12 @@ import com.clonect.feeltalk.new_data.repository.challenge.dataSource.ChallengeLo
 import com.clonect.feeltalk.new_data.repository.challenge.dataSource.ChallengeRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.challenge.paging.CompletedChallengePagingSource
 import com.clonect.feeltalk.new_data.repository.challenge.paging.OngoingChallengePagingSource
-import com.clonect.feeltalk.new_domain.model.challenge.*
+import com.clonect.feeltalk.new_domain.model.challenge.AddChallengeDto
+import com.clonect.feeltalk.new_domain.model.challenge.Challenge
+import com.clonect.feeltalk.new_domain.model.challenge.ChallengeCountDto
+import com.clonect.feeltalk.new_domain.model.challenge.ChallengeDto
+import com.clonect.feeltalk.new_domain.model.challenge.ChallengeListDto
+import com.clonect.feeltalk.new_domain.model.challenge.LastChallengePageNoDto
 import com.clonect.feeltalk.new_domain.repository.challenge.ChallengeRepository
 import kotlinx.coroutines.flow.Flow
 import kotlin.coroutines.cancellation.CancellationException
@@ -96,13 +101,12 @@ class ChallengeRepositoryImpl(
 
     override suspend fun addChallenge(
         accessToken: String,
-        category: String,
         title: String,
         deadline: String,
         content: String,
     ): Resource<AddChallengeDto> {
         return try {
-            val result = remoteDataSource.addChallenge(accessToken, category, title, deadline, content)
+            val result = remoteDataSource.addChallenge(accessToken, title, deadline, content)
             Resource.Success(result)
         } catch (e: CancellationException) {
             throw e
@@ -114,13 +118,12 @@ class ChallengeRepositoryImpl(
     override suspend fun modifyChallenge(
         accessToken: String,
         index: Long,
-        category: String,
         title: String,
         deadline: String,
         content: String,
     ): Resource<Unit> {
         return try {
-            val result = remoteDataSource.modifyChallenge(accessToken, index, category, title, deadline, content)
+            val result = remoteDataSource.modifyChallenge(accessToken, index, title, deadline, content)
             Resource.Success(result)
         } catch (e: CancellationException) {
             throw e

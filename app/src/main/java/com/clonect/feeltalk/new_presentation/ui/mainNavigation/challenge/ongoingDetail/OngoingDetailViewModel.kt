@@ -75,7 +75,6 @@ class OngoingDetailViewModel @Inject constructor(
 
     fun initChallenge(challenge: Challenge) {
         _challenge.value = challenge
-        _category.value = challenge.category
         _title.value = challenge.title
         _body.value = challenge.body
         _deadline.value = challenge.deadline
@@ -126,8 +125,7 @@ class OngoingDetailViewModel @Inject constructor(
 
         it?.title != title.value
                 || it?.body != body.value
-                || it?.category != category.value
-                || format.format(it.deadline) != format.format(deadline.value)
+                || format.format(it?.deadline) != format.format(deadline.value)
     }
 
 
@@ -171,7 +169,6 @@ class OngoingDetailViewModel @Inject constructor(
             _isLoading.value = false
             return@launch
         }
-        val category = category.value
         val title = title.value ?: run {
             _isLoading.value = false
             return@launch
@@ -183,11 +180,10 @@ class OngoingDetailViewModel @Inject constructor(
         val deadlineDate = deadline.value
         val deadline = format.format(deadlineDate)
 
-        when (val result = modifyChallengeUseCase(index, category.raw, title, deadline, content)) {
+        when (val result = modifyChallengeUseCase(index, title, deadline, content)) {
             is Resource.Success -> {
                 val challenge = Challenge(
                     index = index,
-                    category = category,
                     title = title,
                     body = content,
                     deadline = deadlineDate,
@@ -246,7 +242,6 @@ class OngoingDetailViewModel @Inject constructor(
                 if (new.index != old.index) return@collect
 
                 val edited = old.copy(
-                    category = new.category,
                     title = new.title,
                     body = new.body,
                     deadline = new.deadline,

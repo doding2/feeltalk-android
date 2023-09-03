@@ -1,11 +1,10 @@
 package com.clonect.feeltalk.new_data.mapper
 
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
-import com.clonect.feeltalk.new_domain.model.challenge.ChallengeCategory
 import com.clonect.feeltalk.new_domain.model.challenge.ChallengeDto
 import com.clonect.feeltalk.new_domain.model.challenge.ChallengeListDto
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 
 fun ChallengeListDto.toChallengeList(): List<Challenge> {
     val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -22,7 +21,6 @@ fun ChallengeDto.toChallenge(format: SimpleDateFormat = SimpleDateFormat("yyyy-M
     return run {
         Challenge(
             index = index,
-            category = ChallengeCategory.fromString(category),
             title = title,
             body = content ?: "",
             deadline = format.parse(deadline) ?: throw NullPointerException("Fail to parse challenge deadline"),

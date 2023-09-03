@@ -14,8 +14,8 @@ interface ChallengeRepository {
     suspend fun getCompletedChallengeList(accessToken: String, pageNo: Long): Resource<ChallengeListDto>
     fun getPagingCompletedChallenge(): Flow<PagingData<Challenge>>
 
-    suspend fun addChallenge(accessToken: String, category: String, title: String, deadline: String, content: String): Resource<AddChallengeDto>
-    suspend fun modifyChallenge(accessToken: String, index: Long, category: String, title: String, deadline: String, content: String): Resource<Unit>
+    suspend fun addChallenge(accessToken: String, title: String, deadline: String, content: String): Resource<AddChallengeDto>
+    suspend fun modifyChallenge(accessToken: String, index: Long, title: String, deadline: String, content: String): Resource<Unit>
     suspend fun deleteChallenge(accessToken: String, index: Long): Resource<Unit>
     suspend fun completeChallenge(accessToken: String, index: Long): Resource<Unit>
 

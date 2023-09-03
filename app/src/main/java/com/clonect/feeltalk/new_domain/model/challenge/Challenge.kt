@@ -5,7 +5,6 @@ import java.util.*
 
 data class Challenge(
     val index: Long,
-    val category: ChallengeCategory,
     val title: String,
     val body: String,
     val deadline: Date,

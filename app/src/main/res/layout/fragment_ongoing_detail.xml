@@ -472,7 +472,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="215dp"
                 android:visibility="gone"
-                android:background="@color/gray_400"
+                android:background="@color/gray_200"
                 android:calendarViewShown="false"
                 android:datePickerMode="spinner"
                 android:nestedScrollingEnabled="true"

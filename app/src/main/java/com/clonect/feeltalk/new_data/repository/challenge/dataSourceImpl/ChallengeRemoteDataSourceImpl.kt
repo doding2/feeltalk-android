@@ -4,7 +4,11 @@ import android.accounts.NetworkErrorException
 import com.clonect.feeltalk.common.FeelTalkException.ServerIsDownException
 import com.clonect.feeltalk.new_data.api.ClonectService
 import com.clonect.feeltalk.new_data.repository.challenge.dataSource.ChallengeRemoteDataSource
-import com.clonect.feeltalk.new_domain.model.challenge.*
+import com.clonect.feeltalk.new_domain.model.challenge.AddChallengeDto
+import com.clonect.feeltalk.new_domain.model.challenge.ChallengeCountDto
+import com.clonect.feeltalk.new_domain.model.challenge.ChallengeDto
+import com.clonect.feeltalk.new_domain.model.challenge.ChallengeListDto
+import com.clonect.feeltalk.new_domain.model.challenge.LastChallengePageNoDto
 import com.google.gson.JsonObject
 
 class ChallengeRemoteDataSourceImpl(
@@ -56,13 +60,11 @@ class ChallengeRemoteDataSourceImpl(
 
     override suspend fun addChallenge(
         accessToken: String,
-        category: String,
         title: String,
         deadline: String,
         content: String,
     ): AddChallengeDto {
         val body = JsonObject().apply {
-            addProperty("category", category)
             addProperty("title", title)
             addProperty("deadline", deadline)
             addProperty("content", content)
@@ -77,14 +79,12 @@ class ChallengeRemoteDataSourceImpl(
     override suspend fun modifyChallenge(
         accessToken: String,
         index: Long,
-        category: String,
         title: String,
         deadline: String,
         content: String,
     ) {
         val body = JsonObject().apply {
             addProperty("index", index)
-            addProperty("category", category)
             addProperty("title", title)
             addProperty("deadline", deadline)
             addProperty("content", content)
