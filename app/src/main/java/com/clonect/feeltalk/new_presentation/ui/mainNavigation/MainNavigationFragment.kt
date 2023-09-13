@@ -181,8 +181,14 @@ class MainNavigationFragment : Fragment() {
         if (target == "challenge") {
             binding.mnvBottomNavigation.selectedItemId = R.id.navigation_bucket_list
         }
+        if (target == "setting") {
+            binding.mnvBottomNavigation.selectedItemId = R.id.navigation_my_page
+        }
     }
 
+    private fun changeChatBubbleView(hide: Boolean) = binding.run {
+        clFloatingChatContainer.visibility = if (hide) View.GONE else View.VISIBLE
+    }
 
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -191,6 +197,7 @@ class MainNavigationFragment : Fragment() {
             launch { viewModel.showPartnerLastChat.collectLatest(::showPartnerLastChatView) }
             launch { viewModel.partnerLastChat.collectLatest(::changePartnerLastChatView) }
             launch { viewModel.showAnswerSheet.collectLatest(::showAnswerSheet) }
+            launch { viewModel.hideChatBubble.collectLatest(::changeChatBubbleView) }
         }
     }
 

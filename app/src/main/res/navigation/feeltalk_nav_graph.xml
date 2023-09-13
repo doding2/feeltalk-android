@@ -58,6 +58,9 @@
         <action
             android:id="@+id/action_mainNavigationFragment_to_completedChallengeDetailFragment"
             app:destination="@id/completedChallengeDetailFragment" />
+        <action
+            android:id="@+id/action_mainNavigationFragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
     </fragment>
     <fragment
         android:id="@+id/agreementPrivacyDetailFragment"
@@ -99,4 +102,9 @@
         android:name="com.clonect.feeltalk.new_presentation.ui.networkError.NetworkErrorFragment"
         android:label="fragment_network_error"
         tools:layout="@layout/fragment_network_error" />
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.SettingFragment"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_setting" />
 </navigation>

@@ -24,7 +24,7 @@ import com.bumptech.glide.Glide
 import com.clonect.feeltalk.BuildConfig
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
-import com.clonect.feeltalk.databinding.FragmentSettingBinding
+import com.clonect.feeltalk.databinding.FragmentSetting2Binding
 import com.clonect.feeltalk.presentation.ui.bottom_navigation.BottomNavigationViewModel
 import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -42,10 +42,10 @@ import kotlin.coroutines.suspendCoroutine
 import kotlin.math.ceil
 
 @AndroidEntryPoint
-class SettingFragment : Fragment() {
+class Setting2Fragment : Fragment() {
 
-    private lateinit var binding: FragmentSettingBinding
-    private val viewModel: SettingViewModel by viewModels()
+    private lateinit var binding: FragmentSetting2Binding
+    private val viewModel: Setting2ViewModel by viewModels()
     private val navViewModel: BottomNavigationViewModel by activityViewModels()
     private lateinit var onBackCallback: OnBackPressedCallback
 
@@ -53,7 +53,7 @@ class SettingFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentSettingBinding.inflate(inflater, container, false)
+        binding = FragmentSetting2Binding.inflate(inflater, container, false)
         restoreScrollViewState()
         return binding.root
     }
@@ -336,7 +336,7 @@ class SettingFragment : Fragment() {
         super.onAttach(context)
         onBackCallback = object: OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                this@SettingFragment.requireActivity().finish()
+                this@Setting2Fragment.requireActivity().finish()
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, onBackCallback)

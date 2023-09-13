@@ -239,17 +239,26 @@ class SignUpFragment : Fragment() {
             launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
             launch {
                 viewModel.navigateToAgreement.collectLatest {
-                    if (it) navigateToAgreement()
+                    if (it) {
+                        navigateToAgreement()
+                        viewModel.setLoading(false)
+                    }
                 }
             }
             launch {
                 viewModel.navigateToCoupleCode.collectLatest {
-                    if (it) navigateToCoupleCode()
+                    if (it) {
+                        navigateToCoupleCode()
+                        viewModel.setLoading(false)
+                    }
                 }
             }
             launch {
                 viewModel.navigateToMain.collectLatest {
-                    if (it) navigateToMain()
+                    if (it) {
+                        navigateToMain()
+                        viewModel.setLoading(false)
+                    }
                 }
             }
         }

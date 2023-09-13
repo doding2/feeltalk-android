@@ -17,7 +17,7 @@ import java.util.*
 
 class AppleSignInDialog(
     context: Context,
-    private val onCompleted: (state: String?) -> Unit
+    private val onCompleted: (state: String?) -> Unit,
 ): ComponentDialog(context) {
 
     private lateinit var binding: DialogAppleSignInBinding

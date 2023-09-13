@@ -17,4 +17,9 @@
         android:icon="@drawable/n_selector_bucket_list"
         android:title="@string/main_navigation_bucket_list" />
 
+    <item
+        android:id="@+id/navigation_my_page"
+        android:icon="@drawable/n_selector_setting"
+        android:title="@string/main_navigation_my_page" />
+
 </menu>

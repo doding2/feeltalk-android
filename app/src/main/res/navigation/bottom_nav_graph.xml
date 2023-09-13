@@ -18,8 +18,8 @@
         tools:layout="@layout/fragment_question_list" />
 
     <fragment
-        android:id="@+id/settingFragment"
-        android:name="com.clonect.feeltalk.presentation.ui.setting.SettingFragment"
+        android:id="@+id/setting2Fragment"
+        android:name="com.clonect.feeltalk.presentation.ui.setting.Setting2Fragment"
         android:label="fragment_setting"
-        tools:layout="@layout/fragment_setting" />
+        tools:layout="@layout/fragment_setting2" />
 </navigation>

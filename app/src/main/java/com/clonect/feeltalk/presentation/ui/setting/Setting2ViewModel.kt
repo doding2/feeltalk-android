@@ -22,7 +22,7 @@ import org.json.JSONObject
 import javax.inject.Inject
 
 @HiltViewModel
-class SettingViewModel @Inject constructor(
+class Setting2ViewModel @Inject constructor(
     private val getAppSettingsUseCase: GetAppSettingsUseCase,
     private val saveAppSettingsUseCase: SaveAppSettingsUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,

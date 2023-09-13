@@ -18,7 +18,12 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentSignUpNavigationBinding
-import com.clonect.feeltalk.new_presentation.ui.util.*
+import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
+import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
+import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
+import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
+import com.clonect.feeltalk.new_presentation.ui.util.makeLoadingDialog
+import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -45,12 +50,13 @@ class SignUpNavigationFragment : Fragment() {
 
         val navHostFragment = childFragmentManager.findFragmentById(R.id.fcv_fragment) as NavHostFragment
         navController = navHostFragment.navController
-        val startPage = arguments?.getString("startPage", "coupleCode")
+        val startPage = arguments?.getString("startPage", "coupleCode") ?: "coupleCode"
         val startDestination = if (startPage == "coupleCode") {
             R.id.coupleCodeFragment
         } else {
             R.id.agreementFragment
         }
+        infoLog("startPage: $startPage")
         val navGraph = navController.navInflater.inflate(R.navigation.sign_up_nav_graph)
         navGraph.setStartDestination(startDestination)
         navController.graph = navGraph

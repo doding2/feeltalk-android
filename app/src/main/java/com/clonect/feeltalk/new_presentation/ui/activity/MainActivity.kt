@@ -75,6 +75,7 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         val navGraph = navController.navInflater.inflate(R.navigation.feeltalk_nav_graph)
+        val bundle: Bundle? = null
         val startDestination = viewModel.run {
             if (isNetworkErrorOccurred.value)
                 R.id.networkErrorFragment

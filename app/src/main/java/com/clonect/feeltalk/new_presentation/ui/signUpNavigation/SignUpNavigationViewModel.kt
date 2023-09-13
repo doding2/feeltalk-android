@@ -14,7 +14,11 @@ import com.clonect.feeltalk.new_presentation.service.FirebaseCloudMessagingServi
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -160,17 +164,21 @@ class SignUpNavigationViewModel @Inject constructor(
 
     fun setNicknameProcessed(processed: Boolean) = viewModelScope.launch {
         _isNicknameProcessed.value = processed
+        if (processed) {
+            _isAgreementProcessed.value = false
+        }
     }
 
     fun signUp() = viewModelScope.launch(Dispatchers.IO) {
+        setLoading(true)
         FirebaseCloudMessagingService.clearFcmToken()
         val fcmToken = FirebaseCloudMessagingService.getFcmToken() ?: run {
             infoLog("fcmToken is null.")
             _errorMessage.emit("잠시 후 다시 시도해주세요.")
+            setLoading(false)
             return@launch
         }
 
-        setLoading(true)
         when (val result = signUpUseCase(_isMarketingAgreed.value, _nickname.value, fcmToken)) {
             is Resource.Success -> {
                 getCoupleCode()

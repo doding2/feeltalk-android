@@ -136,12 +136,12 @@ class BottomNavigationFragment : Fragment() {
     }
 
     private fun navigateToSettingPage() {
-        val navigateFragmentId = R.id.settingFragment
+        val navigateFragmentId = R.id.setting2Fragment
         if (navController.currentDestination?.id == navigateFragmentId)
             return
 
-        popBottomNavBackStack(R.id.settingFragment)
-        navController.navigate(R.id.settingFragment)
+        popBottomNavBackStack(R.id.setting2Fragment)
+        navController.navigate(R.id.setting2Fragment)
         correctClickedBottomButton(navigateFragmentId)
     }
 
@@ -149,7 +149,7 @@ class BottomNavigationFragment : Fragment() {
         mutableListOf(
             R.id.homeFragment,
             R.id.questionListFragment,
-            R.id.settingFragment
+            R.id.setting2Fragment
         ).run {
             remove(currentFragmentId)
             forEach {
@@ -173,7 +173,7 @@ class BottomNavigationFragment : Fragment() {
             else
                 R.drawable.ic_chat
 
-            val settingButtonDrawable = if (correctFragmentId == R.id.settingFragment)
+            val settingButtonDrawable = if (correctFragmentId == R.id.setting2Fragment)
                 R.drawable.ic_users_couple_clicked
             else
                 R.drawable.ic_users_couple

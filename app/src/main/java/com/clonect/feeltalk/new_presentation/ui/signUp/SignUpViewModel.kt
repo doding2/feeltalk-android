@@ -49,7 +49,6 @@ class SignUpViewModel @Inject constructor(
         setLoading(true)
         when (val result = reLogInUseCase(socialToken)) {
             is Resource.Success -> {
-                setLoading(false)
                 when (result.data.lowercase()) {
                     "newbie" -> {
                         FirebaseCloudMessagingService.clearFcmToken()

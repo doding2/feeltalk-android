@@ -78,8 +78,8 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".new_presentation.notification.NotificationReadReceiver" />
         <receiver android:name=".new_presentation.notification.NotificationReplyReceiver" />
+        <receiver android:name=".new_presentation.notification.NotificationReadReceiver" />
     </application>
 
 </manifest>
