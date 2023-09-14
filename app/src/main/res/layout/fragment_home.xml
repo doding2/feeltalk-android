@@ -157,7 +157,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_marginStart="4dp"
-                            android:src="@drawable/n_ic_next_2"/>
+                            android:src="@drawable/n_ic_next_white"/>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>

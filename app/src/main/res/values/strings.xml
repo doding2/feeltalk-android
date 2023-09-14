@@ -255,13 +255,53 @@
     <string name="my_page_partner_setting_nickname_deco">님과 함께하고 있어요</string>
     <string name="my_page_notice">공지사항</string>
     <string name="my_page_customer_service">고객센터</string>
-    <string name="my_page_frequently_asked_question">자주 묻는 질문</string>
     <string name="my_page_suggest_question">필톡 질문 제안하기</string>
 
     <!--  Setting  -->
+    <string name="setting_title">환경설정</string>
+    <string name="setting_lock_setting">화면잠금</string>
+    <string name="setting_screen_lock_on">켜짐</string>
+    <string name="setting_screen_lock_off">꺼짐</string>
+    <string name="setting_language_setting">언어설정</string>
+    <string name="setting_language_korean">한국어</string>
+    <string name="setting_privacy_policy">개인정보처리방침</string>
+    <string name="setting_service_agreement">이용약관</string>
+    <string name="setting_version_info">버전정보</string>
+    <string name="setting_version_info_value_deco">v.</string>
+    <string name="setting_version_info_default_value">1.0.0</string>
+    <string name="setting_log_out">로그아웃</string>
 
 
+    <!--  LockSetting  -->
+    <string name="lock_setting_title">화면잠금</string>
+    <string name="lock_setting_switch">화면잠금</string>
+    <string name="lock_setting_change_password">암호변경</string>
+    
+    
+    <!--  PasswordSetting  -->
+    <string name="password_setting_title_disabled">암호설정</string>
+    <string name="password_setting_default_guide_disabled">사용하고자 하는 암호를 입력해주세요.</string>
+    <string name="password_setting_confirm_guide_disabled">확인을 위해 한 번 더 입력해주세요</string>
+    <string name="password_setting_title_enabled">암호변경</string>
+    <string name="password_setting_default_guide_enabled">새로운 암호를 입력해주세요</string>
+    <string name="password_setting_confirm_guide_enabled">새로운 암호를 다시 한 번 입력해주세요</string>
+    <string name="password_setting_confirm_invalid">입력한 암호가 일치하지 않습니다</string>
+    <string name="password_setting_keypad_1">1</string>
+    <string name="password_setting_keypad_2">2</string>
+    <string name="password_setting_keypad_3">3</string>
+    <string name="password_setting_keypad_4">4</string>
+    <string name="password_setting_keypad_5">5</string>
+    <string name="password_setting_keypad_6">6</string>
+    <string name="password_setting_keypad_7">7</string>
+    <string name="password_setting_keypad_8">8</string>
+    <string name="password_setting_keypad_9">9</string>
+    <string name="password_setting_keypad_0">0</string>
+    <string name="password_setting_keypad_cancel">취소</string>
+    <string name="password_setting_keypad_confirm">확인</string>
+    <string name="password_setting_success_snack_bar">암호를 변경했어요</string>
 
+    <!--  LockQuestionSetting  -->
+    <string name="lock_question_setting_success_snack_bar">암호를 설정했어요</string>
 
 
     <!--  old ui  -->
@@ -326,7 +366,7 @@
     <string name="setting_usage_info_notification">이용 정보 알림 설정</string>
     <string name="setting_security_title">보안 설정</string>
     <string name="setting_request_key_pairs_restoring">암호화 열쇠 복구 요청</string>
-    <string name="setting_privacy_policy">개인정보처리방침</string>
+    <string name="setting_privacy_policy2">개인정보처리방침</string>
     <string name="setting_customer_service_header_title">고객센터</string>
     <string name="setting_customer_question_service">필로우톡 질문방</string>
     <string name="setting_customer_feedback_service">필로우톡 피드백방</string>

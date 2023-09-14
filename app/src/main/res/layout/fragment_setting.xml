@@ -1,13 +1,224 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     tools:context=".new_presentation.ui.mainNavigation.myPage.setting.SettingFragment">
 
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Hello" />
+        android:layout_height="60dp"
+        android:orientation="horizontal">
 
-</FrameLayout>
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/n_ic_exit"
+            android:padding="12dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/setting_title"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:fontFamily="@font/pretendard_medium"
+            android:layout_gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:background="@color/gray_100"/>
+
+    <LinearLayout
+        android:id="@+id/ll_lock_setting"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="?android:selectableItemBackground">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="@string/setting_lock_setting"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/pretendard_regular"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/setting_screen_lock_off"
+            android:textSize="16sp"
+            android:textColor="@color/gray_500"
+            android:fontFamily="@font/pretendard_regular"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:src="@drawable/n_ic_next_gray_400"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_language_setting"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="20dp"
+        android:background="?android:selectableItemBackground">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/setting_language_setting"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/pretendard_regular"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/setting_language_korean"
+            android:textSize="16sp"
+            android:textColor="@color/gray_500"
+            android:fontFamily="@font/pretendard_regular"/>
+    </LinearLayout>
+    
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:background="@color/gray_100"/>
+
+    <LinearLayout
+        android:id="@+id/ll_privacy_policy"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="20dp"
+        android:background="?android:selectableItemBackground">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/setting_privacy_policy"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/pretendard_regular"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_service_agreement"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="20dp"
+        android:background="?android:selectableItemBackground">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/setting_service_agreement"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/pretendard_regular"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_version_info"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/setting_version_info"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/pretendard_regular"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/setting_version_info_value_deco"
+            android:textSize="16sp"
+            android:textColor="@color/gray_500"
+            android:fontFamily="@font/pretendard_regular"/>
+
+        <TextView
+            android:id="@+id/tv_version_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/setting_version_info_default_value"
+            android:textSize="16sp"
+            android:textColor="@color/gray_500"
+            android:fontFamily="@font/pretendard_regular"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="28dp"
+        android:layout_gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/tv_log_out"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/setting_log_out"
+            android:textSize="14sp"
+            android:textColor="@color/gray_500"
+            android:fontFamily="@font/pretendard_regular"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/gray_500"
+            app:layout_constraintTop_toBottomOf="@id/tv_log_out"
+            app:layout_constraintStart_toStartOf="@id/tv_log_out"
+            app:layout_constraintEnd_toEndOf="@id/tv_log_out"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

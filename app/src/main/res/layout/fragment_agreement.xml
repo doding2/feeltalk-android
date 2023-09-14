@@ -158,7 +158,7 @@
             android:id="@+id/iv_agreement_more"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/n_ic_next_1"
+            android:src="@drawable/n_ic_next_gray_400"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>

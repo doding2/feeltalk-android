@@ -106,5 +106,34 @@
         android:id="@+id/settingFragment"
         android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.SettingFragment"
         android:label="fragment_setting"
-        tools:layout="@layout/fragment_setting" />
+        tools:layout="@layout/fragment_setting" >
+        <action
+            android:id="@+id/action_settingFragment_to_lockSettingFragment"
+            app:destination="@id/lockSettingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/lockSettingFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.lockSetting.LockSettingFragment"
+        android:label="fragment_lock_setting"
+        tools:layout="@layout/fragment_lock_setting" >
+        <action
+            android:id="@+id/action_lockSettingFragment_to_passwordSettingFragment"
+            app:destination="@id/passwordSettingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/passwordSettingFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.passwordSetting.PasswordSettingFragment"
+        android:label="fragment_password_setting"
+        tools:layout="@layout/fragment_password_setting" >
+        <action
+            android:id="@+id/action_passwordSettingFragment_to_lockQuestionSettingFragment"
+            app:destination="@id/lockQuestionSettingFragment"
+            app:popUpTo="@id/lockSettingFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/lockQuestionSettingFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.lockQuestionSetting.LockQuestionSettingFragment"
+        android:label="fragment_lock_question_setting"
+        tools:layout="@layout/fragment_lock_question_setting" />
 </navigation>

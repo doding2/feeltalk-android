@@ -37,6 +37,7 @@
             android:layout_height="wrap_content"
             android:padding="12dp"
             android:src="@drawable/n_ic_setting"
+            android:background="?selectableItemBackgroundBorderless"
             android:layout_gravity="center_vertical"/>
     </LinearLayout>
 
@@ -218,13 +219,15 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:layout_marginVertical="4dp">
 
                     <LinearLayout
                         android:id="@+id/ll_notice"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:background="?android:selectableItemBackground">
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -250,7 +253,8 @@
                         android:id="@+id/ll_customer_service"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:background="?android:selectableItemBackground">
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -276,7 +280,8 @@
                         android:id="@+id/ll_suggest_question"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:background="?android:selectableItemBackground">
 
                         <ImageView
                             android:layout_width="wrap_content"

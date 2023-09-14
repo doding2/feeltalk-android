@@ -442,7 +442,7 @@
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="21dp"
                     android:gravity="center_vertical"
-                    android:text="@string/setting_privacy_policy"
+                    android:text="@string/setting_privacy_policy2"
                     android:textColor="@color/setting_component_text_color"
                     android:textSize="16sp"
                     android:fontFamily="@font/pretendard_regular"/>
