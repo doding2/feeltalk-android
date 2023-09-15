@@ -78,6 +78,8 @@ kapt {
 }
 
 dependencies {
+    // custom spinner
+    implementation "com.github.skydoves:powerspinner:1.2.5"
     // switch button
     implementation 'com.kyleduo.switchbutton:library:2.1.0'
     // flexbox layout

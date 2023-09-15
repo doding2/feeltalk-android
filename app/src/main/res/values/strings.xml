@@ -301,7 +301,26 @@
     <string name="password_setting_success_snack_bar">암호를 변경했어요</string>
 
     <!--  LockQuestionSetting  -->
+    <string name="lock_question_setting_title">암호설정</string>
     <string name="lock_question_setting_success_snack_bar">암호를 설정했어요</string>
+    <string name="lock_question_setting_guide">암호를 잊어버렸을 때 선택할 질문을 골라주세요</string>
+    <string name="lock_question_setting_sub_guide">암호를 잊어버렸을 때 질문에 대답하여 재설정할 수 있어요.</string>
+    <string name="lock_question_setting_select_question_title">질문</string>
+    <string name="lock_question_setting_answer_title">나의 답변</string>
+    <string name="lock_question_setting_answer_hint">질문에 알맞은 답변을 작성해주세요</string>
+    <string name="lock_question_setting_news_bar_complete">완료</string>
+    <string name="lock_question_setting_submit">확인</string>
+
+    <!--  LockQuestionItem  -->
+    <string name="lock_question_hint_unselected">질문을 선택해 주세요</string>
+    <string name="lock_question_hint_selected">질문 선택</string>
+    <string name="lock_question_item_1">연인을 부르는 나만의 애칭은?</string>
+    <string name="lock_question_item_2">연인과 사귄 날짜는?</string>
+    <string name="lock_question_item_3">연인과 처음 만난 장소는?</string>
+
+
+
+
 
 
     <!--  old ui  -->

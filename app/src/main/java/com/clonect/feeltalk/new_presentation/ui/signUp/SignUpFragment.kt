@@ -148,7 +148,7 @@ class SignUpFragment : Fragment() {
 
     private fun clickAppleButton() = lifecycleScope.launch {
         try {
-            val state = AppleAuthHelper.signIn(requireContext())
+            val state = AppleAuthHelper.signIn(requireContext(), lifecycle)
             val socialToken = SocialToken(
                 type = SocialType.Apple,
                 state = state

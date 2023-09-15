@@ -71,13 +71,14 @@ class AddChallengeFragment : Fragment() {
         collectViewModel()
 
         binding.run {
+            ivBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
+
             etTitle.addTextChangedListener { viewModel.setTitle(it?.toString()) }
             etBody.addTextChangedListener { viewModel.setBody(it?.toString()) }
 
             mcvDeadline.setOnClickListener { enableDeadlinePicker(true) }
 
             ivClear.setOnClickListener { etTitle.setText("") }
-            ivBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
 
             mcvAddRound.setOnClickListener { addChallenge() }
             tvNext.setOnClickListener { changeFocus() }
