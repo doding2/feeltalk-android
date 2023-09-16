@@ -95,7 +95,7 @@ dependencies {
     // insets helper
     implementation "dev.chrisbanes.insetter:insetter:0.6.1"
     // paging
-    implementation "androidx.paging:paging-runtime:3.1.1"
+    implementation "androidx.paging:paging-runtime-ktx:3.2.1"
     // lottie animation
     implementation 'com.airbnb.android:lottie:6.1.0'
 
@@ -131,7 +131,7 @@ dependencies {
     implementation "androidx.room:room-ktx:2.5.0"
     // Encryption for room database
     implementation "net.zetetic:android-database-sqlcipher:4.5.3"
-    implementation "androidx.sqlite:sqlite:2.3.0"
+    implementation "androidx.sqlite:sqlite-ktx:2.3.1"
     // dagger hilt
     implementation "com.google.dagger:hilt-android:2.44"
     kapt "com.google.dagger:hilt-compiler:2.44"

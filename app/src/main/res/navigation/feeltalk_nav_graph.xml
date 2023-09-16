@@ -110,6 +110,11 @@
         <action
             android:id="@+id/action_settingFragment_to_lockSettingFragment"
             app:destination="@id/lockSettingFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_languageSettingFragment"
+            app:destination="@id/languageSettingFragment"
+            app:popUpTo="@id/settingFragment"
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/lockSettingFragment"
@@ -136,4 +141,9 @@
         android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.lockQuestionSetting.LockQuestionSettingFragment"
         android:label="fragment_lock_question_setting"
         tools:layout="@layout/fragment_lock_question_setting" />
+    <fragment
+        android:id="@+id/languageSettingFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.languageSetting.LanguageSettingFragment"
+        android:label="fragment_language_setting"
+        tools:layout="@layout/fragment_language_setting" />
 </navigation>

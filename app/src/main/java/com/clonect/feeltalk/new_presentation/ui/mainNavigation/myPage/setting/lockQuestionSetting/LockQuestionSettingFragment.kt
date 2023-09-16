@@ -190,7 +190,7 @@ class LockQuestionSettingFragment : Fragment() {
         val dateString = formatter.format(now)
         val dateTokens = dateString.split("/")
 
-        binding.dpAnswerDatePicker.minDate = now.time
+        binding.dpAnswerDatePicker.maxDate = now.time
 
         binding.dpAnswerDatePicker.init(
             dateTokens[0].toInt(),

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -16,9 +17,11 @@ import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.BuildConfig
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentSettingBinding
+import com.clonect.feeltalk.new_domain.model.appSettings.Language
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -36,6 +39,20 @@ class SettingFragment : Fragment() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
         }
+        setFragmentResultListener("lockSettingFragment") { requestKey, bundle ->
+            val lockEnabled = bundle.getBoolean("lockEnabled", viewModel.lockEnabled.value)
+            viewModel.setLockEnabled(lockEnabled)
+        }
+        setFragmentResultListener("languageSettingFragment") { requestKey, bundle ->
+            val selectedLanguage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                bundle.getSerializable("selectedLanguage", Language::class.java)
+            } else {
+                bundle.getSerializable("selectedLanguage") as? Language
+            }
+            selectedLanguage?.let {
+                viewModel.setLanguage(it)
+            }
+        }
         return binding.root
     }
 
@@ -49,6 +66,7 @@ class SettingFragment : Fragment() {
             ivBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
 
             llLockSetting.setOnClickListener { navigateToLockSetting() }
+            llLanguageSetting.setOnClickListener { navigateToLanguageSetting() }
         }
     }
 
@@ -58,10 +76,32 @@ class SettingFragment : Fragment() {
             .navigate(R.id.action_settingFragment_to_lockSettingFragment)
     }
 
+    private fun navigateToLanguageSetting() {
+        requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_settingFragment_to_languageSettingFragment)
+    }
+
+
+
+
+
+    private fun changeLockSettingView(lockEnabled: Boolean) = binding.run {
+        if (lockEnabled) {
+            tvLockEnabled.text = requireContext().getString(R.string.setting_lock_on)
+        } else {
+            tvLockEnabled.text = requireContext().getString(R.string.setting_lock_off)
+        }
+    }
+
+    private fun changeLanguageSettingView(language: Language) = binding.run {
+        tvLanguage.text = language.nativeName
+    }
 
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-
+            launch { viewModel.lockEnabled.collectLatest(::changeLockSettingView) }
+            launch { viewModel.language.collectLatest(::changeLanguageSettingView) }
         }
     }
 

@@ -260,8 +260,8 @@
     <!--  Setting  -->
     <string name="setting_title">환경설정</string>
     <string name="setting_lock_setting">화면잠금</string>
-    <string name="setting_screen_lock_on">켜짐</string>
-    <string name="setting_screen_lock_off">꺼짐</string>
+    <string name="setting_lock_on">켜짐</string>
+    <string name="setting_lock_off">꺼짐</string>
     <string name="setting_language_setting">언어설정</string>
     <string name="setting_language_korean">한국어</string>
     <string name="setting_privacy_policy">개인정보처리방침</string>
@@ -319,6 +319,12 @@
     <string name="lock_question_item_3">연인과 처음 만난 장소는?</string>
 
 
+    <!--  LanguageSetting  -->
+    <string name="language_setting_title">언어설정</string>
+    <string name="language_setting_select_guide">사용할 언어를 선택해주세요</string>
+    <string name="language_setting_notice">어쩌구 저쩌구 안내문구</string>
+    <string name="language_setting_notice_check">내용을 모두 확인했습니다.</string>
+    <string name="language_setting_change_language">확인</string>
 
 
 
