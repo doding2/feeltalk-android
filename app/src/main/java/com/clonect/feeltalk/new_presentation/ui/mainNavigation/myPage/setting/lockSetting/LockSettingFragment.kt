@@ -18,8 +18,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentLockSettingBinding
+import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -42,6 +44,9 @@ class LockSettingFragment : Fragment() {
         setFragmentResultListener("passwordSettingFragment") { requestKey, bundle ->
             viewModel.setLockEnabled(bundle.getBoolean("lockEnabled", false))
         }
+        setFragmentResultListener("lockQuestionSettingFragment") { requestKey, bundle ->
+            viewModel.setLockEnabled(bundle.getBoolean("lockEnabled", false))
+        }
         return binding.root
     }
 
@@ -61,7 +66,7 @@ class LockSettingFragment : Fragment() {
     private fun navigateBack() {
         setFragmentResult(
             requestKey = "lockSettingFragment",
-            result = bundleOf("lockEnabled" to true)
+            result = bundleOf("lockEnabled" to viewModel.lockEnabled.value)
         )
         findNavController().popBackStack()
     }
@@ -77,14 +82,11 @@ class LockSettingFragment : Fragment() {
 
     private fun toggleLock() = binding.run {
         if (viewModel.lockEnabled.value) {
-            viewModel.setLockEnabled(false)
+            viewModel.unlockAccount()
         } else {
             navigateToPasswordSetting(isLockEnabled = false)
         }
     }
-
-
-
 
 
 
@@ -99,8 +101,21 @@ class LockSettingFragment : Fragment() {
         }
     }
 
+    private fun showSnackBar(message: String) {
+        val decorView = activity?.window?.decorView ?: return
+        TextSnackbar.make(
+            view = decorView,
+            message = message,
+            duration = Snackbar.LENGTH_SHORT,
+            onClick = {
+                it.dismiss()
+            }
+        ).show()
+    }
+
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
             launch { viewModel.lockEnabled.collectLatest(::changeSwitchLock) }
         }
     }

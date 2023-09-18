@@ -8,14 +8,14 @@ import com.clonect.feeltalk.data.repository.question.datasource.QuestionCacheDat
 import com.clonect.feeltalk.data.repository.question.datasourceImpl.QuestionCacheDataSource2Impl
 import com.clonect.feeltalk.data.repository.user.datasource.UserCacheDataSource
 import com.clonect.feeltalk.data.repository.user.datasourceImpl.UserCacheDataSourceImpl
+import com.clonect.feeltalk.new_data.repository.account.dataSource.AccountCacheDataSource
+import com.clonect.feeltalk.new_data.repository.account.dataSourceImpl.AccountCacheDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.challenge.dataSource.ChallengeCacheDataSource
 import com.clonect.feeltalk.new_data.repository.challenge.dataSourceImpl.ChallengeCacheDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatCacheDataSource
 import com.clonect.feeltalk.new_data.repository.chat.dataSourceImpl.ChatCacheDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionCacheDataSource
 import com.clonect.feeltalk.new_data.repository.question.dataSourceImpl.QuestionCacheDataSourceImpl
-import com.clonect.feeltalk.new_data.repository.signIn.dataSource.SignInCacheDataSource
-import com.clonect.feeltalk.new_data.repository.signIn.dataSourceImpl.SignInCacheDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenCacheDataSource
 import com.clonect.feeltalk.new_data.repository.token.dataSourceImpl.TokenCacheDataSourceImpl
 import dagger.Module
@@ -30,8 +30,8 @@ class CacheDataSourceModule {
 
     @Singleton
     @Provides
-    fun providesSignInCacheDatasource(): SignInCacheDataSource {
-        return SignInCacheDataSourceImpl()
+    fun providesAccountCacheDatasource(): AccountCacheDataSource {
+        return AccountCacheDataSourceImpl()
     }
 
     @Singleton

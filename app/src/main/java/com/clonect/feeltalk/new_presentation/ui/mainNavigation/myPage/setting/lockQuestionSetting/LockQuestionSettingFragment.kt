@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.lockQuestionSetting
 
+import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
@@ -30,6 +31,7 @@ import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
+import com.clonect.feeltalk.new_presentation.ui.util.makeLoadingDialog
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -46,6 +48,7 @@ class LockQuestionSettingFragment : Fragment() {
     private lateinit var binding: FragmentLockQuestionSettingBinding
     private val viewModel: LockQuestionSettingViewModel by viewModels()
     private lateinit var onBackCallback: OnBackPressedCallback
+    private lateinit var loadingDialog: Dialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,6 +63,7 @@ class LockQuestionSettingFragment : Fragment() {
         if (password == null) {
             onBackCallback.handleOnBackPressed()
         }
+        loadingDialog = makeLoadingDialog()
         return binding.root
     }
 
@@ -84,18 +88,20 @@ class LockQuestionSettingFragment : Fragment() {
             mcvAnswerDate.setOnClickListener { enableAnswerDatePicker(true) }
             tvNext.setOnClickListener { doneNewsBar() }
 
-            mcvSubmit.setOnClickListener { submitLockQuestionSetting() }
+            mcvConfirm.setOnClickListener { lockAccount() }
         }
     }
 
-    private fun submitLockQuestionSetting() {
-        navigateToLockSetting()
+    private fun lockAccount() {
+        viewModel.lockAccount {
+            showSnackBar(requireContext().getString(R.string.lock_question_setting_success_snack_bar))
+            navigateBack()
+        }
     }
 
-    private fun navigateToLockSetting() {
-        showSuccessSnackBar()
+    private fun navigateBack() {
         setFragmentResult(
-            requestKey = "passwordSettingFragment",
+            requestKey = "lockQuestionSettingFragment",
             result = bundleOf("lockEnabled" to true)
         )
         findNavController().popBackStack()
@@ -110,18 +116,6 @@ class LockQuestionSettingFragment : Fragment() {
             enableAnswerDatePicker(false)
             expandAddButton(false)
         }
-    }
-
-    private fun showSuccessSnackBar() {
-        val decorView = activity?.window?.decorView ?: return
-        TextSnackbar.make(
-            view = decorView,
-            message = requireContext().getString(R.string.lock_question_setting_success_snack_bar),
-            duration = Snackbar.LENGTH_SHORT,
-            onClick = {
-                it.dismiss()
-            }
-        ).show()
     }
 
     private fun initLockQuestion() = binding.spinnerLockQuestion.run {
@@ -248,9 +242,9 @@ class LockQuestionSettingFragment : Fragment() {
 
     private fun expandAddButton(enabled: Boolean) = binding.run {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-            mcvSubmit.visibility = View.VISIBLE
-            mcvSubmit.radius = 0f
-            mcvSubmit.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            mcvConfirm.visibility = View.VISIBLE
+            mcvConfirm.radius = 0f
+            mcvConfirm.updateLayoutParams<ConstraintLayout.LayoutParams> {
                 updateMargins(left = 0, right = 0)
             }
             return@run
@@ -258,32 +252,32 @@ class LockQuestionSettingFragment : Fragment() {
 
         if (dpAnswerDatePicker.isVisible) {
             mcvNewsBar.visibility = View.VISIBLE
-            mcvSubmit.visibility = View.GONE
+            mcvConfirm.visibility = View.GONE
             return@run
         }
 
         if (enabled) {
             mcvNewsBar.visibility = View.VISIBLE
-            mcvSubmit.visibility = View.GONE
+            mcvConfirm.visibility = View.GONE
         } else {
             mcvNewsBar.visibility = View.GONE
-            mcvSubmit.visibility = View.VISIBLE
+            mcvConfirm.visibility = View.VISIBLE
         }
     }
 
     private fun enableAddButton(enabled: Boolean) = binding.run {
-        mcvSubmit.isClickable = enabled
-        mcvSubmit.isFocusable = enabled
-        mcvSubmit.isEnabled = enabled
+        mcvConfirm.isClickable = enabled
+        mcvConfirm.isFocusable = enabled
+        mcvConfirm.isEnabled = enabled
 
         mcvNewsBar.isClickable = enabled
         mcvNewsBar.isFocusable = enabled
         mcvNewsBar.isEnabled = enabled
 
         if (enabled) {
-            mcvSubmit.setCardBackgroundColor(resources.getColor(R.color.main_500, null))
+            mcvConfirm.setCardBackgroundColor(resources.getColor(R.color.main_500, null))
         } else {
-            mcvSubmit.setCardBackgroundColor(resources.getColor(R.color.main_400, null))
+            mcvConfirm.setCardBackgroundColor(resources.getColor(R.color.main_400, null))
         }
     }
 
@@ -345,8 +339,31 @@ class LockQuestionSettingFragment : Fragment() {
     }
 
 
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            loadingDialog.show()
+        } else {
+            loadingDialog.dismiss()
+        }
+    }
+
+    private fun showSnackBar(message: String) {
+        val decorView = activity?.window?.decorView ?: return
+        TextSnackbar.make(
+            view = decorView,
+            message = message,
+            duration = Snackbar.LENGTH_SHORT,
+            onClick = {
+                it.dismiss()
+            }
+        ).show()
+    }
+
+
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch { viewModel.isLoading.collectLatest(::showLoading) }
+            launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
             launch { viewModel.questionType.collectLatest(::changeQuestionTypeView) }
             launch { viewModel.isKeyboardUp.collectLatest(::changeViewWhenKeyboardUp) }
             launch { viewModel.lockAnswerDate.collectLatest(::changeLockAnswerDateView) }

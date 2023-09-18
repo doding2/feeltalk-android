@@ -12,12 +12,12 @@ import com.clonect.feeltalk.domain.model.dto.encryption.TempPublicKeyDto
 import com.clonect.feeltalk.domain.model.dto.news.NewsDto
 import com.clonect.feeltalk.domain.model.dto.question.*
 import com.clonect.feeltalk.domain.model.dto.user.*
+import com.clonect.feeltalk.new_domain.model.account.*
 import com.clonect.feeltalk.new_domain.model.challenge.*
 import com.clonect.feeltalk.new_domain.model.chat.*
 import com.clonect.feeltalk.new_domain.model.question.LastQuestionPageNoDto
 import com.clonect.feeltalk.new_domain.model.question.QuestionDto
 import com.clonect.feeltalk.new_domain.model.question.QuestionListDto
-import com.clonect.feeltalk.new_domain.model.signIn.*
 import com.clonect.feeltalk.new_domain.model.token.RenewTokenDto
 import com.google.gson.JsonObject
 import okhttp3.MultipartBody
@@ -26,7 +26,7 @@ import retrofit2.http.*
 
 interface ClonectService {
 
-    /** SignIn **/
+    /** Account **/
 
     @GET("/api/v1/auto-login")
     suspend fun autoLogIn(
@@ -53,6 +53,7 @@ interface ClonectService {
         @Header("Authorization") token: String,
         @Body body: JsonObject
     ): Response<ApiResponse<MatchCoupleDto>>
+
 
     /** Token **/
 

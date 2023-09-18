@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.addChallenge
 
+import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
@@ -48,7 +49,7 @@ class AddChallengeFragment : Fragment() {
     private lateinit var binding: FragmentAddChallengeBinding
     private val viewModel: AddChallengeViewModel by viewModels()
     private lateinit var onBackCallback: OnBackPressedCallback
-    private val loadingDialog by lazy { makeLoadingDialog() }
+    private lateinit var loadingDialog: Dialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,6 +59,7 @@ class AddChallengeFragment : Fragment() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
         }
+        loadingDialog = makeLoadingDialog()
         return binding.root
     }
 

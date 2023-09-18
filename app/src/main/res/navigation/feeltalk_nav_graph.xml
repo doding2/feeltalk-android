@@ -146,4 +146,14 @@
         android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.languageSetting.LanguageSettingFragment"
         android:label="fragment_language_setting"
         tools:layout="@layout/fragment_language_setting" />
+    <fragment
+        android:id="@+id/passwordFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.password.PasswordFragment"
+        android:label="PasswordFragment" >
+        <action
+            android:id="@+id/action_passwordFragment_to_mainNavigationFragment"
+            app:destination="@id/mainNavigationFragment"
+            app:popUpTo="@id/passwordFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
 </navigation>

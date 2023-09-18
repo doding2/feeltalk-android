@@ -1,13 +1,13 @@
-package com.clonect.feeltalk.new_domain.usecase.signIn
+package com.clonect.feeltalk.new_domain.usecase.account
 
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.token.TokenInfo
-import com.clonect.feeltalk.new_domain.repository.signIn.SignInRepository
+import com.clonect.feeltalk.new_domain.repository.account.AccountRepository
 import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 
 class SignUpUseCase(
     private val tokenRepository: TokenRepository,
-    private val signInRepository: SignInRepository
+    private val accountRepository: AccountRepository
 ) {
     suspend operator fun invoke(isMarketingConsentAgreed: Boolean, nickname: String, fcmToken: String): Resource<TokenInfo> {
         val socialTokenResult = tokenRepository.getCachedSocialToken()
@@ -16,7 +16,7 @@ class SignUpUseCase(
         }
         val socialToken = (socialTokenResult as Resource.Success).data
 
-        val signUpResult = signInRepository.signUp(socialToken, isMarketingConsentAgreed, nickname, fcmToken)
+        val signUpResult = accountRepository.signUp(socialToken, isMarketingConsentAgreed, nickname, fcmToken)
         if (signUpResult is Resource.Success) {
             tokenRepository.saveTokenInfo(signUpResult.data)
         }

@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.passwordSetting
 
+import android.app.Dialog
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
@@ -24,6 +25,7 @@ import com.clonect.feeltalk.databinding.FragmentPasswordSettingBinding
 import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
+import com.clonect.feeltalk.new_presentation.ui.util.makeLoadingDialog
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -34,6 +36,7 @@ class PasswordSettingFragment : Fragment() {
 
     private lateinit var binding: FragmentPasswordSettingBinding
     private val viewModel: PasswordSettingViewModel by viewModels()
+    private lateinit var loadingDialog: Dialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,6 +48,7 @@ class PasswordSettingFragment : Fragment() {
         }
         val isLockEnabled = arguments?.getBoolean("isLockEnabled") ?: false
         viewModel.setLockEnabled(isLockEnabled)
+        loadingDialog = makeLoadingDialog()
         return binding.root
     }
 
@@ -70,13 +74,17 @@ class PasswordSettingFragment : Fragment() {
     }
 
     private fun confirmPassword() {
-        val navigate = viewModel.navigateAndConfirmPassword()
+        val navigate = viewModel.navigateOrConfirmPassword()
         if (!navigate) return
 
-        if (viewModel.lockEnabled.value) {
-            navigateBack()
-        } else {
+        if (!viewModel.lockEnabled.value) {
             navigateToLockQuestionSetting()
+            return
+        }
+
+        viewModel.updatePassword {
+            showSnackBar(requireContext().getString(R.string.password_setting_success_snack_bar))
+            navigateBack()
         }
     }
 
@@ -90,24 +98,11 @@ class PasswordSettingFragment : Fragment() {
     }
 
     private fun navigateBack() {
-        showSuccessSnackBar()
         setFragmentResult(
             requestKey = "passwordSettingFragment",
             result = bundleOf("lockEnabled" to true)
         )
         findNavController().popBackStack()
-    }
-
-    private fun showSuccessSnackBar() {
-        val decorView = activity?.window?.decorView ?: return
-        TextSnackbar.make(
-            view = decorView,
-            message = requireContext().getString(R.string.password_setting_success_snack_bar),
-            duration = Snackbar.LENGTH_SHORT,
-            onClick = {
-                it.dismiss()
-            }
-        ).show()
     }
 
 
@@ -182,8 +177,31 @@ class PasswordSettingFragment : Fragment() {
         }
     }
 
+
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            loadingDialog.show()
+        } else {
+            loadingDialog.dismiss()
+        }
+    }
+
+    private fun showSnackBar(message: String) {
+        val decorView = activity?.window?.decorView ?: return
+        TextSnackbar.make(
+            view = decorView,
+            message = message,
+            duration = Snackbar.LENGTH_SHORT,
+            onClick = {
+                it.dismiss()
+            }
+        ).show()
+    }
+
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch { viewModel.isLoading.collectLatest(::showLoading) }
+            launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
             launch { viewModel.isConfirmMode.collectLatest(::changeConfirmModeView) }
             launch { viewModel.password.collectLatest { changePasswordBarView() } }
             launch { viewModel.confirmPassword.collectLatest { changePasswordBarView() } }

@@ -7,10 +7,11 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.new_domain.model.appSettings.AppSettings
+import com.clonect.feeltalk.new_domain.usecase.account.AutoLogInUseCase
+import com.clonect.feeltalk.new_domain.usecase.account.CheckAccountLockedUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetTodayQuestionUseCase
-import com.clonect.feeltalk.new_domain.usecase.signIn.AutoLogInUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,6 +29,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val autoLogInUseCase: AutoLogInUseCase,
+    private val checkAccountLockedUseCase: CheckAccountLockedUseCase,
     private val getTodayQuestionUseCase: GetTodayQuestionUseCase,
     private val getAppSettingsUseCase: GetAppSettingsUseCase,
     private val saveAppSettingsUseCase: SaveAppSettingsUseCase,
@@ -45,6 +47,10 @@ class MainViewModel @Inject constructor(
 
     private val _isUserCouple = MutableStateFlow(false)
     val isUserCouple = _isUserCouple.asStateFlow()
+
+
+    private val _isAccountLocked = MutableStateFlow(false)
+    val isAccountLocked = _isAccountLocked.asStateFlow()
 
 
     private val _isServerDown = MutableStateFlow(false)
@@ -98,6 +104,18 @@ class MainViewModel @Inject constructor(
 
 
     private suspend fun preloadCoupleData() = withContext(Dispatchers.IO) {
+        val isAccountLocked = async {
+            when (val result = checkAccountLockedUseCase()) {
+                is Resource.Success -> {
+                    _isAccountLocked.value = result.data
+                }
+                is Resource.Error -> {
+                    result.throwable.printStackTrace()
+                    infoLog("Fail to check account locked: ${result.throwable}\n${result.throwable.stackTrace.joinToString("\n")}")
+                }
+            }
+        }
+
         val todayQuestion = async {
             when (val result = getTodayQuestionUseCase()) {
                 is Resource.Success -> { }
@@ -114,6 +132,7 @@ class MainViewModel @Inject constructor(
         }
 
         todayQuestion.await()
+        isAccountLocked.await()
     }
 
 

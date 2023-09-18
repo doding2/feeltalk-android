@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
+import com.clonect.feeltalk.new_domain.usecase.account.GetCoupleCodeUseCase
+import com.clonect.feeltalk.new_domain.usecase.account.MatchCoupleUseCase
+import com.clonect.feeltalk.new_domain.usecase.account.SignUpUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
-import com.clonect.feeltalk.new_domain.usecase.signIn.GetCoupleCodeUseCase
-import com.clonect.feeltalk.new_domain.usecase.signIn.MatchCoupleUseCase
-import com.clonect.feeltalk.new_domain.usecase.signIn.SignUpUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.GetCachedSocialTokenUseCase
 import com.clonect.feeltalk.new_presentation.notification.observer.CreateCoupleObserver
 import com.clonect.feeltalk.new_presentation.service.FirebaseCloudMessagingService

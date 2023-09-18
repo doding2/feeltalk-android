@@ -18,8 +18,10 @@ import com.clonect.feeltalk.BuildConfig
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentSettingBinding
 import com.clonect.feeltalk.new_domain.model.appSettings.Language
+import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -40,7 +42,7 @@ class SettingFragment : Fragment() {
             binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
         }
         setFragmentResultListener("lockSettingFragment") { requestKey, bundle ->
-            val lockEnabled = bundle.getBoolean("lockEnabled", viewModel.lockEnabled.value)
+            val lockEnabled = bundle.getBoolean("lockEnabled", viewModel.lockEnabled.value ?: false)
             viewModel.setLockEnabled(lockEnabled)
         }
         setFragmentResultListener("languageSettingFragment") { requestKey, bundle ->
@@ -86,8 +88,10 @@ class SettingFragment : Fragment() {
 
 
 
-    private fun changeLockSettingView(lockEnabled: Boolean) = binding.run {
-        if (lockEnabled) {
+    private fun changeLockSettingView(lockEnabled: Boolean?) = binding.run {
+        if (lockEnabled == null) {
+            tvLockEnabled.text = null
+        } else if (lockEnabled) {
             tvLockEnabled.text = requireContext().getString(R.string.setting_lock_on)
         } else {
             tvLockEnabled.text = requireContext().getString(R.string.setting_lock_off)
@@ -98,8 +102,22 @@ class SettingFragment : Fragment() {
         tvLanguage.text = language.nativeName
     }
 
+    private fun showSnackBar(message: String) {
+        val decorView = activity?.window?.decorView ?: return
+        TextSnackbar.make(
+            view = decorView,
+            message = message,
+            duration = Snackbar.LENGTH_SHORT,
+            onClick = {
+                it.dismiss()
+            }
+        ).show()
+    }
+
+
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
             launch { viewModel.lockEnabled.collectLatest(::changeLockSettingView) }
             launch { viewModel.language.collectLatest(::changeLanguageSettingView) }
         }

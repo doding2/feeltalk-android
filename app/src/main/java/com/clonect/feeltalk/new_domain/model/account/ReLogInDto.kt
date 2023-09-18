@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_domain.model.signIn
+package com.clonect.feeltalk.new_domain.model.account
 
 data class ReLogInDto(
     val signUpState: String,

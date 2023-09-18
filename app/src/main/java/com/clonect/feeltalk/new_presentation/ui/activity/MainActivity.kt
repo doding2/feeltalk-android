@@ -87,6 +87,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.signUpFragment
             else if (!isUserCouple.value)
                 R.id.signUpNavigationFragment
+            else if (isAccountLocked.value)
+                R.id.passwordFragment
             else
                 R.id.mainNavigationFragment
         }

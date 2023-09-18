@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
-import com.clonect.feeltalk.new_domain.usecase.signIn.ReLogInUseCase
+import com.clonect.feeltalk.new_domain.usecase.account.ReLogInUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.CacheSocialTokenUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.UpdateFcmTokenUseCase
 import com.clonect.feeltalk.new_presentation.service.FirebaseCloudMessagingService

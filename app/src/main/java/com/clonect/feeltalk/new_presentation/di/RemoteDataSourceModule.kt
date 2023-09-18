@@ -15,8 +15,8 @@ import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatRemoteDataSo
 import com.clonect.feeltalk.new_data.repository.chat.dataSourceImpl.ChatRemoteDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.question.dataSourceImpl.QuestionRemoteDataSourceImpl
-import com.clonect.feeltalk.new_data.repository.signIn.dataSource.SignInRemoteDataSource
-import com.clonect.feeltalk.new_data.repository.signIn.dataSourceImpl.SignInRemoteDataSourceImpl
+import com.clonect.feeltalk.new_data.repository.account.dataSource.AccountRemoteDataSource
+import com.clonect.feeltalk.new_data.repository.account.dataSourceImpl.AccountRemoteDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.token.dataSourceImpl.TokenRemoteDataSourceImpl
 import dagger.Module
@@ -31,8 +31,8 @@ class RemoteDataSourceModule {
 
     @Singleton
     @Provides
-    fun providesSignInRemoteDatasource(clonectService: ClonectService): SignInRemoteDataSource {
-        return SignInRemoteDataSourceImpl(clonectService)
+    fun providesAccountRemoteDatasource(clonectService: ClonectService): AccountRemoteDataSource {
+        return AccountRemoteDataSourceImpl(clonectService)
     }
 
     @Singleton

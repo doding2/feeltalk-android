@@ -37,10 +37,10 @@ import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionCach
 import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionLocalDataSource
 import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.question.paging.QuestionPagingSource
-import com.clonect.feeltalk.new_data.repository.signIn.SignInRepositoryImpl
-import com.clonect.feeltalk.new_data.repository.signIn.dataSource.SignInCacheDataSource
-import com.clonect.feeltalk.new_data.repository.signIn.dataSource.SignInLocalDataSource
-import com.clonect.feeltalk.new_data.repository.signIn.dataSource.SignInRemoteDataSource
+import com.clonect.feeltalk.new_data.repository.account.AccountRepositoryImpl
+import com.clonect.feeltalk.new_data.repository.account.dataSource.AccountCacheDataSource
+import com.clonect.feeltalk.new_data.repository.account.dataSource.AccountLocalDataSource
+import com.clonect.feeltalk.new_data.repository.account.dataSource.AccountRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.token.TokenRepositoryImpl
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenCacheDataSource
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenLocalDataSource
@@ -48,7 +48,7 @@ import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenRemoteData
 import com.clonect.feeltalk.new_domain.repository.challenge.ChallengeRepository
 import com.clonect.feeltalk.new_domain.repository.chat.ChatRepository
 import com.clonect.feeltalk.new_domain.repository.question.QuestionRepository
-import com.clonect.feeltalk.new_domain.repository.signIn.SignInRepository
+import com.clonect.feeltalk.new_domain.repository.account.AccountRepository
 import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 import dagger.Module
 import dagger.Provides
@@ -62,12 +62,12 @@ class RepositoryModule {
 
     @Singleton
     @Provides
-    fun providesSignInRepository(
-        cacheDataSource: SignInCacheDataSource,
-        localDataSource: SignInLocalDataSource,
-        remoteDataSource: SignInRemoteDataSource
-    ): SignInRepository {
-        return SignInRepositoryImpl(cacheDataSource, localDataSource, remoteDataSource)
+    fun provideAccountRepository(
+        cacheDataSource: AccountCacheDataSource,
+        localDataSource: AccountLocalDataSource,
+        remoteDataSource: AccountRemoteDataSource
+    ): AccountRepository {
+        return AccountRepositoryImpl(cacheDataSource, localDataSource, remoteDataSource)
     }
 
     @Singleton

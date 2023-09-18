@@ -1,20 +1,21 @@
-package com.clonect.feeltalk.new_data.repository.signIn.dataSourceImpl
+package com.clonect.feeltalk.new_data.repository.account.dataSourceImpl
 
 import android.accounts.NetworkErrorException
+import com.clonect.feeltalk.common.FeelTalkException.ServerIsDownException
 import com.clonect.feeltalk.new_data.api.ClonectService
-import com.clonect.feeltalk.new_data.repository.signIn.dataSource.SignInRemoteDataSource
-import com.clonect.feeltalk.new_domain.model.signIn.AutoLogInDto
-import com.clonect.feeltalk.new_domain.model.signIn.CoupleCodeDto
-import com.clonect.feeltalk.new_domain.model.signIn.ReLogInDto
-import com.clonect.feeltalk.new_domain.model.signIn.SignUpDto
+import com.clonect.feeltalk.new_data.repository.account.dataSource.AccountRemoteDataSource
+import com.clonect.feeltalk.new_domain.model.account.AutoLogInDto
+import com.clonect.feeltalk.new_domain.model.account.CoupleCodeDto
+import com.clonect.feeltalk.new_domain.model.account.LockQA
+import com.clonect.feeltalk.new_domain.model.account.ReLogInDto
+import com.clonect.feeltalk.new_domain.model.account.SignUpDto
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
 import com.clonect.feeltalk.new_domain.model.user.SocialType
 import com.google.gson.JsonObject
-import com.clonect.feeltalk.common.FeelTalkException.ServerIsDownException
 
-class SignInRemoteDataSourceImpl(
+class AccountRemoteDataSourceImpl(
     private val clonectService: ClonectService
-): SignInRemoteDataSource {
+): AccountRemoteDataSource {
 
     override suspend fun autoLogIn(accessToken: String): AutoLogInDto {
         val response = clonectService.autoLogIn("Bearer $accessToken")
@@ -98,6 +99,34 @@ class SignInRemoteDataSourceImpl(
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
+    }
+
+    override suspend fun lockAccount(
+        accessToken: String,
+        password: String,
+        lockQA: LockQA
+    ) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updateAccountLockPassword(accessToken: String, password: String) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getLockQA(accessToken: String): LockQA {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun checkAccountLock(accessToken: String): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun unlockAccount(accessToken: String) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getLockPassword(accessToken: String): String {
+        TODO("Not yet implemented")
     }
 
 

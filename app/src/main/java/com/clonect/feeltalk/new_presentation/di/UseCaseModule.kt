@@ -14,17 +14,17 @@ import com.clonect.feeltalk.domain.usecase.news.GetNewsListUseCase
 import com.clonect.feeltalk.domain.usecase.question.*
 import com.clonect.feeltalk.domain.usecase.user.*
 import com.clonect.feeltalk.new_data.util.AppLevelEncryptHelper
+import com.clonect.feeltalk.new_domain.repository.account.AccountRepository
 import com.clonect.feeltalk.new_domain.repository.challenge.ChallengeRepository
 import com.clonect.feeltalk.new_domain.repository.chat.ChatRepository
 import com.clonect.feeltalk.new_domain.repository.question.QuestionRepository
-import com.clonect.feeltalk.new_domain.repository.signIn.SignInRepository
 import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
+import com.clonect.feeltalk.new_domain.usecase.account.*
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.challenge.*
 import com.clonect.feeltalk.new_domain.usecase.chat.*
 import com.clonect.feeltalk.new_domain.usecase.question.*
-import com.clonect.feeltalk.new_domain.usecase.signIn.*
 import com.clonect.feeltalk.new_domain.usecase.token.CacheSocialTokenUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.GetCachedSocialTokenUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.UpdateFcmTokenUseCase
@@ -61,37 +61,73 @@ class UseCaseModule {
     }
 
 
-    /** Sign In **/
+    /** Account **/
 
 
     @Singleton
     @Provides
-    fun providesAutoLogInUseCase(tokenRepository: TokenRepository, signInRepository: SignInRepository): AutoLogInUseCase {
-        return AutoLogInUseCase(tokenRepository, signInRepository)
+    fun providesAutoLogInUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): AutoLogInUseCase {
+        return AutoLogInUseCase(tokenRepository, accountRepository)
     }
 
     @Singleton
     @Provides
-    fun providesReLogInUseCase(tokenRepository: TokenRepository, signInRepository: SignInRepository): ReLogInUseCase {
-        return ReLogInUseCase(tokenRepository, signInRepository)
+    fun providesReLogInUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): ReLogInUseCase {
+        return ReLogInUseCase(tokenRepository, accountRepository)
     }
 
     @Singleton
     @Provides
-    fun providesSignUpUseCase(tokenRepository: TokenRepository, signInRepository: SignInRepository): SignUpUseCase {
-        return SignUpUseCase(tokenRepository, signInRepository)
+    fun providesSignUpUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): SignUpUseCase {
+        return SignUpUseCase(tokenRepository, accountRepository)
     }
 
     @Singleton
     @Provides
-    fun providesGetCoupleCodeUseCase(tokenRepository: TokenRepository, signInRepository: SignInRepository): GetCoupleCodeUseCase {
-        return GetCoupleCodeUseCase(tokenRepository, signInRepository)
+    fun providesGetCoupleCodeUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): GetCoupleCodeUseCase {
+        return GetCoupleCodeUseCase(tokenRepository, accountRepository)
     }
 
     @Singleton
     @Provides
-    fun providesMatchCoupleUseCase(tokenRepository: TokenRepository, signInRepository: SignInRepository): MatchCoupleUseCase {
-        return MatchCoupleUseCase(tokenRepository, signInRepository)
+    fun providesMatchCoupleUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): MatchCoupleUseCase {
+        return MatchCoupleUseCase(tokenRepository, accountRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesLockAccountUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): LockAccountUseCase {
+        return LockAccountUseCase(tokenRepository, accountRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesMatchPasswordUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): MatchPasswordUseCase {
+        return MatchPasswordUseCase(tokenRepository, accountRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesCheckAccountLockedUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): CheckAccountLockedUseCase {
+        return CheckAccountLockedUseCase(tokenRepository, accountRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetLockQAUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): GetLockQAUseCase {
+        return GetLockQAUseCase(tokenRepository, accountRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesUnlockAccountUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): UnlockAccountUseCase {
+        return UnlockAccountUseCase(tokenRepository, accountRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesUpdateAccountLockPasswordUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): UpdateAccountLockPasswordUseCase {
+        return UpdateAccountLockPasswordUseCase(tokenRepository, accountRepository)
     }
 
 

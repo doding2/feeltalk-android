@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_domain.model.signIn
+package com.clonect.feeltalk.new_domain.model.account
 
 data class SignUpDto(
     val accessToken: String,

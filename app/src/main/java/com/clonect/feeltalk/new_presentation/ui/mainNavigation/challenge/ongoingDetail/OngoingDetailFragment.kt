@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.ongoingDetail
 
+import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
@@ -51,7 +52,7 @@ class OngoingDetailFragment : Fragment() {
     private lateinit var binding: FragmentOngoingDetailBinding
     private val viewModel: OngoingDetailViewModel by viewModels()
     private lateinit var onBackCallback: OnBackPressedCallback
-    private val loadingDialog by lazy { makeLoadingDialog() }
+    private lateinit var loadingDialog: Dialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,6 +63,7 @@ class OngoingDetailFragment : Fragment() {
             binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
         }
         initChallenge()
+        loadingDialog = makeLoadingDialog()
         return binding.root
     }
 

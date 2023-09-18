@@ -316,7 +316,7 @@
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/mcv_submit"
+            android:id="@+id/mcv_confirm"
             android:layout_width="match_parent"
             android:layout_height="59dp"
             android:layout_marginHorizontal="20dp"
@@ -329,7 +329,7 @@
             app:layout_constraintEnd_toEndOf="parent">
 
             <TextView
-                android:id="@+id/tv_submit"
+                android:id="@+id/tv_confirm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
