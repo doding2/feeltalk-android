@@ -115,6 +115,12 @@
             app:destination="@id/languageSettingFragment"
             app:popUpTo="@id/settingFragment"
             app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_settingFragment_to_privacyPolicyDetailFragment"
+            app:destination="@id/privacyPolicyDetailFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_serviceAgreementDetailFragment"
+            app:destination="@id/serviceAgreementDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/lockSettingFragment"
@@ -174,4 +180,14 @@
         android:name="com.clonect.feeltalk.new_presentation.ui.passwordNavigation.partnerHelpReset.PartnerHelpResetFragment"
         android:label="PartnerHelpResetFragment"
         tools:layout="@layout/fragment_partner_help_reset"/>
+    <fragment
+        android:id="@+id/privacyPolicyDetailFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.privacyPolicyDetail.PrivacyPolicyDetailFragment"
+        android:label="PrivacyPolicyDetailFragment"
+        tools:layout="@layout/fragment_privacy_policy_detail" />
+    <fragment
+        android:id="@+id/serviceAgreementDetailFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.serviceAgreementDetail.ServiceAgreementDetailFragment"
+        android:label="ServiceAgreementDetailFragment"
+        tools:layout="@layout/fragment_service_agreement_detail" />
 </navigation>

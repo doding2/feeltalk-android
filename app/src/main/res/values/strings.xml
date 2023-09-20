@@ -355,7 +355,15 @@
     <string name="partner_help_reset_guide">연인이 내 요청을 수락하면\n암호를 재설정 할 수 있는 링크를 받을 수 있어요</string>
     <string name="partner_help_reset_request">요청하기</string>
 
-    
+    <!--  PrivacyPolicyDetail  -->
+    <string name="privacy_policy_detail_title">개인정보처리방침</string>
+    <string name="privacy_policy_detail_dummy">이력서를 작성할 때 글자수를 확인하기 위해 포털사이트에 내용을 복사 붙여 넣기를 하여 확인하곤 합니다. 또한 공모전에 응모한다면 200자 원고지 100매와 같은 기준에 맞추기</string>
+
+    <!--  ServiceAgreement  -->
+    <string name="service_agreement_detail_title">이용약관</string>
+    <string name="service_agreement_detail_dummy">이력서를 작성할 때 글자수를 확인하기 위해 포털사이트에 내용을 복사 붙여 넣기를 하여 확인하곤 합니다. 또한 공모전에 응모한다면 200자 원고지 100매와 같은 기준에 맞추기</string>
+
+
     
 
     <!--  old ui  -->

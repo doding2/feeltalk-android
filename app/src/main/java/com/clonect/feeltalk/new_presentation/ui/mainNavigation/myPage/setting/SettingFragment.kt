@@ -69,6 +69,8 @@ class SettingFragment : Fragment() {
 
             llLockSetting.setOnClickListener { navigateToLockSetting() }
             llLanguageSetting.setOnClickListener { navigateToLanguageSetting() }
+            llPrivacyPolicy.setOnClickListener { navigateToPrivacyPolicyDetail() }
+            llServiceAgreement.setOnClickListener { navigateToServiceAgreementDetail() }
         }
     }
 
@@ -82,6 +84,18 @@ class SettingFragment : Fragment() {
         requireParentFragment()
             .findNavController()
             .navigate(R.id.action_settingFragment_to_languageSettingFragment)
+    }
+
+    private fun navigateToPrivacyPolicyDetail() {
+        requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_settingFragment_to_privacyPolicyDetailFragment)
+    }
+
+    private fun navigateToServiceAgreementDetail() {
+        requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_settingFragment_to_serviceAgreementDetailFragment)
     }
 
 

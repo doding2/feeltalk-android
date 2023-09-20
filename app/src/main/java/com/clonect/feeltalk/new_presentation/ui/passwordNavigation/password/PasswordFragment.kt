@@ -94,6 +94,7 @@ class PasswordFragment : Fragment() {
         requireParentFragment()
             .findNavController()
             .navigate(R.id.action_passwordFragment_to_resetPasswordFragment)
+        viewModel.setValidPassword(true)
     }
 
     private fun vibrate() {
