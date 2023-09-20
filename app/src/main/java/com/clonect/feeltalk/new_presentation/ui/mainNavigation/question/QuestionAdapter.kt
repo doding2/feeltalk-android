@@ -91,10 +91,12 @@ class QuestionAdapter: PagingDataAdapter<Question, QuestionAdapter.QuestionViewH
             val isUserAnswered = item.myAnswer != null
             if (isUserAnswered) {
                 mcvAnswer.setCardBackgroundColor(Color.WHITE)
+                mcvAnswer.setRippleColorResource(R.color.main_300)
                 tvAnswerOrChat.setText(R.string.question_today_button_answer_2)
                 tvAnswerOrChat.setTextColor(root.context.getColor(R.color.main_500))
             } else {
                 mcvAnswer.setCardBackgroundColor(Color.BLACK)
+                mcvAnswer.setRippleColorResource(R.color.system_alert)
                 tvAnswerOrChat.setText(R.string.question_today_button_answer)
                 tvAnswerOrChat.setTextColor(root.context.getColor(R.color.main_100))
             }

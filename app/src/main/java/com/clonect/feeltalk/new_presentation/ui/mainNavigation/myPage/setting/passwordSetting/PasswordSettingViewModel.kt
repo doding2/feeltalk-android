@@ -58,8 +58,8 @@ class PasswordSettingViewModel @Inject constructor(
     }
 
     fun addPasswordNum(num: Int) = viewModelScope.launch {
+        _isConfirmInvalid.value = false
         if (_isConfirmMode.value) {
-            _isConfirmInvalid.value = false
             val password = _confirmPassword.value
             if (password.length < 4) {
                 _confirmPassword.value = password + num
@@ -88,8 +88,10 @@ class PasswordSettingViewModel @Inject constructor(
                 return true
             }
             if (confirmPassword.length == 4) {
-                _isConfirmInvalid.value = true
+                _isConfirmMode.value = false
+                _password.value = ""
                 _confirmPassword.value = ""
+                _isConfirmInvalid.value = true
             }
         } else {
             val password = _password.value

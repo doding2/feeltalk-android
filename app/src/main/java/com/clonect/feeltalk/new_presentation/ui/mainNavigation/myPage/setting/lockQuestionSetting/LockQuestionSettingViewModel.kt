@@ -107,7 +107,7 @@ class LockQuestionSettingViewModel @Inject constructor(
         val questionType = _questionType.value ?: return@launch
         val answer = when (questionType) {
             1 -> {
-                val format = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
+                val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                 val date = _lockAnswerDate.value
                 format.format(date)
             }

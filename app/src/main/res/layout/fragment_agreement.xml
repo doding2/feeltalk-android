@@ -134,7 +134,7 @@
             android:id="@+id/iv_agree_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/n_ic_disagree_all"
+            android:src="@drawable/n_ic_round_disagree"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>

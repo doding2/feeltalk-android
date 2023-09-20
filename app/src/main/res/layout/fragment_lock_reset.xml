@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".new_presentation.ui.mainNavigation.myPage.setting.lockQuestionSetting.LockQuestionSettingFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/n_ic_back"
+            android:padding="12dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lock_reset_title"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:fontFamily="@font/pretendard_medium"
+            android:layout_gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:id="@+id/sv_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            android:fillViewport="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:id="@+id/ll_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:text="@string/lock_reset_guide"
+                    android:textColor="@color/black"
+                    android:textSize="24sp"
+                    android:fontFamily="@font/pretendard_medium"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="4dp"
+                    android:layout_marginTop="52dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:text="@string/lock_question_setting_select_question_title"
+                    android:textColor="@color/gray_600"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/pretendard_semi_bold"/>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/mcv_question"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginHorizontal="20dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardElevation="0dp"
+                    app:cardCornerRadius="12dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/gray_300">
+
+                    <TextView
+                        android:id="@+id/tv_question"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="16dp"
+                        android:text="@string/lock_question_item_1"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:fontFamily="@font/pretendard_regular"
+                        android:lines="1"/>
+                </com.google.android.material.card.MaterialCardView>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="4dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:text="@string/lock_question_setting_answer_title"
+                    android:textColor="@color/gray_600"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/pretendard_semi_bold"/>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/mcv_answer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginHorizontal="20dp"
+                    app:cardBackgroundColor="@color/gray_200"
+                    app:cardElevation="0dp"
+                    app:cardCornerRadius="12dp"
+                    app:strokeWidth="0dp"
+                    app:strokeColor="@color/main_500">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:animateLayoutChanges="true">
+
+                        <EditText
+                            android:id="@+id/et_answer"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="16dp"
+                            android:textCursorDrawable="@drawable/edit_text_cursor"
+                            android:background="@null"
+                            android:hint="@string/lock_question_setting_answer_hint"
+                            android:textColorHint="@color/gray_400"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/pretendard_regular"
+                            android:lines="1"
+                            android:inputType="text"
+                            android:imeOptions="actionDone"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/ll_num_title"/>
+
+                        <LinearLayout
+                            android:id="@+id/ll_num_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginEnd="4dp"
+                            android:visibility="gone"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/iv_clear"
+                            android:gravity="center">
+
+                            <TextView
+                                android:id="@+id/tv_num_title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/add_challenge_default_num_title"
+                                android:textColor="@color/gray_600"
+                                android:textSize="13sp"
+                                android:fontFamily="@font/pretendard_regular"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/add_challenge_max_num_title"
+                                android:textColor="@color/gray_400"
+                                android:textSize="13sp"
+                                android:fontFamily="@font/pretendard_regular"/>
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/iv_clear"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingVertical="16dp"
+                            android:paddingHorizontal="4dp"
+                            android:src="@drawable/n_ic_clear"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"/>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/mcv_answer_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginHorizontal="20dp"
+                    app:rippleColor="@android:color/transparent"
+                    app:cardCornerRadius="12dp"
+                    app:cardBackgroundColor="@color/gray_200"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp"
+                    app:strokeColor="@color/main_500">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/tv_deadline"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginHorizontal="12dp"
+                            android:fontFamily="@font/pretendard_regular"
+                            android:gravity="center_vertical"
+                            android:lines="1"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            app:layout_constrainedWidth="true"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/iv_calendar"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:id="@+id/iv_calendar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="6dp"
+                            android:padding="12dp"
+                            android:src="@drawable/n_ic_calendar"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:id="@+id/tv_invalid_answer_warning"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="4dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:text="@string/lock_reset_invalid_answer_warning"
+                    android:textColor="@color/system_error"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/pretendard_regular"/>
+
+                <View
+                    android:id="@+id/view_focused_spacer"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_forget_again"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="32dp"
+                    android:layout_gravity="center_horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_forget_again"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lock_reset_forget_again"
+                        android:textSize="14sp"
+                        android:textColor="@color/gray_500"
+                        android:fontFamily="@font/pretendard_regular"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:background="@color/gray_500"
+                        app:layout_constraintTop_toBottomOf="@id/tv_forget_again"
+                        app:layout_constraintStart_toStartOf="@id/tv_forget_again"
+                        app:layout_constraintEnd_toEndOf="@id/tv_forget_again"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/mcv_confirm"
+                    android:layout_width="match_parent"
+                    android:layout_height="59dp"
+                    android:layout_marginHorizontal="20dp"
+                    app:cardBackgroundColor="@color/main_500"
+                    app:cardCornerRadius="30dp"
+                    app:cardElevation="0dp"
+                    app:rippleColor="@color/main_600"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <TextView
+                        android:id="@+id/tv_confirm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/lock_question_setting_submit"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:fontFamily="@font/pretendard_medium"/>
+                </com.google.android.material.card.MaterialCardView>
+
+                <DatePicker
+                    android:id="@+id/dp_answer_date_picker"
+                    android:layout_width="match_parent"
+                    android:layout_height="215dp"
+                    android:visibility="gone"
+                    android:background="@color/gray_200"
+                    android:calendarViewShown="false"
+                    android:datePickerMode="spinner"
+                    android:nestedScrollingEnabled="true"
+                    android:elevation="6dp"
+                    android:outlineProvider="none"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+            </LinearLayout>
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

@@ -84,9 +84,9 @@ class LanguageSettingFragment : Fragment() {
 
     private fun changeNoticeCheckView(isChecked: Boolean) = binding.run {
         if (isChecked) {
-            ivNoticeCheck.setImageResource(R.drawable.n_ic_enabled_check)
+            ivNoticeCheck.setImageResource(R.drawable.n_ic_round_agree)
         } else {
-            ivNoticeCheck.setImageResource(R.drawable.n_ic_language_disabled_check)
+            ivNoticeCheck.setImageResource(R.drawable.n_ic_round_disagree)
         }
     }
 

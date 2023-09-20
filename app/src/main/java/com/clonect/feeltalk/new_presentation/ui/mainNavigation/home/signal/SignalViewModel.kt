@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.ui.mainNavigation.signal
+package com.clonect.feeltalk.new_presentation.ui.mainNavigation.home.signal
 
 import androidx.lifecycle.ViewModel
 import com.clonect.feeltalk.new_domain.model.signal.Signal

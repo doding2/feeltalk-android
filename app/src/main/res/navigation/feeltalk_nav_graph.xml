@@ -148,12 +148,30 @@
         tools:layout="@layout/fragment_language_setting" />
     <fragment
         android:id="@+id/passwordFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.password.PasswordFragment"
-        android:label="PasswordFragment" >
+        android:name="com.clonect.feeltalk.new_presentation.ui.passwordNavigation.password.PasswordFragment"
+        android:label="PasswordFragment"
+        tools:layout="@layout/fragment_password" >
         <action
             android:id="@+id/action_passwordFragment_to_mainNavigationFragment"
             app:destination="@id/mainNavigationFragment"
             app:popUpTo="@id/passwordFragment"
             app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_passwordFragment_to_resetPasswordFragment"
+            app:destination="@id/lockResetFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/lockResetFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.passwordNavigation.lockReset.LockResetFragment"
+        android:label="LockResetFragment"
+        tools:layout="@layout/fragment_lock_reset">
+        <action
+            android:id="@+id/action_lockResetFragment_to_partnerHelpResetFragment"
+            app:destination="@id/partnerHelpResetFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/partnerHelpResetFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.passwordNavigation.partnerHelpReset.PartnerHelpResetFragment"
+        android:label="PartnerHelpResetFragment"
+        tools:layout="@layout/fragment_partner_help_reset"/>
 </navigation>

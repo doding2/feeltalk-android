@@ -83,7 +83,7 @@ class MainNavigationViewModel @Inject constructor(
     }
 
     fun navigateTo(target: String) = viewModelScope.launch {
-        if (target == "home" || target == "question" || target == "challenge") {
+        if (target == "home" || target == "question" || target == "challenge" || target == "mypage") {
             _navigateTo.emit(target)
         }
     }

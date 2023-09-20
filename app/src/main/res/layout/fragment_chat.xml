@@ -131,11 +131,11 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/view_spacer"
+                        app:layout_constraintEnd_toStartOf="@id/view_focused_spacer"
                         app:layout_constraintHorizontal_bias="0"/>
 
                     <View
-                        android:id="@+id/view_spacer"
+                        android:id="@+id/view_focused_spacer"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         app:layout_constraintVertical_bias="1"

@@ -122,7 +122,6 @@ class PasswordSettingFragment : Fragment() {
             val combinedVibration = CombinedVibration.createParallel(vibrationEffect)
             vibrator.vibrate(combinedVibration)
         }
-
     }
 
 
@@ -134,7 +133,7 @@ class PasswordSettingFragment : Fragment() {
             if (viewModel.lockEnabled.value) R.string.password_setting_default_guide_enabled
             else R.string.password_setting_default_guide_disabled
         }
-        tvGuid.setText(guideResId)
+        tvGuide.setText(guideResId)
         changePasswordBarView()
     }
 
@@ -159,9 +158,8 @@ class PasswordSettingFragment : Fragment() {
 
     private fun changeConfirmInvalidView(isInvalid: Boolean) = binding.run {
         if (isInvalid) {
-            tvGuid.setText(R.string.password_setting_confirm_invalid)
-            tvGuid.setTextColor(requireContext().getColor(R.color.system_error))
-            ivConfirmInvalid.visibility = View.VISIBLE
+            tvGuide.setText(R.string.password_setting_confirm_invalid)
+            tvGuide.setTextColor(requireContext().getColor(R.color.system_error))
             vibrate()
         } else {
             val guideResId =  if (viewModel.isConfirmMode.value) {
@@ -171,12 +169,18 @@ class PasswordSettingFragment : Fragment() {
                 if (viewModel.lockEnabled.value) R.string.password_setting_default_guide_enabled
                 else R.string.password_setting_default_guide_disabled
             }
-            tvGuid.setText(guideResId)
-            tvGuid.setTextColor(requireContext().getColor(R.color.gray_600))
-            ivConfirmInvalid.visibility = View.GONE
+            tvGuide.setText(guideResId)
+            tvGuide.setTextColor(requireContext().getColor(R.color.gray_600))
         }
     }
 
+
+    private fun changeTitleView(lockEnabled: Boolean) = binding.run {
+        tvTitle.setText(
+            if (lockEnabled) R.string.password_setting_title_enabled
+            else R.string.password_setting_title_disabled
+        )
+    }
 
     private fun showLoading(isLoading: Boolean) {
         if (isLoading) {
@@ -206,6 +210,7 @@ class PasswordSettingFragment : Fragment() {
             launch { viewModel.password.collectLatest { changePasswordBarView() } }
             launch { viewModel.confirmPassword.collectLatest { changePasswordBarView() } }
             launch { viewModel.isConfirmInvalid.collectLatest(::changeConfirmInvalidView) }
+            launch { viewModel.lockEnabled.collectLatest(::changeTitleView) }
         }
     }
 }

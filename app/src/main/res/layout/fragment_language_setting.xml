@@ -126,7 +126,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="12dp"
-                    android:src="@drawable/n_ic_language_disabled_check" />
+                    android:src="@drawable/n_ic_round_disagree" />
 
                 <TextView
                     android:layout_width="wrap_content"

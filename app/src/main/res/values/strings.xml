@@ -4,6 +4,9 @@
     <string name="white_space">&#160;</string>
 
 
+    <!--  Pillowtalk Feedback Email  -->
+    <string name="pillowtalk_feedback_reset_password">[필로우톡] 비밀번호를 재설정하고 싶어요!</string>
+
     <!--  Dialog  -->
     <string name="dialog_title">제목</string>
     <string name="dialog_body">내용</string>
@@ -285,7 +288,7 @@
     <string name="password_setting_title_enabled">암호변경</string>
     <string name="password_setting_default_guide_enabled">새로운 암호를 입력해주세요</string>
     <string name="password_setting_confirm_guide_enabled">새로운 암호를 다시 한 번 입력해주세요</string>
-    <string name="password_setting_confirm_invalid">입력한 암호가 일치하지 않습니다</string>
+    <string name="password_setting_confirm_invalid">입력한 암호가 일치하지 않습니다.\n처음부터 다시 입력해주세요</string>
     <string name="password_setting_keypad_1">1</string>
     <string name="password_setting_keypad_2">2</string>
     <string name="password_setting_keypad_3">3</string>
@@ -322,15 +325,38 @@
     <!--  LanguageSetting  -->
     <string name="language_setting_title">언어설정</string>
     <string name="language_setting_select_guide">사용할 언어를 선택해주세요</string>
-    <string name="language_setting_notice">어쩌구 저쩌구 안내문구</string>
+    <string name="language_setting_notice">안내문구</string>
     <string name="language_setting_notice_check">내용을 모두 확인했습니다.</string>
     <string name="language_setting_change_language">확인</string>
 
     <!--  Password  -->
+    <string name="password_title">암호 입력</string>
+    <string name="password_guide">설정하신 암호를 입력해주세요</string>
+    <string name="password_confirm_invalid">입력한 암호가 일치하지 않습니다.</string>
+    <string name="password_forget">암호를 잊어버렸어요</string>
 
+    <!--  LockReset  -->
+    <string name="lock_reset_title">암호재설정</string>
+    <string name="lock_reset_guide">본인인증 질문에 답하면\n암호를 재설정할 수 있어요</string>
+    <string name="lock_reset_invalid_answer_warning">답변이 일치하지 않습니다</string>
+    <string name="lock_reset_forget_again">답변이 기억나지 않아요</string>
+    <string name="lock_reset_confirm">확인</string>
 
+    <!--  OtherResetWayBottomSheet  -->
+    <string name="other_reset_way_title">아래의 방법으로\n비밀번호를 재설정할 수 있어요</string>
+    <string name="other_reset_way_partner_help_title">연인에게 도움 요청하기</string>
+    <string name="other_reset_way_partner_help_body">연인이 암호를 재설정할 수 있는 링크를 보내줘요</string>
+    <string name="other_reset_way_send_email_title">필로우톡에 메일 보내기</string>
+    <string name="other_reset_way_send_email_body">필로우톡에 내 정보를 인증하고 암호를 재설정해요</string>
 
+    <!--  PartnerHelpReset  -->
+    <string name="partner_help_reset_title">암호재설정</string>
+    <string name="partner_help_reset_body">연인에게\n도움을 요청할까요?</string>
+    <string name="partner_help_reset_guide">연인이 내 요청을 수락하면\n암호를 재설정 할 수 있는 링크를 받을 수 있어요</string>
+    <string name="partner_help_reset_request">요청하기</string>
 
+    
+    
 
     <!--  old ui  -->
 

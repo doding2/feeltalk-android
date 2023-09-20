@@ -22,5 +22,7 @@ class Constants {
         const val EXCHANGE_KEY_WAIT_DELAY = 500L
 
         const val ONE_DAY = 24 * 60 * 60 * 1000
+
+        const val PILLOWTALK_FEEDBACK = "pillowtalk.feedback@gmail.com"
     }
 }

@@ -226,7 +226,7 @@ class LockQuestionSettingFragment : Fragment() {
                 binding.root.setPadding(0, getStatusBarHeight(), 0, imeHeight)
                 binding.llContent.setPadding(horizontalPadding, 0, horizontalPadding, bottomPadding)
                 lifecycleScope.launch {
-                    delay(100)
+                    delay(10)
                     svScroll.smoothScrollBy(0, bottomPadding)
                 }
             }
@@ -281,6 +281,7 @@ class LockQuestionSettingFragment : Fragment() {
         }
     }
 
+
     private fun changeLockAnswerDateView(deadline: Date) {
         val formatter = SimpleDateFormat("yyyy년 M월 dd일", Locale.getDefault())
         val str = formatter.format(deadline)
@@ -295,8 +296,6 @@ class LockQuestionSettingFragment : Fragment() {
             expandAddButton(false)
         }
     }
-
-
 
     private fun changeQuestionTypeView(questionType: Int?) = binding.run {
         when (questionType) {

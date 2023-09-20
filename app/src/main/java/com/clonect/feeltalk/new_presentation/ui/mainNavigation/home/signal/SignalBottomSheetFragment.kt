@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.ui.mainNavigation.signal
+package com.clonect.feeltalk.new_presentation.ui.mainNavigation.home.signal
 
 import android.os.Bundle
 import android.view.LayoutInflater

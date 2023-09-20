@@ -3,6 +3,6 @@ package com.clonect.feeltalk.new_domain.model.account
 import java.io.Serializable
 
 data class LockQA(
-    open val questionType: Int,
-    open val answer: String?,
+    val questionType: Int,
+    val answer: String,
 ): Serializable

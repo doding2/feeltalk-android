@@ -176,8 +176,8 @@ class AgreementFragment : Fragment() {
 
     private fun changeAgreeAllView(agreeAll: Boolean) = binding.run {
         ivAgreeAll.setImageResource(
-            if (agreeAll) R.drawable.n_ic_agree_all
-            else R.drawable.n_ic_disagree_all
+            if (agreeAll) R.drawable.n_ic_round_agree
+            else R.drawable.n_ic_round_disagree
         )
     }
 

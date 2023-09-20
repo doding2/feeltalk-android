@@ -66,6 +66,11 @@ class MainNavigationFragment : Fragment() {
             navigateFragment("challenge")
         }
 
+        val isLockReset = arguments?.getBoolean("isLockReset", false) ?: false
+        if (isLockReset) {
+            navigateFragment("mypage")
+        }
+
         arguments?.clear()
 
         viewModel.setShortcut(requireContext())
@@ -181,7 +186,7 @@ class MainNavigationFragment : Fragment() {
         if (target == "challenge") {
             binding.mnvBottomNavigation.selectedItemId = R.id.navigation_bucket_list
         }
-        if (target == "setting") {
+        if (target == "mypage") {
             binding.mnvBottomNavigation.selectedItemId = R.id.navigation_my_page
         }
     }
