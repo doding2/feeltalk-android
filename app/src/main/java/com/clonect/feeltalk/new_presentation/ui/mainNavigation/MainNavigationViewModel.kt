@@ -72,10 +72,6 @@ class MainNavigationViewModel @Inject constructor(
     val showChallengeDetail = _showChallengeDetail.asStateFlow()
 
 
-    private val _hideChatBubble = MutableStateFlow(false)
-    val hideChatBubble = _hideChatBubble.asStateFlow()
-
-
     init {
         getPartnerLastChat()
         collectNewChat()
@@ -186,10 +182,6 @@ class MainNavigationViewModel @Inject constructor(
         _showChallengeDetail.value = challenge
     }
 
-
-    fun setHideChatBubble(hide: Boolean) {
-        _hideChatBubble.value = hide
-    }
 
 
     fun initShowQuestionAnswerSheet(index: Long) = viewModelScope.launch {

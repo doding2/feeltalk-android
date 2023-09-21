@@ -191,10 +191,6 @@ class MainNavigationFragment : Fragment() {
         }
     }
 
-    private fun changeChatBubbleView(hide: Boolean) = binding.run {
-        clFloatingChatContainer.visibility = if (hide) View.GONE else View.VISIBLE
-    }
-
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.navigateTo.collectLatest(::navigateFragment) }
@@ -202,7 +198,6 @@ class MainNavigationFragment : Fragment() {
             launch { viewModel.showPartnerLastChat.collectLatest(::showPartnerLastChatView) }
             launch { viewModel.partnerLastChat.collectLatest(::changePartnerLastChatView) }
             launch { viewModel.showAnswerSheet.collectLatest(::showAnswerSheet) }
-            launch { viewModel.hideChatBubble.collectLatest(::changeChatBubbleView) }
         }
     }
 

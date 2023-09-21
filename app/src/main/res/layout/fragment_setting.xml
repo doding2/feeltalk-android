@@ -86,6 +86,7 @@
         android:layout_height="56dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:visibility="gone"
         android:paddingHorizontal="20dp"
         android:background="?android:selectableItemBackground">
 
@@ -112,6 +113,47 @@
             android:fontFamily="@font/pretendard_regular"/>
     </LinearLayout>
     
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:background="@color/gray_100"/>
+
+    <LinearLayout
+        android:id="@+id/ll_account_setting"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="20dp"
+        android:background="?android:selectableItemBackground">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/setting_account_setting"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/pretendard_regular"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_break_up_couple"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="20dp"
+        android:background="?android:selectableItemBackground">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/setting_break_up_couple"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/pretendard_regular"/>
+    </LinearLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="8dp"

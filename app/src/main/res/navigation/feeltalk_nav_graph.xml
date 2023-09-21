@@ -121,6 +121,9 @@
         <action
             android:id="@+id/action_settingFragment_to_serviceAgreementDetailFragment"
             app:destination="@id/serviceAgreementDetailFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_breakUpCoupleFragment"
+            app:destination="@id/breakUpCoupleFragment" />
     </fragment>
     <fragment
         android:id="@+id/lockSettingFragment"
@@ -190,4 +193,15 @@
         android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.serviceAgreementDetail.ServiceAgreementDetailFragment"
         android:label="ServiceAgreementDetailFragment"
         tools:layout="@layout/fragment_service_agreement_detail" />
+    <fragment
+        android:id="@+id/breakUpCoupleFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.breakUpCouple.BreakUpCoupleFragment"
+        android:label="fragment_break_up_couple"
+        tools:layout="@layout/fragment_break_up_couple" >
+        <action
+            android:id="@+id/action_breakUpCoupleFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment"
+            app:popUpTo="@id/mainNavigationFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
 </navigation>

@@ -25,20 +25,6 @@
             android:textColor="@color/black"
             android:textSize="18sp"
             android:fontFamily="@font/pretendard_medium"/>
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-        <ImageView
-            android:id="@+id/iv_setting"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:src="@drawable/n_ic_setting"
-            android:background="?selectableItemBackgroundBorderless"
-            android:layout_gravity="center_vertical"/>
     </LinearLayout>
 
 
@@ -133,6 +119,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
+                        android:visibility="gone"
                         app:cardElevation="0dp"
                         app:cardBackgroundColor="@color/main_100"
                         app:cardCornerRadius="12dp"
@@ -223,7 +210,7 @@
                     android:layout_marginVertical="4dp">
 
                     <LinearLayout
-                        android:id="@+id/ll_notice"
+                        android:id="@+id/ll_setting"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -237,13 +224,13 @@
                             android:layout_marginEnd="4dp"
                             android:layout_marginVertical="4dp"
                             android:layout_gravity="center_vertical"
-                            android:src="@drawable/n_ic_notice"/>
+                            android:src="@drawable/n_ic_setting"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:text="@string/my_page_notice"
+                            android:text="@string/my_page_setting"
                             android:textColor="@color/black"
                             android:textSize="16sp"
                             android:fontFamily="@font/pretendard_regular"/>

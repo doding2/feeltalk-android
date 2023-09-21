@@ -39,7 +39,6 @@ class MyPageFragment : Fragment() {
         } else {
             activity.setStatusBarColor(binding.root, requireContext().getColor(R.color.gray_100), true)
         }
-        navViewModel.setHideChatBubble(true)
         return binding.root
     }
 
@@ -54,7 +53,7 @@ class MyPageFragment : Fragment() {
         collectViewModel()
 
         binding.run {
-            ivSetting.setOnClickListener { navigateToSetting() }
+            llSetting.setOnClickListener { navigateToSetting() }
         }
     }
 
@@ -70,10 +69,5 @@ class MyPageFragment : Fragment() {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
 
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        navViewModel.setHideChatBubble(false)
     }
 }
