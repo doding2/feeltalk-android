@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
@@ -75,6 +76,7 @@ class OngoingDetailFragment : Fragment() {
         setFocusListener()
         setDatePickerListener()
         setKeyboardInsets()
+        setEditTextNestedScroll()
         collectViewModel()
 
         binding.run {
@@ -280,8 +282,10 @@ class OngoingDetailFragment : Fragment() {
                 insets.systemWindowInsetBottom
             }
 
-            if (viewModel.isEditMode.value) {
-                viewModel.setKeyboardUp(imeHeight != 0)
+            val isKeyboardUp = imeHeight != 0
+            viewModel.setKeyboardUp(isKeyboardUp)
+            if (!isKeyboardUp && viewModel.focused.value != "deadline") {
+                viewModel.setFocusedEditText(null)
             }
 
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
@@ -292,6 +296,7 @@ class OngoingDetailFragment : Fragment() {
                 binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
             } else {
                 binding.root.setPadding(0, getStatusBarHeight(), 0, imeHeight)
+                binding.svScroll.smoothScrollBy(0, getNavigationBarHeight())
             }
 
             insets
@@ -308,6 +313,20 @@ class OngoingDetailFragment : Fragment() {
     private fun showKeyboard(target: View) {
         val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(target, 0)
+    }
+
+    private fun setEditTextNestedScroll() = binding.run {
+        etBody.setOnTouchListener { view, motionEvent ->
+            if (etBody.hasFocus()) {
+                view?.parent?.requestDisallowInterceptTouchEvent(true)
+                if (motionEvent.action and MotionEvent.ACTION_MASK
+                    == MotionEvent.ACTION_SCROLL) {
+                    view?.parent?.requestDisallowInterceptTouchEvent(false)
+                    return@setOnTouchListener true
+                }
+            }
+            false
+        }
     }
 
 
@@ -497,6 +516,9 @@ class OngoingDetailFragment : Fragment() {
                 mcvBody.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
 
                 tvNext.setText(R.string.add_challenge_next)
+
+                etTitle.clearFocus()
+                etBody.clearFocus()
             }
         }
     }

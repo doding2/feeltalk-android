@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.lockQuestionSetting
+package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.lockSetting.lockQuestionSetting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

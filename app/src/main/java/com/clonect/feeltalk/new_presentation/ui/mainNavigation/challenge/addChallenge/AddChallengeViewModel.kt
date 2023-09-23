@@ -55,7 +55,7 @@ class AddChallengeViewModel @Inject constructor(
     }
 
 
-    fun setFocusedEditText(et: String) {
+    fun setFocusedEditText(et: String?) {
         _focused.value = et
     }
 

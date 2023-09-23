@@ -370,7 +370,7 @@
     <string name="break_up_couple_warning_item_2">재연결 및 데이터 복구 가능 기간은 30일이예요</string>
     <string name="break_up_couple_warning_item_3">재연결 시, 해당 계정으로 로그인과 연결을 진행해야해요</string>
     <string name="break_up_couple_agree_all">내용을 모두 확인했습니다.</string>
-    <string name="break_up_couple_warning_second">아래 연인 끊기 버튼을 누르면\n상대방과의 연결이 즉시 끊어지니 신중하게 결정해주세요.</string>
+    <string name="break_up_couple_last_warning">아래 연인 끊기 버튼을 누르면\n상대방과의 연결이 즉시 끊어지니 신중하게 결정해주세요.</string>
     <string name="break_up_couple_confirm">연인끊기</string>
     <string name="break_up_couple_dialog_title">정말 연인을 끊으시겠어요?</string>
     <string name="break_up_couple_dialog_body">상대방과의 연결이 즉시 끊어집니다</string>
@@ -378,6 +378,48 @@
     <string name="break_up_couple_dialog_confirm">연인끊기</string>
 
 
+    <!--  AccountSetting  -->
+    <string name="account_setting_title">계정정보</string>
+    <string name="account_setting_delete_account">회원탈퇴</string>
+
+    <!--  DeleteAccount  -->
+    <string name="delete_account_title">회원탈퇴</string>
+    <string name="delete_account_notice_1">필로우톡을</string>
+    <string name="delete_account_notice_2">떠나려는 당신에게</string>
+    <string name="delete_account_notice_3">알려드려요</string>
+    <string name="delete_account_warning_title">탈퇴 전 꼭 확인해주세요</string>
+    <string name="delete_account_warning_item_1">탈퇴 시 모든 데이터가 삭제되고 복구할 수 없어요</string>
+    <string name="delete_account_warning_item_2">동일한 계정으로 재가입해도 데이터를 복구할 수 없어요</string>
+    <string name="delete_account_agree_all">내용을 모두 확인했습니다.</string>
+    <string name="delete_account_confirm">탈퇴하기</string>
+
+    <!--  DeleteAccountDetail  -->
+    <string name="delete_account_detail_title">회원탈퇴</string>
+    <string name="delete_account_detail_reason">탈퇴 사유</string>
+    <string name="delete_account_detail_reason_item_1">상대방과 헤어져서</string>
+    <string name="delete_account_detail_reason_item_2">원하는 기능이 없어서</string>
+    <string name="delete_account_detail_reason_item_3">버그나 오류가 많아서</string>
+    <string name="delete_account_detail_reason_item_4">기타</string>
+    <string name="delete_account_detail_reason_hint">이력서를 작성할 때 글자수를 확인하기 위해 포털사이트에 내용을 복사 붙여 넣기를 하여 확인</string>
+    <string name="delete_account_detail_etc_reason_default_num">0</string>
+    <string name="delete_account_detail_etc_reason_max_num">/50</string>
+    <string name="delete_account_detail_delete_reason">필로우톡에 남기고 싶은 말</string>
+    <string name="delete_account_detail_delete_reason_default_num">0</string>
+    <string name="delete_account_detail_delete_reason_max_num">/100</string>
+    <string name="delete_account_detail_last_warning">필로우톡 탈퇴하기 버튼을 누르면\n계정이 삭제되니 꼭 신중하게 결정해주세요.</string>
+    <string name="delete_account_detail_confirm">탈퇴하기</string>
+    <string name="delete_account_detail_dialog_title">정말 탈퇴하시겠어요?</string>
+    <string name="delete_account_detail_dialog_body">모든 데이터는 복구할 수 없습니다.</string>
+    <string name="delete_account_detail_dialog_cancel">취소</string>
+    <string name="delete_account_detail_dialog_confirm">탈퇴</string>
+
+    <!--  DeleteAccountDone  -->
+    <string name="delete_account_done_title">회원탈퇴가 완료되었습니다.</string>
+    <string name="delete_account_done_thanks_title">긴 시간 필로우톡과 함께해주신 감사한 당신께.</string>
+    <string name="delete_account_done_thanks_body">비록 지금은 헤어지지만\n언젠가 다시 만날 수 있을거라 믿어요.\n필톡 팀은 언제나 당신의 사랑을 응원해요!</string>
+    <string name="delete_account_done_confirm">메인으로</string>
+
+    
     <!--  PrivacyPolicyDetail  -->
     <string name="privacy_policy_detail_title">개인정보처리방침</string>
     <string name="privacy_policy_detail_dummy">이력서를 작성할 때 글자수를 확인하기 위해 포털사이트에 내용을 복사 붙여 넣기를 하여 확인하곤 합니다. 또한 공모전에 응모한다면 200자 원고지 100매와 같은 기준에 맞추기</string>

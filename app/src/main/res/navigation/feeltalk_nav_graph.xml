@@ -124,6 +124,9 @@
         <action
             android:id="@+id/action_settingFragment_to_breakUpCoupleFragment"
             app:destination="@id/breakUpCoupleFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_accountSettingFragment"
+            app:destination="@id/accountSettingFragment" />
     </fragment>
     <fragment
         android:id="@+id/lockSettingFragment"
@@ -136,7 +139,7 @@
     </fragment>
     <fragment
         android:id="@+id/passwordSettingFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.passwordSetting.PasswordSettingFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.lockSetting.passwordSetting.PasswordSettingFragment"
         android:label="fragment_password_setting"
         tools:layout="@layout/fragment_password_setting" >
         <action
@@ -147,7 +150,7 @@
     </fragment>
     <fragment
         android:id="@+id/lockQuestionSettingFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.lockQuestionSetting.LockQuestionSettingFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.lockSetting.lockQuestionSetting.LockQuestionSettingFragment"
         android:label="fragment_lock_question_setting"
         tools:layout="@layout/fragment_lock_question_setting" />
     <fragment
@@ -202,6 +205,46 @@
             android:id="@+id/action_breakUpCoupleFragment_to_signUpFragment"
             app:destination="@id/signUpFragment"
             app:popUpTo="@id/mainNavigationFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+    <fragment
+        android:id="@+id/accountSettingFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.accountSetting.AccountSettingFragment"
+        android:label="fragment_account_setting"
+        tools:layout="@layout/fragment_account_setting" >
+        <action
+            android:id="@+id/action_accountSettingFragment_to_deleteAccountFragment"
+            app:destination="@id/deleteAccountFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/deleteAccountFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.accountSetting.deleteAccount.DeleteAccountFragment"
+        android:label="fragment_delete_account"
+        tools:layout="@layout/fragment_delete_account" >
+        <action
+            android:id="@+id/action_deleteAccountFragment_to_deleteAccountDetailFragment"
+            app:destination="@id/deleteAccountDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/deleteAccountDetailFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.accountSetting.deleteAccountDetail.DeleteAccountDetailFragment"
+        android:label="fragment_delete_account_detail"
+        tools:layout="@layout/fragment_delete_account_detail" >
+        <action
+            android:id="@+id/action_deleteAccountDetailFragment_to_deleteAccountDoneFragment"
+            app:destination="@id/deleteAccountDoneFragment"
+            app:popUpTo="@id/mainNavigationFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/deleteAccountDoneFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.accountSetting.deleteAccountDone.DeleteAccountDoneFragment"
+        android:label="DeleteAccountDoneFragment"
+        tools:layout="@layout/fragment_delete_account_done">
+        <action
+            android:id="@+id/action_deleteAccountDoneFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment"
+            app:popUpTo="@id/deleteAccountDoneFragment"
             app:popUpToInclusive="true"/>
     </fragment>
 </navigation>

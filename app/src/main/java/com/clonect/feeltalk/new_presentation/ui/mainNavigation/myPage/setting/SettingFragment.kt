@@ -68,6 +68,7 @@ class SettingFragment : Fragment() {
             ivBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
 
             llLockSetting.setOnClickListener { navigateToLockSetting() }
+            llAccountSetting.setOnClickListener { navigateToAccountSetting() }
             llBreakUpCouple.setOnClickListener { navigateToBreakUpCouple() }
             llLanguageSetting.setOnClickListener { navigateToLanguageSetting() }
             llPrivacyPolicy.setOnClickListener { navigateToPrivacyPolicyDetail() }
@@ -85,6 +86,12 @@ class SettingFragment : Fragment() {
         requireParentFragment()
             .findNavController()
             .navigate(R.id.action_settingFragment_to_languageSettingFragment)
+    }
+
+    private fun navigateToAccountSetting() {
+        requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_settingFragment_to_accountSettingFragment)
     }
 
     private fun navigateToBreakUpCouple() {

@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
@@ -70,6 +71,7 @@ class AddChallengeFragment : Fragment() {
         setFocusListener()
         setDatePickerListener()
         setKeyboardInsets()
+        setEditTextNestedScroll()
         collectViewModel()
 
         binding.run {
@@ -206,7 +208,11 @@ class AddChallengeFragment : Fragment() {
                 insets.systemWindowInsetBottom
             }
 
-            viewModel.setKeyboardUp(imeHeight != 0)
+            val isKeyboardUp = imeHeight != 0
+            viewModel.setKeyboardUp(isKeyboardUp)
+            if (!isKeyboardUp && viewModel.focused.value != "deadline") {
+                viewModel.setFocusedEditText(null)
+            }
 
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
                 return@setOnApplyWindowInsetsListener insets
@@ -216,6 +222,7 @@ class AddChallengeFragment : Fragment() {
                 binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
             } else {
                 binding.root.setPadding(0, getStatusBarHeight(), 0, imeHeight)
+                binding.svScroll.smoothScrollBy(0, getNavigationBarHeight())
             }
 
             insets
@@ -233,6 +240,21 @@ class AddChallengeFragment : Fragment() {
         val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(target, 0)
     }
+
+    private fun setEditTextNestedScroll() = binding.run {
+        etBody.setOnTouchListener { view, motionEvent ->
+            if (etBody.hasFocus()) {
+                view?.parent?.requestDisallowInterceptTouchEvent(true)
+                if (motionEvent.action and MotionEvent.ACTION_MASK
+                    == MotionEvent.ACTION_SCROLL) {
+                    view?.parent?.requestDisallowInterceptTouchEvent(false)
+                    return@setOnTouchListener true
+                }
+            }
+            false
+        }
+    }
+
 
 
     private fun changeFocus() = binding.run {
@@ -386,6 +408,9 @@ class AddChallengeFragment : Fragment() {
                 mcvBody.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
 
                 tvNext.setText(R.string.add_challenge_next)
+
+                etTitle.clearFocus()
+                etBody.clearFocus()
             }
         }
     }

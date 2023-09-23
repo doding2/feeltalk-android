@@ -1,6 +1,5 @@
-package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.breakUpCouple
+package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.accountSetting.deleteAccount
 
-import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
@@ -16,38 +15,34 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
-import com.clonect.feeltalk.databinding.FragmentBreakUpCoupleBinding
-import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
+import com.clonect.feeltalk.databinding.FragmentDeleteAccountBinding
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
-import com.clonect.feeltalk.new_presentation.ui.util.makeLoadingDialog
-import com.clonect.feeltalk.new_presentation.ui.util.showConfirmDialog
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 /**
- * Created by doding2 on 2023/09/21.
+ * Created by doding2 on 2023/09/23.
  */
 @AndroidEntryPoint
-class BreakUpCoupleFragment : Fragment() {
+class DeleteAccountFragment : Fragment() {
 
-    private lateinit var binding: FragmentBreakUpCoupleBinding
-    private val viewModel: BreakUpCoupleViewModel by viewModels()
+    private lateinit var binding: FragmentDeleteAccountBinding
+    private val viewModel: DeleteAccountViewModel by viewModels()
     private lateinit var onBackCallback: OnBackPressedCallback
-    private lateinit var loadingDialog: Dialog
+//    private lateinit var loadingDialog: Dialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentBreakUpCoupleBinding.inflate(inflater, container, false)
+        binding = FragmentDeleteAccountBinding.inflate(inflater, container, false)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
         }
-        loadingDialog = makeLoadingDialog()
+//        loadingDialog = makeLoadingDialog()
         return binding.root
     }
 
@@ -59,32 +54,15 @@ class BreakUpCoupleFragment : Fragment() {
         binding.run {
             ivExit.setOnClickListener { onBackCallback.handleOnBackPressed() }
             llAgreeAll.setOnClickListener { viewModel.toggleIsAllAgreed() }
-            mcvConfirm.setOnClickListener { showBreakUpConfirmDialog() }
+            mcvConfirm.setOnClickListener { navigateToDeleteAccountDetail() }
         }
     }
 
-    private fun showBreakUpConfirmDialog() {
-        showConfirmDialog(
-            title = requireContext().getString(R.string.break_up_couple_dialog_title),
-            body = requireContext().getString(R.string.break_up_couple_dialog_body),
-            cancelButton = requireContext().getString(R.string.break_up_couple_dialog_cancel),
-            confirmButton = requireContext().getString(R.string.break_up_couple_dialog_confirm),
-            onConfirm = {
-                breakUpCouple()
-            }
-        )
-    }
 
-    private fun breakUpCouple() {
-        viewModel.breakUpCouple {
-            navigateToSignUp()
-        }
-    }
-
-    private fun navigateToSignUp() {
+    private fun navigateToDeleteAccountDetail() {
         requireParentFragment()
             .findNavController()
-            .navigate(R.id.action_breakUpCoupleFragment_to_signUpFragment,)
+            .navigate(R.id.action_deleteAccountFragment_to_deleteAccountDetailFragment)
     }
 
 
@@ -104,23 +82,23 @@ class BreakUpCoupleFragment : Fragment() {
     }
 
     private fun showLoading(isLoading: Boolean) {
-        if (isLoading) {
-            loadingDialog.show()
-        } else {
-            loadingDialog.dismiss()
-        }
+//        if (isLoading) {
+//            loadingDialog.show()
+//        } else {
+//            loadingDialog.dismiss()
+//        }
     }
 
     private fun showSnackBar(message: String) {
-        val decorView = activity?.window?.decorView ?: return
-        TextSnackbar.make(
-            view = decorView,
-            message = message,
-            duration = Snackbar.LENGTH_SHORT,
-            onClick = {
-                it.dismiss()
-            }
-        ).show()
+//        val decorView = activity?.window?.decorView ?: return
+//        TextSnackbar.make(
+//            view = decorView,
+//            message = message,
+//            duration = Snackbar.LENGTH_SHORT,
+//            onClick = {
+//                it.dismiss()
+//            }
+//        ).show()
     }
 
     private fun collectViewModel() = lifecycleScope.launch {

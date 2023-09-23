@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".new_presentation.ui.mainNavigation.myPage.setting.breakUpCouple.BreakUpCoupleFragment">
+    tools:context=".new_presentation.ui.mainNavigation.myPage.setting.accountSetting.deleteAccount.DeleteAccountFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -41,65 +41,31 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="28dp"
-        android:layout_marginBottom="10dp"
-        android:text="@string/break_up_couple_record_deco"
-        android:textColor="@color/gray_600"
-        android:textSize="18sp"
+        android:layout_marginTop="60dp"
+        android:text="@string/delete_account_notice_1"
+        android:textColor="@color/black"
+        android:textSize="24sp"
         android:fontFamily="@font/pretendard_medium"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="4dp"
-        android:gravity="center_vertical">
+        android:layout_marginTop="4dp"
+        android:text="@string/delete_account_notice_2"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:fontFamily="@font/pretendard_medium"/>
 
-        <TextView
-            android:id="@+id/tv_question_record"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
-            android:text="@string/break_up_couple_record_default_value"
-            android:textColor="@color/main_500"
-            android:textSize="28sp"
-            android:fontFamily="@font/pretendard_bold"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/break_up_couple_question_record"
-            android:textColor="@color/black"
-            android:textSize="24sp"
-            android:fontFamily="@font/pretendard_medium"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_marginHorizontal="20dp"
-        android:gravity="center_vertical">
-
-        <TextView
-            android:id="@+id/tv_challenge_record"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
-            android:text="@string/break_up_couple_record_default_value"
-            android:textColor="@color/main_500"
-            android:textSize="28sp"
-            android:fontFamily="@font/pretendard_bold"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/break_up_couple_challenge_record"
-            android:textColor="@color/black"
-            android:textSize="24sp"
-            android:fontFamily="@font/pretendard_medium"/>
-    </LinearLayout>
+        android:layout_marginTop="4dp"
+        android:text="@string/delete_account_notice_3"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:fontFamily="@font/pretendard_medium"/>
 
     <View
         android:layout_width="0dp"
@@ -123,7 +89,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/break_up_couple_warning_title"
+            android:text="@string/delete_account_warning_title"
             android:textColor="@color/system_error"
             android:textSize="16sp"
             android:fontFamily="@font/pretendard_semi_bold"/>
@@ -153,7 +119,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/break_up_couple_warning_item_1"
+                android:text="@string/delete_account_warning_item_1"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 android:fontFamily="@font/pretendard_regular"/>
@@ -164,7 +130,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginVertical="8dp">
+            android:layout_marginTop="8dp">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -175,28 +141,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/break_up_couple_warning_item_2"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                android:fontFamily="@font/pretendard_regular"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:src="@drawable/n_ic_notice_square" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/break_up_couple_warning_item_3"
+                android:text="@string/delete_account_warning_item_2"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 android:fontFamily="@font/pretendard_regular"/>
@@ -223,31 +168,18 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/break_up_couple_agree_all"
+            android:text="@string/delete_account_agree_all"
             android:textColor="@color/black"
             android:textSize="16sp"
             android:fontFamily="@font/pretendard_semi_bold"/>
     </LinearLayout>
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="16dp"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center"
-        android:text="@string/break_up_couple_last_warning"
-        android:textColor="@color/gray_500"
-        android:textSize="14sp"
-        android:fontFamily="@font/pretendard_regular"/>
-
-
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/mcv_confirm"
         android:layout_width="match_parent"
         android:layout_height="59dp"
+        android:layout_marginTop="40dp"
         android:layout_marginHorizontal="20dp"
         app:cardBackgroundColor="@color/gray_400"
         app:cardCornerRadius="30dp"
@@ -264,7 +196,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/break_up_couple_confirm"
+            android:text="@string/delete_account_confirm"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:fontFamily="@font/pretendard_medium" />

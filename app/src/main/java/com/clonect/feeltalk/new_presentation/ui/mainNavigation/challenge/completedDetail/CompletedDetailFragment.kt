@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
@@ -56,6 +57,7 @@ class CompletedDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setDatePickerListener()
+        setEditTextNestedScroll()
         collectViewModel()
 
         binding.run {
@@ -86,7 +88,8 @@ class CompletedDetailFragment : Fragment() {
                 etBody.setText(challenge.body)
 
                 etTitle.isEnabled = false
-                etBody.isEnabled = false
+                etBody.isFocusableInTouchMode = false
+                etBody.clearFocus()
                 mcvDeadline.isEnabled = false
                 mcvCompleteRound.isEnabled = false
             }
@@ -141,6 +144,20 @@ class CompletedDetailFragment : Fragment() {
             if (date != null) {
                 viewModel.setDeadline(date)
             }
+        }
+    }
+
+    private fun setEditTextNestedScroll() = binding.run {
+        etBody.setOnTouchListener { view, motionEvent ->
+            if (etBody.hasFocus()) {
+                view?.parent?.requestDisallowInterceptTouchEvent(true)
+                if (motionEvent.action and MotionEvent.ACTION_MASK
+                    == MotionEvent.ACTION_SCROLL) {
+                    view?.parent?.requestDisallowInterceptTouchEvent(false)
+                    return@setOnTouchListener true
+                }
+            }
+            false
         }
     }
 

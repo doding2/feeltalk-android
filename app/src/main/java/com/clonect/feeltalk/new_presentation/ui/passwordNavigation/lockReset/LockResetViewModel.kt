@@ -145,18 +145,18 @@ class LockResetViewModel @Inject constructor(
         return isValid
     }
 
-    fun unlockAccount(onComplete: () -> Unit) = viewModelScope.launch {
-        setLoading(true)
-        when (val result = unlockAccountUseCase()) {
-            is Resource.Success -> {
-                onComplete()
-            }
-            is Resource.Error -> {
-                infoLog("Fail to unlock account: ${result.throwable.localizedMessage}")
-                sendErrorMessage(result.throwable.localizedMessage?: "Fail to unlock account")
-            }
-        }
-        setLoading(false)
-    }
+//    fun unlockAccount(onComplete: () -> Unit) = viewModelScope.launch {
+//        setLoading(true)
+//        when (val result = unlockAccountUseCase()) {
+//            is Resource.Success -> {
+//                onComplete()
+//            }
+//            is Resource.Error -> {
+//                infoLog("Fail to unlock account: ${result.throwable.localizedMessage}")
+//                sendErrorMessage(result.throwable.localizedMessage?: "Fail to unlock account")
+//            }
+//        }
+//        setLoading(false)
+//    }
 
 }

@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.lockQuestionSetting
+package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.lockSetting.lockQuestionSetting
 
 import android.app.Dialog
 import android.content.Context
@@ -215,20 +215,16 @@ class LockQuestionSettingFragment : Fragment() {
                 return@setOnApplyWindowInsetsListener insets
             }
 
-            val horizontalPadding = requireContext().dpToPx(20f).toInt()
             if (imeHeight == 0) {
                 binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
-                binding.llContent.setPadding(horizontalPadding, 0, horizontalPadding, 0)
+                binding.svScroll.setPadding(0, 0, 0, 0)
                 viewModel.setLockAnswerFocused(false)
             } else {
-                val bottomPadding = requireContext().dpToPx(56f).toInt()
+                val newsBarHeight = requireContext().dpToPx(55f).toInt()
 
                 binding.root.setPadding(0, getStatusBarHeight(), 0, imeHeight)
-                binding.llContent.setPadding(horizontalPadding, 0, horizontalPadding, bottomPadding)
-                lifecycleScope.launch {
-                    delay(10)
-                    svScroll.smoothScrollBy(0, bottomPadding)
-                }
+                binding.svScroll.setPadding(0, 0, 0, newsBarHeight)
+                binding.svScroll.smoothScrollBy(0, getNavigationBarHeight() + newsBarHeight)
             }
 
             insets

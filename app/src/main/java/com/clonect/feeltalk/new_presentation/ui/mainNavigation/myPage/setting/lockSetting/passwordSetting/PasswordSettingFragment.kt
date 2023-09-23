@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.passwordSetting
+package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.lockSetting.passwordSetting
 
 import android.app.Dialog
 import android.content.Context
