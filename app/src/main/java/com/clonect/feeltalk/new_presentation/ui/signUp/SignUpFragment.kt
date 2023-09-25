@@ -67,7 +67,7 @@ class SignUpFragment : Fragment() {
             mcvSignUpNaver.setOnClickListener { clickNaverButton() }
             mcvSignUpGoogle.setOnClickListener { clickGoogleButton() }
             mcvSignUpApple.setOnClickListener { clickAppleButton() }
-            tvCustomerService.setOnClickListener { sendFeedbackEmail() }
+            tvInquire.setOnClickListener { sendFeedbackEmail() }
         }
     }
 

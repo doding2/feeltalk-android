@@ -150,12 +150,30 @@
         </com.google.android.material.card.MaterialCardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+    <View
+        android:id="@+id/view_submit_succeed_behind"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:alpha="0.5"
+        android:visibility="gone"
+        android:elevation="11dp"
+        android:outlineProvider="none"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         android:elevation="11dp"
         android:outlineProvider="none"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -173,8 +191,25 @@
                 android:id="@+id/fl_fragment_answer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.answer.AnswerFragment"
+                android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.question.answer.AnswerFragment"
                 tools:layout="@layout/fragment_answer" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/fl_submit_succeed_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+            app:behavior_peekHeight="0dp"
+            app:behavior_hideable="true"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+
+            <include
+                layout="@layout/dialog_submit_succeed_bottom_sheet"
+                android:id="@+id/sheet_submit_succeed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
         </FrameLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

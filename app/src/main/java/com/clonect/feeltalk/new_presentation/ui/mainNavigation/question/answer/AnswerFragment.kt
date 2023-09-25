@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.answer
+package com.clonect.feeltalk.new_presentation.ui.mainNavigation.question.answer
 
 import android.content.Context
 import android.os.Build
@@ -99,7 +99,6 @@ class AnswerFragment : Fragment() {
     }
 
     private fun answerQuestion() {
-
         showConfirmDialog(
             title = requireContext().getString(R.string.answer_confirm_title),
             body = requireContext().getString(R.string.answer_confirm_body),

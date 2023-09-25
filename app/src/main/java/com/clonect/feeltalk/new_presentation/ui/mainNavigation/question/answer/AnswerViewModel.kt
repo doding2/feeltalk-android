@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.answer
+package com.clonect.feeltalk.new_presentation.ui.mainNavigation.question.answer
 
 import android.content.Context
 import androidx.lifecycle.ViewModel

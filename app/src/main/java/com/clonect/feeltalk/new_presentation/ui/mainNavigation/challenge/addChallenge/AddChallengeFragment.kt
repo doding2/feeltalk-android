@@ -85,7 +85,7 @@ class AddChallengeFragment : Fragment() {
             ivClear.setOnClickListener { etTitle.setText("") }
 
             mcvAddRound.setOnClickListener { addChallenge() }
-            tvNext.setOnClickListener { changeFocus() }
+            tvNext.setOnClickListener { navigateFocus() }
         }
     }
 
@@ -257,8 +257,9 @@ class AddChallengeFragment : Fragment() {
 
 
 
-    private fun changeFocus() = binding.run {
-        when (viewModel.focused.value) {
+    private fun navigateFocus() = binding.run {
+        val currentFocus = viewModel.focused.value
+        when (currentFocus) {
             "title" -> {
                 mcvDeadline.requestFocus()
                 mcvDeadline.performClick()

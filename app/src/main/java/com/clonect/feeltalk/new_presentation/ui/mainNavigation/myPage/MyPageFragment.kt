@@ -54,6 +54,7 @@ class MyPageFragment : Fragment() {
 
         binding.run {
             llSetting.setOnClickListener { navigateToSetting() }
+            llInquire.setOnClickListener { navigateToInquire() }
         }
     }
 
@@ -62,6 +63,13 @@ class MyPageFragment : Fragment() {
             .requireParentFragment()
             .findNavController()
             .navigate(R.id.action_mainNavigationFragment_to_settingFragment)
+    }
+
+    private fun navigateToInquire() {
+        requireParentFragment()
+            .requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_mainNavigationFragment_to_inquireFragment)
     }
 
 

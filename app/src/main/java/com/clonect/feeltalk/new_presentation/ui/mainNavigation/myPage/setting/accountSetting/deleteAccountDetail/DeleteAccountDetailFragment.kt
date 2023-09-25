@@ -6,8 +6,11 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
@@ -56,20 +59,23 @@ class DeleteAccountDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        collectViewModel()
         setKeyboardInsets()
+        setEditTextNestedScroll()
+        setEditTextFocusListener()
+        collectViewModel()
 
         binding.run {
+            ivExit.setOnClickListener { onBackCallback.handleOnBackPressed() }
+
             etEtcReason.addTextChangedListener { viewModel.setEtcReason(it?.toString() ?: "") }
-            etEtcReason.setOnFocusChangeListener { view, isFocused -> if (isFocused) viewModel.setEtcReasonFocused(true) }
             etDeleteReason.addTextChangedListener { viewModel.setDeleteReason(it?.toString() ?: "") }
-            etDeleteReason.setOnFocusChangeListener { view, isFocused -> if (isFocused) viewModel.setDeleteReasonFocused(true) }
 
             mcvReason1.setOnClickListener { viewModel.setDeleteReasonType(DeleteReasonType.BreakUp) }
             mcvReason2.setOnClickListener { viewModel.setDeleteReasonType(DeleteReasonType.NoFunctionality) }
             mcvReason3.setOnClickListener { viewModel.setDeleteReasonType(DeleteReasonType.BugOrError) }
             mcvReason4.setOnClickListener { viewModel.setDeleteReasonType(DeleteReasonType.Etc) }
 
+            tvNext.setOnClickListener { navigateFocus() }
             mcvConfirm.setOnClickListener { showDeleteAccountConfirmDialog() }
         }
     }
@@ -98,6 +104,21 @@ class DeleteAccountDetailFragment : Fragment() {
             .navigate(R.id.action_deleteAccountDetailFragment_to_deleteAccountDoneFragment)
     }
 
+    private fun navigateFocus() = binding.run {
+        when (viewModel.focusedEditText.value) {
+            "etc" -> {
+                etDeleteReason.requestFocus()
+                showKeyboard(etDeleteReason)
+            }
+            "delete" -> {
+                hideKeyboard()
+            }
+            else -> {
+                hideKeyboard()
+            }
+        }
+    }
+
 
     private fun setKeyboardInsets() = binding.run {
         root.setOnApplyWindowInsetsListener { v, insets ->
@@ -114,26 +135,82 @@ class DeleteAccountDetailFragment : Fragment() {
             }
             if (imeHeight == 0) {
                 root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
+                binding.svScroll.setPadding(0, 0, 0, 0)
             } else {
+                val newsBarHeight = requireContext().dpToPx(55f).toInt()
+
                 root.setPadding(0, getStatusBarHeight(), 0, imeHeight)
-                svScroll.smoothScrollBy(0, getNavigationBarHeight())
+                binding.svScroll.smoothScrollBy(0, getNavigationBarHeight() + newsBarHeight)
             }
 
             insets
         }
     }
 
+    private fun hideKeyboard() {
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+    }
+
+    private fun showKeyboard(target: View) {
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(target, 0)
+    }
+
+    private fun setEditTextFocusListener() = binding.run {
+        etEtcReason.setOnFocusChangeListener { view, isFocused ->
+            if (isFocused) viewModel.setFocusedEditText("etc")
+        }
+        etDeleteReason.setOnFocusChangeListener { view, isFocused ->
+            if (isFocused) viewModel.setFocusedEditText("delete")
+        }
+
+        etEtcReason.setOnEditorActionListener { textView, actionId, keyEvent ->
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                etDeleteReason.requestFocus()
+                etDeleteReason.performClick()
+                return@setOnEditorActionListener true
+            }
+            false
+        }
+    }
+
+    private fun setEditTextNestedScroll() = binding.run {
+        etEtcReason.setOnTouchListener { view, motionEvent ->
+            if (etEtcReason.hasFocus()) {
+                view?.parent?.requestDisallowInterceptTouchEvent(true)
+                if (motionEvent.action and MotionEvent.ACTION_MASK
+                    == MotionEvent.ACTION_SCROLL) {
+                    view?.parent?.requestDisallowInterceptTouchEvent(false)
+                    return@setOnTouchListener true
+                }
+            }
+            false
+        }
+        etDeleteReason.setOnTouchListener { view, motionEvent ->
+            if (etDeleteReason.hasFocus()) {
+                view?.parent?.requestDisallowInterceptTouchEvent(true)
+                if (motionEvent.action and MotionEvent.ACTION_MASK
+                    == MotionEvent.ACTION_SCROLL) {
+                    view?.parent?.requestDisallowInterceptTouchEvent(false)
+                    return@setOnTouchListener true
+                }
+            }
+            false
+        }
+    }
 
 
     private fun changeKeyboardUpView(isUp: Boolean) = binding.run {
         if (isUp) {
             llConfirm.visibility = View.GONE
+            mcvNewsBar.visibility = View.VISIBLE
         } else {
             llConfirm.visibility = View.VISIBLE
+            mcvNewsBar.visibility = View.GONE
             etEtcReason.clearFocus()
             etDeleteReason.clearFocus()
-            viewModel.setEtcReasonFocused(false)
-            viewModel.setDeleteReasonFocused(false)
+            viewModel.setFocusedEditText(null)
         }
     }
 
@@ -159,25 +236,32 @@ class DeleteAccountDetailFragment : Fragment() {
         }
     }
 
-    private fun changeEtcReasonFocusedView(isFocused: Boolean) = binding.run {
-        if (isFocused) {
-            mcvEtcReason.strokeWidth = requireContext().dpToPx(2f).toInt()
-            mcvEtcReason.setCardBackgroundColor(Color.WHITE)
-        } else {
-            mcvEtcReason.strokeWidth = 0
-            mcvEtcReason.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
+    private fun changeFocusedEditTextView(focused: String?) = binding.run {
+        mcvEtcReason.strokeWidth = 0
+        mcvEtcReason.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
+
+        mcvDeleteReason.strokeWidth = 0
+        mcvDeleteReason.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
+
+        when (focused) {
+            "etc" -> {
+                mcvEtcReason.strokeWidth = requireContext().dpToPx(2f).toInt()
+                mcvEtcReason.setCardBackgroundColor(Color.WHITE)
+                tvNext.setText(R.string.add_challenge_next)
+            }
+            "delete" -> {
+                mcvDeleteReason.strokeWidth = requireContext().dpToPx(2f).toInt()
+                mcvDeleteReason.setCardBackgroundColor(Color.WHITE)
+                tvNext.setText(R.string.add_challenge_done)
+            }
+            else -> {
+                tvNext.setText(R.string.add_challenge_next)
+                etEtcReason.clearFocus()
+                etDeleteReason.clearFocus()
+            }
         }
     }
 
-    private fun changeDeleteReasonFocusedView(isFocused: Boolean) = binding.run {
-        if (isFocused) {
-            mcvDeleteReason.strokeWidth = requireContext().dpToPx(2f).toInt()
-            mcvDeleteReason.setCardBackgroundColor(Color.WHITE)
-        } else {
-            mcvDeleteReason.strokeWidth = 0
-            mcvDeleteReason.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
-        }
-    }
 
     private fun changeConfirmEnabledView(enabled: Boolean) = binding.run {
         mcvConfirm.isEnabled = enabled
@@ -228,8 +312,7 @@ class DeleteAccountDetailFragment : Fragment() {
             launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
             launch { viewModel.isKeyboardUp.collectLatest(::changeKeyboardUpView) }
             launch { viewModel.deleteReasonType.collectLatest(::changeDeleteReasonView) }
-            launch { viewModel.isEtcReasonFocused.collectLatest(::changeEtcReasonFocusedView) }
-            launch { viewModel.isDeleteReasonFocused.collectLatest(::changeDeleteReasonFocusedView) }
+            launch { viewModel.focusedEditText.collectLatest(::changeFocusedEditTextView) }
             launch { viewModel.isConfirmEnabled.collectLatest(::changeConfirmEnabledView) }
             launch { viewModel.etcReason.collectLatest(::changeEtcReasonNumView) }
             launch { viewModel.deleteReason.collectLatest(::changeDeleteReasonNumView) }

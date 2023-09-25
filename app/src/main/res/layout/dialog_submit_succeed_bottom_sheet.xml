@@ -8,36 +8,37 @@
     android:orientation="vertical"
     android:elevation="2dp">
 
-    <ImageView
-        android:id="@+id/lav_complete_check"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="20dp"
-        android:layout_gravity="center"
-        android:src="@drawable/n_image_challenge_complete"/>
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="@string/complete_title"
+        android:gravity="center"
+        android:layout_marginTop="30dp"
+        android:text="@string/submit_succeed_title"
         android:textSize="20sp"
         android:textColor="@color/black"
         android:fontFamily="@font/pretendard_semi_bold"/>
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="4dp"
+        android:layout_gravity="center"
+        android:src="@drawable/n_background_submit_succeed"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="4dp"
-        android:layout_marginBottom="19dp"
-        android:text="@string/complete_content"
+        android:layout_marginBottom="20dp"
+        android:text="@string/submit_succeed_body"
         android:textSize="16sp"
         android:textColor="@color/black"
         android:fontFamily="@font/pretendard_regular"/>
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/mcv_complete_button"
+        android:id="@+id/mcv_confirm"
         android:layout_width="match_parent"
         android:layout_height="59dp"
         android:layout_marginHorizontal="20dp"
@@ -49,7 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/complete_button"
+            android:text="@string/submit_succeed_confirm"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:fontFamily="@font/pretendard_medium"/>

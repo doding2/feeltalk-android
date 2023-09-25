@@ -72,6 +72,10 @@ class MainNavigationViewModel @Inject constructor(
     val showChallengeDetail = _showChallengeDetail.asStateFlow()
 
 
+    private val _showSubmitSucceedSheet = MutableStateFlow(false)
+    val showSubmitSucceedSheet = _showSubmitSucceedSheet.asStateFlow()
+
+
     init {
         getPartnerLastChat()
         collectNewChat()
@@ -180,6 +184,11 @@ class MainNavigationViewModel @Inject constructor(
 
     fun setShowChallengeDetail(challenge: Challenge?) {
         _showChallengeDetail.value = challenge
+    }
+
+
+    fun setShowSubmitSucceedSheet(isShow: Boolean) {
+        _showSubmitSucceedSheet.value =isShow
     }
 
 

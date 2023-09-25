@@ -237,7 +237,7 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/ll_customer_service"
+                        android:id="@+id/ll_inquire"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -251,13 +251,13 @@
                             android:layout_marginEnd="4dp"
                             android:layout_marginVertical="4dp"
                             android:layout_gravity="center_vertical"
-                            android:src="@drawable/n_ic_customer_service"/>
+                            android:src="@drawable/n_ic_inquire"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:text="@string/my_page_customer_service"
+                            android:text="@string/my_page_inquire"
                             android:textColor="@color/black"
                             android:textSize="16sp"
                             android:fontFamily="@font/pretendard_regular"/>

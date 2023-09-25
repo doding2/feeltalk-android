@@ -28,11 +28,8 @@ class DeleteAccountDetailViewModel @Inject constructor(
     private val _isKeyboardUp = MutableStateFlow(false)
     val isKeyboardUp = _isKeyboardUp.asStateFlow()
 
-    private val _isEtcReasonFocused = MutableStateFlow(false)
-    val isEtcReasonFocused = _isEtcReasonFocused.asStateFlow()
-
-    private val _isDeleteReasonFocused = MutableStateFlow(false)
-    val isDeleteReasonFocused = _isDeleteReasonFocused.asStateFlow()
+    private val _focusedEditText = MutableStateFlow<String?>(null)
+    val focusedEditText = _focusedEditText.asStateFlow()
 
     private val _isConfirmEnabled = MutableStateFlow(false)
     val isConfirmEnabled = _isConfirmEnabled.asStateFlow()
@@ -61,12 +58,8 @@ class DeleteAccountDetailViewModel @Inject constructor(
         _isKeyboardUp.value = isUp
     }
 
-    fun setEtcReasonFocused(isFocused: Boolean) = viewModelScope.launch {
-        _isEtcReasonFocused.value = isFocused
-    }
-
-    fun setDeleteReasonFocused(isFocused: Boolean) = viewModelScope.launch {
-        _isDeleteReasonFocused.value = isFocused
+    fun setFocusedEditText(et: String?) = viewModelScope.launch {
+        _focusedEditText.value = et
     }
 
     private fun computeConfirmEnabled() = viewModelScope.launch {

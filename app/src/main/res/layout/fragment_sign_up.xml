@@ -201,7 +201,7 @@
             app:cardCornerRadius="30dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/tv_customer_service">
+            app:layout_constraintBottom_toTopOf="@id/tv_inquire">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -226,12 +226,12 @@
         </com.google.android.material.card.MaterialCardView>
 
         <TextView
-            android:id="@+id/tv_customer_service"
+            android:id="@+id/tv_inquire"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
             android:layout_gravity="center"
-            android:text="@string/sign_up_customer_service"
+            android:text="@string/sign_up_inquire"
             android:textColor="@color/gray_600"
             android:textSize="14sp"
             android:fontFamily="@font/pretendard_regular"
@@ -243,9 +243,9 @@
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:background="@color/gray_600"
-            app:layout_constraintStart_toStartOf="@id/tv_customer_service"
-            app:layout_constraintEnd_toEndOf="@id/tv_customer_service"
-            app:layout_constraintTop_toBottomOf="@id/tv_customer_service"/>
+            app:layout_constraintStart_toStartOf="@id/tv_inquire"
+            app:layout_constraintEnd_toEndOf="@id/tv_inquire"
+            app:layout_constraintTop_toBottomOf="@id/tv_inquire"/>
 
 
 
