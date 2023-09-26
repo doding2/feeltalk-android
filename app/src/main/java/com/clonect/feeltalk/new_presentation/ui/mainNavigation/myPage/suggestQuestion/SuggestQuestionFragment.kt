@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
@@ -69,11 +68,9 @@ class SuggestQuestionFragment : Fragment() {
         binding.run {
             ivExit.setOnClickListener { onBackCallback.handleOnBackPressed() }
 
-            etTitle.addTextChangedListener { viewModel.setTitle(it?.toString()) }
-            etBody.addTextChangedListener { viewModel.setBody(it?.toString()) }
+            etIdea.addTextChangedListener { viewModel.setIdea(it?.toString()) }
             etEmail.addTextChangedListener { viewModel.setEmail(it?.toString()) }
 
-            ivTitleClear.setOnClickListener { etTitle.setText("") }
             ivEmailClear.setOnClickListener { etEmail.setText("") }
 
             tvNext.setOnClickListener { navigateFocus() }
@@ -83,10 +80,10 @@ class SuggestQuestionFragment : Fragment() {
 
 
     private fun submitInquiry() {
-        viewModel.submitInquiry {
+        viewModel.submitSuggestion {
             setFragmentResult(
-                requestKey = "inquireFragment",
-                result = bundleOf("inquirySucceed" to true)
+                requestKey = "suggestQuestionFragment",
+                result = bundleOf("suggestionSucceed" to true)
             )
             findNavController().popBackStack()
         }
@@ -94,11 +91,7 @@ class SuggestQuestionFragment : Fragment() {
 
     private fun navigateFocus() = binding.run {
         when (viewModel.focusedEditText.value) {
-            "title" -> {
-                etBody.requestFocus()
-                showKeyboard(etBody)
-            }
-            "body" -> {
+            "idea" -> {
                 etEmail.requestFocus()
                 showKeyboard(etEmail)
             }
@@ -113,29 +106,17 @@ class SuggestQuestionFragment : Fragment() {
 
 
     private fun setEditTextFocusListener() = binding.run {
-        etTitle.setOnFocusChangeListener { view, isFocused ->
-            if (isFocused) viewModel.setFocusedEditText("title")
-        }
-        etBody.setOnFocusChangeListener { view, isFocused ->
-            if (isFocused) viewModel.setFocusedEditText("body")
+        etIdea.setOnFocusChangeListener { view, isFocused ->
+            if (isFocused) viewModel.setFocusedEditText("idea")
         }
         etEmail.setOnFocusChangeListener { view, isFocused ->
             if (isFocused) viewModel.setFocusedEditText("email")
         }
-
-        etTitle.setOnEditorActionListener { textView, actionId, keyEvent ->
-            if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                etBody.requestFocus()
-                etBody.performClick()
-                return@setOnEditorActionListener true
-            }
-            false
-        }
     }
 
     private fun setEditTextNestedScroll() = binding.run {
-        etBody.setOnTouchListener { view, motionEvent ->
-            if (etBody.hasFocus()) {
+        etIdea.setOnTouchListener { view, motionEvent ->
+            if (etIdea.hasFocus()) {
                 view?.parent?.requestDisallowInterceptTouchEvent(true)
                 if (motionEvent.action and MotionEvent.ACTION_MASK
                     == MotionEvent.ACTION_SCROLL) {
@@ -186,8 +167,8 @@ class SuggestQuestionFragment : Fragment() {
     }
 
 
-    private fun changeNumBodyView(body: String?) = binding.run {
-        tvNumBody.text = body?.length?.toString() ?: requireContext().getString(R.string.add_challenge_default_num_body)
+    private fun changeNumIdeaView(idea: String?) = binding.run {
+        tvNumIdea.text = idea?.length?.toString() ?: requireContext().getString(R.string.add_challenge_default_num_body)
     }
 
     private fun enableSubmitButton(enabled: Boolean) = binding.run {
@@ -215,27 +196,9 @@ class SuggestQuestionFragment : Fragment() {
 
     private fun changeFocusedEditTextView(focused: String?) = binding.run {
         when (focused) {
-            "title" -> {
-                mcvTitle.strokeWidth = requireContext().dpToPx(2f).toInt()
-                mcvTitle.setCardBackgroundColor(Color.WHITE)
-                ivTitleClear.visibility = View.VISIBLE
-
-                mcvBody.strokeWidth = 0
-                mcvBody.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
-
-                mcvEmail.strokeWidth = 0
-                mcvEmail.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
-                ivEmailClear.visibility = View.GONE
-
-                tvNext.setText(R.string.add_challenge_next)
-            }
-            "body" -> {
-                mcvTitle.strokeWidth = 0
-                mcvTitle.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
-                ivTitleClear.visibility = View.GONE
-
-                mcvBody.strokeWidth = requireContext().dpToPx(2f).toInt()
-                mcvBody.setCardBackgroundColor(Color.WHITE)
+            "idea" -> {
+                mcvIdea.strokeWidth = requireContext().dpToPx(2f).toInt()
+                mcvIdea.setCardBackgroundColor(Color.WHITE)
 
                 mcvEmail.strokeWidth = 0
                 mcvEmail.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
@@ -244,12 +207,8 @@ class SuggestQuestionFragment : Fragment() {
                 tvNext.setText(R.string.add_challenge_next)
             }
             "email" -> {
-                mcvTitle.strokeWidth = 0
-                mcvTitle.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
-                ivTitleClear.visibility = View.GONE
-
-                mcvBody.strokeWidth = 0
-                mcvBody.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
+                mcvIdea.strokeWidth = 0
+                mcvIdea.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
 
                 mcvEmail.strokeWidth = requireContext().dpToPx(2f).toInt()
                 mcvEmail.setCardBackgroundColor(Color.WHITE)
@@ -258,12 +217,8 @@ class SuggestQuestionFragment : Fragment() {
                 tvNext.setText(R.string.add_challenge_done)
             }
             else -> {
-                mcvTitle.strokeWidth = 0
-                mcvTitle.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
-                ivTitleClear.visibility = View.GONE
-
-                mcvBody.strokeWidth = 0
-                mcvBody.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
+                mcvIdea.strokeWidth = 0
+                mcvIdea.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
 
                 mcvEmail.strokeWidth = 0
                 mcvEmail.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
@@ -271,8 +226,7 @@ class SuggestQuestionFragment : Fragment() {
 
                 tvNext.setText(R.string.add_challenge_next)
 
-                etTitle.clearFocus()
-                etBody.clearFocus()
+                etIdea.clearFocus()
                 etEmail.clearFocus()
             }
         }
@@ -303,7 +257,7 @@ class SuggestQuestionFragment : Fragment() {
             launch { viewModel.isLoading.collectLatest(::showLoading) }
             launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
             launch { viewModel.isSubmitEnabled.collectLatest(::enableSubmitButton) }
-            launch { viewModel.body.collectLatest(::changeNumBodyView) }
+            launch { viewModel.idea.collectLatest(::changeNumIdeaView) }
             launch { viewModel.isKeyboardUp.collectLatest(::changeKeyboardUpView) }
             launch { viewModel.focusedEditText.collectLatest(::changeFocusedEditTextView) }
         }
@@ -315,10 +269,10 @@ class SuggestQuestionFragment : Fragment() {
             override fun handleOnBackPressed() {
                 if (viewModel.isEdited()) {
                     showConfirmDialog(
-                        title = requireContext().getString(R.string.inquire_dialog_title),
-                        body = requireContext().getString(R.string.inquire_dialog_title),
-                        cancelButton = requireContext().getString(R.string.inquire_dialog_cancel),
-                        confirmButton = requireContext().getString(R.string.inquire_dialog_confirm),
+                        title = requireContext().getString(R.string.suggest_question_dialog_title),
+                        body = requireContext().getString(R.string.suggest_question_dialog_body),
+                        cancelButton = requireContext().getString(R.string.suggest_question_dialog_cancel),
+                        confirmButton = requireContext().getString(R.string.suggest_question_dialog_confirm),
                         onConfirm = {
                             findNavController().popBackStack()
                         }

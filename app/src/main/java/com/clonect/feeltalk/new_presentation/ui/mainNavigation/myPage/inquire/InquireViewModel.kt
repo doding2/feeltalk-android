@@ -93,7 +93,7 @@ class InquireViewModel @Inject constructor(
     }
 
 
-    fun submitInqury(onComplete: () -> Unit) {
+    fun submitInquiry(onComplete: () -> Unit) {
         setLoading(true)
         setLoading(false)
         onComplete()

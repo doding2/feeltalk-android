@@ -64,6 +64,9 @@
         <action
             android:id="@+id/action_mainNavigationFragment_to_inquireFragment"
             app:destination="@id/inquireFragment" />
+        <action
+            android:id="@+id/action_mainNavigationFragment_to_suggestQuestionFragment"
+            app:destination="@id/suggestQuestionFragment" />
     </fragment>
     <fragment
         android:id="@+id/agreementPrivacyDetailFragment"
@@ -255,4 +258,9 @@
         android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.inquire.InquireFragment"
         android:label="InquireFragment"
         tools:layout="@layout/fragment_inquire"/>
+    <fragment
+        android:id="@+id/suggestQuestionFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.suggestQuestion.SuggestQuestionFragment"
+        android:label="SuggestQuestionFragment"
+        tools:layout="@layout/fragment_suggest_question"/>
 </navigation>

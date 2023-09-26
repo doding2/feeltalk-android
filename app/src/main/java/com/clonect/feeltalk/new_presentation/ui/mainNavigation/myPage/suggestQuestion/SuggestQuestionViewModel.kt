@@ -35,12 +35,8 @@ class SuggestQuestionViewModel @Inject constructor(
     private val _focusedEditText = MutableStateFlow<String?>(null)
     val focusedEditText = _focusedEditText.asStateFlow()
 
-
-    private val _title = MutableStateFlow<String?>(null)
-    val title = _title.asStateFlow()
-
-    private val _body = MutableStateFlow<String?>(null)
-    val body = _body.asStateFlow()
+    private val _idea = MutableStateFlow<String?>(null)
+    val idea = _idea.asStateFlow()
 
     private val _email = MutableStateFlow<String?>(null)
     val email = _email.asStateFlow()
@@ -64,13 +60,8 @@ class SuggestQuestionViewModel @Inject constructor(
     }
 
 
-    fun setTitle(title: String?) = viewModelScope.launch {
-        _title.value = title
-        computeSubmitEnabled()
-    }
-
-    fun setBody(body: String?) = viewModelScope.launch {
-        _body.value = body
+    fun setIdea(idea: String?) = viewModelScope.launch {
+        _idea.value = idea
         computeSubmitEnabled()
     }
 
@@ -80,20 +71,18 @@ class SuggestQuestionViewModel @Inject constructor(
     }
 
     private fun computeSubmitEnabled() {
-        _isSubmitEnabled.value = !title.value.isNullOrBlank()
-                && !body.value.isNullOrBlank()
+        _isSubmitEnabled.value = !idea.value.isNullOrBlank()
                 && !email.value.isNullOrBlank()
     }
 
 
     fun isEdited(): Boolean {
-        return !title.value.isNullOrBlank()
-                || !body.value.isNullOrBlank()
+        return !idea.value.isNullOrBlank()
                 || !email.value.isNullOrBlank()
     }
 
 
-    fun submitInquiry(onComplete: () -> Unit) {
+    fun submitSuggestion(onComplete: () -> Unit) {
         setLoading(true)
         setLoading(false)
         onComplete()
