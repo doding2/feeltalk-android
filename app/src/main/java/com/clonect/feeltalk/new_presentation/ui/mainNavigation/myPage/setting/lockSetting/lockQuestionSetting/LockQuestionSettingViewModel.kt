@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,6 +35,9 @@ class LockQuestionSettingViewModel @Inject constructor(
 
     private val _isLockAnswerFocused = MutableStateFlow(false)
     val isLockAnswerFocused = _isLockAnswerFocused.asStateFlow()
+
+    private val _containSpecialChar = MutableStateFlow(false)
+    val containSpecialChar = _containSpecialChar.asStateFlow()
 
     private val _isAddEnabled = MutableStateFlow(false)
     val isAddEnabled = _isAddEnabled.asStateFlow()
@@ -70,19 +74,26 @@ class LockQuestionSettingViewModel @Inject constructor(
         _isLockAnswerFocused.value = focused
     }
 
+    private fun checkContainSpecialChar() {
+        val answer = _lockAnswer.value
+        val pattern = Pattern.compile("^[ㄱ-ㅣ가-힣a-zA-Z0-9]*$")
+        val isNoSpecialCharacter = pattern.matcher(answer).matches()
+        _containSpecialChar.value = !isNoSpecialCharacter
+    }
+
 
     fun setPassword(password: String?) {
         _password.value = password
     }
 
     fun setQuestionType(questionType: Int) {
-        if (questionType < 0 || questionType > 2) return
         _questionType.value = questionType
         computeAddButtonEnabled()
     }
 
     fun setLockAnswer(answer: String?) {
         _lockAnswer.value = answer
+        checkContainSpecialChar()
         computeAddButtonEnabled()
     }
 
@@ -93,8 +104,8 @@ class LockQuestionSettingViewModel @Inject constructor(
 
     private fun computeAddButtonEnabled() {
         val isAddEnabled = when (_questionType.value) {
-            0, 2 -> _lockAnswer.value.isNullOrBlank().not()
-            1 -> true
+            0, 1, 3, 4 -> lockAnswer.value.isNullOrBlank().not() && !containSpecialChar.value
+            2 -> true
             null -> false
             else -> false
         }
@@ -106,7 +117,7 @@ class LockQuestionSettingViewModel @Inject constructor(
         val password = _password.value ?: return@launch
         val questionType = _questionType.value ?: return@launch
         val answer = when (questionType) {
-            1 -> {
+            2 -> {
                 val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                 val date = _lockAnswerDate.value
                 format.format(date)

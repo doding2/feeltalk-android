@@ -13,8 +13,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.core.view.setPadding
-import androidx.core.view.updateLayoutParams
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -131,8 +129,6 @@ class LockResetFragment : Fragment() {
         val dateString = formatter.format(now)
         val dateTokens = dateString.split("/")
 
-        binding.dpAnswerDatePicker.maxDate = now.time
-
         binding.dpAnswerDatePicker.init(
             dateTokens[0].toInt(),
             dateTokens[1].toInt() - 1,
@@ -185,13 +181,16 @@ class LockResetFragment : Fragment() {
 
             if (imeHeight == 0) {
                 root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
-                svScroll.setPadding(0)
+//                svScroll.setPadding(0)
             } else {
-                val forgetAgainBottomMargin = requireContext().dpToPx(32f).toInt()
+                val forgetAgainBottomMargin = requireContext().dpToPx(32f)
 
                 root.setPadding(0, getStatusBarHeight(), 0, imeHeight)
-                svScroll.setPadding(0, 0, 0, forgetAgainBottomMargin)
-                svScroll.smoothScrollBy(0, getNavigationBarHeight() + forgetAgainBottomMargin)
+//                svScroll.setPadding(0, 0, 0, forgetAgainBottomMargin)
+                lifecycleScope.launch {
+                    delay(10)
+                    svScroll.smoothScrollBy(0, getNavigationBarHeight() + forgetAgainBottomMargin)
+                }
             }
 
             insets
@@ -248,26 +247,28 @@ class LockResetFragment : Fragment() {
     }
 
     private fun changeLockQAView(lockQA: LockQA?) = binding.run {
+        mcvAnswer.visibility = View.VISIBLE
+        mcvAnswerDate.visibility = View.GONE
         when (lockQA?.questionType) {
             0 -> {
                 tvQuestion.setText(R.string.lock_question_item_1)
-                mcvAnswer.visibility = View.VISIBLE
-                mcvAnswerDate.visibility = View.GONE
             }
             1 -> {
                 tvQuestion.setText(R.string.lock_question_item_2)
-                mcvAnswer.visibility = View.GONE
-                mcvAnswerDate.visibility = View.VISIBLE
             }
             2 -> {
                 tvQuestion.setText(R.string.lock_question_item_3)
-                mcvAnswer.visibility = View.VISIBLE
-                mcvAnswerDate.visibility = View.GONE
+                mcvAnswer.visibility = View.GONE
+                mcvAnswerDate.visibility = View.VISIBLE
+            }
+            3 -> {
+                tvQuestion.setText(R.string.lock_question_item_4)
+            }
+            4 -> {
+                tvQuestion.setText(R.string.lock_question_item_5)
             }
             else -> {
                 tvQuestion.text = null
-                mcvAnswer.visibility = View.VISIBLE
-                mcvAnswerDate.visibility = View.GONE
             }
         }
     }
@@ -303,6 +304,10 @@ class LockResetFragment : Fragment() {
         }
     }
 
+    private fun changeLockAnswerView(lockAnswer: String?) = binding.run {
+        tvNumTitle.text = lockAnswer?.length?.toString() ?: requireContext().getString(R.string.add_challenge_default_num_title)
+    }
+
     private fun showLoading(isLoading: Boolean) {
         if (isLoading) {
             loadingDialog.show()
@@ -333,6 +338,7 @@ class LockResetFragment : Fragment() {
             launch { viewModel.isLockAnswerFocused.collectLatest(::changeLockAnswerFocusedView) }
             launch { viewModel.isConfirmEnabled.collectLatest(::enableConfirmButton) }
             launch { viewModel.showInvalidWarning.collectLatest(::showInvalidWarning) }
+            launch { viewModel.lockAnswer.collectLatest(::changeLockAnswerView) }
         }
     }
 

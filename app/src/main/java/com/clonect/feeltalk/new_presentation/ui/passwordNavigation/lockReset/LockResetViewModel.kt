@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.account.LockQA
 import com.clonect.feeltalk.new_domain.usecase.account.GetLockQAUseCase
-import com.clonect.feeltalk.new_domain.usecase.account.UnlockAccountUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -24,7 +23,6 @@ import javax.inject.Inject
 @HiltViewModel
 class LockResetViewModel @Inject constructor(
     private val getLockQAUseCase: GetLockQAUseCase,
-    private val unlockAccountUseCase: UnlockAccountUseCase,
 ) : ViewModel() {
 
     private val _errorMessage = MutableSharedFlow<String>()
@@ -117,8 +115,8 @@ class LockResetViewModel @Inject constructor(
 
     private fun computeConfirmButtonEnabled() {
         val isAddEnabled = when (lockQA.value?.questionType) {
-            0, 2 -> _lockAnswer.value.isNullOrBlank().not()
-            1 -> true
+            0, 1, 3, 4 -> _lockAnswer.value.isNullOrBlank().not()
+            2 -> true
             null -> false
             else -> false
         }
@@ -129,11 +127,11 @@ class LockResetViewModel @Inject constructor(
     fun matchQuestionAnswer(): Boolean {
         val qa = lockQA.value ?: return false
         val isValid = when (qa.questionType) {
-            0, 2 -> {
+            0, 1, 3, 4 -> {
                 val isValid = qa.answer == _lockAnswer.value
                 isValid
             }
-            1 -> {
+            2 -> {
                 val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                 val date = _lockAnswerDate.value
                 val isValid = qa.answer == format.format(date)
@@ -144,19 +142,5 @@ class LockResetViewModel @Inject constructor(
         setShowInvalidAnswer(!isValid)
         return isValid
     }
-
-//    fun unlockAccount(onComplete: () -> Unit) = viewModelScope.launch {
-//        setLoading(true)
-//        when (val result = unlockAccountUseCase()) {
-//            is Resource.Success -> {
-//                onComplete()
-//            }
-//            is Resource.Error -> {
-//                infoLog("Fail to unlock account: ${result.throwable.localizedMessage}")
-//                sendErrorMessage(result.throwable.localizedMessage?: "Fail to unlock account")
-//            }
-//        }
-//        setLoading(false)
-//    }
 
 }

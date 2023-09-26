@@ -17,10 +17,10 @@ fun Activity?.pxToDp(px: Float): Float {
     return px / (metrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
 }
 
-fun Context.dpToPx(dp: Float): Float {
-    val resources: Resources = applicationContext?.resources ?: return 0f
+fun Context.dpToPx(dp: Float): Int {
+    val resources: Resources = applicationContext?.resources ?: return 0
     val metrics: DisplayMetrics = resources.displayMetrics
-    return dp * (metrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
+    return (dp * (metrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)).toInt()
 }
 
 fun Context.pxToDp(px: Float): Float {

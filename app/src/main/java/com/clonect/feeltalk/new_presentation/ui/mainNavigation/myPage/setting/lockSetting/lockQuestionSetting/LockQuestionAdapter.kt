@@ -69,6 +69,7 @@ class LockQuestionAdapter(
                 } else {
                     root.setBackgroundColor(root.context.getColor(android.R.color.transparent))
                 }
+//                root.setBackgroundColor(root.context.getColor(android.R.color.transparent))
                 tvLockQuestion.text = item
             }
         }

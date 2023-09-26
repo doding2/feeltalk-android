@@ -310,7 +310,7 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/mcv_news_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="55dp"
         android:visibility="gone"
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="0dp"

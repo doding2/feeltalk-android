@@ -162,6 +162,7 @@
                             android:lines="1"
                             android:inputType="text"
                             android:imeOptions="actionDone"
+                            android:maxLength="10"
                             android:includeFontPadding="false"
                             android:lineSpacingExtra="5dp"
                             android:letterSpacing="-0.01"
@@ -175,7 +176,7 @@
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
                             android:layout_marginEnd="4dp"
-                            android:visibility="gone"
+                            android:visibility="visible"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toStartOf="@id/iv_clear"
@@ -193,7 +194,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/add_challenge_max_num_title"
+                                android:text="@string/lock_question_setting_max_num_title"
                                 android:textColor="@color/gray_400"
                                 android:textSize="13sp"
                                 android:fontFamily="@font/pretendard_regular"/>

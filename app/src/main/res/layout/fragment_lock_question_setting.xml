@@ -114,7 +114,7 @@
                     app:spinner_arrow_drawable="@drawable/n_animate_spinner_arrow"
                     app:spinner_arrow_tint="@color/gray_600"
                     app:spinner_popup_background="@drawable/n_background_spinner_popup"
-                    app:spinner_popup_height="168dp"
+                    app:spinner_popup_height="280dp"
                     app:spinner_popup_elevation="1dp"/>
 
 
@@ -131,94 +131,130 @@
                     android:lineSpacingExtra="4dp"
                     android:letterSpacing="-0.01"/>
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/mcv_answer"
+                <LinearLayout
+                    android:id="@+id/ll_answer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    app:cardBackgroundColor="@color/gray_200"
-                    app:cardElevation="0dp"
-                    app:cardCornerRadius="12dp"
-                    app:strokeWidth="0dp"
-                    app:strokeColor="@color/main_500">
+                    android:orientation="vertical">
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/mcv_answer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:animateLayoutChanges="true">
+                        android:layout_marginTop="4dp"
+                        app:cardBackgroundColor="@color/gray_200"
+                        app:cardElevation="0dp"
+                        app:cardCornerRadius="12dp"
+                        app:strokeWidth="0dp"
+                        app:strokeColor="@color/main_500">
 
-                        <EditText
-                            android:id="@+id/et_answer"
-                            android:layout_width="0dp"
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:paddingHorizontal="12dp"
-                            android:paddingVertical="16dp"
-                            android:textCursorDrawable="@drawable/edit_text_cursor"
-                            android:background="@null"
-                            android:hint="@string/lock_question_setting_answer_hint"
-                            android:textColorHint="@color/gray_400"
-                            android:textColor="@color/black"
-                            android:textSize="16sp"
-                            android:fontFamily="@font/pretendard_regular"
-                            android:lines="1"
-                            android:inputType="text"
-                            android:imeOptions="actionDone"
-                            android:includeFontPadding="false"
-                            android:lineSpacingExtra="5dp"
-                            android:letterSpacing="-0.01"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintEnd_toStartOf="@id/ll_num_title"/>
+                            android:layout_marginEnd="8dp"
+                            android:animateLayoutChanges="true">
 
-                        <LinearLayout
-                            android:id="@+id/ll_num_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginEnd="4dp"
-                            android:visibility="gone"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toStartOf="@id/iv_clear"
-                            android:gravity="center">
+                            <EditText
+                                android:id="@+id/et_answer"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:paddingHorizontal="12dp"
+                                android:paddingVertical="16dp"
+                                android:textCursorDrawable="@drawable/edit_text_cursor"
+                                android:background="@null"
+                                android:hint="@string/lock_question_setting_answer_hint"
+                                android:textColorHint="@color/gray_400"
+                                android:textColor="@color/black"
+                                android:textSize="16sp"
+                                android:fontFamily="@font/pretendard_regular"
+                                android:lines="1"
+                                android:inputType="text"
+                                android:imeOptions="actionDone"
+                                android:maxLength="10"
+                                android:includeFontPadding="false"
+                                android:lineSpacingExtra="5dp"
+                                android:letterSpacing="-0.01"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintEnd_toStartOf="@id/ll_num_title"/>
 
-                            <TextView
-                                android:id="@+id/tv_num_title"
+                            <LinearLayout
+                                android:id="@+id/ll_num_title"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/add_challenge_default_num_title"
-                                android:textColor="@color/gray_600"
-                                android:textSize="13sp"
-                                android:fontFamily="@font/pretendard_regular"/>
+                                android:orientation="horizontal"
+                                android:layout_marginEnd="4dp"
+                                android:visibility="visible"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toStartOf="@id/iv_clear"
+                                android:gravity="center">
 
-                            <TextView
+                                <TextView
+                                    android:id="@+id/tv_num_title"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/add_challenge_default_num_title"
+                                    android:textColor="@color/gray_600"
+                                    android:textSize="13sp"
+                                    android:fontFamily="@font/pretendard_regular"
+                                    android:includeFontPadding="false"
+                                    android:lineSpacingExtra="5dp"
+                                    android:letterSpacing="-0.01"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/lock_question_setting_max_num_title"
+                                    android:textColor="@color/gray_400"
+                                    android:textSize="13sp"
+                                    android:fontFamily="@font/pretendard_regular"
+                                    android:includeFontPadding="false"
+                                    android:lineSpacingExtra="5dp"
+                                    android:letterSpacing="-0.01"/>
+                            </LinearLayout>
+
+                            <ImageView
+                                android:id="@+id/iv_clear"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/add_challenge_max_num_title"
-                                android:textColor="@color/gray_400"
-                                android:textSize="13sp"
-                                android:fontFamily="@font/pretendard_regular"/>
-                        </LinearLayout>
+                                android:paddingVertical="16dp"
+                                android:paddingHorizontal="4dp"
+                                android:src="@drawable/n_ic_clear"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"/>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </com.google.android.material.card.MaterialCardView>
 
-                        <ImageView
-                            android:id="@+id/iv_clear"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:paddingVertical="16dp"
-                            android:paddingHorizontal="4dp"
-                            android:src="@drawable/n_ic_clear"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"/>
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    <TextView
+                        android:id="@+id/tv_invalid_answer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="18dp"
+                        android:layout_marginTop="4dp"
+                        android:paddingHorizontal="6dp"
+                        android:visibility="visible"
+                        android:text="@string/lock_question_setting_invalid_answer"
+                        android:textSize="12sp"
+                        android:textColor="@color/system_error"
+                        android:fontFamily="@font/pretendard_regular"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="4sp"
+                        android:letterSpacing="-0.01"/>
+
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="28dp"/>
+                </LinearLayout>
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/mcv_answer_date"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:layout_marginTop="4dp"
+                    android:visibility="visible"
                     app:rippleColor="@android:color/transparent"
                     app:cardCornerRadius="12dp"
                     app:cardBackgroundColor="@color/gray_200"
@@ -263,13 +299,14 @@
                             app:layout_constraintTop_toTopOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </com.google.android.material.card.MaterialCardView>
+
             </LinearLayout>
         </ScrollView>
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/mcv_news_bar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="55dp"
             android:visibility="gone"
             app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="0dp"

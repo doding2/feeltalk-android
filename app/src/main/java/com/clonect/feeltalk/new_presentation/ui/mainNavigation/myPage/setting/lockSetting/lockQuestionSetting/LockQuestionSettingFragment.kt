@@ -14,6 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.setPadding
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updateMargins
 import androidx.core.widget.addTextChangedListener
@@ -124,7 +125,9 @@ class LockQuestionSettingFragment : Fragment() {
             items = listOf(
                 requireContext().getString(R.string.lock_question_item_1),
                 requireContext().getString(R.string.lock_question_item_2),
-                requireContext().getString(R.string.lock_question_item_3)
+                requireContext().getString(R.string.lock_question_item_3),
+                requireContext().getString(R.string.lock_question_item_4),
+                requireContext().getString(R.string.lock_question_item_5),
             )
         ) { oldIndex, oldItem, newIndex, newItem ->
             viewModel.setQuestionType(newIndex)
@@ -184,8 +187,6 @@ class LockQuestionSettingFragment : Fragment() {
         val dateString = formatter.format(now)
         val dateTokens = dateString.split("/")
 
-        binding.dpAnswerDatePicker.maxDate = now.time
-
         binding.dpAnswerDatePicker.init(
             dateTokens[0].toInt(),
             dateTokens[1].toInt() - 1,
@@ -217,14 +218,18 @@ class LockQuestionSettingFragment : Fragment() {
 
             if (imeHeight == 0) {
                 binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
-                binding.svScroll.setPadding(0, 0, 0, 0)
+                binding.svScroll.setPadding(0)
                 viewModel.setLockAnswerFocused(false)
             } else {
-                val newsBarHeight = requireContext().dpToPx(55f).toInt()
+                val warningSpaceHeight = requireContext().dpToPx(28f)
+                val newsBarHeight = requireContext().dpToPx(55f)
 
                 binding.root.setPadding(0, getStatusBarHeight(), 0, imeHeight)
                 binding.svScroll.setPadding(0, 0, 0, newsBarHeight)
-                binding.svScroll.smoothScrollBy(0, getNavigationBarHeight() + newsBarHeight)
+                lifecycleScope.launch {
+                    delay(10)
+                    binding.svScroll.smoothScrollBy(0, getNavigationBarHeight() + newsBarHeight + warningSpaceHeight)
+                }
             }
 
             insets
@@ -294,33 +299,35 @@ class LockQuestionSettingFragment : Fragment() {
     }
 
     private fun changeQuestionTypeView(questionType: Int?) = binding.run {
+        llAnswer.visibility = View.VISIBLE
+        mcvAnswerDate.visibility = View.GONE
         when (questionType) {
             null -> {
-                mcvAnswer.visibility = View.VISIBLE
-                mcvAnswerDate.visibility = View.GONE
                 return@run
             }
             0 -> {
-                mcvAnswer.visibility = View.VISIBLE
-                mcvAnswerDate.visibility = View.GONE
                 spinnerLockQuestion.text = requireContext().getString(R.string.lock_question_item_1)
             }
             1 -> {
-                mcvAnswer.visibility = View.GONE
-                mcvAnswerDate.visibility = View.VISIBLE
                 spinnerLockQuestion.text = requireContext().getString(R.string.lock_question_item_2)
             }
             2 -> {
-                mcvAnswer.visibility = View.VISIBLE
-                mcvAnswerDate.visibility = View.GONE
+                llAnswer.visibility = View.GONE
+                mcvAnswerDate.visibility = View.VISIBLE
                 spinnerLockQuestion.text = requireContext().getString(R.string.lock_question_item_3)
+            }
+            3 -> {
+                spinnerLockQuestion.text = requireContext().getString(R.string.lock_question_item_4)
+            }
+            4 -> {
+                spinnerLockQuestion.text = requireContext().getString(R.string.lock_question_item_5)
             }
         }
     }
 
     private fun changeLockAnswerFocusedView(focused: Boolean) = binding.run {
         if (focused) {
-            mcvAnswer.strokeWidth = requireContext().dpToPx(2f).toInt()
+            mcvAnswer.strokeWidth = requireContext().dpToPx(2f)
             mcvAnswer.setCardBackgroundColor(Color.WHITE)
             ivClear.visibility = View.VISIBLE
 
@@ -330,6 +337,41 @@ class LockQuestionSettingFragment : Fragment() {
             mcvAnswer.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
             ivClear.visibility = View.GONE
             etAnswer.clearFocus()
+        }
+
+        tvInvalidAnswer.setTextColor(Color.WHITE)
+        if (viewModel.containSpecialChar.value) {
+            tvInvalidAnswer.setTextColor(requireContext().getColor(R.color.system_error))
+            mcvAnswer.setCardBackgroundColor(Color.WHITE)
+            mcvAnswer.strokeWidth = requireContext().dpToPx(1f)
+            mcvAnswer.strokeColor = requireContext().getColor(R.color.system_error)
+        }
+    }
+
+    private fun changeLockAnswerView(lockAnswer: String?) = binding.run {
+        tvNumTitle.text = lockAnswer?.length?.toString() ?: requireContext().getString(R.string.add_challenge_default_num_title)
+    }
+
+    private fun changeContainSpecialCharView(containSpecialChar: Boolean) = binding.run {
+        tvInvalidAnswer.setTextColor(Color.WHITE)
+        val focused = viewModel.isLockAnswerFocused.value
+        if (focused) {
+            mcvAnswer.strokeWidth = requireContext().dpToPx(2f)
+            mcvAnswer.setCardBackgroundColor(Color.WHITE)
+            ivClear.visibility = View.VISIBLE
+
+            enableAnswerDatePicker(false)
+        } else {
+            mcvAnswer.strokeWidth = 0
+            mcvAnswer.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
+            ivClear.visibility = View.GONE
+        }
+
+        if (containSpecialChar) {
+            tvInvalidAnswer.setTextColor(requireContext().getColor(R.color.system_error))
+            mcvAnswer.setCardBackgroundColor(Color.WHITE)
+            mcvAnswer.strokeWidth = requireContext().dpToPx(1f)
+            mcvAnswer.strokeColor = requireContext().getColor(R.color.system_error)
         }
     }
 
@@ -359,10 +401,12 @@ class LockQuestionSettingFragment : Fragment() {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.isLoading.collectLatest(::showLoading) }
             launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
+            launch { viewModel.lockAnswer.collectLatest(::changeLockAnswerView) }
             launch { viewModel.questionType.collectLatest(::changeQuestionTypeView) }
             launch { viewModel.isKeyboardUp.collectLatest(::changeViewWhenKeyboardUp) }
             launch { viewModel.lockAnswerDate.collectLatest(::changeLockAnswerDateView) }
             launch { viewModel.isLockAnswerFocused.collectLatest(::changeLockAnswerFocusedView) }
+            launch { viewModel.containSpecialChar.collectLatest(::changeContainSpecialCharView) }
             launch { viewModel.isAddEnabled.collectLatest(::enableAddButton) }
         }
     }
