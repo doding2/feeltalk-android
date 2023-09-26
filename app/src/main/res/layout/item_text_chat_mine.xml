@@ -27,6 +27,8 @@
             android:fontFamily="@font/pretendard_regular"
             android:textColor="@color/gray_600"
             android:lines="1"
+            android:lineSpacingExtra="4dp"
+            android:letterSpacing="-0.01"
             app:layout_constraintBottom_toTopOf="@id/tv_time"
             app:layout_constraintEnd_toEndOf="@id/tv_time"/>
 
@@ -39,8 +41,10 @@
             android:fontFamily="@font/pretendard_regular"
             android:textColor="@color/gray_600"
             android:lines="1"
+            android:lineSpacingExtra="4dp"
+            android:letterSpacing="-0.01"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/mcv_chat_container"
@@ -64,7 +68,10 @@
                 android:text=""
                 android:textColor="@color/white"
                 android:textSize="16sp"
-                android:fontFamily="@font/pretendard_regular"/>
+                android:fontFamily="@font/pretendard_regular"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="5dp"
+                android:letterSpacing="-0.01"/>
         </com.google.android.material.card.MaterialCardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

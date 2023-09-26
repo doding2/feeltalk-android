@@ -72,8 +72,11 @@ class MainNavigationViewModel @Inject constructor(
     val showChallengeDetail = _showChallengeDetail.asStateFlow()
 
 
-    private val _showSubmitSucceedSheet = MutableStateFlow(false)
-    val showSubmitSucceedSheet = _showSubmitSucceedSheet.asStateFlow()
+    private val _showInquirySucceedSheet = MutableStateFlow(false)
+    val showInquirySucceedSheet = _showInquirySucceedSheet.asStateFlow()
+
+    private val _showSuggestionSucceedSheet = MutableStateFlow(false)
+    val showSuggestionSucceedSheet = _showSuggestionSucceedSheet.asStateFlow()
 
 
     init {
@@ -187,8 +190,12 @@ class MainNavigationViewModel @Inject constructor(
     }
 
 
-    fun setShowSubmitSucceedSheet(isShow: Boolean) {
-        _showSubmitSucceedSheet.value =isShow
+    fun setShowInquirySucceedSheet(isShow: Boolean) {
+        _showInquirySucceedSheet.value =isShow
+    }
+
+    fun setShowSuggestionSucceedSheet(isShow: Boolean) {
+        _showSuggestionSucceedSheet.value =isShow
     }
 
 

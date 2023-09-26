@@ -31,6 +31,9 @@
             android:textSize="18sp"
             android:fontFamily="@font/pretendard_medium"
             android:layout_gravity="center"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="5dp"
+            android:letterSpacing="-0.01"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -45,7 +48,10 @@
         android:text="@string/delete_account_notice_1"
         android:textColor="@color/black"
         android:textSize="24sp"
-        android:fontFamily="@font/pretendard_medium"/>
+        android:fontFamily="@font/pretendard_medium"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="7dp"
+        android:letterSpacing="-0.01"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -55,7 +61,10 @@
         android:text="@string/delete_account_notice_2"
         android:textColor="@color/black"
         android:textSize="24sp"
-        android:fontFamily="@font/pretendard_medium"/>
+        android:fontFamily="@font/pretendard_medium"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="7dp"
+        android:letterSpacing="-0.01"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -65,7 +74,10 @@
         android:text="@string/delete_account_notice_3"
         android:textColor="@color/black"
         android:textSize="24sp"
-        android:fontFamily="@font/pretendard_medium"/>
+        android:fontFamily="@font/pretendard_medium"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="7dp"
+        android:letterSpacing="-0.01"/>
 
     <View
         android:layout_width="0dp"
@@ -92,7 +104,10 @@
             android:text="@string/delete_account_warning_title"
             android:textColor="@color/system_error"
             android:textSize="16sp"
-            android:fontFamily="@font/pretendard_semi_bold"/>
+            android:fontFamily="@font/pretendard_semi_bold"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="5dp"
+            android:letterSpacing="-0.01"/>
     </LinearLayout>
 
     <LinearLayout
@@ -122,7 +137,10 @@
                 android:text="@string/delete_account_warning_item_1"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                android:fontFamily="@font/pretendard_regular"/>
+                android:fontFamily="@font/pretendard_regular"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="4dp"
+                android:letterSpacing="-0.01"/>
         </LinearLayout>
 
         <LinearLayout
@@ -144,7 +162,10 @@
                 android:text="@string/delete_account_warning_item_2"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                android:fontFamily="@font/pretendard_regular"/>
+                android:fontFamily="@font/pretendard_regular"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="4dp"
+                android:letterSpacing="-0.01"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -171,7 +192,10 @@
             android:text="@string/delete_account_agree_all"
             android:textColor="@color/black"
             android:textSize="16sp"
-            android:fontFamily="@font/pretendard_semi_bold"/>
+            android:fontFamily="@font/pretendard_semi_bold"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="5dp"
+            android:letterSpacing="-0.01"/>
     </LinearLayout>
 
 
@@ -199,6 +223,9 @@
             android:text="@string/delete_account_confirm"
             android:textColor="@color/white"
             android:textSize="18sp"
-            android:fontFamily="@font/pretendard_medium" />
+            android:fontFamily="@font/pretendard_medium"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="5dp"
+            android:letterSpacing="-0.01" />
     </com.google.android.material.card.MaterialCardView>
 </LinearLayout>

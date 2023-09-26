@@ -180,7 +180,7 @@
     <string name="add_challenge_d_day_over">D-999+</string>
     <string name="add_challenge_deadline">챌린지 마감일</string>
     <string name="add_challenge_content">챌린지 내용</string>
-    <string name="add_challenge_title_hint">챌린지 이름을 적어주세요 !</string>
+    <string name="add_challenge_title_hint">함께하고 싶은 챌린지를 적어주세요</string>
     <string name="add_challenge_body_hint">내용을 자세히 적어보세요 !</string>
     <string name="add_challenge_button">챌린지 만들기</string>
     <string name="add_challenge_next">다음</string>
@@ -443,14 +443,22 @@
     <string name="inquire_dialog_cancel">계속하기</string>
     <string name="inquire_dialog_confirm">나가기</string>
 
-    <!--  SubmitSucceedBottomSheet  -->
-    <string name="submit_succeed_title">문의사항을\n성공적으로 전송했어요!</string>
-    <string name="submit_succeed_body">답변은 이메일→받은메일함을 통해 확인해주세요.</string>
-    <string name="submit_succeed_confirm">알겠어요</string>
+    <!--  InquireSucceedBottomSheet  -->
+    <string name="inquire_succeed_title">문의사항을\n성공적으로 전송했어요!</string>
+    <string name="inquire_succeed_body">답변은 이메일→받은메일함을 통해 확인해주세요.</string>
+    <string name="inquire_succeed_confirm">알겠어요</string>
+
+
+    <!--  SuggestQuest  -->
+
+
+    <!--  SuggestionSucceedBottomSheet  -->
+    <string name="suggestion_succeed_title">필로우톡에\n질문을 제안했어요!</string>
+    <string name="suggestion_succeed_body">서비스 향상에 함께해 주셔서 감사해요.\n보내주신 내용은 적극적으로 검토할게요 🙌</string>
+    <string name="suggestion_succeed_confirm">알겠어요</string>
 
 
 
-    
 
     <!--  old ui  -->
 

@@ -45,7 +45,10 @@
                 android:text="UserName"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                android:fontFamily="@font/pretendard_regular"/>
+                android:fontFamily="@font/pretendard_regular"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="4dp"
+                android:letterSpacing="-0.01"/>
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -87,26 +90,34 @@
                         android:text="Q. 난 이게 가장 좋더라!"
                         android:textColor="@color/black"
                         android:textSize="14sp"
-                        android:fontFamily="@font/pretendard_regular"/>
+                        android:fontFamily="@font/pretendard_regular"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="4dp"
+                        android:letterSpacing="-0.01"/>
 
 
                     <TextView
                         android:id="@+id/tv_question_body"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:paddingTop="4dp"
                         android:text="당신이 가장 좋아하는 스킨십은?"
                         android:textColor="@color/black"
                         android:textSize="14sp"
-                        android:fontFamily="@font/pretendard_regular"/>
+                        android:fontFamily="@font/pretendard_regular"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="4dp"
+                        android:letterSpacing="-0.01"/>
 
                     <TextView
                         android:id="@+id/tv_question_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
                         android:text="2023.06.01"
                         android:textSize="12sp"
-                        android:textColor="@color/gray_500" />
+                        android:textColor="@color/gray_500"
+                        android:lineSpacingExtra="4dp"
+                        android:letterSpacing="-0.01" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -116,7 +127,10 @@
                         android:text="@string/question_chat_wait_answer"
                         android:textColor="@color/gray_600"
                         android:textSize="12sp"
-                        android:fontFamily="@font/pretendard_regular"/>
+                        android:fontFamily="@font/pretendard_regular"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="4dp"
+                        android:letterSpacing="-0.01"/>
 
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/mcv_go_to_answer"
@@ -135,7 +149,10 @@
                             android:text="@string/question_chat_go_to_answer"
                             android:textColor="@color/white"
                             android:textSize="16sp"
-                            android:fontFamily="@font/pretendard_regular"/>
+                            android:fontFamily="@font/pretendard_regular"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="5dp"
+                            android:letterSpacing="-0.01"/>
                     </com.google.android.material.card.MaterialCardView>
 
                 </LinearLayout>
@@ -150,6 +167,8 @@
                 android:fontFamily="@font/pretendard_regular"
                 android:textColor="@color/gray_600"
                 android:lines="1"
+                android:lineSpacingExtra="4dp"
+                android:letterSpacing="-0.01"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -162,6 +181,8 @@
                 android:fontFamily="@font/pretendard_regular"
                 android:textColor="@color/gray_600"
                 android:lines="1"
+                android:lineSpacingExtra="4dp"
+                android:letterSpacing="-0.01"
                 app:layout_constraintBottom_toTopOf="@id/tv_time"
                 app:layout_constraintStart_toStartOf="@id/tv_time"/>
         </androidx.constraintlayout.widget.ConstraintLayout>

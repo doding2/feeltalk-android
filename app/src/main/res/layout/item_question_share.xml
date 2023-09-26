@@ -39,7 +39,9 @@
                 android:text="100"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                android:fontFamily="@font/montserrat_bold" />
+                android:fontFamily="@font/montserrat_bold"
+                android:lineSpacingExtra="4dp"
+                android:letterSpacing="-0.03" />
         </com.google.android.material.card.MaterialCardView>
 
 
@@ -54,6 +56,9 @@
             android:fontFamily="@font/pretendard_medium"
             android:lines="1"
             android:ellipsize="end"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="9dp"
+            android:letterSpacing="-0.01"
             app:layout_constrainedWidth="true"
             app:layout_constraintStart_toEndOf="@id/mcv_index"
             app:layout_constraintEnd_toStartOf="@id/tv_new"
@@ -79,6 +84,9 @@
             android:textColor="@color/main_500"
             android:textSize="14sp"
             android:fontFamily="@font/montserrat_bold"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="11dp"
+            android:letterSpacing="-0.01"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>

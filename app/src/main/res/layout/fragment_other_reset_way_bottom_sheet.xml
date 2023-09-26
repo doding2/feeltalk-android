@@ -24,7 +24,10 @@
         android:text="@string/other_reset_way_title"
         android:textSize="20sp"
         android:textColor="@color/black"
-        android:fontFamily="@font/pretendard_semi_bold"/>
+        android:fontFamily="@font/pretendard_semi_bold"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="6dp"
+        android:letterSpacing="-0.01"/>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/mcv_partner_help"
@@ -51,7 +54,10 @@
                 android:text="@string/other_reset_way_partner_help_title"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                android:fontFamily="@font/pretendard_regular"/>
+                android:fontFamily="@font/pretendard_regular"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="5dp"
+                android:letterSpacing="-0.01"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -59,7 +65,10 @@
                 android:text="@string/other_reset_way_partner_help_body"
                 android:textColor="@color/gray_500"
                 android:textSize="14sp"
-                android:fontFamily="@font/pretendard_regular"/>
+                android:fontFamily="@font/pretendard_regular"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="4dp"
+                android:letterSpacing="-0.01"/>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -89,7 +98,10 @@
                 android:text="@string/other_reset_way_send_email_title"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                android:fontFamily="@font/pretendard_regular"/>
+                android:fontFamily="@font/pretendard_regular"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="5dp"
+                android:letterSpacing="-0.01"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -97,7 +109,10 @@
                 android:text="@string/other_reset_way_send_email_body"
                 android:textColor="@color/gray_500"
                 android:textSize="14sp"
-                android:fontFamily="@font/pretendard_regular"/>
+                android:fontFamily="@font/pretendard_regular"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="4dp"
+                android:letterSpacing="-0.01"/>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

@@ -22,7 +22,10 @@
             android:text="@string/question_title"
             android:textColor="@color/black"
             android:textSize="18sp"
-            android:fontFamily="@font/pretendard_medium"/>
+            android:fontFamily="@font/pretendard_medium"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="5dp"
+            android:letterSpacing="-0.01"/>
     </LinearLayout>
 
     <com.google.android.material.card.MaterialCardView
@@ -74,7 +77,10 @@
                         android:text="100"
                         android:textColor="@color/main_500"
                         android:textSize="14sp"
-                        android:fontFamily="@font/montserrat_bold" />
+                        android:fontFamily="@font/montserrat_bold"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="4dp"
+                        android:letterSpacing="-0.03" />
                 </com.google.android.material.card.MaterialCardView>
 
                 <View
@@ -90,7 +96,10 @@
                     android:text="@string/question_today_new"
                     android:textColor="@color/white"
                     android:textSize="14sp"
-                    android:fontFamily="@font/montserrat_bold"/>
+                    android:fontFamily="@font/montserrat_bold"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="11dp"
+                    android:letterSpacing="-0.01"/>
             </LinearLayout>
 
             <TextView
@@ -101,16 +110,23 @@
                 android:text="난 이게 가장 좋더라!"
                 android:textColor="@color/white"
                 android:textSize="20sp"
-                android:fontFamily="@font/pretendard_medium"/>
+                android:fontFamily="@font/pretendard_medium"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="5dp"
+                android:letterSpacing="-0.01"/>
 
             <TextView
                 android:id="@+id/tv_today_question_body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingTop="6dp"
                 android:text="당신이 가장 좋아하는 스킨십은?"
                 android:textColor="@color/white"
                 android:textSize="20sp"
-                android:fontFamily="@font/pretendard_medium"/>
+                android:fontFamily="@font/pretendard_medium"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="5dp"
+                android:letterSpacing="-0.01"/>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/mcv_answer"
@@ -131,7 +147,10 @@
                     android:text="@string/question_today_button_answer"
                     android:textSize="16sp"
                     android:textColor="@color/white"
-                    android:fontFamily="@font/pretendard_regular"/>
+                    android:fontFamily="@font/pretendard_regular"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="5dp"
+                    android:letterSpacing="-0.01"/>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
@@ -150,7 +169,10 @@
             android:text="@string/question_list_title"
             android:textColor="@color/black"
             android:textSize="18sp"
-            android:fontFamily="@font/pretendard_medium"/>
+            android:fontFamily="@font/pretendard_medium"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="5dp"
+            android:letterSpacing="-0.01"/>
 
         <View
             android:layout_width="0dp"

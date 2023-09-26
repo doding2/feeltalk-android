@@ -47,7 +47,10 @@
                     android:text=""
                     android:textSize="24sp"
                     android:textColor="@color/black"
-                    android:fontFamily="@font/pretendard_regular"/>
+                    android:fontFamily="@font/pretendard_regular"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="7dp"
+                    android:letterSpacing="-0.01"/>
 
 
                 <TextView
@@ -55,10 +58,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
+                    android:paddingTop="7dp"
                     android:text=""
                     android:textSize="24sp"
                     android:textColor="@color/black"
-                    android:fontFamily="@font/pretendard_regular"/>
+                    android:fontFamily="@font/pretendard_regular"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="7dp"
+                    android:letterSpacing="-0.01"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -66,10 +73,14 @@
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginTop="32dp"
                     android:layout_marginBottom="8dp"
+                    android:paddingHorizontal="4dp"
                     android:text="@string/answer_my_answer_deco"
                     android:textSize="12sp"
                     android:textColor="@color/gray_500"
-                    android:fontFamily="@font/pretendard_semi_bold"/>
+                    android:fontFamily="@font/pretendard_semi_bold"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="4dp"
+                    android:letterSpacing="-0.01"/>
 
                 <EditText
                     android:id="@+id/et_my_answer"
@@ -85,7 +96,10 @@
                     android:textColor="@color/black"
                     android:textColorHint="@color/gray_400"
                     android:textSize="16sp"
-                    android:fontFamily="@font/pretendard_regular"/>
+                    android:fontFamily="@font/pretendard_regular"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="5dp"
+                    android:letterSpacing="-0.01"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -93,10 +107,14 @@
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginTop="32dp"
                     android:layout_marginBottom="8dp"
+                    android:paddingHorizontal="4dp"
                     android:text="@string/answer_partner_answer_deco"
                     android:textSize="12sp"
                     android:textColor="@color/gray_500"
-                    android:fontFamily="@font/pretendard_semi_bold"/>
+                    android:fontFamily="@font/pretendard_semi_bold"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="4dp"
+                    android:letterSpacing="-0.01"/>
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/mcv_partner_done"
@@ -118,7 +136,10 @@
                         android:text="@string/answer_partner_answer_state_1"
                         android:textColor="@color/main_500"
                         android:textSize="16sp"
-                        android:fontFamily="@font/pretendard_regular"/>
+                        android:fontFamily="@font/pretendard_regular"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="5dp"
+                        android:letterSpacing="-0.01"/>
                 </com.google.android.material.card.MaterialCardView>
 
                 <EditText
@@ -136,7 +157,10 @@
                     android:lines="4"
                     android:scrollbars="vertical"
                     android:gravity="top"
-                    android:fontFamily="@font/pretendard_regular"/>
+                    android:fontFamily="@font/pretendard_regular"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="5dp"
+                    android:letterSpacing="-0.01"/>
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/mcv_partner_not_done"
@@ -164,7 +188,10 @@
                             android:text="@string/answer_partner_answer_state_2"
                             android:textColor="@color/gray_600"
                             android:textSize="16sp"
-                            android:fontFamily="@font/pretendard_regular"/>
+                            android:fontFamily="@font/pretendard_regular"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="5dp"
+                            android:letterSpacing="-0.01"/>
 
                         <com.google.android.material.card.MaterialCardView
                             android:id="@+id/mcv_press_for_answer"
@@ -184,7 +211,10 @@
                                 android:text="@string/answer_press_for"
                                 android:textSize="18sp"
                                 android:textColor="@color/white"
-                                android:fontFamily="@font/pretendard_medium"/>
+                                android:fontFamily="@font/pretendard_medium"
+                                android:includeFontPadding="false"
+                                android:lineSpacingExtra="5dp"
+                                android:letterSpacing="-0.01"/>
                         </com.google.android.material.card.MaterialCardView>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -217,7 +247,10 @@
                 android:text="@string/answer_button_done"
                 android:textColor="@color/white"
                 android:textSize="18sp"
-                android:fontFamily="@font/pretendard_medium"/>
+                android:fontFamily="@font/pretendard_medium"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="5dp"
+                android:letterSpacing="-0.01"/>
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
@@ -242,7 +275,10 @@
                 android:text="@string/answer_button_done"
                 android:textColor="@color/white"
                 android:textSize="18sp"
-                android:fontFamily="@font/pretendard_medium"/>
+                android:fontFamily="@font/pretendard_medium"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="5dp"
+                android:letterSpacing="-0.01"/>
         </com.google.android.material.card.MaterialCardView>
     </RelativeLayout>
 </LinearLayout>

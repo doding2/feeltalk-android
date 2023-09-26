@@ -66,7 +66,10 @@
                     android:text="@string/lock_question_setting_guide"
                     android:textColor="@color/black"
                     android:textSize="24sp"
-                    android:fontFamily="@font/pretendard_medium"/>
+                    android:fontFamily="@font/pretendard_medium"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="7dp"
+                    android:letterSpacing="-0.01"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -75,7 +78,10 @@
                     android:text="@string/lock_question_setting_sub_guide"
                     android:textColor="@color/gray_600"
                     android:textSize="16sp"
-                    android:fontFamily="@font/pretendard_regular"/>
+                    android:fontFamily="@font/pretendard_regular"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="5dp"
+                    android:letterSpacing="-0.01"/>
 
 
                 <TextView
@@ -86,7 +92,10 @@
                     android:text="@string/lock_question_setting_select_question_title"
                     android:textColor="@color/gray_600"
                     android:textSize="12sp"
-                    android:fontFamily="@font/pretendard_semi_bold"/>
+                    android:fontFamily="@font/pretendard_semi_bold"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="4dp"
+                    android:letterSpacing="-0.01"/>
 
                 <com.skydoves.powerspinner.PowerSpinnerView
                     android:id="@+id/spinner_lock_question"
@@ -100,6 +109,8 @@
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     android:fontFamily="@font/pretendard_regular"
+                    android:lineSpacingExtra="5dp"
+                    android:letterSpacing="-0.01"
                     app:spinner_arrow_drawable="@drawable/n_animate_spinner_arrow"
                     app:spinner_arrow_tint="@color/gray_600"
                     app:spinner_popup_background="@drawable/n_background_spinner_popup"
@@ -115,7 +126,10 @@
                     android:text="@string/lock_question_setting_answer_title"
                     android:textColor="@color/gray_600"
                     android:textSize="12sp"
-                    android:fontFamily="@font/pretendard_semi_bold"/>
+                    android:fontFamily="@font/pretendard_semi_bold"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="4dp"
+                    android:letterSpacing="-0.01"/>
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/mcv_answer"
@@ -150,6 +164,9 @@
                             android:lines="1"
                             android:inputType="text"
                             android:imeOptions="actionDone"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="5dp"
+                            android:letterSpacing="-0.01"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintEnd_toStartOf="@id/ll_num_title"/>
@@ -223,6 +240,9 @@
                             android:lines="1"
                             android:textColor="@color/black"
                             android:textSize="16sp"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="5dp"
+                            android:letterSpacing="-0.01"
                             app:layout_constrainedWidth="true"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -274,7 +294,10 @@
                     android:text="@string/lock_question_setting_news_bar_complete"
                     android:textColor="@color/main_500"
                     android:textSize="18sp"
-                    android:fontFamily="@font/pretendard_medium"/>
+                    android:fontFamily="@font/pretendard_medium"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="5dp"
+                    android:letterSpacing="-0.01"/>
             </FrameLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -299,7 +322,10 @@
                 android:text="@string/lock_question_setting_submit"
                 android:textColor="@color/white"
                 android:textSize="18sp"
-                android:fontFamily="@font/pretendard_medium"/>
+                android:fontFamily="@font/pretendard_medium"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="5dp"
+                android:letterSpacing="-0.01"/>
         </com.google.android.material.card.MaterialCardView>
 
         <DatePicker

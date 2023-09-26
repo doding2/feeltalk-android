@@ -22,7 +22,10 @@
             android:text="@string/challenge_tab_ongoing"
             android:textColor="@color/black"
             android:textSize="16sp"
-            android:fontFamily="@font/pretendard_semi_bold"/>
+            android:fontFamily="@font/pretendard_semi_bold"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="5dp"
+            android:letterSpacing="-0.01"/>
 
         <TextView
             android:id="@+id/tv_count"
@@ -31,7 +34,10 @@
             android:text="0"
             android:textColor="@color/main_500"
             android:textSize="16sp"
-            android:fontFamily="@font/pretendard_semi_bold"/>
+            android:fontFamily="@font/pretendard_semi_bold"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="5dp"
+            android:letterSpacing="-0.01"/>
     </LinearLayout>
 
     <View

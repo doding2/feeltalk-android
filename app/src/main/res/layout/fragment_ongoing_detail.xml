@@ -78,7 +78,10 @@
                         android:text="@string/challenge_detail_title_1"
                         android:textSize="24sp"
                         android:textColor="@color/black"
-                        android:fontFamily="@font/pretendard_regular"/>
+                        android:fontFamily="@font/pretendard_regular"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="7dp"
+                        android:letterSpacing="-0.01"/>
 
                     <TextView
                         android:id="@+id/tv_detail_title_2"
@@ -86,10 +89,14 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="20dp"
                         android:layout_marginBottom="32dp"
+                        android:paddingTop="7dp"
                         android:text="@string/challenge_detail_title_2"
                         android:textSize="24sp"
                         android:textColor="@color/black"
-                        android:fontFamily="@font/pretendard_medium"/>
+                        android:fontFamily="@font/pretendard_medium"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="7dp"
+                        android:letterSpacing="-0.01"/>
 
 
                     <TextView
@@ -97,10 +104,14 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
                         android:layout_marginBottom="4dp"
+                        android:paddingHorizontal="4dp"
                         android:text="@string/add_challenge_title"
                         android:textColor="@color/gray_600"
                         android:textSize="12sp"
-                        android:fontFamily="@font/pretendard_semi_bold"/>
+                        android:fontFamily="@font/pretendard_semi_bold"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="4dp"
+                        android:letterSpacing="-0.01"/>
 
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/mcv_title"
@@ -136,6 +147,9 @@
                                 android:inputType="text"
                                 android:imeOptions="flagNavigateNext"
                                 android:maxLength="20"
+                                android:includeFontPadding="false"
+                                android:lineSpacingExtra="5dp"
+                                android:letterSpacing="-0.01"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:layout_constraintEnd_toStartOf="@id/ll_num_title"/>
@@ -158,7 +172,10 @@
                                     android:text="@string/add_challenge_default_num_title"
                                     android:textColor="@color/gray_600"
                                     android:textSize="13sp"
-                                    android:fontFamily="@font/pretendard_regular"/>
+                                    android:fontFamily="@font/pretendard_regular"
+                                    android:includeFontPadding="false"
+                                    android:lineSpacingExtra="4dp"
+                                    android:letterSpacing="-0.01"/>
 
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -166,7 +183,10 @@
                                     android:text="@string/add_challenge_max_num_title"
                                     android:textColor="@color/gray_400"
                                     android:textSize="13sp"
-                                    android:fontFamily="@font/pretendard_regular"/>
+                                    android:fontFamily="@font/pretendard_regular"
+                                    android:includeFontPadding="false"
+                                    android:lineSpacingExtra="4dp"
+                                    android:letterSpacing="-0.01"/>
                             </LinearLayout>
 
                             <ImageView
@@ -188,10 +208,14 @@
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginBottom="4dp"
+                        android:paddingHorizontal="4dp"
                         android:text="@string/add_challenge_deadline"
                         android:textColor="@color/gray_600"
                         android:textSize="12sp"
-                        android:fontFamily="@font/pretendard_semi_bold"/>
+                        android:fontFamily="@font/pretendard_semi_bold"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="4dp"
+                        android:letterSpacing="-0.01"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -220,7 +244,10 @@
                                 android:textColor="@color/main_500"
                                 android:fontFamily="@font/pretendard_medium"
                                 android:lines="1"
-                                android:ellipsize="marquee"/>
+                                android:ellipsize="marquee"
+                                android:includeFontPadding="false"
+                                android:lineSpacingExtra="5dp"
+                                android:letterSpacing="-0.01"/>
                         </com.google.android.material.card.MaterialCardView>
 
                         <com.google.android.material.card.MaterialCardView
@@ -277,10 +304,14 @@
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginBottom="4dp"
+                        android:paddingHorizontal="4dp"
                         android:text="@string/add_challenge_content"
                         android:textColor="@color/gray_600"
                         android:textSize="12sp"
-                        android:fontFamily="@font/pretendard_semi_bold"/>
+                        android:fontFamily="@font/pretendard_semi_bold"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="4dp"
+                        android:letterSpacing="-0.01"/>
 
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/mcv_body"
@@ -319,7 +350,10 @@
                                 android:maxLength="100"
                                 android:scrollbars="vertical"
                                 android:overScrollMode="always"
-                                android:scrollbarStyle="insideInset"/>
+                                android:scrollbarStyle="insideInset"
+                                android:includeFontPadding="false"
+                                android:lineSpacingExtra="5dp"
+                                android:letterSpacing="-0.01"/>
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -338,7 +372,10 @@
                                     android:text="@string/add_challenge_default_num_body"
                                     android:textColor="@color/gray_600"
                                     android:textSize="13sp"
-                                    android:fontFamily="@font/pretendard_regular"/>
+                                    android:fontFamily="@font/pretendard_regular"
+                                    android:includeFontPadding="false"
+                                    android:lineSpacingExtra="4dp"
+                                    android:letterSpacing="-0.01"/>
 
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -346,7 +383,10 @@
                                     android:text="@string/add_challenge_max_num_body"
                                     android:textColor="@color/gray_400"
                                     android:textSize="13sp"
-                                    android:fontFamily="@font/pretendard_regular"/>
+                                    android:fontFamily="@font/pretendard_regular"
+                                    android:includeFontPadding="false"
+                                    android:lineSpacingExtra="4dp"
+                                    android:letterSpacing="-0.01"/>
                             </LinearLayout>
                         </FrameLayout>
                     </com.google.android.material.card.MaterialCardView>
@@ -395,7 +435,10 @@
                             android:text="@string/add_challenge_news_bar_recommend"
                             android:textColor="@color/gray_500"
                             android:textSize="14sp"
-                            android:fontFamily="@font/pretendard_regular" />
+                            android:fontFamily="@font/pretendard_regular"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="4dp"
+                            android:letterSpacing="-0.01" />
                     </com.google.android.material.card.MaterialCardView>
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -417,7 +460,10 @@
                         android:text="@string/add_challenge_next"
                         android:textColor="@color/main_500"
                         android:textSize="18sp"
-                        android:fontFamily="@font/pretendard_medium"/>
+                        android:fontFamily="@font/pretendard_medium"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="5dp"
+                        android:letterSpacing="-0.01"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -442,7 +488,10 @@
                     android:text="@string/challenge_detail_edit"
                     android:textColor="@color/white"
                     android:textSize="18sp"
-                    android:fontFamily="@font/pretendard_medium"/>
+                    android:fontFamily="@font/pretendard_medium"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="5dp"
+                    android:letterSpacing="-0.01"/>
             </com.google.android.material.card.MaterialCardView>
 
 
@@ -466,7 +515,10 @@
                     android:text="@string/challenge_detail_complete"
                     android:textColor="@color/white"
                     android:textSize="18sp"
-                    android:fontFamily="@font/pretendard_medium"/>
+                    android:fontFamily="@font/pretendard_medium"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="5dp"
+                    android:letterSpacing="-0.01"/>
             </com.google.android.material.card.MaterialCardView>
 
             <DatePicker

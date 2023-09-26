@@ -45,7 +45,10 @@
                 android:text="UserName"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                android:fontFamily="@font/pretendard_regular"/>
+                android:fontFamily="@font/pretendard_regular"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="4dp"
+                android:letterSpacing="-0.01"/>
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -74,7 +77,10 @@
                     android:paddingVertical="10dp"
                     android:textColor="@color/black"
                     android:textSize="16sp"
-                    android:fontFamily="@font/pretendard_regular"/>
+                    android:fontFamily="@font/pretendard_regular"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="5dp"
+                    android:letterSpacing="-0.01"/>
             </com.google.android.material.card.MaterialCardView>
 
             <TextView
@@ -86,6 +92,8 @@
                 android:fontFamily="@font/pretendard_regular"
                 android:textColor="@color/gray_600"
                 android:lines="1"
+                android:lineSpacingExtra="4dp"
+                android:letterSpacing="-0.01"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -98,6 +106,8 @@
                 android:fontFamily="@font/pretendard_regular"
                 android:textColor="@color/gray_600"
                 android:lines="1"
+                android:lineSpacingExtra="4dp"
+                android:letterSpacing="-0.01"
                 app:layout_constraintBottom_toTopOf="@id/tv_time"
                 app:layout_constraintStart_toStartOf="@id/tv_time"/>
         </androidx.constraintlayout.widget.ConstraintLayout>

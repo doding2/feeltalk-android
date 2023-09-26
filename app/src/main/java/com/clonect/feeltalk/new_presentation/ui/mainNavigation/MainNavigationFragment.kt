@@ -23,7 +23,6 @@ import com.clonect.feeltalk.new_domain.model.chat.PartnerLastChatDto
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.showConfirmDialog
-import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -44,7 +43,8 @@ class MainNavigationFragment : Fragment() {
         // set fullscreen
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             binding.clFloatingChatContainer.setPadding(0, getStatusBarHeight(), 0, 0)
-            binding.flSubmitSucceedSheet.setPadding(0, 0, 0, getNavigationBarHeight())
+            binding.flInquirySucceedSheet.setPadding(0, 0, 0, getNavigationBarHeight())
+            binding.flSuggestionSucceedSheet.setPadding(0, 0, 0, getNavigationBarHeight())
         } else {
             activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         }
@@ -73,9 +73,12 @@ class MainNavigationFragment : Fragment() {
         }
 
         setFragmentResultListener("inquireFragment") { requestKey, bundle ->
-            val submitSucceed = bundle.getBoolean("submitSucceed", false)
-            infoLog(submitSucceed.toString())
-            viewModel.setShowSubmitSucceedSheet(submitSucceed)
+            val inquirySucceed = bundle.getBoolean("inquirySucceed", false)
+            viewModel.setShowInquirySucceedSheet(inquirySucceed)
+        }
+        setFragmentResultListener("suggestQuestionFragment") { requestKey, bundle ->
+            val suggestionSucceed = bundle.getBoolean("suggestionSucceed", false)
+            viewModel.setShowSuggestionSucceedSheet(suggestionSucceed)
         }
 
         arguments?.clear()
@@ -90,14 +93,14 @@ class MainNavigationFragment : Fragment() {
 
         setUpBottomNavigation()
         setUpAnswerSheet()
-        setUpSubmitSucceedSheet()
+        setUpInquirySucceedSheet()
+        setUpSuggestionSucceedSheet()
         collectViewModel()
 
         binding.run {
             mcvFloatingChat.setOnClickListener {
                 viewModel.toggleShowChatNavigation()
             }
-
             viewChatBehind.setOnClickListener {
                 viewModel.toggleShowChatNavigation()
             }
@@ -106,12 +109,18 @@ class MainNavigationFragment : Fragment() {
                 viewModel.setShowAnswerSheet(false)
             }
 
-            viewSubmitSucceedBehind.setOnClickListener {
-                viewModel.setShowSubmitSucceedSheet(false)
+            sheetInquirySucceed.mcvConfirm.setOnClickListener {
+                viewModel.setShowInquirySucceedSheet(false)
+            }
+            viewInquirySucceedBehind.setOnClickListener {
+                viewModel.setShowInquirySucceedSheet(false)
             }
 
-            sheetSubmitSucceed.mcvConfirm.setOnClickListener {
-                viewModel.setShowSubmitSucceedSheet(false)
+            sheetSuggestionSucceed.mcvConfirm.setOnClickListener {
+                viewModel.setShowSuggestionSucceedSheet(false)
+            }
+            viewSuggestionSucceedBehind.setOnClickListener {
+                viewModel.setShowSuggestionSucceedSheet(false)
             }
         }
     }
@@ -145,15 +154,30 @@ class MainNavigationFragment : Fragment() {
         }
     }
 
-    private fun setUpSubmitSucceedSheet() {
-        val behavior = BottomSheetBehavior.from(binding.flSubmitSucceedSheet).apply {
+    private fun setUpInquirySucceedSheet() {
+        val behavior = BottomSheetBehavior.from(binding.flInquirySucceedSheet).apply {
             peekHeight = 0
             skipCollapsed = true
             addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {}
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                        viewModel.setShowSubmitSucceedSheet(false)
+                        viewModel.setShowInquirySucceedSheet(false)
+                    }
+                }
+            })
+        }
+    }
+
+    private fun setUpSuggestionSucceedSheet() {
+        val behavior = BottomSheetBehavior.from(binding.flSuggestionSucceedSheet).apply {
+            peekHeight = 0
+            skipCollapsed = true
+            addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                        viewModel.setShowSuggestionSucceedSheet(false)
                     }
                 }
             })
@@ -198,15 +222,27 @@ class MainNavigationFragment : Fragment() {
     }
 
     private fun showSubmitSucceedSheet(isShow: Boolean) {
-        val behavior = BottomSheetBehavior.from(binding.flSubmitSucceedSheet)
-        infoLog("submit succeed sheet: $isShow")
+        val behavior = BottomSheetBehavior.from(binding.flInquirySucceedSheet)
 
         if (isShow) {
-            binding.viewSubmitSucceedBehind.visibility = View.VISIBLE
+            binding.viewInquirySucceedBehind.visibility = View.VISIBLE
             behavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
         else {
-            binding.viewSubmitSucceedBehind.visibility = View.GONE
+            binding.viewInquirySucceedBehind.visibility = View.GONE
+            behavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+    }
+
+    private fun showSuggestionSucceedSheet(isShow: Boolean) {
+        val behavior = BottomSheetBehavior.from(binding.flSuggestionSucceedSheet)
+
+        if (isShow) {
+            binding.viewSuggestionSucceedBehind.visibility = View.VISIBLE
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+        else {
+            binding.viewSuggestionSucceedBehind.visibility = View.GONE
             behavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
     }
@@ -245,7 +281,8 @@ class MainNavigationFragment : Fragment() {
             launch { viewModel.showPartnerLastChat.collectLatest(::showPartnerLastChatView) }
             launch { viewModel.partnerLastChat.collectLatest(::changePartnerLastChatView) }
             launch { viewModel.showAnswerSheet.collectLatest(::showAnswerSheet) }
-            launch { viewModel.showSubmitSucceedSheet.collectLatest(::showSubmitSucceedSheet) }
+            launch { viewModel.showInquirySucceedSheet.collectLatest(::showSubmitSucceedSheet) }
+            launch { viewModel.showSuggestionSucceedSheet.collectLatest(::showSuggestionSucceedSheet) }
         }
     }
 

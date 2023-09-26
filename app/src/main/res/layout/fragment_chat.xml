@@ -31,6 +31,9 @@
             android:fontFamily="@font/pretendard_medium"
             android:lines="1"
             android:ellipsize="end"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="5dp"
+            android:letterSpacing="-0.01"
             app:layout_constrainedWidth="true"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -127,6 +130,9 @@
                         android:fontFamily="@font/pretendard_regular"
                         android:maxLines="3"
                         android:background="@null"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="5dp"
+                        android:letterSpacing="-0.01"
                         app:layout_constrainedWidth="true"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -198,6 +204,9 @@
                         android:fontFamily="@font/pretendard_regular"
                         android:maxLines="1"
                         android:background="@null"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="4dp"
+                        android:letterSpacing="-0.01"
                         app:layout_constrainedWidth="true"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -287,6 +296,9 @@
                         android:textSize="14sp"
                         android:textColor="@color/white"
                         android:fontFamily="@font/pretendard_semi_bold"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="4dp"
+                        android:letterSpacing="-0.01"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/view_recording_spacer"/>
@@ -359,7 +371,10 @@
                     android:text="@string/chat_camera"
                     android:textColor="@color/black"
                     android:textSize="14sp"
-                    android:fontFamily="@font/pretendard_regular"/>
+                    android:fontFamily="@font/pretendard_regular"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="4dp"
+                    android:letterSpacing="-0.01"/>
             </LinearLayout>
 
             <LinearLayout
@@ -380,10 +395,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/chat_camera"
+                    android:text="@string/chat_album"
                     android:textColor="@color/black"
                     android:textSize="14sp"
-                    android:fontFamily="@font/pretendard_regular"/>
+                    android:fontFamily="@font/pretendard_regular"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="4dp"
+                    android:letterSpacing="-0.01"/>
             </LinearLayout>
 
             <View

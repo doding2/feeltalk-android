@@ -22,7 +22,10 @@
             android:text="@string/ongoing_challenge_deadline_imminent"
             android:textColor="@color/white"
             android:textSize="14sp"
-            android:fontFamily="@font/pretendard_regular"/>
+            android:fontFamily="@font/pretendard_regular"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="4dp"
+            android:letterSpacing="-0.01"/>
     </com.google.android.material.card.MaterialCardView>
 
     <ImageView

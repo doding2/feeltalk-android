@@ -30,41 +30,66 @@
             android:textSize="18sp"
             android:fontFamily="@font/pretendard_medium"
             android:layout_gravity="center"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="5dp"
+            android:letterSpacing="-0.01"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="56dp"
-        android:text="@string/partner_help_reset_body"
-        android:textColor="@color/black"
-        android:textSize="24sp"
-        android:fontFamily="@font/pretendard_medium"/>
-    
     <View
-        android:layout_width="match_parent"
-        android:layout_height="234dp"
-        android:layout_marginBottom="20dp"
-        android:layout_marginHorizontal="20dp"
-        android:background="@color/gray_100"/>
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="0.0436" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginHorizontal="20dp"
+        android:text="@string/partner_help_reset_body"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:fontFamily="@font/pretendard_medium"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="7dp"
+        android:letterSpacing="-0.01"/>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="0.0408" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="22dp"
+        android:src="@drawable/n_background_partner_help_reset"
+        android:layout_weight="0.4509"/>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="0.0327" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:gravity="center"
         android:text="@string/partner_help_reset_guide"
         android:textColor="@color/gray_600"
         android:textSize="14sp"
-        android:fontFamily="@font/pretendard_regular"/>
+        android:fontFamily="@font/pretendard_regular"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="5dp"
+        android:letterSpacing="-0.01"/>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="0.0272" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/mcv_request"
@@ -87,6 +112,14 @@
             android:text="@string/partner_help_reset_request"
             android:textColor="@color/white"
             android:textSize="18sp"
-            android:fontFamily="@font/pretendard_medium"/>
+            android:fontFamily="@font/pretendard_medium"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="5dp"
+            android:letterSpacing="-0.01"/>
     </com.google.android.material.card.MaterialCardView>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="0.0735" />
 </LinearLayout>

@@ -66,7 +66,10 @@
                     android:text="@string/challenge_detail_title_1"
                     android:textSize="24sp"
                     android:textColor="@color/black"
-                    android:fontFamily="@font/pretendard_regular"/>
+                    android:fontFamily="@font/pretendard_regular"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="7dp"
+                    android:letterSpacing="-0.01"/>
 
                 <TextView
                     android:id="@+id/tv_detail_title_2"
@@ -74,10 +77,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginBottom="32dp"
+                    android:paddingTop="7dp"
                     android:text="@string/challenge_detail_title_2"
                     android:textSize="24sp"
                     android:textColor="@color/black"
-                    android:fontFamily="@font/pretendard_medium"/>
+                    android:fontFamily="@font/pretendard_medium"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="7dp"
+                    android:letterSpacing="-0.01"/>
 
 
                 <TextView
@@ -85,10 +92,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginBottom="4dp"
+                    android:paddingHorizontal="4dp"
                     android:text="@string/add_challenge_title"
                     android:textColor="@color/gray_600"
                     android:textSize="12sp"
-                    android:fontFamily="@font/pretendard_semi_bold"/>
+                    android:fontFamily="@font/pretendard_semi_bold"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="4dp"
+                    android:letterSpacing="-0.01"/>
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/mcv_title"
@@ -124,6 +135,9 @@
                             android:inputType="text"
                             android:imeOptions="flagNavigateNext"
                             android:maxLength="20"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="5dp"
+                            android:letterSpacing="-0.01"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintEnd_toStartOf="@id/ll_num_title"/>
@@ -146,7 +160,10 @@
                                 android:text="@string/add_challenge_default_num_title"
                                 android:textColor="@color/gray_600"
                                 android:textSize="13sp"
-                                android:fontFamily="@font/pretendard_regular"/>
+                                android:fontFamily="@font/pretendard_regular"
+                                android:includeFontPadding="false"
+                                android:lineSpacingExtra="4dp"
+                                android:letterSpacing="-0.01"/>
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -154,7 +171,10 @@
                                 android:text="@string/add_challenge_max_num_title"
                                 android:textColor="@color/gray_400"
                                 android:textSize="13sp"
-                                android:fontFamily="@font/pretendard_regular"/>
+                                android:fontFamily="@font/pretendard_regular"
+                                android:includeFontPadding="false"
+                                android:lineSpacingExtra="4dp"
+                                android:letterSpacing="-0.01"/>
                         </LinearLayout>
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -165,47 +185,26 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="4dp"
+                    android:paddingHorizontal="4dp"
                     android:text="@string/add_challenge_deadline"
                     android:textColor="@color/gray_600"
                     android:textSize="12sp"
-                    android:fontFamily="@font/pretendard_semi_bold"/>
+                    android:fontFamily="@font/pretendard_semi_bold"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="4dp"
+                    android:letterSpacing="-0.01"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layoutDirection="rtl">
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:minWidth="85dp"
-                        android:minHeight="59dp"
-                        android:layout_marginStart="20dp"
-                        app:cardCornerRadius="12dp"
-                        app:cardBackgroundColor="@color/main_300"
-                        app:cardElevation="0dp"
-                        app:strokeWidth="0dp">
-
-                        <TextView
-                            android:id="@+id/tv_d_day"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="@string/add_challenge_d_day_today"
-                            android:textSize="18sp"
-                            android:textColor="@color/main_500"
-                            android:fontFamily="@font/pretendard_medium"
-                            android:lines="1"
-                            android:ellipsize="marquee"/>
-                    </com.google.android.material.card.MaterialCardView>
+                    android:orientation="horizontal">
 
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/mcv_deadline"
                         android:layout_width="match_parent"
                         android:layout_height="59dp"
                         android:layout_marginEnd="20dp"
-                        android:layout_marginStart="12dp"
+                        android:layout_marginStart="20dp"
                         app:rippleColor="@android:color/transparent"
                         app:cardCornerRadius="12dp"
                         app:cardBackgroundColor="@color/gray_200"
@@ -227,9 +226,12 @@
                                 android:lines="1"
                                 android:textColor="@color/black"
                                 android:textSize="16sp"
+                                android:includeFontPadding="false"
+                                android:lineSpacingExtra="5dp"
+                                android:letterSpacing="-0.01"
                                 app:layout_constrainedWidth="true"
                                 app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toEndOf="@id/iv_calendar"
+                                app:layout_constraintEnd_toStartOf="@id/iv_calendar"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -242,7 +244,7 @@
                                 android:padding="12dp"
                                 android:src="@drawable/n_ic_calendar"
                                 app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </com.google.android.material.card.MaterialCardView>
@@ -254,10 +256,14 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="4dp"
+                    android:paddingHorizontal="4dp"
                     android:text="@string/add_challenge_content"
                     android:textColor="@color/gray_600"
                     android:textSize="12sp"
-                    android:fontFamily="@font/pretendard_semi_bold"/>
+                    android:fontFamily="@font/pretendard_semi_bold"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="4dp"
+                    android:letterSpacing="-0.01"/>
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/mcv_body"
@@ -296,7 +302,10 @@
                             android:maxLength="100"
                             android:scrollbars="vertical"
                             android:overScrollMode="always"
-                            android:scrollbarStyle="insideInset"/>
+                            android:scrollbarStyle="insideInset"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="5dp"
+                            android:letterSpacing="-0.01"/>
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -315,7 +324,10 @@
                                 android:text="@string/add_challenge_default_num_body"
                                 android:textColor="@color/gray_600"
                                 android:textSize="13sp"
-                                android:fontFamily="@font/pretendard_regular"/>
+                                android:fontFamily="@font/pretendard_regular"
+                                android:includeFontPadding="false"
+                                android:lineSpacingExtra="4dp"
+                                android:letterSpacing="-0.01"/>
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -323,7 +335,10 @@
                                 android:text="@string/add_challenge_max_num_body"
                                 android:textColor="@color/gray_400"
                                 android:textSize="13sp"
-                                android:fontFamily="@font/pretendard_regular"/>
+                                android:fontFamily="@font/pretendard_regular"
+                                android:includeFontPadding="false"
+                                android:lineSpacingExtra="4dp"
+                                android:letterSpacing="-0.01"/>
                         </LinearLayout>
                     </FrameLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -353,9 +368,12 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/challenge_detail_completed"
-                android:textColor="@color/gray_500"
+                android:textColor="@color/white"
                 android:textSize="18sp"
-                android:fontFamily="@font/pretendard_medium"/>
+                android:fontFamily="@font/pretendard_medium"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="5dp"
+                android:letterSpacing="-0.01"/>
         </com.google.android.material.card.MaterialCardView>
 
         <DatePicker

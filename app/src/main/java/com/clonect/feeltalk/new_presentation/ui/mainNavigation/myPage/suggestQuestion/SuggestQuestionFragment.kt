@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.inquire
+package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.suggestQuestion
 
 import android.app.Dialog
 import android.content.Context
@@ -23,7 +23,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
-import com.clonect.feeltalk.databinding.FragmentInquireBinding
+import com.clonect.feeltalk.databinding.FragmentSuggestQuestionBinding
 import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
@@ -36,13 +36,13 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 /**
- * Created by doding2 on 2023/09/24.
+ * Created by doding2 on 2023/09/26.
  */
 @AndroidEntryPoint
-class InquireFragment : Fragment() {
+class SuggestQuestionFragment : Fragment() {
 
-    private lateinit var binding: FragmentInquireBinding
-    private val viewModel: InquireViewModel by viewModels()
+    private lateinit var binding: FragmentSuggestQuestionBinding
+    private val viewModel: SuggestQuestionViewModel by viewModels()
     private lateinit var onBackCallback: OnBackPressedCallback
     private lateinit var loadingDialog: Dialog
 
@@ -50,7 +50,7 @@ class InquireFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentInquireBinding.inflate(inflater, container, false)
+        binding = FragmentSuggestQuestionBinding.inflate(inflater, container, false)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
         }

@@ -34,6 +34,9 @@
             android:textSize="18sp"
             android:fontFamily="@font/pretendard_medium"
             android:layout_gravity="center"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="5dp"
+            android:letterSpacing="-0.01"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -72,7 +75,10 @@
                     android:text="@string/delete_account_detail_title"
                     android:textColor="@color/black"
                     android:textSize="14sp"
-                    android:fontFamily="@font/pretendard_regular"/>
+                    android:fontFamily="@font/pretendard_regular"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="4dp"
+                    android:letterSpacing="-0.01"/>
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -114,7 +120,10 @@
                         android:text="@string/delete_account_detail_reason_item_1"
                         android:textSize="16sp"
                         android:textColor="@color/black"
-                        android:fontFamily="@font/pretendard_regular" />
+                        android:fontFamily="@font/pretendard_regular"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="5dp"
+                        android:letterSpacing="-0.01" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -150,7 +159,10 @@
                         android:text="@string/delete_account_detail_reason_item_2"
                         android:textSize="16sp"
                         android:textColor="@color/black"
-                        android:fontFamily="@font/pretendard_regular" />
+                        android:fontFamily="@font/pretendard_regular"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="5dp"
+                        android:letterSpacing="-0.01" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -186,7 +198,10 @@
                         android:text="@string/delete_account_detail_reason_item_3"
                         android:textSize="16sp"
                         android:textColor="@color/black"
-                        android:fontFamily="@font/pretendard_regular" />
+                        android:fontFamily="@font/pretendard_regular"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="5dp"
+                        android:letterSpacing="-0.01" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -227,7 +242,10 @@
                             android:text="@string/delete_account_detail_reason_item_4"
                             android:textSize="16sp"
                             android:textColor="@color/black"
-                            android:fontFamily="@font/pretendard_regular" />
+                            android:fontFamily="@font/pretendard_regular"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="5dp"
+                            android:letterSpacing="-0.01" />
                     </LinearLayout>
 
 
@@ -270,7 +288,10 @@
                                 android:maxLength="50"
                                 android:scrollbars="vertical"
                                 android:nestedScrollingEnabled="true"
-                                android:imeOptions="actionNext"/>
+                                android:imeOptions="actionNext"
+                                android:includeFontPadding="false"
+                                android:lineSpacingExtra="5dp"
+                                android:letterSpacing="-0.01"/>
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -289,7 +310,10 @@
                                     android:text="@string/delete_account_detail_etc_reason_default_num"
                                     android:textColor="@color/gray_600"
                                     android:textSize="13sp"
-                                    android:fontFamily="@font/pretendard_regular"/>
+                                    android:fontFamily="@font/pretendard_regular"
+                                    android:includeFontPadding="false"
+                                    android:lineSpacingExtra="4dp"
+                                    android:letterSpacing="-0.01"/>
 
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -297,7 +321,10 @@
                                     android:text="@string/delete_account_detail_etc_reason_max_num"
                                     android:textColor="@color/gray_400"
                                     android:textSize="13sp"
-                                    android:fontFamily="@font/pretendard_regular"/>
+                                    android:fontFamily="@font/pretendard_regular"
+                                    android:includeFontPadding="false"
+                                    android:lineSpacingExtra="4dp"
+                                    android:letterSpacing="-0.01"/>
                             </LinearLayout>
                         </FrameLayout>
                     </com.google.android.material.card.MaterialCardView>
@@ -313,7 +340,10 @@
                 android:text="@string/delete_account_detail_delete_reason"
                 android:textSize="14sp"
                 android:textColor="@color/black"
-                android:fontFamily="@font/pretendard_regular" />
+                android:fontFamily="@font/pretendard_regular"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="4dp"
+                android:letterSpacing="-0.01" />
 
 
             <com.google.android.material.card.MaterialCardView
@@ -354,7 +384,10 @@
                         android:maxLength="100"
                         android:scrollbars="vertical"
                         android:nestedScrollingEnabled="true"
-                        android:imeOptions="actionDone"/>
+                        android:imeOptions="actionDone"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="5dp"
+                        android:letterSpacing="-0.01"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -373,7 +406,10 @@
                             android:text="@string/delete_account_detail_delete_reason_default_num"
                             android:textColor="@color/gray_600"
                             android:textSize="13sp"
-                            android:fontFamily="@font/pretendard_regular"/>
+                            android:fontFamily="@font/pretendard_regular"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="4dp"
+                            android:letterSpacing="-0.01"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -381,7 +417,10 @@
                             android:text="@string/delete_account_detail_delete_reason_max_num"
                             android:textColor="@color/gray_400"
                             android:textSize="13sp"
-                            android:fontFamily="@font/pretendard_regular"/>
+                            android:fontFamily="@font/pretendard_regular"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="4dp"
+                            android:letterSpacing="-0.01"/>
                     </LinearLayout>
                 </FrameLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -426,7 +465,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -449,7 +488,10 @@
                 android:text="@string/delete_account_detail_last_warning"
                 android:textColor="@color/gray_500"
                 android:textSize="14sp"
-                android:fontFamily="@font/pretendard_regular"/>
+                android:fontFamily="@font/pretendard_regular"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="4dp"
+                android:letterSpacing="-0.01"/>
         </FrameLayout>
 
         <FrameLayout
@@ -480,7 +522,10 @@
                     android:text="@string/delete_account_detail_confirm"
                     android:textColor="@color/white"
                     android:textSize="18sp"
-                    android:fontFamily="@font/pretendard_medium" />
+                    android:fontFamily="@font/pretendard_medium"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="5dp"
+                    android:letterSpacing="-0.01" />
             </com.google.android.material.card.MaterialCardView>
         </FrameLayout>
     </LinearLayout>

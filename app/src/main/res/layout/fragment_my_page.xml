@@ -24,7 +24,10 @@
             android:text="@string/my_page_title"
             android:textColor="@color/black"
             android:textSize="18sp"
-            android:fontFamily="@font/pretendard_medium"/>
+            android:fontFamily="@font/pretendard_medium"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="5dp"
+            android:letterSpacing="-0.01"/>
     </LinearLayout>
 
 
@@ -103,7 +106,10 @@
                             android:textSize="20sp"
                             android:fontFamily="@font/pretendard_medium"
                             android:ellipsize="end"
-                            android:lines="1"/>
+                            android:lines="1"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="6dp"
+                            android:letterSpacing="-0.01"/>
 
                         <ImageView
                             android:id="@+id/iv_sns_type"
@@ -233,7 +239,10 @@
                             android:text="@string/my_page_setting"
                             android:textColor="@color/black"
                             android:textSize="16sp"
-                            android:fontFamily="@font/pretendard_regular"/>
+                            android:fontFamily="@font/pretendard_regular"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="5dp"
+                            android:letterSpacing="-0.01"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -260,7 +269,10 @@
                             android:text="@string/my_page_inquire"
                             android:textColor="@color/black"
                             android:textSize="16sp"
-                            android:fontFamily="@font/pretendard_regular"/>
+                            android:fontFamily="@font/pretendard_regular"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="5dp"
+                            android:letterSpacing="-0.01"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -287,7 +299,10 @@
                             android:text="@string/my_page_suggest_question"
                             android:textColor="@color/black"
                             android:textSize="16sp"
-                            android:fontFamily="@font/pretendard_regular"/>
+                            android:fontFamily="@font/pretendard_regular"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="5dp"
+                            android:letterSpacing="-0.01"/>
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

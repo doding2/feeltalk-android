@@ -31,6 +31,9 @@
             android:textSize="18sp"
             android:fontFamily="@font/pretendard_medium"
             android:layout_gravity="center"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="5dp"
+            android:letterSpacing="-0.01"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -57,7 +60,10 @@
             android:text="@string/setting_lock_setting"
             android:textSize="16sp"
             android:textColor="@color/black"
-            android:fontFamily="@font/pretendard_regular"/>
+            android:fontFamily="@font/pretendard_regular"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="5dp"
+            android:letterSpacing="-0.01"/>
 
         <View
             android:layout_width="0dp"
@@ -71,7 +77,10 @@
             android:text="@string/setting_lock_off"
             android:textSize="16sp"
             android:textColor="@color/gray_500"
-            android:fontFamily="@font/pretendard_regular"/>
+            android:fontFamily="@font/pretendard_regular"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="5dp"
+            android:letterSpacing="-0.01"/>
 
         <ImageView
             android:layout_width="wrap_content"
@@ -133,7 +142,10 @@
             android:text="@string/setting_account_setting"
             android:textSize="16sp"
             android:textColor="@color/black"
-            android:fontFamily="@font/pretendard_regular"/>
+            android:fontFamily="@font/pretendard_regular"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="5dp"
+            android:letterSpacing="-0.01"/>
     </LinearLayout>
 
     <LinearLayout
@@ -151,7 +163,10 @@
             android:text="@string/setting_break_up_couple"
             android:textSize="16sp"
             android:textColor="@color/black"
-            android:fontFamily="@font/pretendard_regular"/>
+            android:fontFamily="@font/pretendard_regular"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="5dp"
+            android:letterSpacing="-0.01"/>
     </LinearLayout>
 
     <View
@@ -174,7 +189,10 @@
             android:text="@string/setting_privacy_policy"
             android:textSize="16sp"
             android:textColor="@color/black"
-            android:fontFamily="@font/pretendard_regular"/>
+            android:fontFamily="@font/pretendard_regular"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="5dp"
+            android:letterSpacing="-0.01"/>
     </LinearLayout>
 
     <LinearLayout
@@ -192,7 +210,10 @@
             android:text="@string/setting_service_agreement"
             android:textSize="16sp"
             android:textColor="@color/black"
-            android:fontFamily="@font/pretendard_regular"/>
+            android:fontFamily="@font/pretendard_regular"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="5dp"
+            android:letterSpacing="-0.01"/>
     </LinearLayout>
 
     <LinearLayout
@@ -209,7 +230,10 @@
             android:text="@string/setting_version_info"
             android:textSize="16sp"
             android:textColor="@color/black"
-            android:fontFamily="@font/pretendard_regular"/>
+            android:fontFamily="@font/pretendard_regular"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="5dp"
+            android:letterSpacing="-0.01"/>
 
         <View
             android:layout_width="0dp"
@@ -222,7 +246,10 @@
             android:text="@string/setting_version_info_value_deco"
             android:textSize="16sp"
             android:textColor="@color/gray_500"
-            android:fontFamily="@font/pretendard_regular"/>
+            android:fontFamily="@font/pretendard_regular"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="5dp"
+            android:letterSpacing="-0.01"/>
 
         <TextView
             android:id="@+id/tv_version_info"
@@ -231,7 +258,10 @@
             android:text="@string/setting_version_info_default_value"
             android:textSize="16sp"
             android:textColor="@color/gray_500"
-            android:fontFamily="@font/pretendard_regular"/>
+            android:fontFamily="@font/pretendard_regular"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="5dp"
+            android:letterSpacing="-0.01"/>
     </LinearLayout>
 
     <View
@@ -253,6 +283,9 @@
             android:textSize="14sp"
             android:textColor="@color/gray_500"
             android:fontFamily="@font/pretendard_regular"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="4dp"
+            android:letterSpacing="-0.01"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
