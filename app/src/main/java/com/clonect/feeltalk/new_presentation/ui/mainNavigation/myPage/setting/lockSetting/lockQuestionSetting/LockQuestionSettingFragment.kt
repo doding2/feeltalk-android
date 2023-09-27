@@ -340,7 +340,20 @@ class LockQuestionSettingFragment : Fragment() {
         }
 
         tvInvalidAnswer.setTextColor(Color.WHITE)
-        if (viewModel.containSpecialChar.value) {
+        tvNumTitle.setTextColor(requireContext().getColor(R.color.gray_600))
+        val state = viewModel.invalidAnswerState.value
+        if (state.containSpecialChar) {
+            tvInvalidAnswer.setText(R.string.lock_question_setting_invalid_answer_1)
+
+            tvInvalidAnswer.setTextColor(requireContext().getColor(R.color.system_error))
+            mcvAnswer.setCardBackgroundColor(Color.WHITE)
+            mcvAnswer.strokeWidth = requireContext().dpToPx(1f)
+            mcvAnswer.strokeColor = requireContext().getColor(R.color.system_error)
+        }
+        if (state.isOverMaxLength) {
+            tvNumTitle.setTextColor(requireContext().getColor(R.color.system_error))
+            tvInvalidAnswer.setText(R.string.lock_question_setting_invalid_answer_2)
+
             tvInvalidAnswer.setTextColor(requireContext().getColor(R.color.system_error))
             mcvAnswer.setCardBackgroundColor(Color.WHITE)
             mcvAnswer.strokeWidth = requireContext().dpToPx(1f)
@@ -349,11 +362,14 @@ class LockQuestionSettingFragment : Fragment() {
     }
 
     private fun changeLockAnswerView(lockAnswer: String?) = binding.run {
-        tvNumTitle.text = lockAnswer?.length?.toString() ?: requireContext().getString(R.string.add_challenge_default_num_title)
+        val len = lockAnswer?.length?.coerceAtMost(10)
+        tvNumTitle.text = len?.toString() ?: requireContext().getString(R.string.add_challenge_default_num_title)
     }
 
-    private fun changeContainSpecialCharView(containSpecialChar: Boolean) = binding.run {
+    private fun changeInvalidAnswerView(state: LockQuestionInvalidAnswerState) = binding.run {
         tvInvalidAnswer.setTextColor(Color.WHITE)
+        tvNumTitle.setTextColor(requireContext().getColor(R.color.gray_600))
+
         val focused = viewModel.isLockAnswerFocused.value
         if (focused) {
             mcvAnswer.strokeWidth = requireContext().dpToPx(2f)
@@ -367,7 +383,18 @@ class LockQuestionSettingFragment : Fragment() {
             ivClear.visibility = View.GONE
         }
 
-        if (containSpecialChar) {
+        if (state.containSpecialChar) {
+            tvInvalidAnswer.setText(R.string.lock_question_setting_invalid_answer_1)
+
+            tvInvalidAnswer.setTextColor(requireContext().getColor(R.color.system_error))
+            mcvAnswer.setCardBackgroundColor(Color.WHITE)
+            mcvAnswer.strokeWidth = requireContext().dpToPx(1f)
+            mcvAnswer.strokeColor = requireContext().getColor(R.color.system_error)
+        }
+        if (state.isOverMaxLength) {
+            tvNumTitle.setTextColor(requireContext().getColor(R.color.system_error))
+            tvInvalidAnswer.setText(R.string.lock_question_setting_invalid_answer_2)
+
             tvInvalidAnswer.setTextColor(requireContext().getColor(R.color.system_error))
             mcvAnswer.setCardBackgroundColor(Color.WHITE)
             mcvAnswer.strokeWidth = requireContext().dpToPx(1f)
@@ -406,7 +433,7 @@ class LockQuestionSettingFragment : Fragment() {
             launch { viewModel.isKeyboardUp.collectLatest(::changeViewWhenKeyboardUp) }
             launch { viewModel.lockAnswerDate.collectLatest(::changeLockAnswerDateView) }
             launch { viewModel.isLockAnswerFocused.collectLatest(::changeLockAnswerFocusedView) }
-            launch { viewModel.containSpecialChar.collectLatest(::changeContainSpecialCharView) }
+            launch { viewModel.invalidAnswerState.collectLatest(::changeInvalidAnswerView) }
             launch { viewModel.isAddEnabled.collectLatest(::enableAddButton) }
         }
     }

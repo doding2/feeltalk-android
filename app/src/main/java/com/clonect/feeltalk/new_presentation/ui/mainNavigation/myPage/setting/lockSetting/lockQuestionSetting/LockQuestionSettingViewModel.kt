@@ -36,8 +36,8 @@ class LockQuestionSettingViewModel @Inject constructor(
     private val _isLockAnswerFocused = MutableStateFlow(false)
     val isLockAnswerFocused = _isLockAnswerFocused.asStateFlow()
 
-    private val _containSpecialChar = MutableStateFlow(false)
-    val containSpecialChar = _containSpecialChar.asStateFlow()
+    private val _invalidAnswerState = MutableStateFlow(LockQuestionInvalidAnswerState())
+    val invalidAnswerState = _invalidAnswerState.asStateFlow()
 
     private val _isAddEnabled = MutableStateFlow(false)
     val isAddEnabled = _isAddEnabled.asStateFlow()
@@ -74,11 +74,15 @@ class LockQuestionSettingViewModel @Inject constructor(
         _isLockAnswerFocused.value = focused
     }
 
-    private fun checkContainSpecialChar() {
+    private fun computeInvalidAnswerState() {
         val answer = _lockAnswer.value
         val pattern = Pattern.compile("^[ㄱ-ㅣ가-힣a-zA-Z0-9]*$")
         val isNoSpecialCharacter = pattern.matcher(answer).matches()
-        _containSpecialChar.value = !isNoSpecialCharacter
+        val isOverMaxLength = (answer?.length ?: 0) > 10
+        _invalidAnswerState.value = LockQuestionInvalidAnswerState(
+            isOverMaxLength = isOverMaxLength,
+            containSpecialChar = !isNoSpecialCharacter
+        )
     }
 
 
@@ -93,7 +97,7 @@ class LockQuestionSettingViewModel @Inject constructor(
 
     fun setLockAnswer(answer: String?) {
         _lockAnswer.value = answer
-        checkContainSpecialChar()
+        computeInvalidAnswerState()
         computeAddButtonEnabled()
     }
 
@@ -104,7 +108,11 @@ class LockQuestionSettingViewModel @Inject constructor(
 
     private fun computeAddButtonEnabled() {
         val isAddEnabled = when (_questionType.value) {
-            0, 1, 3, 4 -> lockAnswer.value.isNullOrBlank().not() && !containSpecialChar.value
+            0, 1, 3, 4 -> {
+                lockAnswer.value.isNullOrBlank().not()
+                        && !invalidAnswerState.value.containSpecialChar
+                        && !invalidAnswerState.value.isOverMaxLength
+            }
             2 -> true
             null -> false
             else -> false

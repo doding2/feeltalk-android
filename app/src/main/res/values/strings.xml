@@ -316,7 +316,8 @@
     <string name="lock_question_setting_news_bar_complete">완료</string>
     <string name="lock_question_setting_submit">확인</string>
     <string name="lock_question_setting_max_num_title">/10</string>
-    <string name="lock_question_setting_invalid_answer">특수문자, 공백은 사용할 수 없어요</string>
+    <string name="lock_question_setting_invalid_answer_1">특수문자, 공백은 사용할 수 없어요</string>
+    <string name="lock_question_setting_invalid_answer_2">최대 10글자까지 입력할 수 있어요</string>
 
     <!--  LockQuestionItem  -->
     <string name="lock_question_hint_unselected">질문을 선택해 주세요</string>
