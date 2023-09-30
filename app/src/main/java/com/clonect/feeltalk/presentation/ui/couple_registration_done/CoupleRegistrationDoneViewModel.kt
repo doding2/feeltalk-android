@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
-import com.clonect.feeltalk.domain.usecase.user.GetPartnerInfoUseCase
+import com.clonect.feeltalk.domain.usecase.user.GetPartnerInfo2UseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CoupleRegistrationDoneViewModel @Inject constructor(
-    private val getPartnerInfoUseCase: GetPartnerInfoUseCase
+    private val getPartnerInfo2UseCase: GetPartnerInfo2UseCase
 ): ViewModel() {
 
     private val _partnerInfo = MutableStateFlow(UserInfo())
@@ -26,7 +26,7 @@ class CoupleRegistrationDoneViewModel @Inject constructor(
     }
 
     private fun getPartnerInfo() = viewModelScope.launch(Dispatchers.IO) {
-        val result = getPartnerInfoUseCase()
+        val result = getPartnerInfo2UseCase()
         when (result) {
             is Resource.Success -> _partnerInfo.value = result.data
             is Resource.Error -> infoLog("Fail to get partner info: ${result.throwable.localizedMessage}")

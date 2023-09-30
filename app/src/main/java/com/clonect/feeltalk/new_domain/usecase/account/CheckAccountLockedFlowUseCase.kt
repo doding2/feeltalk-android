@@ -1,0 +1,21 @@
+package com.clonect.feeltalk.new_domain.usecase.account
+
+import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.new_domain.repository.account.AccountRepository
+import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
+
+class CheckAccountLockedFlowUseCase(
+    private val tokenRepository: TokenRepository,
+    private val accountRepository: AccountRepository,
+) {
+    suspend operator fun invoke(): Flow<Resource<Boolean>> {
+        val tokenInfo = tokenRepository.getTokenInfo()
+        if (tokenInfo is Resource.Error) {
+            return flowOf(Resource.Error(tokenInfo.throwable))
+        }
+        val accessToken = (tokenInfo as Resource.Success).data.accessToken
+        return accountRepository.checkAccountLockedFlow(accessToken)
+    }
+}

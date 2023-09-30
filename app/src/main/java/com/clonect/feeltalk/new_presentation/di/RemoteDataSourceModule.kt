@@ -9,14 +9,16 @@ import com.clonect.feeltalk.data.repository.question.datasourceImpl.QuestionRemo
 import com.clonect.feeltalk.data.repository.user.datasource.UserRemoteDataSource
 import com.clonect.feeltalk.data.repository.user.datasourceImpl.UserRemoteDataSourceImpl
 import com.clonect.feeltalk.new_data.api.ClonectService
+import com.clonect.feeltalk.new_data.repository.account.dataSource.AccountRemoteDataSource
+import com.clonect.feeltalk.new_data.repository.account.dataSourceImpl.AccountRemoteDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.challenge.dataSource.ChallengeRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.challenge.dataSourceImpl.ChallengeRemoteDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.chat.dataSourceImpl.ChatRemoteDataSourceImpl
+import com.clonect.feeltalk.new_data.repository.partner.dataSource.PartnerRemoteDataSource
+import com.clonect.feeltalk.new_data.repository.partner.dataSourceImpl.PartnerRemoteDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.question.dataSourceImpl.QuestionRemoteDataSourceImpl
-import com.clonect.feeltalk.new_data.repository.account.dataSource.AccountRemoteDataSource
-import com.clonect.feeltalk.new_data.repository.account.dataSourceImpl.AccountRemoteDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.token.dataSourceImpl.TokenRemoteDataSourceImpl
 import dagger.Module
@@ -63,6 +65,14 @@ class RemoteDataSourceModule {
         clonectService: ClonectService
     ): ChallengeRemoteDataSource {
         return ChallengeRemoteDataSourceImpl(clonectService)
+    }
+
+    @Singleton
+    @Provides
+    fun providesPartnerRemoteDataSource(
+        clonectService: ClonectService
+    ): PartnerRemoteDataSource {
+        return PartnerRemoteDataSourceImpl(clonectService)
     }
 
 

@@ -5,13 +5,16 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
+import com.clonect.feeltalk.new_domain.usecase.account.CheckAccountLockedUseCase
 import com.clonect.feeltalk.new_domain.usecase.account.ReLogInUseCase
+import com.clonect.feeltalk.new_domain.usecase.question.GetTodayQuestionUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.CacheSocialTokenUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.UpdateFcmTokenUseCase
 import com.clonect.feeltalk.new_presentation.service.FirebaseCloudMessagingService
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -25,6 +28,8 @@ class SignUpViewModel @Inject constructor(
     private val reLogInUseCase: ReLogInUseCase,
     private val cacheSocialTokenUseCase: CacheSocialTokenUseCase,
     private val updateFcmTokenUseCase: UpdateFcmTokenUseCase,
+    private val checkAccountLockedUseCase: CheckAccountLockedUseCase,
+    private val getTodayQuestionUseCase: GetTodayQuestionUseCase,
     private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
 ): ViewModel() {
 
@@ -36,6 +41,9 @@ class SignUpViewModel @Inject constructor(
 
     private val _navigateToMain = MutableStateFlow(false)
     val navigateToMain = _navigateToMain.asStateFlow()
+
+    private val _navigateToPassword = MutableStateFlow(false)
+    val navigateToPassword = _navigateToPassword.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
@@ -61,7 +69,12 @@ class SignUpViewModel @Inject constructor(
                     }
                     "couple" -> {
                         updateFcmToken()
-                        _navigateToMain.value = true
+                        val isLocked = preloadCoupleData()
+                        if (isLocked) {
+                            _navigateToPassword.value = true
+                        } else {
+                            _navigateToMain.value = true
+                        }
                     }
                 }
             }
@@ -82,6 +95,33 @@ class SignUpViewModel @Inject constructor(
                 throw result.throwable
             }
         }
+    }
+    private suspend fun preloadCoupleData() = withContext(Dispatchers.IO) {
+        val isAccountLocked = async {
+            when (val result = checkAccountLockedUseCase()) {
+                is Resource.Success -> {
+                    infoLog("isAccountLocked: ${result.data}")
+                    result.data
+                }
+                is Resource.Error -> {
+                    result.throwable.printStackTrace()
+                    infoLog("Fail to check account locked: ${result.throwable}\n${result.throwable.stackTrace.joinToString("\n")}")
+                    false
+                }
+            }
+        }
+
+        val todayQuestion = async {
+            when (val result = getTodayQuestionUseCase()) {
+                is Resource.Success -> { }
+                is Resource.Error -> {
+                    infoLog("Fail to preload today question: ${result.throwable.localizedMessage}\n${result.throwable.stackTrace.joinToString("\n")}")
+                }
+            }
+        }
+
+        todayQuestion.await()
+        isAccountLocked.await()
     }
     
     private suspend fun updateFcmToken() = withContext(Dispatchers.IO) {

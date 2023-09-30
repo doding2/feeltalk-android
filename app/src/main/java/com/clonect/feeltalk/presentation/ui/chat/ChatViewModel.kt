@@ -33,7 +33,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val getQuestionDetailUseCase: GetQuestionDetailUseCase,
-    private val getPartnerInfoUseCase: GetPartnerInfoUseCase,
+    private val getPartnerInfo2UseCase: GetPartnerInfo2UseCase,
     private val getChatListUseCase2: GetChatListUseCase2,
     private val sendChatUseCase: SendChatUseCase,
     private val reloadChatListUseCase: ReloadChatListUseCase,
@@ -167,7 +167,7 @@ class ChatViewModel @Inject constructor(
     }
 
     private fun getPartnerInfo() = viewModelScope.launch(Dispatchers.IO) {
-        val result = getPartnerInfoUseCase()
+        val result = getPartnerInfo2UseCase()
         when (result) {
             is Resource.Success -> _partnerInfo.value = result.data
             is Resource.Error -> infoLog("Fail to get partner info: ${result.throwable.localizedMessage}")

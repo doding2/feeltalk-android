@@ -2,6 +2,9 @@ package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.suggestQu
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.new_domain.usecase.account.SubmitSuggestionUseCase
+import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +18,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class SuggestQuestionViewModel @Inject constructor(
-
+    private val submitSuggestionUseCase: SubmitSuggestionUseCase,
 ) : ViewModel() {
 
     private val _errorMessage = MutableSharedFlow<String>()
@@ -82,9 +85,19 @@ class SuggestQuestionViewModel @Inject constructor(
     }
 
 
-    fun submitSuggestion(onComplete: () -> Unit) {
+    fun submitSuggestion(onComplete: () -> Unit) = viewModelScope.launch {
+        val idea = idea.value ?: return@launch
+        val email = email.value ?: return@launch
         setLoading(true)
+        when (val result = submitSuggestionUseCase(null, idea, email)) {
+            is Resource.Success -> {
+                onComplete()
+            }
+            is Resource.Error -> {
+                infoLog("Fail to submit suggestion: ${result.throwable.localizedMessage}")
+                result.throwable.localizedMessage?.let { sendErrorMessage(it) }
+            }
+        }
         setLoading(false)
-        onComplete()
     }
 }

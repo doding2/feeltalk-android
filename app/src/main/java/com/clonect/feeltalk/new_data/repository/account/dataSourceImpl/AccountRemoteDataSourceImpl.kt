@@ -5,12 +5,19 @@ import com.clonect.feeltalk.common.FeelTalkException.ServerIsDownException
 import com.clonect.feeltalk.new_data.api.ClonectService
 import com.clonect.feeltalk.new_data.repository.account.dataSource.AccountRemoteDataSource
 import com.clonect.feeltalk.new_domain.model.account.AutoLogInDto
+import com.clonect.feeltalk.new_domain.model.account.ConfigurationInfoDto
 import com.clonect.feeltalk.new_domain.model.account.CoupleCodeDto
+import com.clonect.feeltalk.new_domain.model.account.GetPasswordDto
 import com.clonect.feeltalk.new_domain.model.account.LockQA
+import com.clonect.feeltalk.new_domain.model.account.LockResetQuestionDto
+import com.clonect.feeltalk.new_domain.model.account.MyInfoDto
 import com.clonect.feeltalk.new_domain.model.account.ReLogInDto
+import com.clonect.feeltalk.new_domain.model.account.ServiceDataCountDto
 import com.clonect.feeltalk.new_domain.model.account.SignUpDto
+import com.clonect.feeltalk.new_domain.model.account.SocialType
+import com.clonect.feeltalk.new_domain.model.account.ValidateLockAnswerDto
+import com.clonect.feeltalk.new_domain.model.account.ValidatePasswordDto
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
-import com.clonect.feeltalk.new_domain.model.user.SocialType
 import com.google.gson.JsonObject
 
 class AccountRemoteDataSourceImpl(
@@ -38,7 +45,7 @@ class AccountRemoteDataSourceImpl(
                     addProperty("idToken", socialToken.idToken)
                     addProperty("authCode", socialToken.serverAuthCode)
                 }
-                SocialType.Apple -> {
+                SocialType.AppleAndroid, SocialType.AppleIOS -> {
                     addProperty("state", socialToken.state)
                 }
             }
@@ -71,7 +78,7 @@ class AccountRemoteDataSourceImpl(
                     addProperty("idToken", socialToken.idToken)
                     addProperty("authCode", socialToken.serverAuthCode)
                 }
-                SocialType.Apple -> {
+                SocialType.AppleAndroid, SocialType.AppleIOS -> {
                     addProperty("state", socialToken.state)
                 }
             }
@@ -81,6 +88,30 @@ class AccountRemoteDataSourceImpl(
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
         return response.body()!!.data!!
+    }
+
+    override suspend fun logOut(accessToken: String) {
+        val response = clonectService.logOut("Bearer $accessToken")
+        if (!response.isSuccessful) throw ServerIsDownException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
+    }
+
+    override suspend fun deleteMyAccount(
+        accessToken: String,
+        category: String,
+        etcReason: String?,
+        deleteReason: String,
+    ) {
+        val body = JsonObject().apply {
+            addProperty("category", category)
+            addProperty("etcReason", etcReason)
+            addProperty("deleteReason", deleteReason)
+        }
+        val response = clonectService.deleteMyAccount("Bearer $accessToken", body)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
     }
 
     override suspend fun getCoupleCode(accessToken: String): CoupleCodeDto {
@@ -101,33 +132,133 @@ class AccountRemoteDataSourceImpl(
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
     }
 
+    override suspend fun breakUpCouple(accessToken: String) {
+        val response = clonectService.breakUpCouple("Bearer $accessToken")
+        if (!response.isSuccessful) throw ServerIsDownException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
+    }
+
+    override suspend fun getMyInfo(accessToken: String): MyInfoDto {
+        val response = clonectService.getMyInfo("Bearer $accessToken")
+        if (!response.isSuccessful) throw ServerIsDownException(response)
+        if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
+        return response.body()!!.data!!
+    }
+
+    override suspend fun getConfigurationInfo(accessToken: String): ConfigurationInfoDto {
+        val response = clonectService.getConfigurationInfo("Bearer $accessToken")
+        if (!response.isSuccessful) throw ServerIsDownException(response)
+        if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
+        return response.body()!!.data!!
+    }
+
+    override suspend fun submitSuggestion(
+        accessToken: String,
+        title: String?,
+        body: String,
+        email: String,
+    ) {
+        val body = JsonObject().apply {
+            addProperty("title", title)
+            addProperty("body", body)
+            addProperty("email", email)
+        }
+        val response = clonectService.submitSuggestion("Bearer $accessToken", body)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
+    }
+
+    override suspend fun getServiceDataCount(accessToken: String): ServiceDataCountDto {
+        val response = clonectService.getServiceDataCount("Bearer $accessToken")
+        if (!response.isSuccessful) throw ServerIsDownException(response)
+        if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
+        return response.body()!!.data!!
+    }
+
     override suspend fun lockAccount(
         accessToken: String,
         password: String,
         lockQA: LockQA
     ) {
-        TODO("Not yet implemented")
+        val body = JsonObject().apply {
+            addProperty("password", password)
+            addProperty("answer", lockQA.answer)
+            addProperty("questionType", when (lockQA.questionType) {
+                0 -> "treasure"
+                1 -> "celebrity"
+                2 -> "date"
+                3 -> "travel"
+                4 -> "bucketList"
+                else -> throw IllegalArgumentException("Lock question type is invalid")
+            })
+        }
+        val response = clonectService.setupPassword("Bearer $accessToken", body)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
     }
 
     override suspend fun updateAccountLockPassword(accessToken: String, password: String) {
-        TODO("Not yet implemented")
+        val body = JsonObject().apply {
+            addProperty("password", password)
+        }
+        val response = clonectService.updatePassword("Bearer $accessToken", body)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
     }
 
-    override suspend fun getLockQA(accessToken: String): LockQA {
-        TODO("Not yet implemented")
+    override suspend fun validateLockPassword(
+        accessToken: String,
+        password: String,
+    ): ValidatePasswordDto {
+        val body = JsonObject().apply {
+            addProperty("password", password)
+        }
+        val response = clonectService.validatePassword("Bearer $accessToken", body)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
+        if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
+        return response.body()!!.data!!
     }
 
-    override suspend fun checkAccountLock(accessToken: String): Boolean {
-        TODO("Not yet implemented")
+    override suspend fun getLockPassword(accessToken: String): GetPasswordDto {
+        val response = clonectService.getPassword("Bearer $accessToken")
+        if (!response.isSuccessful) throw ServerIsDownException(response)
+        if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
+        return response.body()!!.data!!
     }
 
     override suspend fun unlockAccount(accessToken: String) {
-        TODO("Not yet implemented")
+        val response = clonectService.unlockPassword("Bearer $accessToken")
+        if (!response.isSuccessful) throw ServerIsDownException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
     }
 
-    override suspend fun getLockPassword(accessToken: String): String {
-        TODO("Not yet implemented")
+    override suspend fun getLockQuestion(accessToken: String): LockResetQuestionDto {
+        val response = clonectService.getLockResetQuestion("Bearer $accessToken")
+        if (!response.isSuccessful) throw ServerIsDownException(response)
+        if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
+        return response.body()!!.data!!
     }
 
+    override suspend fun validateLockAnswer(accessToken: String, answer: String): ValidateLockAnswerDto {
+        val body = JsonObject().apply {
+            addProperty("answer", answer)
+        }
+        val response = clonectService.validateLockResetAnswer("Bearer $accessToken", body)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
+        if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
+        return response.body()!!.data!!
+    }
 
 }

@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_domain.model.page
+package com.clonect.feeltalk.common
 
 sealed class  PageEvents<T>(open val item: T) {
     data class Edit<T>(override val item: T): PageEvents<T>(item)

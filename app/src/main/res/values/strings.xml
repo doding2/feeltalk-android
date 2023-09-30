@@ -276,6 +276,12 @@
     <string name="setting_version_info_default_value">1.0.0</string>
     <string name="setting_log_out">로그아웃</string>
 
+    <!--  LogOutDialog  -->
+    <string name="log_out_dialog_title">로그아웃 확인</string>
+    <string name="log_out_dialog_body">정말 로그아웃 하시겠어요?</string>
+    <string name="log_out_dialog_cancel">돌아가기</string>
+    <string name="log_out_dialog_confirm">로그아웃</string>
+
 
     <!--  LockSetting  -->
     <string name="lock_setting_title">화면잠금</string>

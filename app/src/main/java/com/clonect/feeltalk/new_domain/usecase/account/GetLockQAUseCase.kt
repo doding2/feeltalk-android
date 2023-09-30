@@ -1,7 +1,6 @@
 package com.clonect.feeltalk.new_domain.usecase.account
 
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.new_domain.model.account.LockQA
 import com.clonect.feeltalk.new_domain.repository.account.AccountRepository
 import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 
@@ -9,12 +8,12 @@ class GetLockQAUseCase(
     private val tokenRepository: TokenRepository,
     private val accountRepository: AccountRepository,
 ) {
-    suspend operator fun invoke(): Resource<LockQA> {
+    suspend operator fun invoke(): Resource<Int> {
         val tokenInfo = tokenRepository.getTokenInfo()
         if (tokenInfo is Resource.Error) {
             return Resource.Error(tokenInfo.throwable)
         }
         val accessToken = (tokenInfo as Resource.Success).data.accessToken
-        return accountRepository.getLockQA(accessToken)
+        return accountRepository.getLockResetQuestion(accessToken)
     }
 }

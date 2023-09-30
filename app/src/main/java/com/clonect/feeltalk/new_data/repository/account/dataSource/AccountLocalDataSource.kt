@@ -1,8 +1,16 @@
 package com.clonect.feeltalk.new_data.repository.account.dataSource
 
+import com.clonect.feeltalk.new_domain.model.account.ConfigurationInfo
 import com.clonect.feeltalk.new_domain.model.account.LockQA
+import com.clonect.feeltalk.new_domain.model.account.MyInfo
 
 interface AccountLocalDataSource {
+
+    suspend fun saveMyInfo(myInfo: MyInfo)
+    suspend fun getMyInfo(): MyInfo?
+
+    suspend fun saveConfigurationInfo(configurationInfo: ConfigurationInfo)
+    suspend fun getConfigurationInfo(): ConfigurationInfo?
 
     suspend fun saveLockPassword(password: String)
     suspend fun saveLockQA(lockQA: LockQA)
@@ -11,4 +19,5 @@ interface AccountLocalDataSource {
     suspend fun checkLockPassword(): Boolean
     suspend fun deleteLockInfo(): Boolean
 
+    suspend fun clearInternalStorage()
 }

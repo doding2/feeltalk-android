@@ -3,8 +3,8 @@ package com.clonect.feeltalk.new_presentation.ui.passwordNavigation.lockReset
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.new_domain.model.account.LockQA
 import com.clonect.feeltalk.new_domain.usecase.account.GetLockQAUseCase
+import com.clonect.feeltalk.new_domain.usecase.account.ValidateLockResetAnswerUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -12,9 +12,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
+import kotlinx.coroutines.withContext
 import java.util.Date
-import java.util.Locale
 import javax.inject.Inject
 
 /**
@@ -23,6 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LockResetViewModel @Inject constructor(
     private val getLockQAUseCase: GetLockQAUseCase,
+    private val validateLockResetAnswerUseCase: ValidateLockResetAnswerUseCase,
 ) : ViewModel() {
 
     private val _errorMessage = MutableSharedFlow<String>()
@@ -45,8 +45,8 @@ class LockResetViewModel @Inject constructor(
     val showInvalidWarning = _showInvalidWarning.asStateFlow()
 
 
-    private val _lockQA = MutableStateFlow<LockQA?>(null)
-    val lockQA = _lockQA.asStateFlow()
+    private val _lockQuestionType = MutableStateFlow<Int?>(null)
+    val lockQuestionType = _lockQuestionType.asStateFlow()
 
     private val _lockAnswer = MutableStateFlow<String?>(null)
     val lockAnswer = _lockAnswer.asStateFlow()
@@ -65,7 +65,7 @@ class LockResetViewModel @Inject constructor(
         setLoading(true)
         when (val result = getLockQAUseCase()) {
             is Resource.Success -> {
-                _lockQA.value = result.data
+                _lockQuestionType.value = result.data
             }
             is Resource.Error -> {
                 infoLog("Fail to get lock QA: ${result.throwable.localizedMessage}")
@@ -114,7 +114,7 @@ class LockResetViewModel @Inject constructor(
     }
 
     private fun computeConfirmButtonEnabled() {
-        val isAddEnabled = when (lockQA.value?.questionType) {
+        val isAddEnabled = when (lockQuestionType.value) {
             0, 1, 3, 4 -> _lockAnswer.value.isNullOrBlank().not()
             2 -> true
             null -> false
@@ -124,23 +124,21 @@ class LockResetViewModel @Inject constructor(
     }
 
 
-    fun matchQuestionAnswer(): Boolean {
-        val qa = lockQA.value ?: return false
-        val isValid = when (qa.questionType) {
-            0, 1, 3, 4 -> {
-                val isValid = qa.answer == _lockAnswer.value
-                isValid
+    suspend fun matchQuestionAnswer(): Boolean = withContext(viewModelScope.coroutineContext) {
+        setLoading(true)
+        val answer = lockAnswer.value ?: ""
+        val isValid = when (val result = validateLockResetAnswerUseCase(answer)) {
+            is Resource.Success -> {
+                result.data.isValid
             }
-            2 -> {
-                val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                val date = _lockAnswerDate.value
-                val isValid = qa.answer == format.format(date)
-                isValid
+            is Resource.Error -> {
+                infoLog("Fail to match question answer: ${result.throwable.localizedMessage}")
+                false
             }
-            else -> false
         }
+        setLoading(false)
         setShowInvalidAnswer(!isValid)
-        return isValid
+        return@withContext isValid
     }
 
 }

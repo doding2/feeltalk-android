@@ -1,6 +1,9 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting
 
+import android.app.Dialog
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -21,10 +24,14 @@ import com.clonect.feeltalk.new_domain.model.appSettings.Language
 import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
+import com.clonect.feeltalk.new_presentation.ui.util.makeLoadingDialog
+import com.clonect.feeltalk.new_presentation.ui.util.showConfirmDialog
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.system.exitProcess
+
 
 @AndroidEntryPoint
 class SettingFragment : Fragment() {
@@ -32,6 +39,7 @@ class SettingFragment : Fragment() {
     private lateinit var binding: FragmentSettingBinding
     private val viewModel: SettingViewModel by viewModels()
     private lateinit var onBackCallback: OnBackPressedCallback
+    private lateinit var loadingDialog: Dialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,6 +63,7 @@ class SettingFragment : Fragment() {
                 viewModel.setLanguage(it)
             }
         }
+        loadingDialog = makeLoadingDialog()
         return binding.root
     }
 
@@ -73,6 +82,8 @@ class SettingFragment : Fragment() {
             llLanguageSetting.setOnClickListener { navigateToLanguageSetting() }
             llPrivacyPolicy.setOnClickListener { navigateToPrivacyPolicyDetail() }
             llServiceAgreement.setOnClickListener { navigateToServiceAgreementDetail() }
+
+            tvLogOut.setOnClickListener { showLogOutDialog() }
         }
     }
 
@@ -113,7 +124,28 @@ class SettingFragment : Fragment() {
     }
 
 
+    private fun showLogOutDialog() {
+        showConfirmDialog(
+            title = requireContext().getString(R.string.log_out_dialog_title),
+            body = requireContext().getString(R.string.log_out_dialog_body),
+            cancelButton = requireContext().getString(R.string.log_out_dialog_cancel),
+            confirmButton = requireContext().getString(R.string.log_out_dialog_confirm),
+            onConfirm = {
+                viewModel.logOut {
+                    restartApplication()
+                }
+            }
+        )
+    }
 
+    private fun restartApplication() {
+        val packageManager: PackageManager = requireContext().packageManager
+        val intent = packageManager.getLaunchIntentForPackage(requireContext().packageName)
+        val componentName = intent!!.component
+        val mainIntent = Intent.makeRestartActivityTask(componentName)
+        startActivity(mainIntent)
+        exitProcess(0)
+    }
 
 
     private fun changeLockSettingView(lockEnabled: Boolean?) = binding.run {
@@ -128,6 +160,14 @@ class SettingFragment : Fragment() {
 
     private fun changeLanguageSettingView(language: Language) = binding.run {
         tvLanguage.text = language.nativeName
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            loadingDialog.show()
+        } else {
+            loadingDialog.dismiss()
+        }
     }
 
     private fun showSnackBar(message: String) {
@@ -145,6 +185,7 @@ class SettingFragment : Fragment() {
 
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch { viewModel.isLoading.collectLatest(::showLoading) }
             launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
             launch { viewModel.lockEnabled.collectLatest(::changeLockSettingView) }
             launch { viewModel.language.collectLatest(::changeLanguageSettingView) }

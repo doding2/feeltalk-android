@@ -17,6 +17,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentBreakUpCoupleBinding
+import com.clonect.feeltalk.new_domain.model.account.ServiceDataCountDto
 import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
@@ -103,6 +104,16 @@ class BreakUpCoupleFragment : Fragment() {
         }
     }
 
+    private fun changeServiceDataCount(dataCount: ServiceDataCountDto?) = binding.run {
+        if (dataCount == null) {
+            tvQuestionRecord.text = "0"
+            tvChallengeRecord.text = "0"
+            return@run
+        }
+        tvQuestionRecord.text = dataCount.questionTotalCount.toString()
+        tvChallengeRecord.text = dataCount.challengeTotalCount.toString()
+    }
+
     private fun showLoading(isLoading: Boolean) {
         if (isLoading) {
             loadingDialog.show()
@@ -128,6 +139,7 @@ class BreakUpCoupleFragment : Fragment() {
             launch { viewModel.isLoading.collectLatest(::showLoading) }
             launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
             launch { viewModel.isAllAgreed.collectLatest(::changeAgreeAllView) }
+            launch { viewModel.serviceDataCount.collectLatest(::changeServiceDataCount) }
         }
     }
 

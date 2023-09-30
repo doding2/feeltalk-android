@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
-import com.clonect.feeltalk.new_domain.model.page.PageEvents
+import com.clonect.feeltalk.common.PageEvents
 import com.clonect.feeltalk.new_domain.usecase.challenge.GetPagingOngoingChallengeUseCase
 import com.clonect.feeltalk.new_presentation.notification.observer.AddOngoingChallengeObserver
 import com.clonect.feeltalk.new_presentation.notification.observer.DeleteOngoingChallengeObserver
@@ -13,7 +13,6 @@ import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject

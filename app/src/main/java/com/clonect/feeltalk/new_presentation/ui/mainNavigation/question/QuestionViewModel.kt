@@ -3,7 +3,7 @@ package com.clonect.feeltalk.new_presentation.ui.mainNavigation.question
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
-import com.clonect.feeltalk.new_domain.model.page.PageEvents
+import com.clonect.feeltalk.common.PageEvents
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.usecase.question.GetPagingQuestionUseCase
 import com.clonect.feeltalk.new_presentation.notification.observer.QuestionAnswerObserver

@@ -1,0 +1,43 @@
+package com.clonect.feeltalk.new_data.repository.partner
+
+import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.new_data.mapper.toPartnerInfo
+import com.clonect.feeltalk.new_data.repository.partner.dataSource.PartnerCacheDataSource
+import com.clonect.feeltalk.new_data.repository.partner.dataSource.PartnerLocalDataSource
+import com.clonect.feeltalk.new_data.repository.partner.dataSource.PartnerRemoteDataSource
+import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
+import com.clonect.feeltalk.new_domain.repository.partner.PartnerRepository
+import kotlinx.coroutines.CancellationException
+
+/**
+ * Created by doding2 on 2023/09/27.
+ */
+class PartnerRepositoryImpl(
+    private val cacheDataSource: PartnerCacheDataSource,
+    private val localDataSource: PartnerLocalDataSource,
+    private val remoteDataSource: PartnerRemoteDataSource
+ ): PartnerRepository {
+
+    override suspend fun getPartnerInfo(accessToken: String): Resource<PartnerInfo> {
+        try {
+            val cache = cacheDataSource.getPartnerInfo()
+            if (cache != null) return Resource.Success(cache)
+
+            val local = localDataSource.getPartnerInfo()
+            if (local != null) {
+                cacheDataSource.savePartnerInfo(local)
+                return Resource.Success(local)
+            }
+
+            val remote = remoteDataSource.getPartnerInfo(accessToken).toPartnerInfo()
+            cacheDataSource.savePartnerInfo(remote)
+            localDataSource.savePartnerInfo(remote)
+            return Resource.Success(remote)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            return Resource.Error(e)
+        }
+    }
+
+}

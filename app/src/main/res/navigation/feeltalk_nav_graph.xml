@@ -18,6 +18,11 @@
             app:destination="@id/mainNavigationFragment"
             app:popUpTo="@id/signUpFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_signUpFragment_to_passwordFragment"
+            app:destination="@id/passwordFragment"
+            app:popUpTo="@id/signUpFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/signUpNavigationFragment"

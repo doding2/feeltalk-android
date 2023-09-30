@@ -23,6 +23,7 @@ import com.clonect.feeltalk.new_domain.model.chat.PartnerLastChatDto
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.showConfirmDialog
+import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -40,6 +41,11 @@ class MainNavigationFragment : Fragment() {
     ): View {
         binding = FragmentMainNavigationBinding.inflate(inflater, container, false)
 
+        setUpBottomNavigation()
+        setUpAnswerSheet()
+        setUpInquirySucceedSheet()
+        setUpSuggestionSucceedSheet()
+
         // set fullscreen
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             binding.clFloatingChatContainer.setPadding(0, getStatusBarHeight(), 0, 0)
@@ -47,6 +53,16 @@ class MainNavigationFragment : Fragment() {
             binding.flSuggestionSucceedSheet.setPadding(0, 0, 0, getNavigationBarHeight())
         } else {
             activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        }
+
+
+        setFragmentResultListener("inquireFragment") { requestKey, bundle ->
+            val inquirySucceed = bundle.getBoolean("inquirySucceed", false)
+            viewModel.setShowInquirySucceedSheet(inquirySucceed)
+        }
+        setFragmentResultListener("suggestQuestionFragment") { requestKey, bundle ->
+            val suggestionSucceed = bundle.getBoolean("suggestionSucceed", false)
+            viewModel.setShowSuggestionSucceedSheet(suggestionSucceed)
         }
 
         val showChat = arguments?.getBoolean("showChat", false) ?: false
@@ -72,17 +88,6 @@ class MainNavigationFragment : Fragment() {
             navigateFragment("mypage")
         }
 
-        setFragmentResultListener("inquireFragment") { requestKey, bundle ->
-            val inquirySucceed = bundle.getBoolean("inquirySucceed", false)
-            viewModel.setShowInquirySucceedSheet(inquirySucceed)
-        }
-        setFragmentResultListener("suggestQuestionFragment") { requestKey, bundle ->
-            val suggestionSucceed = bundle.getBoolean("suggestionSucceed", false)
-            viewModel.setShowSuggestionSucceedSheet(suggestionSucceed)
-        }
-
-        arguments?.clear()
-
         viewModel.setShortcut(requireContext())
 
         return binding.root
@@ -91,10 +96,6 @@ class MainNavigationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setUpBottomNavigation()
-        setUpAnswerSheet()
-        setUpInquirySucceedSheet()
-        setUpSuggestionSucceedSheet()
         collectViewModel()
 
         binding.run {
@@ -259,18 +260,18 @@ class MainNavigationFragment : Fragment() {
         tvLatestChat.text = partnerLastChatDto?.message
     }
 
-    private fun navigateFragment(target: String) {
+    private fun navigateFragment(target: String) = binding.mnvBottomNavigation.run {
         if (target == "home") {
-            binding.mnvBottomNavigation.selectedItemId = R.id.navigation_home
+            selectedItemId = R.id.navigation_home
         }
         if (target == "question") {
-            binding.mnvBottomNavigation.selectedItemId = R.id.navigation_question
+            selectedItemId = R.id.navigation_question
         }
         if (target == "challenge") {
-            binding.mnvBottomNavigation.selectedItemId = R.id.navigation_bucket_list
+            selectedItemId = R.id.navigation_bucket_list
         }
         if (target == "mypage") {
-            binding.mnvBottomNavigation.selectedItemId = R.id.navigation_my_page
+            selectedItemId = R.id.navigation_my_page
         }
     }
 

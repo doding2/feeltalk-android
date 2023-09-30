@@ -15,6 +15,7 @@ import com.clonect.feeltalk.domain.model.dto.user.*
 import com.clonect.feeltalk.new_domain.model.account.*
 import com.clonect.feeltalk.new_domain.model.challenge.*
 import com.clonect.feeltalk.new_domain.model.chat.*
+import com.clonect.feeltalk.new_domain.model.partner.PartnerInfoDto
 import com.clonect.feeltalk.new_domain.model.question.LastQuestionPageNoDto
 import com.clonect.feeltalk.new_domain.model.question.QuestionDto
 import com.clonect.feeltalk.new_domain.model.question.QuestionListDto
@@ -53,6 +54,77 @@ interface ClonectService {
         @Header("Authorization") token: String,
         @Body body: JsonObject
     ): Response<ApiResponse<MatchCoupleDto>>
+
+    @GET("/api/v1/member")
+    suspend fun getMyInfo(
+        @Header("Authorization") token: String,
+    ): Response<ApiResponse<MyInfoDto>>
+
+    @GET("/api/v1/logout")
+    suspend fun logOut(
+        @Header("Authorization") token: String,
+    ): Response<ApiResponse<Unit>>
+
+    @GET("")
+    suspend fun deleteMyAccount(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<ApiResponse<Unit>>
+
+    @POST("/api/v1/member/config/password")
+    suspend fun setupPassword(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<ApiResponse<Unit>>
+
+    @PUT("/api/v1/member/config/password")
+    suspend fun updatePassword(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<ApiResponse<Unit>>
+
+    @POST("/api/v1/member/config/check-password")
+    suspend fun validatePassword(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<ApiResponse<ValidatePasswordDto>>
+
+    @GET("/api/v1/member/config/password")
+    suspend fun getPassword(
+        @Header("Authorization") token: String
+    ): Response<ApiResponse<GetPasswordDto>>
+
+    @PUT("/api/v1/member/config/lock")
+    suspend fun unlockPassword(
+        @Header("Authorization") token: String
+    ): Response<ApiResponse<Unit>>
+
+    @GET("/api/v1/member/config/question-type")
+    suspend fun getLockResetQuestion(
+        @Header("Authorization") token: String
+    ): Response<ApiResponse<LockResetQuestionDto>>
+
+    @POST("/api/v1/member/config/valid-answer")
+    suspend fun validateLockResetAnswer(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<ApiResponse<ValidateLockAnswerDto>>
+
+    @DELETE("")
+    suspend fun breakUpCouple(
+        @Header("Authorization") token: String
+    ): Response<ApiResponse<Unit>>
+
+    @POST("/api/v1/comment")
+    suspend fun submitSuggestion(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<ApiResponse<Unit>>
+
+    @GET("/api/v1/member/service-data")
+    suspend fun getServiceDataCount(
+        @Header("Authorization") token: String
+    ): Response<ApiResponse<ServiceDataCountDto>>
 
 
     /** Token **/
@@ -208,7 +280,18 @@ interface ClonectService {
         @Header("Authorization") token: String,
     ): Response<ApiResponse<ChallengeCountDto>>
 
+    @GET("/api/v1/member/config")
+    suspend fun getConfigurationInfo(
+        @Header("Authorization") token: String,
+    ): Response<ApiResponse<ConfigurationInfoDto>>
 
+
+
+    /** Partner **/
+    @GET("/api/v1/member/partner")
+    suspend fun getPartnerInfo(
+        @Header("Authorization") token: String,
+    ): Response<ApiResponse<PartnerInfoDto>>
 
 
     /** Old Apis **/
@@ -220,7 +303,7 @@ interface ClonectService {
     ): Response<UserInfoDto>
 
     @GET("api/couple/partner/{accessToken}")
-    suspend fun getPartnerInfo(
+    suspend fun getPartnerInfo2(
         @Path("accessToken") accessToken: String,
     ): Response<AccessTokenDto>
 

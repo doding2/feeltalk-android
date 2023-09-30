@@ -17,6 +17,7 @@ import com.clonect.feeltalk.new_data.util.AppLevelEncryptHelper
 import com.clonect.feeltalk.new_domain.repository.account.AccountRepository
 import com.clonect.feeltalk.new_domain.repository.challenge.ChallengeRepository
 import com.clonect.feeltalk.new_domain.repository.chat.ChatRepository
+import com.clonect.feeltalk.new_domain.repository.partner.PartnerRepository
 import com.clonect.feeltalk.new_domain.repository.question.QuestionRepository
 import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 import com.clonect.feeltalk.new_domain.usecase.account.*
@@ -24,6 +25,7 @@ import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.challenge.*
 import com.clonect.feeltalk.new_domain.usecase.chat.*
+import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.*
 import com.clonect.feeltalk.new_domain.usecase.token.CacheSocialTokenUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.GetCachedSocialTokenUseCase
@@ -128,6 +130,70 @@ class UseCaseModule {
     @Provides
     fun providesUpdateAccountLockPasswordUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): UpdateAccountLockPasswordUseCase {
         return UpdateAccountLockPasswordUseCase(tokenRepository, accountRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetMyInfoUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): GetMyInfoUseCase {
+        return GetMyInfoUseCase(tokenRepository, accountRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetConfigurationInfoUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): GetConfigurationInfoUseCase {
+        return GetConfigurationInfoUseCase(tokenRepository, accountRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesLogOutUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): LogOutUseCase {
+        return LogOutUseCase(tokenRepository, accountRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesDeleteMyAccountUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): DeleteMyAccountUseCase {
+        return DeleteMyAccountUseCase(tokenRepository, accountRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesValidateLockResetAnswerUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): ValidateLockResetAnswerUseCase {
+        return ValidateLockResetAnswerUseCase(tokenRepository, accountRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesCheckAccountLockedFlowUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): CheckAccountLockedFlowUseCase {
+        return CheckAccountLockedFlowUseCase(tokenRepository, accountRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesBreakUpCoupleUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): BreakUpCoupleUseCase {
+        return BreakUpCoupleUseCase(tokenRepository, accountRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesSubmitSuggestionUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): SubmitSuggestionUseCase {
+        return SubmitSuggestionUseCase(tokenRepository, accountRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetServiceDataCountUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): GetServiceDataCountUseCase {
+        return GetServiceDataCountUseCase(tokenRepository, accountRepository)
+    }
+
+
+
+    /** Partner **/
+
+    @Singleton
+    @Provides
+    fun providesGetPartnerInfoUseCase(tokenRepository: TokenRepository, partnerRepository: PartnerRepository): GetPartnerInfoUseCase {
+        return GetPartnerInfoUseCase(tokenRepository, partnerRepository)
     }
 
 
@@ -447,8 +513,8 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesGetPartnerInfoUseCase(userRepository: UserRepository): GetPartnerInfoUseCase {
-        return GetPartnerInfoUseCase(userRepository)
+    fun providesGetPartnerInfo2UseCase(userRepository: UserRepository): GetPartnerInfo2UseCase {
+        return GetPartnerInfo2UseCase(userRepository)
     }
 
     @Singleton
@@ -459,8 +525,8 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesBreakUpCoupleUseCase(userRepository: UserRepository): BreakUpCoupleUseCase {
-        return BreakUpCoupleUseCase(userRepository)
+    fun providesBreakUpCoupleUseCase2(userRepository: UserRepository): BreakUpCoupleUseCase2 {
+        return BreakUpCoupleUseCase2(userRepository)
     }
 
     @Singleton

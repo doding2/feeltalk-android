@@ -41,6 +41,10 @@ import com.clonect.feeltalk.new_data.repository.account.AccountRepositoryImpl
 import com.clonect.feeltalk.new_data.repository.account.dataSource.AccountCacheDataSource
 import com.clonect.feeltalk.new_data.repository.account.dataSource.AccountLocalDataSource
 import com.clonect.feeltalk.new_data.repository.account.dataSource.AccountRemoteDataSource
+import com.clonect.feeltalk.new_data.repository.partner.PartnerRepositoryImpl
+import com.clonect.feeltalk.new_data.repository.partner.dataSource.PartnerCacheDataSource
+import com.clonect.feeltalk.new_data.repository.partner.dataSource.PartnerLocalDataSource
+import com.clonect.feeltalk.new_data.repository.partner.dataSource.PartnerRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.token.TokenRepositoryImpl
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenCacheDataSource
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenLocalDataSource
@@ -49,6 +53,7 @@ import com.clonect.feeltalk.new_domain.repository.challenge.ChallengeRepository
 import com.clonect.feeltalk.new_domain.repository.chat.ChatRepository
 import com.clonect.feeltalk.new_domain.repository.question.QuestionRepository
 import com.clonect.feeltalk.new_domain.repository.account.AccountRepository
+import com.clonect.feeltalk.new_domain.repository.partner.PartnerRepository
 import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 import dagger.Module
 import dagger.Provides
@@ -112,6 +117,16 @@ class RepositoryModule {
         completedPagingSource: CompletedChallengePagingSource
     ): ChallengeRepository {
         return ChallengeRepositoryImpl(cacheDataSource, localDataSource, remoteDataSource, ongoingPagingSource, completedPagingSource)
+    }
+
+    @Singleton
+    @Provides
+    fun providesPartnerRepository(
+        remoteDataSource: PartnerRemoteDataSource,
+        localDataSource: PartnerLocalDataSource,
+        cacheDataSource: PartnerCacheDataSource,
+    ): PartnerRepository {
+        return PartnerRepositoryImpl(cacheDataSource, localDataSource, remoteDataSource)
     }
 
 

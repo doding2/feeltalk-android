@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
-import com.clonect.feeltalk.new_domain.model.page.PageEvents
+import com.clonect.feeltalk.common.PageEvents
 import com.clonect.feeltalk.new_domain.usecase.challenge.GetPagingCompletedChallengeUseCase
 import com.clonect.feeltalk.new_presentation.notification.observer.AddCompletedChallengeObserver
 import com.clonect.feeltalk.new_presentation.notification.observer.DeleteCompletedChallengeObserver

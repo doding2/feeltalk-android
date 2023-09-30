@@ -22,7 +22,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentLockResetBinding
-import com.clonect.feeltalk.new_domain.model.account.LockQA
 import com.clonect.feeltalk.new_presentation.ui.passwordNavigation.otherResetWay.OtherResetWayBottomSheetFragment
 import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
@@ -105,9 +104,9 @@ class LockResetFragment : Fragment() {
             .navigate(R.id.action_lockResetFragment_to_partnerHelpResetFragment)
     }
 
-    private fun matchQuestionAnswer() {
+    private fun matchQuestionAnswer() = lifecycleScope.launch {
         val isValid = viewModel.matchQuestionAnswer()
-        if (!isValid) return
+        if (!isValid) return@launch
 
         navigateToPasswordSettingDeepLink()
     }
@@ -246,10 +245,10 @@ class LockResetFragment : Fragment() {
         }
     }
 
-    private fun changeLockQAView(lockQA: LockQA?) = binding.run {
+    private fun changeLockQuestionTypeView(lockQuestionType: Int?) = binding.run {
         mcvAnswer.visibility = View.VISIBLE
         mcvAnswerDate.visibility = View.GONE
-        when (lockQA?.questionType) {
+        when (lockQuestionType) {
             0 -> {
                 tvQuestion.setText(R.string.lock_question_item_1)
             }
@@ -332,7 +331,7 @@ class LockResetFragment : Fragment() {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.isLoading.collectLatest(::showLoading) }
             launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
-            launch { viewModel.lockQA.collectLatest(::changeLockQAView) }
+            launch { viewModel.lockQuestionType.collectLatest(::changeLockQuestionTypeView) }
             launch { viewModel.isKeyboardUp.collectLatest(::changeViewWhenKeyboardUp) }
             launch { viewModel.lockAnswerDate.collectLatest(::changeLockAnswerDateView) }
             launch { viewModel.isLockAnswerFocused.collectLatest(::changeLockAnswerFocusedView) }

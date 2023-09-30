@@ -1,6 +1,6 @@
 package com.clonect.feeltalk.new_domain.model.token
 
-import com.clonect.feeltalk.new_domain.model.user.SocialType
+import com.clonect.feeltalk.new_domain.model.account.SocialType
 import java.io.Serializable
 import java.util.*
 

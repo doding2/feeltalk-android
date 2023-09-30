@@ -20,8 +20,8 @@ import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.BuildConfig
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentSignUpBinding
+import com.clonect.feeltalk.new_domain.model.account.SocialType
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
-import com.clonect.feeltalk.new_domain.model.user.SocialType
 import com.clonect.feeltalk.new_presentation.ui.signUp.authHelper.AppleAuthHelper
 import com.clonect.feeltalk.new_presentation.ui.signUp.authHelper.GoogleAuthHelper
 import com.clonect.feeltalk.new_presentation.ui.signUp.authHelper.KakaoAuthHelper
@@ -104,6 +104,15 @@ class SignUpFragment : Fragment() {
         infoLog("navigate main error: ${it.localizedMessage}")
     }
 
+    private fun navigateToPassword() = runCatching {
+        requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_signUpFragment_to_passwordFragment)
+    }.onFailure {
+        it.printStackTrace()
+        infoLog("navigate main error: ${it.localizedMessage}")
+    }
+
 
     private fun clickKakaoButton() = lifecycleScope.launch {
         try {
@@ -150,7 +159,7 @@ class SignUpFragment : Fragment() {
         try {
             val state = AppleAuthHelper.signIn(requireContext(), lifecycle)
             val socialToken = SocialToken(
-                type = SocialType.Apple,
+                type = SocialType.AppleAndroid,
                 state = state
             )
 
@@ -257,6 +266,14 @@ class SignUpFragment : Fragment() {
                 viewModel.navigateToMain.collectLatest {
                     if (it) {
                         navigateToMain()
+                        viewModel.setLoading(false)
+                    }
+                }
+            }
+            launch {
+                viewModel.navigateToPassword.collectLatest {
+                    if (it) {
+                        navigateToPassword()
                         viewModel.setLoading(false)
                     }
                 }

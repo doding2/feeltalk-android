@@ -12,7 +12,7 @@ import com.clonect.feeltalk.domain.usecase.question.GetQuestionAnswersUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetQuestionDetailUseCase
 import com.clonect.feeltalk.domain.usecase.question.SaveQuestionToDatabaseUseCase
 import com.clonect.feeltalk.domain.usecase.question.SendQuestionAnswerUseCase
-import com.clonect.feeltalk.domain.usecase.user.GetPartnerInfoUseCase
+import com.clonect.feeltalk.domain.usecase.user.GetPartnerInfo2UseCase
 import com.clonect.feeltalk.domain.usecase.user.GetUserInfoUseCase
 import com.clonect.feeltalk.domain.usecase.user.SetUserIsActiveUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
@@ -34,7 +34,7 @@ class TodayQuestionViewModel @Inject constructor(
     private val getQuestionDetailUseCase: GetQuestionDetailUseCase,
     private val sendQuestionAnswerUseCase: SendQuestionAnswerUseCase,
     private val getQuestionAnswersUseCase: GetQuestionAnswersUseCase,
-    private val getPartnerInfoUseCase: GetPartnerInfoUseCase,
+    private val getPartnerInfo2UseCase: GetPartnerInfo2UseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
     private val saveQuestionToDatabaseUseCase: SaveQuestionToDatabaseUseCase,
@@ -109,7 +109,7 @@ class TodayQuestionViewModel @Inject constructor(
     }
 
     private fun getPartnerInfo() = viewModelScope.launch(Dispatchers.IO) {
-        val result = getPartnerInfoUseCase()
+        val result = getPartnerInfo2UseCase()
         when (result) {
             is Resource.Success -> {
                 _partnerInfo.value = result.data

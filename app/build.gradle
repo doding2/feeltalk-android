@@ -4,7 +4,6 @@ plugins {
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
     id 'com.google.dagger.hilt.android'
-    id 'androidx.navigation.safeargs'
     id 'com.google.gms.google-services'
 }
 
@@ -108,8 +107,8 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
     // navigation
-    implementation "androidx.navigation:navigation-fragment-ktx:2.5.3"
-    implementation "androidx.navigation:navigation-ui-ktx:2.5.3"
+    implementation "androidx.navigation:navigation-fragment-ktx:2.7.3"
+    implementation "androidx.navigation:navigation-ui-ktx:2.7.3"
     // json
     implementation 'com.google.code.gson:gson:2.10'
     // retrofit

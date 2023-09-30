@@ -1,14 +1,22 @@
 package com.clonect.feeltalk.data.repository.user.datasourceImpl
 
 import android.graphics.Bitmap
-import com.clonect.feeltalk.new_data.api.ClonectService
+import com.clonect.feeltalk.common.FeelTalkException.ServerIsDownException
 import com.clonect.feeltalk.data.repository.user.datasource.UserRemoteDataSource
 import com.clonect.feeltalk.data.utils.BitmapRequestBody
 import com.clonect.feeltalk.domain.model.dto.common.StatusDto
-import com.clonect.feeltalk.domain.model.dto.user.*
+import com.clonect.feeltalk.domain.model.dto.user.AccessTokenDto
+import com.clonect.feeltalk.domain.model.dto.user.CoupleCheckDto
+import com.clonect.feeltalk.domain.model.dto.user.CoupleRegistrationCodeDto
+import com.clonect.feeltalk.domain.model.dto.user.DDayDto
+import com.clonect.feeltalk.domain.model.dto.user.OldSignUpDto
+import com.clonect.feeltalk.domain.model.dto.user.PartnerCodeCheckDto
+import com.clonect.feeltalk.domain.model.dto.user.ProfileImageUrlDto
+import com.clonect.feeltalk.domain.model.dto.user.StatusCodeDto
+import com.clonect.feeltalk.domain.model.dto.user.UserInfoDto
+import com.clonect.feeltalk.new_data.api.ClonectService
 import com.google.gson.JsonObject
 import okhttp3.MultipartBody
-import com.clonect.feeltalk.common.FeelTalkException.ServerIsDownException
 import retrofit2.Response
 
 class UserRemoteDataSourceImpl(
@@ -23,7 +31,7 @@ class UserRemoteDataSourceImpl(
     }
 
     override suspend fun getPartnerInfo(accessToken: String): Response<AccessTokenDto> {
-        val response = clonectService.getPartnerInfo(accessToken)
+        val response = clonectService.getPartnerInfo2(accessToken)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         return response

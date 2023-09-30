@@ -33,8 +33,8 @@ class CoupleRegistrationViewModel @Inject constructor(
     private val loadPartnerPrivateKeyUseCase: LoadPartnerPrivateKeyUseCase,
     private val checkKeyPairsExistUseCase: CheckKeyPairsExistUseCase,
     private val checkKeyPairsWorkWellUseCase: CheckKeyPairsWorkWellUseCase,
-    private val getPartnerInfoUseCase: GetPartnerInfoUseCase,
-    private val breakUpCoupleUseCase: BreakUpCoupleUseCase,
+    private val getPartnerInfo2UseCase: GetPartnerInfo2UseCase,
+    private val breakUpCoupleUseCase2: BreakUpCoupleUseCase2,
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
     private val leaveFeeltalkUseCase: LeaveFeeltalkUseCase
@@ -181,7 +181,7 @@ class CoupleRegistrationViewModel @Inject constructor(
             return@launch
         }
 
-        val partnerInfoResult = getPartnerInfoUseCase()
+        val partnerInfoResult = getPartnerInfo2UseCase()
         if (partnerInfoResult is Resource.Error) {
             infoLog("Fail to get partner info: ${partnerInfoResult.throwable.localizedMessage}")
         }
@@ -194,7 +194,7 @@ class CoupleRegistrationViewModel @Inject constructor(
     }
 
     private suspend fun breakUpCouple() {
-        val result = breakUpCoupleUseCase()
+        val result = breakUpCoupleUseCase2()
         when (result) {
             is Resource.Success -> {
                 infoLog("Success to break up couple caused by Fail To Exchange KeyPair")

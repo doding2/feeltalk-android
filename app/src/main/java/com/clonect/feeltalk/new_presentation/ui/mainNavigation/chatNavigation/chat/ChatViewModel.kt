@@ -7,7 +7,7 @@ import androidx.paging.*
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.chat.*
-import com.clonect.feeltalk.new_domain.model.page.PageEvents
+import com.clonect.feeltalk.common.PageEvents
 import com.clonect.feeltalk.new_domain.usecase.chat.ChangeChatRoomStateUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPagingChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.SendTextChatUseCase

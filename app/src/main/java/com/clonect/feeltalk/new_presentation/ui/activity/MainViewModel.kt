@@ -108,6 +108,7 @@ class MainViewModel @Inject constructor(
             when (val result = checkAccountLockedUseCase()) {
                 is Resource.Success -> {
                     _isAccountLocked.value = result.data
+                    infoLog("isAccountLocked: ${result.data}")
                 }
                 is Resource.Error -> {
                     result.throwable.printStackTrace()
