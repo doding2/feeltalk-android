@@ -4,5 +4,5 @@ import java.io.Serializable
 
 data class LockQA(
     val questionType: Int,
-    val answer: String,
+    val answer: String?,
 ): Serializable

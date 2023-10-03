@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.appSettings.Language
 import com.clonect.feeltalk.new_domain.usecase.account.CheckAccountLockedFlowUseCase
+import com.clonect.feeltalk.new_domain.usecase.account.GetServiceDataCountUseCase
 import com.clonect.feeltalk.new_domain.usecase.account.LogOutUseCase
 import com.clonect.feeltalk.new_presentation.service.FirebaseCloudMessagingService
 import com.clonect.feeltalk.presentation.utils.infoLog
@@ -20,6 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingViewModel @Inject constructor(
     private val checkAccountLockedFlowUseCase: CheckAccountLockedFlowUseCase,
+    private val getServiceDataCountUseCase: GetServiceDataCountUseCase,
     private val logOutUseCase: LogOutUseCase,
 ): ViewModel() {
 
@@ -39,6 +41,16 @@ class SettingViewModel @Inject constructor(
 
     init {
         collectCheckAccountLocked()
+        preloadServiceDataCount()
+    }
+
+    private fun preloadServiceDataCount() = viewModelScope.launch {
+        when (val result = getServiceDataCountUseCase()) {
+            is Resource.Success -> { }
+            is Resource.Error -> {
+                infoLog("Fail to preload service data: ${result.throwable.localizedMessage}")
+            }
+        }
     }
 
     private fun collectCheckAccountLocked() = viewModelScope.launch {

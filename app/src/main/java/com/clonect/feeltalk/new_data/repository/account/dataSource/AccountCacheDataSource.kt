@@ -2,6 +2,7 @@ package com.clonect.feeltalk.new_data.repository.account.dataSource
 
 import com.clonect.feeltalk.new_domain.model.account.ConfigurationInfo
 import com.clonect.feeltalk.new_domain.model.account.MyInfo
+import com.clonect.feeltalk.new_domain.model.account.ServiceDataCountDto
 
 interface AccountCacheDataSource {
 
@@ -10,4 +11,7 @@ interface AccountCacheDataSource {
 
     fun saveConfigurationInfo(configurationInfo: ConfigurationInfo)
     fun getConfigurationInfo(): ConfigurationInfo?
+
+    fun saveServiceDataCount(serviceDataCountDto: ServiceDataCountDto)
+    fun getServiceDataCount(): ServiceDataCountDto?
 }

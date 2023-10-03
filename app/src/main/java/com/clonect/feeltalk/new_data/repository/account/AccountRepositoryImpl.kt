@@ -46,6 +46,7 @@ class AccountRepositoryImpl(
         return try {
             val now = Date()
             val result = remoteDataSource.reLogIn(socialToken)
+            localDataSource.clearInternalStorage()
             val tokenInfo = if (result.signUpState == "newbie") {
                 null
             } else {
@@ -68,6 +69,7 @@ class AccountRepositoryImpl(
         return try {
             val now = Date()
             val result = remoteDataSource.signUp(socialToken, isMarketingConsentAgreed, nickname, fcmToken)
+            localDataSource.clearInternalStorage()
             val tokenInfo = TokenInfo(
                 accessToken = result.accessToken,
                 refreshToken = result.refreshToken,
@@ -207,7 +209,12 @@ class AccountRepositoryImpl(
 
     override suspend fun getServiceDataCount(accessToken: String): Resource<ServiceDataCountDto> {
         return try {
+            val cache = cacheDataSource.getServiceDataCount()
+            if (cache != null) {
+                return Resource.Success(cache)
+            }
             val result = remoteDataSource.getServiceDataCount(accessToken)
+            cacheDataSource.saveServiceDataCount(result)
             Resource.Success(result)
         } catch (e: CancellationException) {
             throw e
@@ -330,6 +337,12 @@ class AccountRepositoryImpl(
                 "bucketList" -> 4
                 else -> throw IllegalStateException("The question type from server is invalid.")
             }
+            localDataSource.saveLockQA(
+                LockQA(
+                    questionType = questionType,
+                    answer = null
+                )
+            )
             Resource.Success(questionType)
         } catch (e: CancellationException) {
             throw e
@@ -344,7 +357,7 @@ class AccountRepositoryImpl(
     ): Resource<ValidateLockAnswerDto> {
         try {
             val local = localDataSource.getLockQA()
-            if (local != null) {
+            if (local?.answer != null) {
                 return Resource.Success(ValidateLockAnswerDto(local.answer == answer))
             }
             val remote = remoteDataSource.validateLockAnswer(accessToken, answer)
@@ -352,7 +365,6 @@ class AccountRepositoryImpl(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            return Resource.Error(e)
             return Resource.Error(e)
         }
     }
