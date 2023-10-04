@@ -84,6 +84,14 @@ class LockResetFragment : Fragment() {
 
             clForgetAgain.setOnClickListener { showOtherResetWayBottomSheet() }
 
+            tvNext.setOnClickListener {
+                if (binding.dpAnswerDatePicker.isVisible) {
+                    enableAnswerDatePicker(false)
+                    hideConfirmButton(false)
+                } else {
+                    hideKeyboard()
+                }
+            }
             mcvConfirm.setOnClickListener { matchQuestionAnswer() }
         }
     }
@@ -148,6 +156,8 @@ class LockResetFragment : Fragment() {
                     hideKeyboard()
                     delay(100)
                 }
+                mcvConfirm.visibility = View.GONE
+                mcvNewsBar.visibility = View.VISIBLE
                 dpAnswerDatePicker.visibility = View.VISIBLE
                 mcvAnswerDate.strokeWidth = activity.dpToPx(2f).toInt()
                 mcvAnswerDate.setCardBackgroundColor(Color.WHITE)
@@ -155,6 +165,8 @@ class LockResetFragment : Fragment() {
                 hideConfirmButton(true)
             }
         } else {
+            mcvConfirm.visibility = View.VISIBLE
+            mcvNewsBar.visibility = View.GONE
             dpAnswerDatePicker.visibility = View.GONE
             mcvAnswerDate.strokeWidth = 0
             mcvAnswerDate.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
@@ -179,10 +191,14 @@ class LockResetFragment : Fragment() {
             }
 
             if (imeHeight == 0) {
+                mcvConfirm.visibility = View.VISIBLE
+                mcvNewsBar.visibility = View.GONE
                 root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
 //                svScroll.setPadding(0)
             } else {
                 val forgetAgainBottomMargin = requireContext().dpToPx(32f)
+                mcvConfirm.visibility = View.GONE
+                mcvNewsBar.visibility = View.VISIBLE
 
                 root.setPadding(0, getStatusBarHeight(), 0, imeHeight)
 //                svScroll.setPadding(0, 0, 0, forgetAgainBottomMargin)

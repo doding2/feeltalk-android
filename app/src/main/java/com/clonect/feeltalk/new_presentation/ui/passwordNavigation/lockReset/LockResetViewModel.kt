@@ -13,7 +13,9 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 /**
@@ -125,8 +127,16 @@ class LockResetViewModel @Inject constructor(
 
 
     suspend fun matchQuestionAnswer(): Boolean = withContext(viewModelScope.coroutineContext) {
+        val questionType = lockQuestionType.value ?: return@withContext false
+        val answer = when (questionType) {
+            0, 1, 3, 4 -> lockAnswer.value ?: return@withContext false
+            2 -> {
+                val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                format.format(lockAnswerDate.value)
+            }
+            else -> return@withContext false
+        }
         setLoading(true)
-        val answer = lockAnswer.value ?: ""
         val isValid = when (val result = validateLockResetAnswerUseCase(answer)) {
             is Resource.Success -> {
                 result.data.isValid

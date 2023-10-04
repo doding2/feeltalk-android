@@ -318,10 +318,43 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/mcv_news_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:visibility="gone"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="0dp"
+                    app:cardElevation="5dp"
+                    app:rippleColor="@android:color/transparent">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv_next"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="14dp"
+                            android:layout_gravity="end"
+                            android:text="@string/lock_question_setting_news_bar_complete"
+                            android:textColor="@color/main_500"
+                            android:textSize="18sp"
+                            android:fontFamily="@font/pretendard_medium"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="5dp"
+                            android:letterSpacing="-0.01"/>
+                    </FrameLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/mcv_confirm"
                     android:layout_width="match_parent"
                     android:layout_height="59dp"
                     android:layout_marginHorizontal="20dp"
+                    android:visibility="visible"
                     app:cardBackgroundColor="@color/main_500"
                     app:cardCornerRadius="30dp"
                     app:cardElevation="0dp"
