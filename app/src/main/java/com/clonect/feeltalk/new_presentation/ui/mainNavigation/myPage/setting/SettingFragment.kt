@@ -17,7 +17,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.clonect.feeltalk.BuildConfig
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentSettingBinding
 import com.clonect.feeltalk.new_domain.model.appSettings.Language
@@ -73,15 +72,11 @@ class SettingFragment : Fragment() {
         collectViewModel()
 
         binding.run {
-            tvVersionInfo.text = BuildConfig.VERSION_NAME
-            ivBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
+            ivExit.setOnClickListener { onBackCallback.handleOnBackPressed() }
 
             llLockSetting.setOnClickListener { navigateToLockSetting() }
             llAccountSetting.setOnClickListener { navigateToAccountSetting() }
-            llBreakUpCouple.setOnClickListener { navigateToBreakUpCouple() }
             llLanguageSetting.setOnClickListener { navigateToLanguageSetting() }
-            llPrivacyPolicy.setOnClickListener { navigateToPrivacyPolicyDetail() }
-            llServiceAgreement.setOnClickListener { navigateToServiceAgreementDetail() }
 
             tvLogOut.setOnClickListener { showLogOutDialog() }
         }
@@ -103,24 +98,6 @@ class SettingFragment : Fragment() {
         requireParentFragment()
             .findNavController()
             .navigate(R.id.action_settingFragment_to_accountSettingFragment)
-    }
-
-    private fun navigateToBreakUpCouple() {
-        requireParentFragment()
-            .findNavController()
-            .navigate(R.id.action_settingFragment_to_breakUpCoupleFragment)
-    }
-
-    private fun navigateToPrivacyPolicyDetail() {
-        requireParentFragment()
-            .findNavController()
-            .navigate(R.id.action_settingFragment_to_privacyPolicyDetailFragment)
-    }
-
-    private fun navigateToServiceAgreementDetail() {
-        requireParentFragment()
-            .findNavController()
-            .navigate(R.id.action_settingFragment_to_serviceAgreementDetailFragment)
     }
 
 

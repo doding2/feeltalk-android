@@ -1,11 +1,10 @@
-package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage
+package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.partnerSetting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.new_domain.model.account.MyInfo
 import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
-import com.clonect.feeltalk.new_domain.usecase.account.GetMyInfoUseCase
+import com.clonect.feeltalk.new_domain.usecase.account.GetServiceDataCountUseCase
 import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoFlowUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,11 +16,14 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * Created by doding2 on 2023/10/04.
+ */
 @HiltViewModel
-class MyPageViewModel @Inject constructor(
-    private val getMyInfoUseCase: GetMyInfoUseCase,
+class PartnerSettingViewModel @Inject constructor(
     private val getPartnerInfoFlowUseCase: GetPartnerInfoFlowUseCase,
-): ViewModel() {
+    private val getServiceDataCountUseCase: GetServiceDataCountUseCase,
+) : ViewModel() {
 
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage = _errorMessage.asSharedFlow()
@@ -30,25 +32,19 @@ class MyPageViewModel @Inject constructor(
     val isLoading = _isLoading.asStateFlow()
 
 
-    private val _myInfo = MutableStateFlow<MyInfo?>(null)
-    val myInfo = _myInfo.asStateFlow()
-
     private val _partnerInfo = MutableStateFlow<PartnerInfo?>(null)
     val partnerInfo = _partnerInfo.asStateFlow()
 
     init {
-        initMyInfo()
+        preloadServiceDataCount()
         collectPartnerInfo()
     }
 
-    private fun initMyInfo() = viewModelScope.launch {
-        when (val result = getMyInfoUseCase()) {
-            is Resource.Success -> {
-                _myInfo.value = result.data
-            }
+    private fun preloadServiceDataCount() = viewModelScope.launch {
+        when (val result = getServiceDataCountUseCase()) {
+            is Resource.Success -> { }
             is Resource.Error -> {
-                infoLog("Fail to get my info: ${result.throwable.localizedMessage}")
-                result.throwable.localizedMessage?.let { sendErrorMessage(it) }
+                infoLog("Fail to preload service data: ${result.throwable.localizedMessage}")
             }
         }
     }
@@ -66,7 +62,6 @@ class MyPageViewModel @Inject constructor(
             }
         }
     }
-
 
     fun sendErrorMessage(message: String) = viewModelScope.launch {
         _errorMessage.emit(message)

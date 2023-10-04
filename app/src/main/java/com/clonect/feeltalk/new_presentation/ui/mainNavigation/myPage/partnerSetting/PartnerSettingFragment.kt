@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.privacyPolicyDetail
+package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.partnerSetting
 
 import android.content.Context
 import android.os.Build
@@ -13,7 +13,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.clonect.feeltalk.databinding.FragmentPrivacyPolicyDetailBinding
+import com.clonect.feeltalk.R
+import com.clonect.feeltalk.databinding.FragmentPartnerSettingBinding
+import com.clonect.feeltalk.new_domain.model.account.SocialType
+import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,13 +24,13 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 /**
- * Created by doding2 on 2023/09/20.
+ * Created by doding2 on 2023/10/04.
  */
 @AndroidEntryPoint
-class PrivacyPolicyDetailFragment : Fragment() {
+class PartnerSettingFragment : Fragment() {
 
-    private lateinit var binding: FragmentPrivacyPolicyDetailBinding
-    private val viewModel: PrivacyPolicyDetailViewModel by viewModels()
+    private lateinit var binding: FragmentPartnerSettingBinding
+    private val viewModel: PartnerSettingViewModel by viewModels()
     private lateinit var onBackCallback: OnBackPressedCallback
 //    private lateinit var loadingDialog: Dialog
 
@@ -35,7 +38,7 @@ class PrivacyPolicyDetailFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentPrivacyPolicyDetailBinding.inflate(inflater, container, false)
+        binding = FragmentPartnerSettingBinding.inflate(inflater, container, false)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
         }
@@ -49,8 +52,32 @@ class PrivacyPolicyDetailFragment : Fragment() {
         collectViewModel()
 
         binding.run {
-            ivExit.setOnClickListener { onBackCallback.handleOnBackPressed() }
+            ivBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
+            tvBreakUp.setOnClickListener { navigateToBreakUpCouple() }
         }
+    }
+
+    private fun navigateToBreakUpCouple() {
+        requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_partnerSettingFragment_to_breakUpCoupleFragment)
+    }
+
+
+    private fun changePartnerInfoView(partnerInfo: PartnerInfo?) = binding.run {
+        val snsType = SocialType.Google     // TODO 나중에 PartnerInfo가 snsType Property를 가지게 수정해야 됨
+        val snsRes = when (snsType) {
+            SocialType.Google -> R.drawable.n_ic_setting_sns_google
+            SocialType.Kakao -> R.drawable.n_ic_setting_sns_kakao
+            SocialType.Naver -> R.drawable.n_ic_setting_sns_naver
+            SocialType.AppleIOS, SocialType.AppleAndroid -> R.drawable.n_ic_setting_sns_apple
+            else -> {
+                ivSnsType.setImageDrawable(null)
+                return@run
+            }
+        }
+        ivSnsType.setImageResource(snsRes)
+        tvNickname.text = partnerInfo?.nickname
     }
 
     private fun showLoading(isLoading: Boolean) {
@@ -77,6 +104,7 @@ class PrivacyPolicyDetailFragment : Fragment() {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.isLoading.collectLatest(::showLoading) }
             launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
+            launch { viewModel.partnerInfo.collectLatest(::changePartnerInfoView) }
         }
     }
 

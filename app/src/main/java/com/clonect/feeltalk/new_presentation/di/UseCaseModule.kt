@@ -25,6 +25,7 @@ import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.challenge.*
 import com.clonect.feeltalk.new_domain.usecase.chat.*
+import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.*
 import com.clonect.feeltalk.new_domain.usecase.token.CacheSocialTokenUseCase
@@ -194,6 +195,12 @@ class UseCaseModule {
     @Provides
     fun providesGetPartnerInfoUseCase(tokenRepository: TokenRepository, partnerRepository: PartnerRepository): GetPartnerInfoUseCase {
         return GetPartnerInfoUseCase(tokenRepository, partnerRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetPartnerInfoFlowUseCase(tokenRepository: TokenRepository, partnerRepository: PartnerRepository): GetPartnerInfoFlowUseCase {
+        return GetPartnerInfoFlowUseCase(tokenRepository, partnerRepository)
     }
 
 
@@ -681,8 +688,8 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesGetPartnerInfoFlowUseCase(userRepository: UserRepository): GetPartnerInfoFlowUseCase {
-        return GetPartnerInfoFlowUseCase(userRepository)
+    fun providesGetPartnerInfoFlow2UseCase(userRepository: UserRepository): GetPartnerInfoFlow2UseCase {
+        return GetPartnerInfoFlow2UseCase(userRepository)
     }
 
     @Singleton

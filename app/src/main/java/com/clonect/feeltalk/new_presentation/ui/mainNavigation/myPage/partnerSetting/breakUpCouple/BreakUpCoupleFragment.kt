@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.breakUpCouple
+package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.partnerSetting.breakUpCouple
 
 import android.app.Dialog
 import android.content.Context

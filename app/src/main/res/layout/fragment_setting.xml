@@ -13,7 +13,7 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/iv_back"
+            android:id="@+id/iv_exit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?selectableItemBackgroundBorderless"
@@ -133,7 +133,8 @@
         android:layout_height="56dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingHorizontal="20dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="0dp"
         android:background="?android:selectableItemBackground">
 
         <TextView
@@ -146,123 +147,19 @@
             android:includeFontPadding="false"
             android:lineSpacingExtra="5dp"
             android:letterSpacing="-0.01"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/ll_break_up_couple"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="20dp"
-        android:background="?android:selectableItemBackground">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/setting_break_up_couple"
-            android:textSize="16sp"
-            android:textColor="@color/black"
-            android:fontFamily="@font/pretendard_regular"
-            android:includeFontPadding="false"
-            android:lineSpacingExtra="5dp"
-            android:letterSpacing="-0.01"/>
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="8dp"
-        android:background="@color/gray_100"/>
-
-    <LinearLayout
-        android:id="@+id/ll_privacy_policy"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="20dp"
-        android:background="?android:selectableItemBackground">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/setting_privacy_policy"
-            android:textSize="16sp"
-            android:textColor="@color/black"
-            android:fontFamily="@font/pretendard_regular"
-            android:includeFontPadding="false"
-            android:lineSpacingExtra="5dp"
-            android:letterSpacing="-0.01"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/ll_service_agreement"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="20dp"
-        android:background="?android:selectableItemBackground">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/setting_service_agreement"
-            android:textSize="16sp"
-            android:textColor="@color/black"
-            android:fontFamily="@font/pretendard_regular"
-            android:includeFontPadding="false"
-            android:lineSpacingExtra="5dp"
-            android:letterSpacing="-0.01"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/ll_version_info"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="20dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/setting_version_info"
-            android:textSize="16sp"
-            android:textColor="@color/black"
-            android:fontFamily="@font/pretendard_regular"
-            android:includeFontPadding="false"
-            android:lineSpacingExtra="5dp"
-            android:letterSpacing="-0.01"/>
 
         <View
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"/>
 
-        <TextView
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/setting_version_info_value_deco"
-            android:textSize="16sp"
-            android:textColor="@color/gray_500"
-            android:fontFamily="@font/pretendard_regular"
-            android:includeFontPadding="false"
-            android:lineSpacingExtra="5dp"
-            android:letterSpacing="-0.01"/>
-
-        <TextView
-            android:id="@+id/tv_version_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/setting_version_info_default_value"
-            android:textSize="16sp"
-            android:textColor="@color/gray_500"
-            android:fontFamily="@font/pretendard_regular"
-            android:includeFontPadding="false"
-            android:lineSpacingExtra="5dp"
-            android:letterSpacing="-0.01"/>
+            android:padding="12dp"
+            android:src="@drawable/n_ic_next_gray_400"/>
     </LinearLayout>
+
 
     <View
         android:layout_width="0dp"

@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.accountSetting
+package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.accountSetting.privacyPolicyDetail
 
 import android.content.Context
 import android.os.Build
@@ -13,9 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.clonect.feeltalk.BuildConfig
-import com.clonect.feeltalk.R
-import com.clonect.feeltalk.databinding.FragmentAccountSettingBinding
+import com.clonect.feeltalk.databinding.FragmentPrivacyPolicyDetailBinding
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,13 +21,13 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 /**
- * Created by doding2 on 2023/09/23.
+ * Created by doding2 on 2023/09/20.
  */
 @AndroidEntryPoint
-class AccountSettingFragment : Fragment() {
+class PrivacyPolicyDetailFragment : Fragment() {
 
-    private lateinit var binding: FragmentAccountSettingBinding
-    private val viewModel: AccountSettingViewModel by viewModels()
+    private lateinit var binding: FragmentPrivacyPolicyDetailBinding
+    private val viewModel: PrivacyPolicyDetailViewModel by viewModels()
     private lateinit var onBackCallback: OnBackPressedCallback
 //    private lateinit var loadingDialog: Dialog
 
@@ -37,7 +35,7 @@ class AccountSettingFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentAccountSettingBinding.inflate(inflater, container, false)
+        binding = FragmentPrivacyPolicyDetailBinding.inflate(inflater, container, false)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
         }
@@ -51,34 +49,9 @@ class AccountSettingFragment : Fragment() {
         collectViewModel()
 
         binding.run {
-            tvVersionInfo.text = BuildConfig.VERSION_NAME
-            ivBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
-
-            llPrivacyPolicy.setOnClickListener { navigateToPrivacyPolicyDetail() }
-            llServiceAgreement.setOnClickListener { navigateToServiceAgreementDetail() }
-
-            tvDeleteAccount.setOnClickListener { navigateToDeleteAccount() }
+            ivExit.setOnClickListener { onBackCallback.handleOnBackPressed() }
         }
     }
-
-    private fun navigateToPrivacyPolicyDetail() {
-        requireParentFragment()
-            .findNavController()
-            .navigate(R.id.action_accountSettingFragment_to_privacyPolicyDetailFragment)
-    }
-
-    private fun navigateToServiceAgreementDetail() {
-        requireParentFragment()
-            .findNavController()
-            .navigate(R.id.action_accountSettingFragment_to_serviceAgreementDetailFragment)
-    }
-
-    private fun navigateToDeleteAccount() {
-        requireParentFragment()
-            .findNavController()
-            .navigate(R.id.action_accountSettingFragment_to_deleteAccountFragment)
-    }
-
 
     private fun showLoading(isLoading: Boolean) {
 //        if (isLoading) {

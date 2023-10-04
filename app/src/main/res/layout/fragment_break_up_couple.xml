@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".new_presentation.ui.mainNavigation.myPage.setting.breakUpCouple.BreakUpCoupleFragment">
+    tools:context=".new_presentation.ui.mainNavigation.myPage.partnerSetting.breakUpCouple.BreakUpCoupleFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

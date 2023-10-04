@@ -17,6 +17,7 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentMyPageBinding
 import com.clonect.feeltalk.new_domain.model.account.MyInfo
 import com.clonect.feeltalk.new_domain.model.account.SocialType
+import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
 import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
@@ -63,6 +64,7 @@ class MyPageFragment : Fragment() {
 
         binding.run {
             llSetting.setOnClickListener { navigateToSetting() }
+            mcvPartnerSetting.setOnClickListener { navigateToPartnerSetting() }
             llInquire.setOnClickListener { navigateToInquire() }
             llSuggestQuestion.setOnClickListener { navigateToSuggestQuestion() }
         }
@@ -73,6 +75,13 @@ class MyPageFragment : Fragment() {
             .requireParentFragment()
             .findNavController()
             .navigate(R.id.action_mainNavigationFragment_to_settingFragment)
+    }
+
+    private fun navigateToPartnerSetting() {
+        requireParentFragment()
+            .requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_mainNavigationFragment_to_partnerSettingFragment)
     }
 
     private fun navigateToInquire() {
@@ -102,7 +111,11 @@ class MyPageFragment : Fragment() {
             }
         }
         ivSnsType.setImageResource(snsRes)
-        tvNickname.text = myInfo?.nickname
+        tvNickname.text = myInfo.nickname
+    }
+
+    private fun changePartnerInfoView(partnerInfo: PartnerInfo?) = binding.run {
+        tvPartnerNickname.text = partnerInfo?.nickname
     }
 
     private fun showLoading(isLoading: Boolean) {
@@ -130,6 +143,7 @@ class MyPageFragment : Fragment() {
             launch { viewModel.isLoading.collectLatest(::showLoading) }
             launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
             launch { viewModel.myInfo.collectLatest(::changeMyInfoView) }
+            launch { viewModel.partnerInfo.collectLatest(::changePartnerInfoView) }
         }
     }
 }

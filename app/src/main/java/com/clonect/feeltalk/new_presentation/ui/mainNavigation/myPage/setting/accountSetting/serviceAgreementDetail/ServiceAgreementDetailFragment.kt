@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.serviceAgreementDetail
+package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.accountSetting.serviceAgreementDetail
 
 import android.content.Context
 import android.os.Build

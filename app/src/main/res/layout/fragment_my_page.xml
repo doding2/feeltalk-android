@@ -69,6 +69,7 @@
                         <FrameLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:visibility="gone"
                             android:layout_gravity="center_horizontal">
 
                             <com.google.android.material.card.MaterialCardView
@@ -100,7 +101,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:layout_marginStart="16dp"
                             android:text="nickname"
                             android:textColor="@color/black"
                             android:textSize="20sp"
@@ -122,10 +122,11 @@
 
 
                     <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/mcv_partner_setting"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         app:cardElevation="0dp"
                         app:cardBackgroundColor="@color/main_100"
                         app:cardCornerRadius="12dp"
@@ -164,7 +165,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="4.5dp"
-                                android:text="UserNickname"
+                                android:text=""
                                 android:textColor="@color/black"
                                 android:textSize="14sp"
                                 android:fontFamily="@font/pretendard_medium"

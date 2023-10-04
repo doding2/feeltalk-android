@@ -72,6 +72,9 @@
         <action
             android:id="@+id/action_mainNavigationFragment_to_suggestQuestionFragment"
             app:destination="@id/suggestQuestionFragment" />
+        <action
+            android:id="@+id/action_mainNavigationFragment_to_partnerSettingFragment"
+            app:destination="@id/partnerSettingFragment" />
     </fragment>
     <fragment
         android:id="@+id/agreementPrivacyDetailFragment"
@@ -126,15 +129,6 @@
             app:destination="@id/languageSettingFragment"
             app:popUpTo="@id/settingFragment"
             app:popUpToInclusive="false" />
-        <action
-            android:id="@+id/action_settingFragment_to_privacyPolicyDetailFragment"
-            app:destination="@id/privacyPolicyDetailFragment" />
-        <action
-            android:id="@+id/action_settingFragment_to_serviceAgreementDetailFragment"
-            app:destination="@id/serviceAgreementDetailFragment" />
-        <action
-            android:id="@+id/action_settingFragment_to_breakUpCoupleFragment"
-            app:destination="@id/breakUpCoupleFragment" />
         <action
             android:id="@+id/action_settingFragment_to_accountSettingFragment"
             app:destination="@id/accountSettingFragment" />
@@ -199,17 +193,17 @@
         tools:layout="@layout/fragment_partner_help_reset"/>
     <fragment
         android:id="@+id/privacyPolicyDetailFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.privacyPolicyDetail.PrivacyPolicyDetailFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.accountSetting.privacyPolicyDetail.PrivacyPolicyDetailFragment"
         android:label="PrivacyPolicyDetailFragment"
         tools:layout="@layout/fragment_privacy_policy_detail" />
     <fragment
         android:id="@+id/serviceAgreementDetailFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.serviceAgreementDetail.ServiceAgreementDetailFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.accountSetting.serviceAgreementDetail.ServiceAgreementDetailFragment"
         android:label="ServiceAgreementDetailFragment"
         tools:layout="@layout/fragment_service_agreement_detail" />
     <fragment
         android:id="@+id/breakUpCoupleFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.breakUpCouple.BreakUpCoupleFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.partnerSetting.breakUpCouple.BreakUpCoupleFragment"
         android:label="fragment_break_up_couple"
         tools:layout="@layout/fragment_break_up_couple" >
         <action
@@ -226,6 +220,12 @@
         <action
             android:id="@+id/action_accountSettingFragment_to_deleteAccountFragment"
             app:destination="@id/deleteAccountFragment" />
+        <action
+            android:id="@+id/action_accountSettingFragment_to_privacyPolicyDetailFragment"
+            app:destination="@id/privacyPolicyDetailFragment" />
+        <action
+            android:id="@+id/action_accountSettingFragment_to_serviceAgreementDetailFragment"
+            app:destination="@id/serviceAgreementDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/deleteAccountFragment"
@@ -268,4 +268,13 @@
         android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.suggestQuestion.SuggestQuestionFragment"
         android:label="SuggestQuestionFragment"
         tools:layout="@layout/fragment_suggest_question"/>
+    <fragment
+        android:id="@+id/partnerSettingFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.partnerSetting.PartnerSettingFragment"
+        android:label="fragment_partner_setting"
+        tools:layout="@layout/fragment_partner_setting" >
+        <action
+            android:id="@+id/action_partnerSettingFragment_to_breakUpCoupleFragment"
+            app:destination="@id/breakUpCoupleFragment" />
+    </fragment>
 </navigation>

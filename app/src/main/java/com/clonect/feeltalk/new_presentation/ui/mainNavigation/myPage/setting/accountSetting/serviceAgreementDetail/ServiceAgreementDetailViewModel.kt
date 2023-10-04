@@ -1,5 +1,6 @@
-package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.privacyPolicyDetail
+package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.accountSetting.serviceAgreementDetail
 
+import com.clonect.feeltalk.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +15,7 @@ import javax.inject.Inject
  * Created by doding2 on 2023/09/20.
  */
 @HiltViewModel
-class PrivacyPolicyDetailViewModel @Inject constructor(
+class ServiceAgreementDetailViewModel @Inject constructor(
 
 ) : ViewModel() {
 

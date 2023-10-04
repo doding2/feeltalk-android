@@ -2,6 +2,9 @@ package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.a
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.new_domain.usecase.account.DeleteMyAccountUseCase
+import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +18,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class DeleteAccountDetailViewModel @Inject constructor(
-
+    private val deleteMyAccountUseCase: DeleteMyAccountUseCase,
 ) : ViewModel() {
 
     private val _errorMessage = MutableSharedFlow<String>()
@@ -91,9 +94,26 @@ class DeleteAccountDetailViewModel @Inject constructor(
 
 
     fun deleteAccount(onComplete: () -> Unit) = viewModelScope.launch {
+        if (isConfirmEnabled.value.not()) return@launch
+        val deleteReasonType = _deleteReasonType.value?.raw ?: return@launch
+        val etcReason = _etcReason.value
+        val deleteReason = if (deleteReasonType == DeleteReasonType.Etc.raw) {
+            _deleteReason.value
+        } else {
+            null
+        }
+
         setLoading(true)
+        when (val result = deleteMyAccountUseCase(deleteReasonType, deleteReason, etcReason)) {
+            is Resource.Success -> {
+                onComplete()
+            }
+            is Resource.Error -> {
+                infoLog("Fail to delete account: ${result.throwable.localizedMessage}")
+                result.throwable.localizedMessage?.let { sendErrorMessage(it) }
+            }
+        }
         setLoading(false)
-        onComplete()
     }
 
 }

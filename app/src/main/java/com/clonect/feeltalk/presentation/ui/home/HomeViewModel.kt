@@ -29,7 +29,7 @@ import kotlin.math.ceil
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getUserInfoUseCase: GetUserInfoUseCase,
-    private val getPartnerInfoFlowUseCase: GetPartnerInfoFlowUseCase,
+    private val getPartnerInfoFlow2UseCase: GetPartnerInfoFlow2UseCase,
     private val updateMyEmotionUseCase: UpdateMyEmotionUseCase,
     private val getTodayQuestionUseCase2: GetTodayQuestionUseCase2,
     private val getTodayQuestionAnswersFromServer: GetTodayQuestionAnswersFromServer,
@@ -126,7 +126,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getPartnerInfo() = viewModelScope.launch(Dispatchers.IO) {
-        getPartnerInfoFlowUseCase().collectLatest { result ->
+        getPartnerInfoFlow2UseCase().collectLatest { result ->
             when (result) {
                 is Resource.Success -> _partnerInfo.value = result.data
                 is Resource.Error -> infoLog("Fail to get partner info: ${result.throwable.localizedMessage}")
