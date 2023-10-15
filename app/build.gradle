@@ -98,6 +98,8 @@ dependencies {
     implementation "androidx.paging:paging-runtime-ktx:3.2.1"
     // lottie animation
     implementation 'com.airbnb.android:lottie:6.1.0'
+    // more shadow card view
+    implementation 'com.github.sina-seyfi:AdvancedCardView:1.0.1'
 
     // 믹스패널 데이터 분석
     implementation "com.mixpanel.android:mixpanel-android:7.+"

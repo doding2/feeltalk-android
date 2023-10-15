@@ -35,12 +35,11 @@
     <color name="answer_status_bar">#808080</color>
 
     <!--  Signal(임시)  -->
-    <color name="signal_seduce">#FFC0CB</color>
-    <color name="signal_passion">#FF0000</color>
-    <color name="signal_skinship">#00FF00</color>
-    <color name="signal_puzzling">#779cdb</color>
-    <color name="signal_nope">#000000</color>
-    <color name="signal_tired">#FFFF00</color>
+    <color name="signal_100">#FF2980</color>
+    <color name="signal_75">#F2635A</color>
+    <color name="signal_50">#FAC16D</color>
+    <color name="signal_25">#9483E5</color>
+    <color name="signal_0">#D2D1DC</color>
 
     <!--  old ui  -->
 

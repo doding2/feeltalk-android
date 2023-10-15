@@ -10,126 +10,176 @@
     <include layout="@layout/image_view_bottom_sheet_handle" />
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
+        android:layout_width="wrap_content"
+        android:layout_height="72dp"
+        android:layout_marginTop="-2dp"
         android:layout_marginHorizontal="20dp"
-        android:gravity="center"
         android:text="@string/signal_title"
-        android:textSize="20sp"
+        android:textSize="24sp"
         android:textColor="@color/black"
-        android:fontFamily="@font/pretendard_medium" />
+        android:fontFamily="@font/pretendard_regular"
+        android:lineSpacingExtra="7sp"
+        android:letterSpacing="-0.01"/>
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/mcv_signal_percent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="31dp"
-        android:layout_marginBottom="46dp"
+        android:layout_marginTop="45dp"
+        android:layout_marginBottom="8dp"
+        android:layout_gravity="center_horizontal"
+        app:cardBackgroundColor="@color/white"
         app:cardElevation="0dp"
-        app:cardCornerRadius="50dp"
-        app:cardBackgroundColor="@color/gray_300"
-        android:layout_gravity="center">
+        app:cardCornerRadius="17dp"
+        app:strokeColor="@color/signal_100"
+        app:strokeWidth="1dp">
 
-        <ImageView
-            android:id="@+id/iv_selected_signal"
-            android:layout_width="116dp"
-            android:layout_height="116dp"/>
+        <TextView
+            android:id="@+id/tv_signal_percent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="6dp"
+            android:layout_marginHorizontal="9.5dp"
+            android:text="@string/signal_percent_100"
+            android:textColor="@color/signal_100"
+            android:textSize="14sp"
+            android:fontFamily="@font/pretendard_regular"
+            android:letterSpacing="-0.01"
+            android:lineSpacingExtra="4dp"/>
     </com.google.android.material.card.MaterialCardView>
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/tv_signal_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_marginTop="8dp"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/signal_subtitle_100"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:fontFamily="@font/pretendard_medium"
+        android:letterSpacing="-0.01"
+        android:lineSpacingExtra="6dp"/>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_signal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="21dp">
+        android:clipToPadding="false"
+        android:paddingTop="36dp"
+        android:paddingBottom="40dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/iv_track"
+            android:layout_width="306dp"
+            android:layout_height="225dp"
+            android:adjustViewBounds="true"
+            android:src="@drawable/n_ic_signal_slider_track"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-            <include layout="@layout/image_view_signal_seduce"
-                android:id="@+id/layout_seduce"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginEnd="9dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/layout_passion"
-                app:layout_constraintDimensionRatio="V, 100:118"/>
+        <ImageView
+            android:id="@+id/iv_signal"
+            android:layout_width="162dp"
+            android:layout_height="162dp"
+            android:layout_marginTop="81dp"
+            android:src="@drawable/n_image_home_signal_25"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-            <include layout="@layout/image_view_signal_passion"
-                android:id="@+id/layout_passion"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginHorizontal="9dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/layout_seduce"
-                app:layout_constraintEnd_toStartOf="@id/layout_skinship"
-                app:layout_constraintDimensionRatio="V, 100:118"/>
-
-            <include layout="@layout/image_view_signal_skinship"
-                android:id="@+id/layout_skinship"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="9dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/layout_passion"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintDimensionRatio="V, 100:118"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/iv_pointer"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="22dp">
+            android:layout_marginTop="32dp"
+            android:src="@drawable/n_ic_signal_pointer"
+            app:layout_constraintTop_toTopOf="@id/iv_track"
+            app:layout_constraintStart_toStartOf="@id/iv_track"
+            app:layout_constraintEnd_toEndOf="@id/iv_track"/>
 
-            <include layout="@layout/image_view_signal_puzzling"
-                android:id="@+id/layout_puzzling"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginEnd="9dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/layout_nope"
-                app:layout_constraintDimensionRatio="V, 100:118"/>
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/mcv_signal_0"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_marginTop="207dp"
+            android:layout_marginStart="17dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/gray_400"
+            app:strokeColor="@color/white"
+            app:strokeWidth="1dp"
+            app:layout_constraintTop_toTopOf="@id/iv_track"
+            app:layout_constraintStart_toStartOf="@id/iv_track"/>
 
-            <include layout="@layout/image_view_signal_nope"
-                android:id="@+id/layout_nope"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginHorizontal="9dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/layout_puzzling"
-                app:layout_constraintEnd_toStartOf="@id/layout_tired"
-                app:layout_constraintDimensionRatio="V, 100:118"/>
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/mcv_signal_25"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_marginTop="69dp"
+            android:layout_marginStart="27dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/gray_400"
+            app:strokeColor="@color/white"
+            app:strokeWidth="1dp"
+            app:layout_constraintTop_toTopOf="@id/iv_track"
+            app:layout_constraintStart_toStartOf="@id/iv_track"/>
 
-            <include layout="@layout/image_view_signal_tired"
-                android:id="@+id/layout_tired"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="9dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/layout_nope"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintDimensionRatio="V, 100:118"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </LinearLayout>
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/mcv_signal_50"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_marginTop="4dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/gray_400"
+            app:strokeColor="@color/white"
+            app:strokeWidth="1dp"
+            app:layout_constraintTop_toTopOf="@id/iv_track"
+            app:layout_constraintStart_toStartOf="@id/iv_track"
+            app:layout_constraintEnd_toEndOf="@id/iv_track"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/mcv_signal_75"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_marginTop="69dp"
+            android:layout_marginEnd="27dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/gray_400"
+            app:strokeColor="@color/white"
+            app:strokeWidth="1dp"
+            app:layout_constraintTop_toTopOf="@id/iv_track"
+            app:layout_constraintEnd_toEndOf="@id/iv_track"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/mcv_signal_100"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_marginTop="207dp"
+            android:layout_marginEnd="17dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/gray_400"
+            app:strokeColor="@color/white"
+            app:strokeWidth="1dp"
+            app:layout_constraintTop_toTopOf="@id/iv_track"
+            app:layout_constraintEnd_toEndOf="@id/iv_track"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/mcv_send_signal"
         android:layout_width="match_parent"
         android:layout_height="59dp"
         android:layout_marginHorizontal="20dp"
-        app:cardBackgroundColor="@color/main_400"
+        app:cardBackgroundColor="@color/black"
         app:cardCornerRadius="30dp"
         app:cardElevation="0dp"
-        app:rippleColor="@color/main_600">
+        app:rippleColor="@color/system_alert">
 
         <TextView
             android:layout_width="wrap_content"

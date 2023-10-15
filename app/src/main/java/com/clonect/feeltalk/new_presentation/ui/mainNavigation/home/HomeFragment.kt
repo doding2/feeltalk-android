@@ -9,7 +9,6 @@ import android.text.style.AbsoluteSizeSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -52,16 +51,16 @@ class HomeFragment : Fragment() {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             binding.root.setPadding(0, getStatusBarHeight(), 0, 0)
-            setLightStatusBars(false, activity, binding.root)
+            setLightStatusBars(true, activity, binding.root)
         } else {
-            activity.setStatusBarColor(binding.root, requireContext().getColor(R.color.main_500), false)
+            activity.setStatusBarColor(binding.root, requireContext().getColor(R.color.white), false)
         }
         return binding.root
     }
 
     override fun onResume() {
         super.onResume()
-        setLightStatusBars(false, activity, binding.root)
+        setLightStatusBars(true, activity, binding.root)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,7 +69,7 @@ class HomeFragment : Fragment() {
 
         binding.run {
             mcvAnswer.setOnClickListener { showAnswerBottomSheet() }
-            mcvMySignal.setOnClickListener { showSignalBottomSheet() }
+            acvMySignal.setOnClickListener { showSignalBottomSheet() }
         }
     }
 
@@ -115,22 +114,22 @@ class HomeFragment : Fragment() {
 
     // TODO 나중에 이미지로 바꾸기
     private fun changeMySignalView(signal: Signal) {
-        binding.ivMySignal.setBackgroundColor(signal.getColorResource())
+//        binding.ivMySignal.setBackgroundColor(signal.getColorResource())
     }
 
     private fun changePartnerSignalView(signal: Signal) {
-        binding.ivPartnerSignal.setBackgroundColor(signal.getColorResource())
+//        binding.ivPartnerSignal.setBackgroundColor(signal.getColorResource())
     }
 
     // TODO 나중에 이미지로 바꾸기
-    private fun Signal.getColorResource(): Int = when (this) {
-        Signal.Seduce -> ContextCompat.getColor(requireContext(), R.color.signal_seduce)
-        Signal.Passion -> ContextCompat.getColor(requireContext(), R.color.signal_passion)
-        Signal.Skinship -> ContextCompat.getColor(requireContext(), R.color.signal_skinship)
-        Signal.Puzzling -> ContextCompat.getColor(requireContext(), R.color.signal_puzzling)
-        Signal.Nope -> ContextCompat.getColor(requireContext(), R.color.signal_nope)
-        Signal.Tired -> ContextCompat.getColor(requireContext(), R.color.signal_tired)
-    }
+//    private fun Signal.getColorResource(): Int = when (this) {
+//        Signal.Zero -> ContextCompat.getColor(requireContext(), R.color.signal_seduce)
+//        Signal.Quarter -> ContextCompat.getColor(requireContext(), R.color.signal_passion)
+//        Signal.Half -> ContextCompat.getColor(requireContext(), R.color.signal_skinship)
+//        Signal.ThreeFourth -> ContextCompat.getColor(requireContext(), R.color.signal_puzzling)
+//        Signal.One -> ContextCompat.getColor(requireContext(), R.color.signal_nope)
+//        Signal.Tired -> ContextCompat.getColor(requireContext(), R.color.signal_tired)
+//    }
 
 
     private fun collectViewModel() = lifecycleScope.launch {

@@ -12,6 +12,7 @@ fun Fragment.makeLoadingDialog(onDismiss: () -> Unit = {}): Dialog {
     val dialog = Dialog(requireContext()).apply {
         setContentView(R.layout.dialog_loading)
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        window?.setDimAmount(0f)
     }
 
     dialog.setCancelable(false)

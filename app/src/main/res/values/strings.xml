@@ -121,20 +121,28 @@
     <string name="home_answer_state_title_2">님이 답변을 기다리고 있어요!</string>
     <string name="home_answer_state_title_3">상대방의 답변을 기다리고 있어요</string>
     <string name="home_answer_state_title_4">오늘의 질문에 대해 필로우톡해봐요</string>
+    
+    <string name="home_today_question_mention">오늘도 서로에 대해 더 알아가봐요!</string>
     <string name="home_sub_title">두근두근!</string>
     <string name="home_main_title_deco">번째 질문이 도착했어요</string>
     <string name="home_main_answer_button">답변하기</string>
     <string name="home_signal_title">오늘의 시그널</string>
+    <string name="home_partner">상대방</string>
+    <string name="home_me">나</string>
 
     <!--  SignalBottomSheet  -->
-    <string name="signal_title">오늘 내 기분을 연인에게 보내볼까요?</string>
-    <string name="signal_send_button">시그널보내기</string>
-    <string name="signal_seduce">유혹</string>
-    <string name="signal_passion">열정적임</string>
-    <string name="signal_skinship">스킨십</string>
-    <string name="signal_puzzling">나도모름</string>
-    <string name="signal_nope">안돼</string>
-    <string name="signal_tired">피곤</string>
+    <string name="signal_title">오늘 내 기분을\n연인에게 보내봐요 !</string>
+    <string name="signal_percent_100">시그널 100%</string>
+    <string name="signal_percent_75">시그널 75%</string>
+    <string name="signal_percent_50">시그널 50%</string>
+    <string name="signal_percent_25">시그널 25%</string>
+    <string name="signal_percent_0">시그널 0%</string>
+    <string name="signal_subtitle_100">나 오늘 준비됐어 !</string>
+    <string name="signal_subtitle_75">오늘 사랑 충만 !</string>
+    <string name="signal_subtitle_50">나도 날 잘 모르겠어</string>
+    <string name="signal_subtitle_25">그럴 기분 아니야 !</string>
+    <string name="signal_subtitle_0">오늘은 정말 피곤해..</string>
+    <string name="signal_send_button">시그널 바꾸기</string>
 
     <!--  Question  -->
     <string name="question_title">질문</string>
