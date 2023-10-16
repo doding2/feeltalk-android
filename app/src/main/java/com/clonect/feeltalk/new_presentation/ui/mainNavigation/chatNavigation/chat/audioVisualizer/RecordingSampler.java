@@ -203,7 +203,9 @@ public class RecordingSampler {
      */
     public void stopRecording() {
         mIsRecording = false;
-        mTimer.cancel();
+        if (mTimer != null) {
+            mTimer.cancel();
+        }
 
         if (mVisualizerViews != null && !mVisualizerViews.isEmpty()) {
             for (int i = 0; i < mVisualizerViews.size(); i++) {
@@ -281,8 +283,10 @@ public class RecordingSampler {
      */
     public void release() {
         stopRecording();
-        mAudioRecord.release();
-        mAudioRecord = null;
+        if (mAudioRecord != null) {
+            mAudioRecord.release();
+            mAudioRecord = null;
+        }
         mTimer = null;
     }
 

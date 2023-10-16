@@ -3,11 +3,20 @@ package com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.c
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.*
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.filter
+import androidx.paging.insertFooterItem
+import androidx.paging.insertHeaderItem
+import androidx.paging.map
 import com.clonect.feeltalk.common.Constants
-import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.new_domain.model.chat.*
 import com.clonect.feeltalk.common.PageEvents
+import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.new_domain.model.chat.Chat
+import com.clonect.feeltalk.new_domain.model.chat.ChatType
+import com.clonect.feeltalk.new_domain.model.chat.QuestionChat
+import com.clonect.feeltalk.new_domain.model.chat.TextChat
+import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
 import com.clonect.feeltalk.new_domain.usecase.chat.ChangeChatRoomStateUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPagingChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.SendTextChatUseCase
@@ -20,11 +29,24 @@ import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.ch
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.audioVisualizer.VisualizerView
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
+import java.util.Timer
+import java.util.TimerTask
 import javax.inject.Inject
 
 @HiltViewModel
@@ -415,7 +437,8 @@ class ChatViewModel @Inject constructor(
     }
 
     fun finishVoiceRecording() {
-        _voiceSampler.value?.stopRecording()
+//        _voiceSampler.value?.stopRecording()
+        _voiceSampler.value?.release()
         _isVoiceRecordingFinished.value = true
         recordTimer?.cancel()
     }
@@ -424,7 +447,8 @@ class ChatViewModel @Inject constructor(
         _isVoiceRecordingMode.value = false
         _isVoiceRecordingFinished.value = false
         recordTimer?.cancel()
-        _voiceSampler.value?.stopRecording()
+//        _voiceSampler.value?.stopRecording()
+        _voiceSampler.value?.release()
         _voiceSampler.value = null
     }
 
