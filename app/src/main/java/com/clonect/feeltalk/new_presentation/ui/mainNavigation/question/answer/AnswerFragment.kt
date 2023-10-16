@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.question.answer
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
@@ -151,7 +152,10 @@ class AnswerFragment : Fragment() {
                     tvDoneRound.setText(R.string.answer_button_chat)
                     tvDoneSquare.setText(R.string.answer_button_chat)
                 } else {
-                    etMyAnswer.text = null
+                    // 앱 백그라운드 갔다가 돌아오면 작성된 내용 날아가는거 방지
+                    if (!navViewModel.isUserAnswering.value) {
+                        etMyAnswer.text = null
+                    }
                     etMyAnswer.isEnabled = true
                     tvDoneRound.setText(R.string.answer_button_done)
                     tvDoneSquare.setText(R.string.answer_button_done)
@@ -203,6 +207,7 @@ class AnswerFragment : Fragment() {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setEditTextScroll() = binding.run {
 //        var isMyEtInTop = false
 //        var isMyEtInBottom = false
