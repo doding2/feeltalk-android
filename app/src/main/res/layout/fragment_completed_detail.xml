@@ -290,7 +290,7 @@
                             android:paddingHorizontal="12dp"
                             android:paddingTop="16dp"
                             android:paddingBottom="46dp"
-                            android:textCursorDrawable="@null"
+                            android:textCursorDrawable="@color/gray_400"
                             android:background="@null"
                             android:hint="@string/add_challenge_body_hint"
                             android:textColorHint="@color/gray_400"

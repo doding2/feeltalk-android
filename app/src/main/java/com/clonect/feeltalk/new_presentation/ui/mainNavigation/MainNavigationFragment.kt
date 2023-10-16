@@ -23,7 +23,6 @@ import com.clonect.feeltalk.new_domain.model.chat.PartnerLastChatDto
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.showConfirmDialog
-import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -42,15 +41,14 @@ class MainNavigationFragment : Fragment() {
         binding = FragmentMainNavigationBinding.inflate(inflater, container, false)
 
         setUpBottomNavigation()
-        setUpAnswerSheet()
-        setUpInquirySucceedSheet()
-        setUpSuggestionSucceedSheet()
+        setUpBottomSheets()
 
         // set fullscreen
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             binding.clFloatingChatContainer.setPadding(0, getStatusBarHeight(), 0, 0)
             binding.flInquirySucceedSheet.setPadding(0, 0, 0, getNavigationBarHeight())
             binding.flSuggestionSucceedSheet.setPadding(0, 0, 0, getNavigationBarHeight())
+            binding.flSignalCompleteSheet.setPadding(0, 0, 0, getNavigationBarHeight())
         } else {
             activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         }
@@ -123,6 +121,13 @@ class MainNavigationFragment : Fragment() {
             viewSuggestionSucceedBehind.setOnClickListener {
                 viewModel.setShowSuggestionSucceedSheet(false)
             }
+
+            sheetSignalComplete.mcvConfirm.setOnClickListener {
+                viewModel.setShowSignalCompleteSheet(false)
+            }
+            viewSignalCompleteBehind.setOnClickListener {
+                viewModel.setShowSignalCompleteSheet(false)
+            }
         }
     }
 
@@ -139,8 +144,8 @@ class MainNavigationFragment : Fragment() {
         bottomNav.setupWithNavController(navController)
     }
 
-    private fun setUpAnswerSheet() {
-        val behavior = BottomSheetBehavior.from(binding.flAnswerSheet).apply {
+    private fun setUpBottomSheets() {
+        BottomSheetBehavior.from(binding.flAnswerSheet).apply {
             peekHeight = 0
             skipCollapsed = true
             addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
@@ -153,10 +158,8 @@ class MainNavigationFragment : Fragment() {
                 }
             })
         }
-    }
 
-    private fun setUpInquirySucceedSheet() {
-        val behavior = BottomSheetBehavior.from(binding.flInquirySucceedSheet).apply {
+        BottomSheetBehavior.from(binding.flInquirySucceedSheet).apply {
             peekHeight = 0
             skipCollapsed = true
             addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
@@ -168,10 +171,8 @@ class MainNavigationFragment : Fragment() {
                 }
             })
         }
-    }
 
-    private fun setUpSuggestionSucceedSheet() {
-        val behavior = BottomSheetBehavior.from(binding.flSuggestionSucceedSheet).apply {
+        BottomSheetBehavior.from(binding.flSuggestionSucceedSheet).apply {
             peekHeight = 0
             skipCollapsed = true
             addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
@@ -179,6 +180,19 @@ class MainNavigationFragment : Fragment() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     if (newState == BottomSheetBehavior.STATE_HIDDEN) {
                         viewModel.setShowSuggestionSucceedSheet(false)
+                    }
+                }
+            })
+        }
+
+        BottomSheetBehavior.from(binding.flSignalCompleteSheet).apply {
+            peekHeight = 0
+            skipCollapsed = true
+            addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                        viewModel.setShowSignalCompleteSheet(false)
                     }
                 }
             })
@@ -248,6 +262,19 @@ class MainNavigationFragment : Fragment() {
         }
     }
 
+    private fun showSignalCompleteSheet(isShow: Boolean) {
+        val behavior = BottomSheetBehavior.from(binding.flSignalCompleteSheet)
+
+        if (isShow) {
+            binding.viewSignalCompleteBehind.visibility = View.VISIBLE
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+        else {
+            binding.viewSignalCompleteBehind.visibility = View.GONE
+            behavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+    }
+
     private fun showPartnerLastChatView(isShow: Boolean) = binding.run {
         flLatestChat.visibility = if (isShow) {
             View.VISIBLE
@@ -284,6 +311,7 @@ class MainNavigationFragment : Fragment() {
             launch { viewModel.showAnswerSheet.collectLatest(::showAnswerSheet) }
             launch { viewModel.showInquirySucceedSheet.collectLatest(::showSubmitSucceedSheet) }
             launch { viewModel.showSuggestionSucceedSheet.collectLatest(::showSuggestionSucceedSheet) }
+            launch { viewModel.showSignalCompleteSheet.collectLatest(::showSignalCompleteSheet) }
         }
     }
 
@@ -293,7 +321,7 @@ class MainNavigationFragment : Fragment() {
         super.onAttach(context)
         onBackCallback = object: OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (viewModel.isUserAnswering.value) {
+                if (viewModel.showAnswerSheet.value && viewModel.isUserAnswering.value) {
                     showConfirmDialog(
                         title = requireContext().getString(R.string.answer_cancel_title),
                         body = requireContext().getString(R.string.answer_cancel_body),
@@ -308,6 +336,19 @@ class MainNavigationFragment : Fragment() {
                     viewModel.setShowAnswerSheet(false)
                     return
                 }
+                if (viewModel.showSignalCompleteSheet.value) {
+                    viewModel.setShowSignalCompleteSheet(false)
+                    return
+                }
+                if (viewModel.showInquirySucceedSheet.value) {
+                    viewModel.setShowInquirySucceedSheet(false)
+                    return
+                }
+                if (viewModel.showSuggestionSucceedSheet.value) {
+                    viewModel.setShowSuggestionSucceedSheet(false)
+                    return
+                }
+
                 requireActivity().finish()
             }
         }

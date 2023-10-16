@@ -25,10 +25,10 @@ class HomeViewModel @Inject constructor(
     private val _todayQuestion = MutableStateFlow<Question?>(null)
     val todayQuestion = _todayQuestion.asStateFlow()
 
-    private val _mySignal = MutableStateFlow(Signal.Zero)
+    private val _mySignal = MutableStateFlow(Signal.One)
     val mySignal = _mySignal.asStateFlow()
 
-    private val _partnerSignal = MutableStateFlow(Signal.Zero)
+    private val _partnerSignal = MutableStateFlow(Signal.One)
     val partnerSignal = _partnerSignal.asStateFlow()
 
     init {

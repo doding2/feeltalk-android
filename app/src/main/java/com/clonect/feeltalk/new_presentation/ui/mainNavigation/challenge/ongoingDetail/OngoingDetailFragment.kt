@@ -339,7 +339,7 @@ class OngoingDetailFragment : Fragment() {
             ivDelete.visibility = View.GONE
 
             etTitle.isEnabled = true
-            etBody.isEnabled = true
+            etBody.isFocusableInTouchMode = true
             mcvDeadline.isEnabled = true
             mcvNewsBar.isEnabled = true
             mcvEditRound.isEnabled = true
@@ -355,7 +355,8 @@ class OngoingDetailFragment : Fragment() {
             ivDelete.visibility = View.VISIBLE
 
             etTitle.isEnabled = false
-            etBody.isEnabled = false
+            etBody.isFocusableInTouchMode = false
+            etBody.clearFocus()
             mcvDeadline.isEnabled = false
             mcvNewsBar.isEnabled = false
             mcvEditRound.isEnabled = false

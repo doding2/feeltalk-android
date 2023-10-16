@@ -83,7 +83,7 @@ class HomeFragment : Fragment() {
 
 
     private fun showSignalBottomSheet() {
-        val bottomSheet = SignalBottomSheetFragment(onSendSignal = viewModel::setMySignal)
+        val bottomSheet = SignalBottomSheetFragment(onSendSignal = ::changeMySignal)
 
         val currentSignal = viewModel.mySignal.value
         val bundle = Bundle()
@@ -92,6 +92,12 @@ class HomeFragment : Fragment() {
 
         bottomSheet.show(requireActivity().supportFragmentManager, SignalBottomSheetFragment.TAG)
     }
+
+    private fun changeMySignal(signal: Signal) {
+        viewModel.setMySignal(signal)
+        navViewModel.setShowSignalCompleteSheet(true)
+    }
+
 
 
     private fun changeTodayQuestionView(todayQuestion: Question?) {
@@ -112,24 +118,21 @@ class HomeFragment : Fragment() {
     }
 
 
-    // TODO 나중에 이미지로 바꾸기
     private fun changeMySignalView(signal: Signal) {
-//        binding.ivMySignal.setBackgroundColor(signal.getColorResource())
+        binding.ivMySignal.setImageResource(signal.getImageResource())
     }
 
     private fun changePartnerSignalView(signal: Signal) {
-//        binding.ivPartnerSignal.setBackgroundColor(signal.getColorResource())
+        binding.ivPartnerSignal.setImageResource(signal.getImageResource())
     }
 
-    // TODO 나중에 이미지로 바꾸기
-//    private fun Signal.getColorResource(): Int = when (this) {
-//        Signal.Zero -> ContextCompat.getColor(requireContext(), R.color.signal_seduce)
-//        Signal.Quarter -> ContextCompat.getColor(requireContext(), R.color.signal_passion)
-//        Signal.Half -> ContextCompat.getColor(requireContext(), R.color.signal_skinship)
-//        Signal.ThreeFourth -> ContextCompat.getColor(requireContext(), R.color.signal_puzzling)
-//        Signal.One -> ContextCompat.getColor(requireContext(), R.color.signal_nope)
-//        Signal.Tired -> ContextCompat.getColor(requireContext(), R.color.signal_tired)
-//    }
+    private fun Signal.getImageResource(): Int = when (this) {
+        Signal.Zero -> R.drawable.n_image_home_signal_0
+        Signal.Quarter -> R.drawable.n_image_home_signal_25
+        Signal.Half -> R.drawable.n_image_home_signal_50
+        Signal.ThreeFourth -> R.drawable.n_image_home_signal_75
+        Signal.One -> R.drawable.n_image_home_signal_100
+    }
 
 
     private fun collectViewModel() = lifecycleScope.launch {

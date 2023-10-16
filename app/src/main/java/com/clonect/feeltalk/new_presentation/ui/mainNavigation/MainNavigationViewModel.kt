@@ -78,6 +78,9 @@ class MainNavigationViewModel @Inject constructor(
     private val _showSuggestionSucceedSheet = MutableStateFlow(false)
     val showSuggestionSucceedSheet = _showSuggestionSucceedSheet.asStateFlow()
 
+    private val _showSignalCompleteSheet = MutableStateFlow(false)
+    val showSignalCompleteSheet = _showSignalCompleteSheet.asStateFlow()
+
 
     init {
         getPartnerLastChat()
@@ -196,6 +199,10 @@ class MainNavigationViewModel @Inject constructor(
 
     fun setShowSuggestionSucceedSheet(isShow: Boolean) {
         _showSuggestionSucceedSheet.value =isShow
+    }
+
+    fun setShowSignalCompleteSheet(isShow: Boolean) {
+        _showSignalCompleteSheet.value =isShow
     }
 
 

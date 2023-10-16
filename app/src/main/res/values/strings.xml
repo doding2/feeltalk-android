@@ -144,6 +144,12 @@
     <string name="signal_subtitle_0">오늘은 정말 피곤해..</string>
     <string name="signal_send_button">시그널 바꾸기</string>
 
+    <!--  SignalCompleteBottomSheet  -->
+    <string name="signal_complete_title">시그널 전송 완료 💓</string>
+    <string name="signal_complete_body">님에게 시그널을 성공적으로 보냈어요.</string>
+    <string name="signal_complete_confirm">우리 진짜 최고야 !</string>
+
+
     <!--  Question  -->
     <string name="question_title">질문</string>
     <string name="question_today_new">New</string>

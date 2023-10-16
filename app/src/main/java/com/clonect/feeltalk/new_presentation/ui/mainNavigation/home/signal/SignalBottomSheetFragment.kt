@@ -73,11 +73,11 @@ class SignalBottomSheetFragment(
         viewModel.setAngle(146.97f)
         arguments?.getString("currentSignal")?.let {
             val angle = when (Signal.valueOf(it)) {
-                Signal.Zero -> 335.22f
-                Signal.Quarter -> 33f
+                Signal.Zero -> 204.77f
+                Signal.Quarter -> 147f
                 Signal.Half -> 90f
-                Signal.ThreeFourth -> 147f
-                Signal.One -> 204.77f
+                Signal.ThreeFourth -> 33f
+                Signal.One -> 335.22f
             }
             viewModel.setAngle(angle)
         }
@@ -131,7 +131,7 @@ class SignalBottomSheetFragment(
                 val angle = if (x > center.x && y <= center.y) {
                     rawAngle
                 }
-                // 2 사분면
+                // 4 사분면
                 else if (x > center.x && y > center.y) {
                     360 - rawAngle
                 }
@@ -139,7 +139,7 @@ class SignalBottomSheetFragment(
                 else if (x <= center.x && y > center.y) {
                     rawAngle + 180
                 }
-                // 4 사분면
+                // 2 사분면
                 else  {
                     180 - rawAngle
                 }
@@ -185,7 +185,7 @@ class SignalBottomSheetFragment(
                 dx *= 1
                 dy *= -1
             }
-            // 4 사분면
+            // 2 사분면
             else if (discreteAngle < 180) {
                 dx *= -1
                 dy *= -1
@@ -195,7 +195,7 @@ class SignalBottomSheetFragment(
                 dx *= -1
                 dy *= 1
             }
-            // 2 사분면
+            // 4 사분면
             else {
                 dx *= 1
                 dy *= 1
@@ -209,6 +209,12 @@ class SignalBottomSheetFragment(
 
 
     private fun applySignalChange(signal: Signal?) = binding.run {
+        mcvSignal0.setCardBackgroundColor(requireContext().getColor(R.color.gray_400))
+        mcvSignal25.setCardBackgroundColor(requireContext().getColor(R.color.gray_400))
+        mcvSignal50.setCardBackgroundColor(requireContext().getColor(R.color.gray_400))
+        mcvSignal75.setCardBackgroundColor(requireContext().getColor(R.color.gray_400))
+        mcvSignal100.setCardBackgroundColor(requireContext().getColor(R.color.gray_400))
+
         when (signal) {
             Signal.Zero -> {
                 tvSignalSubtitle.setText(R.string.signal_subtitle_0)
@@ -216,6 +222,7 @@ class SignalBottomSheetFragment(
                 tvSignalPercent.setTextColor(requireContext().getColor(R.color.signal_0))
                 mcvSignalPercent.strokeColor = requireContext().getColor(R.color.signal_0)
                 ivSignal.setImageResource(R.drawable.n_image_signal_0)
+                mcvSignal0.setCardBackgroundColor(requireContext().getColor(R.color.black))
             }
             Signal.Quarter -> {
                 tvSignalSubtitle.setText(R.string.signal_subtitle_25)
@@ -223,6 +230,7 @@ class SignalBottomSheetFragment(
                 tvSignalPercent.setTextColor(requireContext().getColor(R.color.signal_25))
                 mcvSignalPercent.strokeColor = requireContext().getColor(R.color.signal_25)
                 ivSignal.setImageResource(R.drawable.n_image_signal_25)
+                mcvSignal25.setCardBackgroundColor(requireContext().getColor(R.color.signal_25))
             }
             Signal.Half -> {
                 tvSignalSubtitle.setText(R.string.signal_subtitle_50)
@@ -230,6 +238,7 @@ class SignalBottomSheetFragment(
                 tvSignalPercent.setTextColor(requireContext().getColor(R.color.signal_50))
                 mcvSignalPercent.strokeColor = requireContext().getColor(R.color.signal_50)
                 ivSignal.setImageResource(R.drawable.n_image_signal_50)
+                mcvSignal50.setCardBackgroundColor(requireContext().getColor(R.color.signal_50))
             }
             Signal.ThreeFourth -> {
                 tvSignalSubtitle.setText(R.string.signal_subtitle_75)
@@ -237,6 +246,7 @@ class SignalBottomSheetFragment(
                 tvSignalPercent.setTextColor(requireContext().getColor(R.color.signal_75))
                 mcvSignalPercent.strokeColor = requireContext().getColor(R.color.signal_75)
                 ivSignal.setImageResource(R.drawable.n_image_signal_75)
+                mcvSignal75.setCardBackgroundColor(requireContext().getColor(R.color.signal_75))
             }
             Signal.One -> {
                 tvSignalSubtitle.setText(R.string.signal_subtitle_100)
@@ -244,8 +254,9 @@ class SignalBottomSheetFragment(
                 tvSignalPercent.setTextColor(requireContext().getColor(R.color.signal_100))
                 mcvSignalPercent.strokeColor = requireContext().getColor(R.color.signal_100)
                 ivSignal.setImageResource(R.drawable.n_image_signal_100)
+                mcvSignal100.setCardBackgroundColor(requireContext().getColor(R.color.signal_100))
             }
-            null -> viewModel.setSignal(Signal.One)
+            null -> return@run
         }
     }
 
