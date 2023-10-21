@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.home
 
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
@@ -24,10 +25,12 @@ import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.home.signal.SignalBottomSheetFragment
 import com.clonect.feeltalk.new_presentation.ui.util.CustomTypefaceSpan
+import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
 import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -68,17 +71,39 @@ class HomeFragment : Fragment() {
         collectViewModel()
 
         binding.run {
-            mcvAnswer.setOnClickListener { showAnswerBottomSheet() }
+            mcvAnswer.setOnClickListener { clickAnswerButton() }
             acvMySignal.setOnClickListener { showSignalBottomSheet() }
         }
     }
 
+    private fun clickAnswerButton() {
+        viewModel.todayQuestion.value?.let {
+            if (it.myAnswer != null && it.partnerAnswer == null) {
+                showPokeSnackBar()
+            } else {
+                showAnswerBottomSheet()
+            }
+        }
+    }
 
     private fun showAnswerBottomSheet() {
         val todayQuestion = viewModel.todayQuestion.value ?: return
 
         navViewModel.setAnswerTargetQuestion(todayQuestion)
         navViewModel.setShowAnswerSheet(true)
+    }
+
+    private fun showPokeSnackBar() {
+        val decorView = activity?.window?.decorView ?: return
+        TextSnackbar.make(
+            view = decorView,
+            message = requireContext().getString(R.string.home_poke_snackbar_title),
+            duration = Snackbar.LENGTH_SHORT,
+            bottomMargin = activity.dpToPx(56f).toInt(),
+            onClick = {
+                it.dismiss()
+            }
+        ).show()
     }
 
 
@@ -100,7 +125,7 @@ class HomeFragment : Fragment() {
 
 
 
-    private fun changeTodayQuestionView(todayQuestion: Question?) {
+    private fun changeTodayQuestionView(todayQuestion: Question?) = binding.run {
         if (todayQuestion == null) return
 
         val index = todayQuestion.index.toString()
@@ -114,7 +139,18 @@ class HomeFragment : Fragment() {
             setSpan(AbsoluteSizeSpan(activity.dpToPx(28f).toInt()), 0, index.length, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
             setSpan(CountCenterVerticalSpan(), 0, index.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
-        binding.tvQuestionCount.text = spanString
+        tvQuestionCount.text = spanString
+
+        if (todayQuestion.myAnswer != null) {
+            tvAnswer.setText(R.string.home_main_answer_button_2)
+            mcvAnswer.setCardBackgroundColor(requireContext().getColor(R.color.main_500))
+            mcvAnswer.strokeWidth = requireContext().dpToPx(1f)
+        } else {
+            tvAnswer.setText(R.string.home_main_answer_button_1)
+            mcvAnswer.setCardBackgroundColor(Color.WHITE)
+            mcvAnswer.strokeWidth = 0
+        }
+
     }
 
 

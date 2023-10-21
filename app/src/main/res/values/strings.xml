@@ -125,10 +125,13 @@
     <string name="home_today_question_mention">오늘도 서로에 대해 더 알아가봐요!</string>
     <string name="home_sub_title">두근두근!</string>
     <string name="home_main_title_deco">번째 질문이 도착했어요</string>
-    <string name="home_main_answer_button">답변하기</string>
+    <string name="home_main_answer_button_1">답변하기</string>
+    <string name="home_main_answer_button_2">답변보기</string>
     <string name="home_signal_title">오늘의 시그널</string>
     <string name="home_partner">상대방</string>
     <string name="home_me">나</string>
+    <string name="home_poke_snackbar_title">연인이 아직 답변을 작성하지 않았어요.</string>
+    <string name="home_poke_snackbar_button">콕찌르기</string>
 
     <!--  SignalBottomSheet  -->
     <string name="signal_title">오늘 내 기분을\n연인에게 보내봐요 !</string>

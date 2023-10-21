@@ -51,10 +51,12 @@
                 android:layout_height="match_parent">
 
                 <ImageView
-                    android:layout_width="204dp"
-                    android:layout_height="201dp"
+                    android:layout_width="233dp"
+                    android:layout_height="261dp"
                     android:layout_gravity="bottom|end"
-                    android:src="@drawable/n_image_home_question_deco"/>
+                    android:src="@drawable/n_image_home_question_deco"
+                    android:translationX="68dp"
+                    android:translationY="40dp"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -110,7 +112,7 @@
                         app:cardElevation="0dp"
                         app:cardBackgroundColor="@color/white"
                         app:cardCornerRadius="24dp"
-                        app:rippleColor="@color/system_alert"
+                        app:rippleColor="@color/main_300"
                         app:strokeWidth="0dp"
                         app:strokeColor="@color/white">
 
@@ -123,9 +125,10 @@
                             android:gravity="center">
 
                             <TextView
+                                android:id="@+id/tv_answer"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/home_main_answer_button"
+                                android:text="@string/home_main_answer_button_1"
                                 android:textSize="18sp"
                                 android:textColor="@color/main_500"
                                 android:fontFamily="@font/pretendard_medium"
@@ -185,6 +188,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"/>
 
                 <com.sinaseyfi.advancedcardview.AdvancedCardView
+                    android:id="@+id/acv_partner_signal"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:maxHeight="100dp"
