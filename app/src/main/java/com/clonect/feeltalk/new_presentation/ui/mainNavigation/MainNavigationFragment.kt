@@ -88,6 +88,8 @@ class MainNavigationFragment : Fragment() {
 
         viewModel.setShortcut(requireContext())
 
+        arguments?.clear()
+
         return binding.root
     }
 
