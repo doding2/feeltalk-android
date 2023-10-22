@@ -65,11 +65,11 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setRecyclerView()
         viewModel.cancelJob()
         viewModel.setJob(
             collectViewModel()
         )
+        setRecyclerView()
 
         binding.run {
             ivCancel.setOnClickListener { cancel() }

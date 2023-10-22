@@ -12,26 +12,11 @@ import com.clonect.feeltalk.databinding.ItemQuestionShareBinding
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 
-class QuestionShareAdapter: PagingDataAdapter<Question, QuestionShareAdapter.QuestionViewHolder>(
-    callback
-) {
-
-    companion object {
-        private val callback = object: DiffUtil.ItemCallback<Question>() {
-            override fun areItemsTheSame(oldItem: Question, newItem: Question): Boolean {
-                return oldItem.index == newItem.index
-            }
-
-            override fun areContentsTheSame(oldItem: Question, newItem: Question): Boolean {
-                return oldItem == newItem
-            }
-        }
-    }
+class QuestionShareAdapter : PagingDataAdapter<Question, QuestionShareAdapter.QuestionViewHolder>(callback) {
 
     private var selectedIndex: Long? = null
     private var onItemSelect: ((Question?) -> Unit) = {}
     private val viewHolders = mutableListOf<QuestionViewHolder>()
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuestionViewHolder {
         val binding = ItemQuestionShareBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -114,6 +99,20 @@ class QuestionShareAdapter: PagingDataAdapter<Question, QuestionShareAdapter.Que
 
         fun setViewUnselected() = binding.run {
             root.strokeWidth = 0
+        }
+    }
+
+
+
+    companion object {
+        private val callback = object: DiffUtil.ItemCallback<Question>() {
+            override fun areItemsTheSame(oldItem: Question, newItem: Question): Boolean {
+                return oldItem.index == newItem.index
+            }
+
+            override fun areContentsTheSame(oldItem: Question, newItem: Question): Boolean {
+                return oldItem == newItem
+            }
         }
     }
 }

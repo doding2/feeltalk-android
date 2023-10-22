@@ -38,7 +38,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -77,7 +76,6 @@ class ChatViewModel @Inject constructor(
     private val _isKeyboardUp = MutableStateFlow(false)
     val isKeyboardUp = _isKeyboardUp.asStateFlow()
 
-
     init {
         collectNewChat()
         collectPartnerChatRoomState()
@@ -105,7 +103,7 @@ class ChatViewModel @Inject constructor(
     }
 
     fun cancelJob() = viewModelScope.launch {
-        job.value?.job
+        job.value?.cancel()
     }
 
     fun setJob(job: Job) {

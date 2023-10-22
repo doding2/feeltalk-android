@@ -19,7 +19,6 @@
         android:textColor="@color/white"
         android:textSize="16sp"
         android:fontFamily="@font/pretendard_regular"
-        android:includeFontPadding="false"
         android:lineSpacingExtra="5dp"
         android:letterSpacing="-0.01"/>
 

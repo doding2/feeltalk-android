@@ -12,14 +12,11 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.databinding.FragmentQuestionShareBinding
 import com.clonect.feeltalk.new_domain.model.question.Question
-import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUseCase
-import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.contentsShare.ContentsShareViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -29,11 +26,6 @@ class QuestionShareFragment : Fragment() {
     private val shareViewModel: ContentsShareViewModel by viewModels(ownerProducer = { requireParentFragment() })
     private val viewModel: QuestionShareViewModel by viewModels()
     lateinit var adapter: QuestionShareAdapter
-
-    @Inject
-    lateinit var notificationHelper: NotificationHelper
-    @Inject
-    lateinit var getQuestionUseCase: GetQuestionUseCase
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

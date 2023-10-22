@@ -1,12 +1,15 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.home
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.model.signal.Signal
 import com.clonect.feeltalk.new_domain.usecase.question.ChangeTodayQuestionCacheUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetTodayQuestionUseCase
+import com.clonect.feeltalk.new_domain.usecase.question.PressForAnswerUseCase
 import com.clonect.feeltalk.new_presentation.notification.observer.QuestionAnswerObserver
 import com.clonect.feeltalk.new_presentation.notification.observer.TodayQuestionObserver
 import com.clonect.feeltalk.new_presentation.ui.util.mutableStateFlow
@@ -21,6 +24,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getTodayQuestionUseCase: GetTodayQuestionUseCase,
     private val changeTodayQuestionCacheUseCase: ChangeTodayQuestionCacheUseCase,
+    private val pressForAnswerUseCase: PressForAnswerUseCase,
 ) : ViewModel() {
 
     private val _todayQuestion = MutableStateFlow<Question?>(null)
@@ -31,6 +35,9 @@ class HomeViewModel @Inject constructor(
 
     private val _partnerSignal = MutableStateFlow(Signal.One)
     val partnerSignal = _partnerSignal.asStateFlow()
+
+    var snackbarMessage: String? by mutableStateFlow(null)
+        private set
 
     init {
         getTodayQuestion()
@@ -45,6 +52,18 @@ class HomeViewModel @Inject constructor(
             }
             is Resource.Error -> {
                 infoLog("Fail to get today question: ${result.throwable.localizedMessage}\n${result.throwable.stackTrace.joinToString("\n")}")
+            }
+        }
+    }
+
+    fun pressForAnswer(context: Context) = viewModelScope.launch {
+        when (val result = pressForAnswerUseCase(_todayQuestion.value?.index ?: return@launch)) {
+            is Resource.Success -> {
+                snackbarMessage = context.getString(R.string.answer_poke_partner_snack_bar)
+            }
+            is Resource.Error -> {
+                infoLog("Fail to answer question: ${result.throwable.localizedMessage}\n${result.throwable.stackTrace.joinToString("\n")}")
+                snackbarMessage = result.throwable.localizedMessage
             }
         }
     }

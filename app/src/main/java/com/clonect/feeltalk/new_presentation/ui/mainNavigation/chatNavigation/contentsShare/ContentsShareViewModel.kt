@@ -61,7 +61,7 @@ class ContentsShareViewModel @Inject constructor(
 
     fun getShareChallengeEnabled() = _selectedChallenge.value != null
 
-    fun selectedChallenge(challenge: Challenge?) {
+    fun selectChallenge(challenge: Challenge?) {
         _selectedQuestion.value = null
         _selectedChallenge.value = challenge
     }

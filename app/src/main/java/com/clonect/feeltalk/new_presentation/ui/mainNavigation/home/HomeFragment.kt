@@ -25,11 +25,13 @@ import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.home.signal.SignalBottomSheetFragment
 import com.clonect.feeltalk.new_presentation.ui.util.CustomTypefaceSpan
+import com.clonect.feeltalk.new_presentation.ui.util.PokeSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
 import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
+import com.clonect.feeltalk.new_presentation.ui.util.stateFlow
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -95,13 +97,18 @@ class HomeFragment : Fragment() {
 
     private fun showPokeSnackBar() {
         val decorView = activity?.window?.decorView ?: return
-        TextSnackbar.make(
+        PokeSnackbar.make(
             view = decorView,
             message = requireContext().getString(R.string.home_poke_snackbar_title),
+            pokeText = requireContext().getString(R.string.home_poke_snackbar_button),
             duration = Snackbar.LENGTH_SHORT,
             bottomMargin = activity.dpToPx(56f).toInt(),
             onClick = {
                 it.dismiss()
+            },
+            onPoke = {
+                it.dismiss()
+                viewModel.pressForAnswer(requireContext())
             }
         ).show()
     }
@@ -171,11 +178,26 @@ class HomeFragment : Fragment() {
     }
 
 
+    private fun showSnackBar(message: String?) {
+        if (message == null) return
+        val decorView = activity?.window?.decorView ?: return
+        TextSnackbar.make(
+            view = decorView,
+            message = message,
+            duration = Snackbar.LENGTH_SHORT,
+            onClick = {
+                it.dismiss()
+            }
+        ).show()
+    }
+
+
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.todayQuestion.collectLatest(::changeTodayQuestionView) }
             launch { viewModel.mySignal.collectLatest(::changeMySignalView) }
             launch { viewModel.partnerSignal.collectLatest(::changePartnerSignalView) }
+            launch { viewModel::snackbarMessage.stateFlow.collectLatest(::showSnackBar) }
         }
     }
 }

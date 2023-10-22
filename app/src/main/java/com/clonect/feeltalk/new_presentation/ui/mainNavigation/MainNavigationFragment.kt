@@ -154,8 +154,7 @@ class MainNavigationFragment : Fragment() {
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {}
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                        viewModel.setUserAnswering(false)
-                        viewModel.setShowAnswerSheet(false)
+                        viewModel.setAnswerTargetQuestion(null)
                     }
                 }
             })
@@ -329,7 +328,7 @@ class MainNavigationFragment : Fragment() {
                         body = requireContext().getString(R.string.answer_cancel_body),
                         confirmButton = requireContext().getString(R.string.answer_cancel_confirm),
                     ) {
-                        viewModel.setShowAnswerSheet(false)
+                        viewModel.setAnswerTargetQuestion(null)
                     }
                     return
                 }
