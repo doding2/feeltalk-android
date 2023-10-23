@@ -48,14 +48,17 @@
         android:layout_width="match_parent"
         android:layout_height="59dp"
         android:layout_marginHorizontal="20dp"
-        app:cardBackgroundColor="@color/black"
+        app:cardBackgroundColor="@null"
         app:cardCornerRadius="30dp"
-        app:cardElevation="0dp">
+        app:cardElevation="0dp"
+        app:rippleColor="@android:color/transparent">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:id="@+id/tv_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:background="@drawable/n_background_button_black"
             android:text="@string/signal_complete_confirm"
             android:textColor="@color/white"
             android:textSize="18sp"

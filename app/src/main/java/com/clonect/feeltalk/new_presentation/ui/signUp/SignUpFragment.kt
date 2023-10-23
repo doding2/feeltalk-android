@@ -17,8 +17,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.clonect.feeltalk.BuildConfig
 import com.clonect.feeltalk.R
+import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.databinding.FragmentSignUpBinding
 import com.clonect.feeltalk.new_domain.model.account.SocialType
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
@@ -211,13 +211,31 @@ class SignUpFragment : Fragment() {
         }
     }
 
-
-
     private fun sendFeedbackEmail() {
+        try {
+            sendEmailWithGmail()
+        } catch (e: Exception) {
+            sendEmailWithOtherApp()
+        }
+    }
+
+    private fun sendEmailWithGmail() {
+        val emailIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "plain/text"
+            setPackage("com.google.android.gm")
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(Constants.PILLOWTALK_FEEDBACK))
+            putExtra(Intent.EXTRA_SUBJECT, requireContext().getString(R.string.pillowtalk_feedback_inquire))
+        }
+        if (emailIntent.resolveActivity(requireActivity().packageManager) != null)
+            startActivity(emailIntent)
+        startActivity(emailIntent)
+    }
+
+    private fun sendEmailWithOtherApp() {
         val intent = Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:")
-            putExtra(Intent.EXTRA_EMAIL, arrayOf(BuildConfig.FEEDBACK_EMAIL))
-            putExtra(Intent.EXTRA_SUBJECT, "[필로우톡] 이런 점이 아쉬워요 !")
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(Constants.PILLOWTALK_FEEDBACK))
+            putExtra(Intent.EXTRA_SUBJECT, requireContext().getString(R.string.pillowtalk_feedback_inquire))
         }
         startActivity(Intent.createChooser(intent, null))
     }

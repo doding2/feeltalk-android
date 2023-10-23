@@ -122,15 +122,15 @@ class AgreementFragment : Fragment() {
 
     private fun enableNextButton(enabled: Boolean) = binding.mcvNext.run {
         if (enabled) {
-            setCardBackgroundColor(resources.getColor(R.color.main_500, null))
             isClickable = true
             isFocusable = true
             isEnabled = true
+            binding.tvNext.setBackgroundResource(R.drawable.n_background_button_main)
         } else {
-            setCardBackgroundColor(resources.getColor(R.color.main_400, null))
             isClickable = false
             isFocusable = false
             isEnabled = false
+            binding.tvNext.setBackgroundColor(resources.getColor(R.color.main_400, null))
         }
     }
 

@@ -131,7 +131,8 @@
                         app:cardBackgroundColor="@color/main_100"
                         app:cardCornerRadius="12dp"
                         app:strokeColor="@color/main_300"
-                        app:strokeWidth="1dp">
+                        app:strokeWidth="1dp"
+                        app:rippleColor="@android:color/transparent">
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
@@ -220,8 +221,7 @@
                         android:id="@+id/ll_setting"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:background="?android:selectableItemBackground">
+                        android:orientation="horizontal">
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -250,8 +250,7 @@
                         android:id="@+id/ll_inquire"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:background="?android:selectableItemBackground">
+                        android:orientation="horizontal">
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -280,8 +279,7 @@
                         android:id="@+id/ll_suggest_question"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:background="?android:selectableItemBackground">
+                        android:orientation="horizontal">
 
                         <ImageView
                             android:layout_width="wrap_content"

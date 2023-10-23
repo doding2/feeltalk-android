@@ -52,8 +52,7 @@
         android:layout_height="56dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingHorizontal="20dp"
-        android:background="?android:selectableItemBackground">
+        android:paddingHorizontal="20dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -73,8 +72,7 @@
         android:layout_height="56dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingHorizontal="20dp"
-        android:background="?android:selectableItemBackground">
+        android:paddingHorizontal="20dp">
 
         <TextView
             android:layout_width="wrap_content"

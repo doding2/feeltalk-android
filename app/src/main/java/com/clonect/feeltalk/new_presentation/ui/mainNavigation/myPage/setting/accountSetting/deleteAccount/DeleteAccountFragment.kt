@@ -70,13 +70,13 @@ class DeleteAccountFragment : Fragment() {
         mcvConfirm.isEnabled = isAllAgreed
         if (isAllAgreed) {
             ivAgreeAllCheck.setImageResource(R.drawable.n_ic_round_agree)
-            mcvConfirm.strokeWidth = requireContext().dpToPx(1f).toInt()
-            mcvConfirm.setCardBackgroundColor(Color.WHITE)
+            mcvConfirm.strokeWidth = requireContext().dpToPx(1f)
+            tvConfirm.setBackgroundResource(R.drawable.n_background_button_outline)
             tvConfirm.setTextColor(Color.BLACK)
         } else {
             ivAgreeAllCheck.setImageResource(R.drawable.n_ic_round_disagree)
             mcvConfirm.strokeWidth = 0
-            mcvConfirm.setCardBackgroundColor(requireContext().getColor(R.color.gray_400))
+            tvConfirm.setBackgroundColor(requireContext().getColor(R.color.gray_400))
             tvConfirm.setTextColor(Color.WHITE)
         }
     }

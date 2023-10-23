@@ -16,9 +16,13 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentQuestionBinding
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
+import com.clonect.feeltalk.new_presentation.ui.util.PokeSnackbar
+import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
+import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
 import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -72,11 +76,51 @@ class QuestionFragment : Fragment() {
     }
 
 
-    private fun onQuestionClick(question: Question) {
+    private fun onQuestionClick(question: Question, itemViewType: Int) {
+        if (itemViewType == QuestionAdapter.TYPE_TODAY_QUESTION
+            && question.myAnswer != null && question.partnerAnswer == null
+            ) {
+            showPokeSnackBar(question.index)
+            return
+        }
+
         showAnswerBottomSheet(question)
         navViewModel.setShowChatNavigation(false)
     }
 
+    private fun showPokeSnackBar(index: Long) {
+        val decorView = activity?.window?.decorView ?: return
+        PokeSnackbar.make(
+            view = decorView,
+            message = requireContext().getString(R.string.home_poke_snackbar_title),
+            pokeText = requireContext().getString(R.string.home_poke_snackbar_button),
+            duration = Snackbar.LENGTH_SHORT,
+            bottomMargin = activity.dpToPx(56f).toInt(),
+            onClick = {
+                it.dismiss()
+            },
+            onPoke = {
+                it.dismiss()
+                viewModel.pressForAnswer(index) {
+                    showSnackBar(requireContext().getString(R.string.answer_poke_partner_snack_bar))
+                }
+            }
+        ).show()
+    }
+
+    private fun showSnackBar(message: String?) {
+        if (message == null) return
+        val decorView = activity?.window?.decorView ?: return
+        TextSnackbar.make(
+            view = decorView,
+            message = message,
+            duration = Snackbar.LENGTH_SHORT,
+            bottomMargin = activity.dpToPx(56f).toInt(),
+            onClick = {
+                it.dismiss()
+            }
+        ).show()
+    }
 
     private fun initRecyclerView() = binding.run {
         rvQuestion.adapter = adapter

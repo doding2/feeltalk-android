@@ -53,7 +53,7 @@ class PartnerSettingFragment : Fragment() {
 
         binding.run {
             ivBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
-            tvBreakUp.setOnClickListener { navigateToBreakUpCouple() }
+            mcvBreakUp.setOnClickListener { navigateToBreakUpCouple() }
         }
     }
 

@@ -1,6 +1,5 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.home
 
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
@@ -31,7 +30,6 @@ import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
 import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
-import com.clonect.feeltalk.new_presentation.ui.util.stateFlow
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -60,6 +58,7 @@ class HomeFragment : Fragment() {
         } else {
             activity.setStatusBarColor(binding.root, requireContext().getColor(R.color.white), false)
         }
+        navViewModel.lastChatColor = requireContext().getColor(R.color.gray_200)
         return binding.root
     }
 
@@ -150,12 +149,18 @@ class HomeFragment : Fragment() {
 
         if (todayQuestion.myAnswer != null) {
             tvAnswer.setText(R.string.home_main_answer_button_2)
-            mcvAnswer.setCardBackgroundColor(requireContext().getColor(R.color.main_500))
+//            mcvAnswer.setCardBackgroundColor(requireContext().getColor(R.color.main_500))
             mcvAnswer.strokeWidth = requireContext().dpToPx(1f)
+            llAnswer.setBackgroundResource(R.drawable.n_background_button_main)
+            tvAnswer.setTextColor(requireContext().getColor(R.color.white))
+            ivAnswerArrow.setColorFilter(requireContext().getColor(R.color.white))
         } else {
             tvAnswer.setText(R.string.home_main_answer_button_1)
-            mcvAnswer.setCardBackgroundColor(Color.WHITE)
+//            mcvAnswer.setCardBackgroundColor(Color.WHITE)
             mcvAnswer.strokeWidth = 0
+            llAnswer.setBackgroundResource(R.drawable.n_background_button_white)
+            tvAnswer.setTextColor(requireContext().getColor(R.color.main_500))
+            ivAnswerArrow.setColorFilter(requireContext().getColor(R.color.main_500))
         }
 
     }
@@ -185,6 +190,7 @@ class HomeFragment : Fragment() {
             view = decorView,
             message = message,
             duration = Snackbar.LENGTH_SHORT,
+            bottomMargin = activity.dpToPx(56f).toInt(),
             onClick = {
                 it.dismiss()
             }
@@ -197,7 +203,13 @@ class HomeFragment : Fragment() {
             launch { viewModel.todayQuestion.collectLatest(::changeTodayQuestionView) }
             launch { viewModel.mySignal.collectLatest(::changeMySignalView) }
             launch { viewModel.partnerSignal.collectLatest(::changePartnerSignalView) }
-            launch { viewModel::snackbarMessage.stateFlow.collectLatest(::showSnackBar) }
+            launch { viewModel.snackbarMessage.collectLatest(::showSnackBar) }
         }
+    }
+
+
+    override fun onDetach() {
+        super.onDetach()
+        navViewModel.lastChatColor = requireContext().getColor(R.color.white)
     }
 }

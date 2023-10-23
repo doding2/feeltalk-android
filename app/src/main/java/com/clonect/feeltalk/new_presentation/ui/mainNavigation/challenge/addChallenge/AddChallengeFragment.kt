@@ -323,9 +323,9 @@ class AddChallengeFragment : Fragment() {
         mcvNewsBar.isEnabled = enabled
 
         if (enabled) {
-            mcvAddRound.setCardBackgroundColor(resources.getColor(R.color.main_500, null))
+            tvAddRound.setBackgroundResource(R.drawable.n_background_button_main)
         } else {
-            mcvAddRound.setCardBackgroundColor(resources.getColor(R.color.main_400, null))
+            tvAddRound.setBackgroundColor(resources.getColor(R.color.main_400, null))
         }
     }
 

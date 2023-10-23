@@ -137,17 +137,21 @@
                             android:layout_width="79dp"
                             android:layout_height="40dp"
                             android:layout_marginTop="10dp"
-                            app:cardBackgroundColor="@color/black"
-                            app:cardCornerRadius="20dp"
+                            android:layout_gravity="center"
+                            app:strokeColor="@color/black"
+                            app:strokeWidth="1dp"
+                            app:cardBackgroundColor="@null"
+                            app:cardCornerRadius="30dp"
                             app:cardElevation="0dp"
-                            android:layout_gravity="center">
+                            app:rippleColor="@android:color/transparent">
 
                             <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:background="@drawable/n_background_button_outline"
                                 android:text="@string/couple_code_share"
-                                android:textColor="@color/white"
+                                android:textColor="@color/black"
                                 android:textSize="16sp"
                                 android:fontFamily="@font/pretendard_regular"/>
                         </com.google.android.material.card.MaterialCardView>
@@ -326,23 +330,22 @@
         android:layout_width="match_parent"
         android:layout_height="59dp"
         android:layout_marginHorizontal="20dp"
-        app:cardBackgroundColor="@color/white"
+        app:cardBackgroundColor="@null"
         app:cardCornerRadius="30dp"
         app:cardElevation="0dp"
-        app:strokeColor="@color/black"
-        app:strokeWidth="1dp"
-        app:rippleColor="@color/gray_200"
+        app:rippleColor="@android:color/transparent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:background="@drawable/n_background_button_black"
             android:fontFamily="@font/pretendard_medium"
             android:text="@string/couple_code_show_sheet"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="18sp" />
     </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

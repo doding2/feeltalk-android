@@ -22,6 +22,7 @@ import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUseCase
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.notification.observer.NewChatObserver
 import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
+import com.clonect.feeltalk.new_presentation.ui.util.mutableStateFlow
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -45,6 +46,8 @@ class MainNavigationViewModel @Inject constructor(
 
     private val _partnerLastChat = MutableStateFlow<PartnerLastChatDto?>(null)
     val partnerLastChat = _partnerLastChat.asStateFlow()
+
+    var lastChatColor: Int by mutableStateFlow(R.color.white)
 
     private val _showPartnerLastChat = MutableStateFlow(true)
     val showPartnerLastChat = _showPartnerLastChat.asStateFlow()

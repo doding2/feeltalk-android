@@ -23,6 +23,7 @@ import com.clonect.feeltalk.new_domain.model.chat.PartnerLastChatDto
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.showConfirmDialog
+import com.clonect.feeltalk.new_presentation.ui.util.stateFlow
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -303,6 +304,11 @@ class MainNavigationFragment : Fragment() {
         }
     }
 
+    private fun applyLastChatColorChange(color: Int) = binding.run {
+        mcvLatestChatBody.setCardBackgroundColor(color)
+        ivLatestChatTail.setColorFilter(color)
+    }
+
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.navigateTo.collectLatest(::navigateFragment) }
@@ -313,6 +319,7 @@ class MainNavigationFragment : Fragment() {
             launch { viewModel.showInquirySucceedSheet.collectLatest(::showSubmitSucceedSheet) }
             launch { viewModel.showSuggestionSucceedSheet.collectLatest(::showSuggestionSucceedSheet) }
             launch { viewModel.showSignalCompleteSheet.collectLatest(::showSignalCompleteSheet) }
+            launch { viewModel::lastChatColor.stateFlow.collectLatest(::applyLastChatColorChange) }
         }
     }
 

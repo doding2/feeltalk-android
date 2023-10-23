@@ -16,7 +16,11 @@ import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentContentsShareBinding
 import com.clonect.feeltalk.databinding.TabItemContentsShareBinding
-import com.clonect.feeltalk.new_presentation.ui.util.*
+import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
+import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
+import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
+import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
+import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -153,13 +157,13 @@ class ContentsShareFragment : Fragment() {
         }
     }
 
-    private fun enableShareButton(enabled: Boolean) = binding.mcvShare.run {
+    private fun enableShareButton(enabled: Boolean) = binding.run {
         if (enabled) {
-            setCardBackgroundColor(resources.getColor(R.color.main_500, null))
-            isEnabled = true
+            tvShare.setBackgroundResource(R.drawable.n_background_button_main)
+            mcvShare.isEnabled = true
         } else {
-            setCardBackgroundColor(resources.getColor(R.color.main_400, null))
-            isEnabled = false
+            tvShare.setBackgroundColor(resources.getColor(R.color.main_400, null))
+            mcvShare.isEnabled = false
         }
     }
 

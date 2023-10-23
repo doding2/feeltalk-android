@@ -128,12 +128,12 @@ class CoupleConnectBottomSheetFragment(
 
     private fun enableConnectButton(enabled: Boolean) = binding.mcvConnect.run {
         if (enabled) {
-            setCardBackgroundColor(resources.getColor(R.color.main_500, null))
+            binding.tvConnect.setBackgroundResource(R.drawable.n_background_button_main)
             isClickable = true
             isFocusable = true
             isEnabled = true
         } else {
-            setCardBackgroundColor(resources.getColor(R.color.main_400, null))
+            binding.tvConnect.setBackgroundColor(resources.getColor(R.color.main_400, null))
             isClickable = false
             isFocusable = false
             isEnabled = false

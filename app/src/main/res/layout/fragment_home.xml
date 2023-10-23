@@ -110,19 +110,21 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
                         app:cardElevation="0dp"
-                        app:cardBackgroundColor="@color/white"
                         app:cardCornerRadius="24dp"
-                        app:rippleColor="@color/main_300"
+                        app:cardBackgroundColor="@null"
+                        app:rippleColor="@android:color/transparent"
                         app:strokeWidth="0dp"
                         app:strokeColor="@color/white">
 
                         <LinearLayout
+                            android:id="@+id/ll_answer"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
-                            android:layout_marginVertical="12dp"
-                            android:layout_marginHorizontal="32dp"
-                            android:gravity="center">
+                            android:paddingVertical="12dp"
+                            android:paddingHorizontal="32dp"
+                            android:gravity="center"
+                            android:background="@drawable/n_background_button_white">
 
                             <TextView
                                 android:id="@+id/tv_answer"
@@ -135,6 +137,7 @@
                                 android:letterSpacing="-0.01"/>
 
                             <ImageView
+                                android:id="@+id/iv_answer_arrow"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:layout_marginStart="4dp"

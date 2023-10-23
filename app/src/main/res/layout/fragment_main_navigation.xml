@@ -140,7 +140,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:cardCornerRadius="28dp"
             app:cardElevation="2dp"
-            app:cardBackgroundColor="@color/white">
+            app:cardBackgroundColor="@color/white"
+            app:rippleColor="@android:color/transparent">
 
             <ImageView
                 android:id="@+id/iv_chat_profile"

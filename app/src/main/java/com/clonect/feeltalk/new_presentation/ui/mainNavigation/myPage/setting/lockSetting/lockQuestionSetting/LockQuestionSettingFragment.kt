@@ -276,9 +276,9 @@ class LockQuestionSettingFragment : Fragment() {
         mcvNewsBar.isEnabled = enabled
 
         if (enabled) {
-            mcvConfirm.setCardBackgroundColor(resources.getColor(R.color.main_500, null))
+            tvConfirm.setBackgroundResource(R.drawable.n_background_button_main)
         } else {
-            mcvConfirm.setCardBackgroundColor(resources.getColor(R.color.main_400, null))
+            tvConfirm.setBackgroundColor(resources.getColor(R.color.main_400, null))
         }
     }
 

@@ -312,16 +312,28 @@ class AnswerFragment : Fragment() {
     }
 
     private fun enableDoneButton(enabled: Boolean) = binding.run {
+
+        tvDoneRound.apply {
+            if (enabled) {
+                setBackgroundResource(R.drawable.n_background_button_main)
+            } else {
+                setBackgroundColor(requireContext().getColor(R.color.main_400))
+            }
+        }
         mcvDoneRound.apply {
-            val backgroundResource = if (enabled) R.color.main_500 else R.color.main_400
-            setCardBackgroundColor(requireContext().getColor(backgroundResource))
             isCheckable = enabled
             isFocusable = enabled
             isEnabled = enabled
         }
+
+        tvDoneSquare.apply {
+            if (enabled) {
+                setBackgroundResource(R.drawable.n_background_button_main)
+            } else {
+                setBackgroundColor(requireContext().getColor(R.color.main_400))
+            }
+        }
         mcvDoneSquare.apply {
-            val backgroundResource = if (enabled) R.color.main_500 else R.color.main_400
-            setCardBackgroundColor(requireContext().getColor(backgroundResource))
             isCheckable = enabled
             isFocusable = enabled
             isEnabled = enabled

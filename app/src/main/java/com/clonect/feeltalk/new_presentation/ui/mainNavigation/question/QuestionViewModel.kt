@@ -2,12 +2,20 @@ package com.clonect.feeltalk.new_presentation.ui.mainNavigation.question
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.*
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.filter
+import androidx.paging.insertFooterItem
+import androidx.paging.insertHeaderItem
+import androidx.paging.map
 import com.clonect.feeltalk.common.PageEvents
+import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.usecase.question.GetPagingQuestionUseCase
+import com.clonect.feeltalk.new_domain.usecase.question.PressForAnswerUseCase
 import com.clonect.feeltalk.new_presentation.notification.observer.QuestionAnswerObserver
 import com.clonect.feeltalk.new_presentation.notification.observer.TodayQuestionObserver
+import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class QuestionViewModel @Inject constructor(
     getPagingQuestionUseCase: GetPagingQuestionUseCase,
+    private val pressForAnswerUseCase: PressForAnswerUseCase,
 ) : ViewModel() {
 
     private val isInQuestionTop = MutableStateFlow(true)
@@ -29,6 +38,17 @@ class QuestionViewModel @Inject constructor(
     init {
         collectTodayQuestion()
         collectQuestionAnswer()
+    }
+
+    fun pressForAnswer(index: Long, onComplete: () -> Unit) = viewModelScope.launch {
+        when (val result = pressForAnswerUseCase(index)) {
+            is Resource.Success -> {
+                onComplete()
+            }
+            is Resource.Error -> {
+                infoLog("Fail to answer question: ${result.throwable.localizedMessage}\n${result.throwable.stackTrace.joinToString("\n")}")
+            }
+        }
     }
 
     fun setInQuestionTop(isTop: Boolean) {

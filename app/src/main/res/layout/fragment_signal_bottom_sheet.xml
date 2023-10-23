@@ -176,15 +176,17 @@
         android:layout_width="match_parent"
         android:layout_height="59dp"
         android:layout_marginHorizontal="20dp"
-        app:cardBackgroundColor="@color/black"
+        app:cardBackgroundColor="@null"
         app:cardCornerRadius="30dp"
         app:cardElevation="0dp"
-        app:rippleColor="@color/system_alert">
+        app:rippleColor="@android:color/transparent">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:id="@+id/tv_send_signal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:background="@drawable/n_background_button_black"
             android:fontFamily="@font/pretendard_medium"
             android:text="@string/signal_send_button"
             android:textColor="@color/white"

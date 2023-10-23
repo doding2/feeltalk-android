@@ -12,10 +12,11 @@ import com.clonect.feeltalk.new_domain.usecase.question.GetTodayQuestionUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.PressForAnswerUseCase
 import com.clonect.feeltalk.new_presentation.notification.observer.QuestionAnswerObserver
 import com.clonect.feeltalk.new_presentation.notification.observer.TodayQuestionObserver
-import com.clonect.feeltalk.new_presentation.ui.util.mutableStateFlow
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -36,8 +37,8 @@ class HomeViewModel @Inject constructor(
     private val _partnerSignal = MutableStateFlow(Signal.One)
     val partnerSignal = _partnerSignal.asStateFlow()
 
-    var snackbarMessage: String? by mutableStateFlow(null)
-        private set
+    private val _snackbarMessage = MutableSharedFlow<String>()
+    val snackbarMessage = _snackbarMessage.asSharedFlow()
 
     init {
         getTodayQuestion()
@@ -59,11 +60,11 @@ class HomeViewModel @Inject constructor(
     fun pressForAnswer(context: Context) = viewModelScope.launch {
         when (val result = pressForAnswerUseCase(_todayQuestion.value?.index ?: return@launch)) {
             is Resource.Success -> {
-                snackbarMessage = context.getString(R.string.answer_poke_partner_snack_bar)
+                _snackbarMessage.emit(context.getString(R.string.answer_poke_partner_snack_bar))
             }
             is Resource.Error -> {
                 infoLog("Fail to answer question: ${result.throwable.localizedMessage}\n${result.throwable.stackTrace.joinToString("\n")}")
-                snackbarMessage = result.throwable.localizedMessage
+                result.throwable.localizedMessage?.let { _snackbarMessage.emit(it) }
             }
         }
     }

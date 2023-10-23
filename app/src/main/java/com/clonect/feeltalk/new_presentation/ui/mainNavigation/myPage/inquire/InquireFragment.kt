@@ -196,9 +196,9 @@ class InquireFragment : Fragment() {
         mcvSubmit.isEnabled = enabled
 
         if (enabled) {
-            mcvSubmit.setCardBackgroundColor(resources.getColor(R.color.main_500, null))
+            tvSubmit.setBackgroundResource(R.drawable.n_background_button_main)
         } else {
-            mcvSubmit.setCardBackgroundColor(resources.getColor(R.color.main_400, null))
+            tvSubmit.setBackgroundColor(resources.getColor(R.color.main_400, null))
         }
     }
 

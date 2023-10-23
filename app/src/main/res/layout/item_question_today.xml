@@ -134,16 +134,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/black"
+                app:cardBackgroundColor="@null"
                 app:cardCornerRadius="24dp"
-                app:rippleColor="@color/system_alert">
+                app:rippleColor="@android:color/transparent">
 
                 <TextView
                     android:id="@+id/tv_answer_or_chat"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="12dp"
-                    android:layout_marginHorizontal="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingVertical="12dp"
+                    android:paddingHorizontal="16dp"
+                    android:background="@drawable/n_background_button_black"
                     android:text="@string/question_today_button_answer"
                     android:textSize="16sp"
                     android:textColor="@color/white"

@@ -234,7 +234,7 @@ class SignalBottomSheetFragment(
             }
             Signal.Half -> {
                 tvSignalSubtitle.setText(R.string.signal_subtitle_50)
-                tvSignalPercent.setText(R.string.signal_percent_0)
+                tvSignalPercent.setText(R.string.signal_percent_50)
                 tvSignalPercent.setTextColor(requireContext().getColor(R.color.signal_50))
                 mcvSignalPercent.strokeColor = requireContext().getColor(R.color.signal_50)
                 ivSignal.setImageResource(R.drawable.n_image_signal_50)
@@ -257,21 +257,6 @@ class SignalBottomSheetFragment(
                 mcvSignal100.setCardBackgroundColor(requireContext().getColor(R.color.signal_100))
             }
             null -> return@run
-        }
-    }
-
-
-    private fun enableSendButton(enabled: Boolean) = binding.mcvSendSignal.run {
-        if (enabled) {
-            setCardBackgroundColor(resources.getColor(R.color.black, null))
-            isClickable = true
-            isFocusable = true
-            isEnabled = true
-        } else {
-            setCardBackgroundColor(resources.getColor(R.color.gray_400, null))
-            isClickable = false
-            isFocusable = false
-            isEnabled = false
         }
     }
 

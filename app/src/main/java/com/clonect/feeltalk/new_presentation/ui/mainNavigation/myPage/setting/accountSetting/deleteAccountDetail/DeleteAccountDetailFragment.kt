@@ -266,12 +266,12 @@ class DeleteAccountDetailFragment : Fragment() {
     private fun changeConfirmEnabledView(enabled: Boolean) = binding.run {
         mcvConfirm.isEnabled = enabled
         if (enabled) {
-            mcvConfirm.strokeWidth = requireContext().dpToPx(1f).toInt()
-            mcvConfirm.setCardBackgroundColor(Color.WHITE)
+            mcvConfirm.strokeWidth = requireContext().dpToPx(1f)
+            tvConfirm.setBackgroundResource(R.drawable.n_background_button_outline)
             tvConfirm.setTextColor(Color.BLACK)
         } else {
             mcvConfirm.strokeWidth = 0
-            mcvConfirm.setCardBackgroundColor(requireContext().getColor(R.color.gray_400))
+            tvConfirm.setBackgroundColor(requireContext().getColor(R.color.gray_400))
             tvConfirm.setTextColor(Color.WHITE)
         }
     }

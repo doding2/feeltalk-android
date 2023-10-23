@@ -48,21 +48,21 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/mcv_certify_adult"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="59dp"
         android:layout_marginHorizontal="20dp"
-        app:cardBackgroundColor="@color/main_500"
+        app:cardBackgroundColor="@null"
         app:cardCornerRadius="30dp"
         app:cardElevation="0dp"
-        app:rippleColor="@color/main_600"
+        app:rippleColor="@android:color/transparent"
         android:animateLayoutChanges="true">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:layout_margin="16dp"
             android:gravity="center"
-            android:animateLayoutChanges="true">
+            android:animateLayoutChanges="true"
+            android:background="@drawable/n_background_button_main">
 
             <TextView
                 android:id="@+id/tv_certify_adult"
@@ -344,17 +344,19 @@
         android:layout_height="59dp"
         android:layout_marginHorizontal="20dp"
         android:visibility="gone"
-        app:cardBackgroundColor="@color/main_400"
-        app:cardCornerRadius="30dp"
-        app:cardElevation="0dp"
         android:clickable="false"
         android:focusable="false"
-        app:rippleColor="@color/main_600">
+        app:cardBackgroundColor="@null"
+        app:cardCornerRadius="30dp"
+        app:cardElevation="0dp"
+        app:rippleColor="@android:color/transparent">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:id="@+id/tv_next"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:background="@drawable/n_background_button_main"
             android:fontFamily="@font/pretendard_medium"
             android:text="@string/sign_up_next_button"
             android:textColor="@color/white"

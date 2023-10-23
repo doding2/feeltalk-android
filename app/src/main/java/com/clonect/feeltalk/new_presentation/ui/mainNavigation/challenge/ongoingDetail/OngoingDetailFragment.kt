@@ -431,9 +431,9 @@ class OngoingDetailFragment : Fragment() {
         mcvNewsBar.isEnabled = enabled
 
         if (enabled) {
-            mcvEditRound.setCardBackgroundColor(resources.getColor(R.color.black, null))
+            tvEditRound.setBackgroundResource(R.drawable.n_background_button_black)
         } else {
-            mcvEditRound.setCardBackgroundColor(resources.getColor(R.color.gray_300, null))
+            tvEditRound.setBackgroundColor(resources.getColor(R.color.gray_300, null))
         }
     }
 

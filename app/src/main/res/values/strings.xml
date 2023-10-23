@@ -6,6 +6,7 @@
 
     <!--  Pillowtalk Feedback Email  -->
     <string name="pillowtalk_feedback_reset_password">[필로우톡] 비밀번호를 재설정하고 싶어요!</string>
+    <string name="pillowtalk_feedback_inquire">[필로우톡] 이런 점이 아쉬워요 !</string>
 
     <!--  Dialog  -->
     <string name="dialog_title">제목</string>
@@ -95,11 +96,11 @@
 
     <!--  CoupleCode  -->
     <string name="couple_code_title">연인에게 보낼 초대장을 준비했어요</string>
-    <string name="couple_code_sub_title">상대방에게 코드를 공유해 기기를 연결해주세요</string>
-    <string name="couple_code_invitation">나의 연인 코드</string>
+    <string name="couple_code_sub_title">연결코드를 공유해 기기를 연결해주세요\n코드를 공유받았다면, 하단 버튼을 눌러 입력해주세요</string>
+    <string name="couple_code_invitation">나의 연결코드</string>
     <string name="couple_code_share">코드복사</string>
     <string name="couple_code_reload">새로고침</string>
-    <string name="couple_code_show_sheet">상대방 코드를 직접 입력할게요</string>
+    <string name="couple_code_show_sheet">공유받은 코드 입력</string>
     <string name="couple_code_couple_connect_title">상대방의 코드를 입력해주세요</string>
     <string name="couple_code_couple_connect_hint">연결코드 입력하기</string>
 

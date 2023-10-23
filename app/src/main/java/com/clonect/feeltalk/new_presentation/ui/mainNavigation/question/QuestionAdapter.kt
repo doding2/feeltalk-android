@@ -1,6 +1,5 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.question
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,7 +29,7 @@ class QuestionAdapter: PagingDataAdapter<Question, QuestionAdapter.QuestionViewH
     }
 
 
-    private var onItemClick: ((Question) -> Unit) = {}
+    private var onItemClick: ((Question, Int) -> Unit) = { _, _ -> }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuestionViewHolder {
@@ -65,7 +64,7 @@ class QuestionAdapter: PagingDataAdapter<Question, QuestionAdapter.QuestionViewH
     }
 
 
-    fun setOnItemClickListener(listener: (Question) -> Unit) {
+    fun setOnItemClickListener(listener: (Question, Int) -> Unit) {
         onItemClick = listener
     }
 
@@ -86,19 +85,17 @@ class QuestionAdapter: PagingDataAdapter<Question, QuestionAdapter.QuestionViewH
             tvTodayQuestionHeader.text = item.header
             tvTodayQuestionBody.text = item.body
 
-            mcvAnswer.setOnClickListener { onItemClick(item) }
+            mcvAnswer.setOnClickListener { onItemClick(item, TYPE_TODAY_QUESTION) }
 
             val isUserAnswered = item.myAnswer != null
             if (isUserAnswered) {
-                mcvAnswer.setCardBackgroundColor(Color.WHITE)
-                mcvAnswer.setRippleColorResource(R.color.main_300)
                 tvAnswerOrChat.setText(R.string.question_today_button_answer_2)
                 tvAnswerOrChat.setTextColor(root.context.getColor(R.color.main_500))
+                tvAnswerOrChat.setBackgroundResource(R.drawable.n_background_button_white)
             } else {
-                mcvAnswer.setCardBackgroundColor(Color.BLACK)
-                mcvAnswer.setRippleColorResource(R.color.system_alert)
                 tvAnswerOrChat.setText(R.string.question_today_button_answer)
-                tvAnswerOrChat.setTextColor(root.context.getColor(R.color.main_100))
+                tvAnswerOrChat.setTextColor(root.context.getColor(R.color.white))
+                tvAnswerOrChat.setBackgroundResource(R.drawable.n_background_button_black)
             }
         }
     }
@@ -108,7 +105,7 @@ class QuestionAdapter: PagingDataAdapter<Question, QuestionAdapter.QuestionViewH
     ): QuestionViewHolder(binding.root) {
 
         override fun bind(item: Question) = binding.run {
-            root.setOnClickListener { onItemClick(item) }
+            root.setOnClickListener { onItemClick(item, TYPE_NORMAL_QUESTION) }
 
             tvIndex.text = item.index.toString()
             tvQuestionBody.text = item.body

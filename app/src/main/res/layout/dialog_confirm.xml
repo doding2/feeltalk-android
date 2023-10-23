@@ -63,7 +63,7 @@
                 app:cardBackgroundColor="@color/gray_200"
                 app:cardElevation="0dp"
                 app:strokeWidth="0dp"
-                app:rippleColor="@color/gray_400">
+                app:rippleColor="@android:color/transparent">
 
                 <TextView
                     android:id="@+id/tv_cancel"
@@ -86,16 +86,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 app:cardCornerRadius="24dp"
-                app:cardBackgroundColor="@color/black"
+                app:cardBackgroundColor="@null"
                 app:cardElevation="0dp"
-                app:rippleColor="@color/system_alert">
+                app:rippleColor="@android:color/transparent">
 
                 <TextView
                     android:id="@+id/tv_confirm"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="12dp"
-                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingVertical="12dp"
+                    android:gravity="center"
+                    android:background="@drawable/n_background_button_black"
                     android:text="@string/dialog_confirm"
                     android:textColor="@color/white"
                     android:textSize="16sp"
