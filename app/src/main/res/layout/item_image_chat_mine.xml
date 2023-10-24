@@ -53,26 +53,19 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             app:cardCornerRadius="16dp"
-            app:cardBackgroundColor="@color/main_500"
+            app:cardBackgroundColor="@color/black"
             app:cardElevation="0dp"
-            app:layout_constrainedWidth="true"
             app:layout_constraintStart_toEndOf="@id/tv_time"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
 
-            <TextView
-                android:id="@+id/tv_message"
+            <ImageView
+                android:id="@+id/iv_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="10dp"
-                android:text=""
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:fontFamily="@font/pretendard_regular"
-                android:includeFontPadding="false"
-                android:lineSpacingExtra="5dp"
-                android:letterSpacing="-0.01"/>
+                android:maxWidth="252dp"
+                android:maxHeight="300dp"
+                android:adjustViewBounds="true"/>
         </com.google.android.material.card.MaterialCardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

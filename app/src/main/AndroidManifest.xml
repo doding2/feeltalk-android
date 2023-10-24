@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-feature android:name="android.hardware.camera2" android:required="true" />
 
     <application
         android:name=".new_presentation.ui.FeeltalkApp"
@@ -26,6 +27,16 @@
         android:enableOnBackInvokedCallback="true"
         tools:replace="android:allowBackup, android:fullBackupOnly"
         tools:targetApi="tiramisu" >
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.clonect.feeltalk.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
         <activity
             android:name=".new_presentation.ui.mainNavigation.chatNavigation.bubble.BubbleActivity"
@@ -82,5 +93,4 @@
         <receiver android:name=".new_presentation.notification.NotificationReplyReceiver" />
         <receiver android:name=".new_presentation.notification.NotificationReadReceiver" />
     </application>
-
 </manifest>

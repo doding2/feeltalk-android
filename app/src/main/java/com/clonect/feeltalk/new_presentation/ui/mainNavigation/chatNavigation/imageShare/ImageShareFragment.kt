@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import com.clonect.feeltalk.R
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -12,7 +13,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -30,7 +30,9 @@ import com.clonect.feeltalk.new_presentation.ui.util.makeLoadingDialog
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
 import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
 import com.clonect.feeltalk.new_presentation.ui.util.stateFlow
+import com.clonect.feeltalk.new_presentation.ui.util.toBitmap
 import com.google.android.material.snackbar.Snackbar
+import com.otaliastudios.zoom.ZoomLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -40,6 +42,11 @@ import kotlinx.coroutines.launch
  */
 @AndroidEntryPoint
 class ImageShareFragment : Fragment() {
+
+    companion object {
+        const val REQUEST_KEY = "imageShareFragment"
+        const val RESULT_KEY_URI = "bitmap"
+    }
 
     private lateinit var binding: FragmentImageShareBinding
     private val viewModel: ImageShareViewModel by viewModels()
@@ -76,47 +83,47 @@ class ImageShareFragment : Fragment() {
             ivBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
             tvSend.setOnClickListener { sendImageChat() }
 
-            ivImage.registerDoubleTouchReset()
+            zlImage.registerDoubleTouchReset()
         }
     }
 
     private fun sendImageChat() {
-        viewModel.sendImageChat {
-            setFragmentResult(
-                requestKey = "imageShareFragment",
-                result = bundleOf("uri" to viewModel.uri)
+        setFragmentResult(
+            requestKey = REQUEST_KEY,
+            result = bundleOf(
+                RESULT_KEY_URI to viewModel.uri,
             )
-            onBackCallback.handleOnBackPressed()
-        }
+        )
+        onBackCallback.handleOnBackPressed()
     }
 
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun ImageView.registerDoubleTouchReset() {
+    private fun ZoomLayout.registerDoubleTouchReset() {
         val detector = GestureDetector(requireContext(), GestureDetector.SimpleOnGestureListener())
         detector.setOnDoubleTapListener(object: GestureDetector.OnDoubleTapListener {
             override fun onSingleTapConfirmed(p0: MotionEvent): Boolean { return true }
             override fun onDoubleTap(p0: MotionEvent): Boolean { return true }
             override fun onDoubleTapEvent(p0: MotionEvent): Boolean {
-                binding.zlImage.engine.zoomTo(1f, true)
+                engine.zoomTo(1f, true)
                 return true
             }
         })
 
-        binding.zlImage.setOnTouchListener { view, event ->
+        setOnTouchListener { view, event ->
             detector.onTouchEvent(event)
             false
         }
     }
 
     private fun applyUriChanges(uri: Uri?) = lifecycleScope.launch {
-        binding.run {
-            if (uri == null) return@launch
+        viewModel.isLoading = true
+        viewModel.bitmap = uri?.toBitmap(requireContext())
+        viewModel.isLoading = false
+    }
 
-            viewModel.isLoading = true
-            ivImage.setImageURI(uri)
-            viewModel.isLoading = false
-        }
+    private fun applyBitmapChanges(bitmap: Bitmap?) = lifecycleScope.launch {
+        binding.ivImage.setImageBitmap(bitmap)
     }
 
     private fun showLoading(isLoading: Boolean) {
@@ -144,6 +151,7 @@ class ImageShareFragment : Fragment() {
             launch { viewModel::isLoading.stateFlow.collectLatest(::showLoading) }
             launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
             launch { viewModel::uri.stateFlow.collectLatest(::applyUriChanges) }
+            launch { viewModel::bitmap.stateFlow.collectLatest(::applyBitmapChanges) }
         }
     }
 

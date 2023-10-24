@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.new_domain.model.chat
 
+import android.graphics.Bitmap
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.question.Question
 
@@ -154,7 +155,8 @@ data class ImageChat(
     override var isRead: Boolean,
     override val createAt: String,
     override var isSending: Boolean = false,
-    val url: String
+    val url: String,
+    val bitmap: Bitmap?
 ): Chat(index, pageNo, ChatType.ImageChatting, chatSender, isRead, createAt, isSending)
 
 

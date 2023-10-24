@@ -2,6 +2,7 @@ package com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.c
 
 import android.content.ClipData
 import android.content.Context
+import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.StrictMode
@@ -14,8 +15,12 @@ import androidx.core.view.updateLayoutParams
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.target.SimpleTarget
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.ItemChatDividerBinding
+import com.clonect.feeltalk.databinding.ItemImageChatMineBinding
 import com.clonect.feeltalk.databinding.ItemQuestionChatMineBinding
 import com.clonect.feeltalk.databinding.ItemQuestionChatPartnerBinding
 import com.clonect.feeltalk.databinding.ItemTextChatMineBinding
@@ -25,11 +30,15 @@ import com.clonect.feeltalk.databinding.ItemVoiceChatPartnerBinding
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.ChatType
 import com.clonect.feeltalk.new_domain.model.chat.DividerChat
+import com.clonect.feeltalk.new_domain.model.chat.ImageChat
 import com.clonect.feeltalk.new_domain.model.chat.QuestionChat
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.audioVisualizer.RecordingReplayer
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
+import com.clonect.feeltalk.new_presentation.ui.util.resize
+import com.clonect.feeltalk.new_presentation.ui.util.resizeIfMin
+import com.clonect.feeltalk.new_presentation.ui.util.toBitmap
 import com.clonect.feeltalk.presentation.utils.infoLog
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -61,8 +70,26 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
     private var isPartnerInChat = false
 
-    private var onQuestionAnswerButtonClick: ((QuestionChat) -> Unit)? = null
+    private var onClick: ((Chat) -> Unit) = {}
+    private var onUrlLoad: ((Chat) -> Unit) = {}
 
+    override fun onViewRecycled(holder: ChatViewHolder) {
+        super.onViewRecycled(holder)
+        when (holder) {
+            is VoiceChatMineViewHolder -> {
+                holder.audioFile = null
+                holder.replayer?.stop()
+                holder.replayer = null
+                holder.timer = null
+            }
+            is VoiceChatPartnerViewHolder -> {
+                holder.audioFile = null
+                holder.replayer?.stop()
+                holder.replayer = null
+                holder.timer = null
+            }
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
         val viewHolder = when (viewType) {
@@ -97,6 +124,14 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
             TYPE_QUESTION_PARTNER -> {
                 val binding = ItemQuestionChatPartnerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 QuestionChatPartnerViewHolder(binding)
+            }
+            TYPE_IMAGE_MINE -> {
+                val binding = ItemImageChatMineBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ImageChatMineViewHolder(binding)
+            }
+            TYPE_IMAGE_PARTNER -> {
+                val binding = ItemImageChatMineBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ImageChatMineViewHolder(binding)
             }
             else -> {
                 val binding = ItemChatDividerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -162,8 +197,12 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
     }
 
 
-    fun setOnQuestionAnswerButtonClick(onClick: ((QuestionChat) -> Unit)) {
-        onQuestionAnswerButtonClick = onClick
+    fun setOnClickItem(onClick: (Chat) -> Unit) {
+        this.onClick = onClick
+    }
+
+    fun setOnUrlLoad(onLoad: (Chat) -> Unit) {
+        this.onUrlLoad = onLoad
     }
 
     fun setMyNickname(nickname: String) {
@@ -242,8 +281,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
     abstract class ChatViewHolder(val root: View): RecyclerView.ViewHolder(root) {
 
-        val defaultVerticalMargin = root.context.dpToPx(8f).toInt()
-        val continuousVerticalMargin = root.context.dpToPx(2f).toInt()
+        val defaultVerticalMargin = root.context.dpToPx(8f)
+        val continuousVerticalMargin = root.context.dpToPx(2f)
 
         abstract fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?)
 
@@ -474,6 +513,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
         }
     }
 
+
     inner class VoiceChatMineViewHolder(
         val binding: ItemVoiceChatMineBinding,
     ) : ChatViewHolder(binding.root) {
@@ -532,7 +572,6 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                         vvVoiceVisualizer.reset()
                         vvVoiceVisualizer.drawDefaultView()
                         vvCount--
-                        infoLog(vvCount.toString())
                         delay(50)
                     }
                 }
@@ -1323,6 +1362,103 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 val prevPrevItem = if (position - 1 < 0) null
                 else snapshot().items[position - 1]
                 if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+            }
+        }
+    }
+
+
+    inner class ImageChatMineViewHolder(
+        val binding: ItemImageChatMineBinding,
+    ) : ChatViewHolder(binding.root) {
+
+        override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
+            val chat = item as ImageChat
+
+            binding.run {
+                ivImage.setImageBitmap(chat.bitmap)
+
+                tvRead.text = root.context.getString(
+                    if (isPartnerInChat || chat.isRead) R.string.chat_read
+                    else R.string.chat_unread
+                )
+                tvTime.text = getFormatted(chat.createAt)
+
+                if (chat.isSending) {
+                    tvRead.visibility = View.GONE
+                    tvTime.visibility = View.GONE
+                } else {
+                    tvRead.visibility = View.VISIBLE
+                    tvTime.visibility = View.VISIBLE
+                }
+
+                makeContinuous(prevItem, item, nextItem)
+            }
+        }
+
+        override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+            root.updateLayoutParams<RecyclerView.LayoutParams> {
+                topMargin = defaultVerticalMargin
+                bottomMargin = defaultVerticalMargin
+            }
+
+            tvRead.visibility = View.VISIBLE
+            tvTime.visibility = View.VISIBLE
+
+            if (item.isSending) {
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+                return
+            }
+
+            val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+
+            val isStartChat = !isTopSame && isBottomSame
+            val isEndChat = isTopSame && !isBottomSame
+            val isMiddleChat = isTopSame && isBottomSame
+
+            if (isMiddleChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+                return@run
+            }
+
+            if (isStartChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = defaultVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+            }
+
+            if (isEndChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = defaultVerticalMargin
+                }
+                tvRead.visibility = View.VISIBLE
+                tvTime.visibility = View.VISIBLE
+
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null) {
                     viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
                 }
             }

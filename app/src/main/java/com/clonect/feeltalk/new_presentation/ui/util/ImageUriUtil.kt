@@ -43,3 +43,26 @@ fun Bitmap.resize(size: Int = 512): Bitmap {
 
     return image
 }
+
+fun Bitmap.resizeIfMin(size: Int = 512): Bitmap {
+    var image = this
+    if (size > 0) {
+        val width = image.width
+        val height = image.height
+        if (width >= size || height >= size)
+            return this
+        val ratioBitmap = width.toFloat() / height.toFloat()
+        val ratioMax = size.toFloat() / size.toFloat()
+
+        var finalWidth = size
+        var finalHeight = size
+        if (ratioMax > ratioBitmap) {
+            finalWidth = (size.toFloat() * ratioBitmap).toInt()
+        } else {
+            finalHeight = (size.toFloat() / ratioBitmap).toInt()
+        }
+        image = Bitmap.createScaledBitmap(image, finalWidth, finalHeight, true)
+    }
+
+    return image
+}

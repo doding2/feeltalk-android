@@ -1,6 +1,8 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -8,12 +10,15 @@ import androidx.paging.cachedIn
 import androidx.paging.filter
 import androidx.paging.insertFooterItem
 import androidx.paging.insertHeaderItem
+import androidx.paging.insertSeparators
 import androidx.paging.map
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.common.PageEvents
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.ChatType
+import com.clonect.feeltalk.new_domain.model.chat.DividerChat
+import com.clonect.feeltalk.new_domain.model.chat.ImageChat
 import com.clonect.feeltalk.new_domain.model.chat.QuestionChat
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
@@ -27,6 +32,8 @@ import com.clonect.feeltalk.new_presentation.notification.observer.PartnerChatRo
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.audioVisualizer.RecordingReplayer
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.audioVisualizer.RecordingSampler
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.audioVisualizer.VisualizerView
+import com.clonect.feeltalk.new_presentation.ui.util.mutableStateFlow
+import com.clonect.feeltalk.new_presentation.ui.util.toBitmap
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -141,9 +148,7 @@ class ChatViewModel @Inject constructor(
     }
 
     fun modifyPage(event: PageEvents<Chat>) {
-        if (event !in pageModificationEvents.value) {
-            pageModificationEvents.value += event
-        }
+        pageModificationEvents.value += event
     }
 
     private fun insertLoadingChat(chat: Chat) {
@@ -168,6 +173,21 @@ class ChatViewModel @Inject constructor(
         pageModificationEvents.value -= PageEvents.InsertItemFooter(chat)
     }
 
+    private fun PagingData<Chat>.insertDividerChat(): PagingData<Chat> {
+        return insertSeparators { before, after ->
+            val beforeCreate = before?.createAt?.substringBefore("T")
+            val afterCreate = after?.createAt?.substringBefore("T")
+
+            return@insertSeparators if (beforeCreate.isNullOrBlank() && !afterCreate.isNullOrBlank()) {
+                DividerChat(afterCreate)
+            } else if (!beforeCreate.isNullOrBlank() && !afterCreate.isNullOrBlank() && beforeCreate != afterCreate) {
+                DividerChat(afterCreate)
+            } else {
+                null
+            }
+        }
+    }
+
     /** Text Chat **/
 
     val pagingChat: Flow<PagingData<Chat>> = getPagingChatUseCase()
@@ -175,7 +195,7 @@ class ChatViewModel @Inject constructor(
         .combine(pageModificationEvents) { pagingData, modifications ->
             modifications.fold(pagingData) { acc, event ->
                 applyPageModification(acc, event)
-            }
+            }.insertDividerChat()
         }
 
     private val _textChat = MutableStateFlow("")
@@ -266,6 +286,10 @@ class ChatViewModel @Inject constructor(
                         ChatType.QuestionChatting -> {
                             val questionChat = newChat as? QuestionChat ?: return@collect
                             questionChat
+                        }
+                        ChatType.ImageChatting -> {
+                            val imageChat = newChat as? ImageChat ?: return@collect
+                            imageChat
                         }
                         null -> return@collect
                         else -> {
@@ -495,5 +519,60 @@ class ChatViewModel @Inject constructor(
         _isVoiceRecordingReplayPaused.value = false
         voiceReplayer?.resume()
     }
+
+
+    /** Image **/
+
+    fun sendImageChat(context: Context, uri: Uri?) = viewModelScope.launch {
+        if (uri == null) return@launch
+        val bitmap = uri.toBitmap(context)
+
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val now = Date()
+
+        val loadingImageChat = ImageChat(
+            index = now.time,
+            pageNo = 0,
+            chatSender = "me",
+            isRead = true,
+            createAt = format.format(Date()),
+            isSending = true,
+            url = "index",
+            bitmap = bitmap
+        )
+
+        launch {
+            insertLoadingChat(loadingImageChat)
+            setScrollToBottom()
+        }
+
+        // after send chat
+
+        launch {
+
+            delay(1000)
+            val next = Date()
+
+            val imageChat = ImageChat(
+                index = next.time,
+                pageNo = 0,
+                chatSender = "me",
+                isRead = true,
+                createAt = format.format(next),
+                isSending = false,
+                url = "index",
+                bitmap = bitmap
+            )
+
+            removeLoadingChat(loadingImageChat)
+            NewChatObserver.getInstance().setNewChat(imageChat)
+        }
+
+
+
+    }
+
+
+
 
 }

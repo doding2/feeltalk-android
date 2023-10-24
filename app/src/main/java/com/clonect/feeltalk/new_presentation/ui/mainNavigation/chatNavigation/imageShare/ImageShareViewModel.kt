@@ -26,17 +26,11 @@ class ImageShareViewModel @Inject constructor(
 
     var uri: Uri? by mutableStateFlow(null)
 
-    var image: Bitmap? by mutableStateFlow(null)
+    var bitmap: Bitmap? by mutableStateFlow(null)
 
 
     fun sendErrorMessage(message: String) = viewModelScope.launch {
         _errorMessage.emit(message)
     }
 
-
-    fun sendImageChat(onComplete: () -> Unit) = viewModelScope.launch {
-        isLoading = true
-        onComplete()
-        isLoading = false
-    }
 }

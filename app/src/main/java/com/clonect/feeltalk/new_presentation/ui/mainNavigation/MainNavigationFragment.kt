@@ -1,6 +1,7 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation
 
 import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -20,10 +21,12 @@ import androidx.navigation.ui.setupWithNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentMainNavigationBinding
 import com.clonect.feeltalk.new_domain.model.chat.PartnerLastChatDto
+import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageShare.ImageShareFragment
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.showConfirmDialog
 import com.clonect.feeltalk.new_presentation.ui.util.stateFlow
+import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -55,11 +58,11 @@ class MainNavigationFragment : Fragment() {
         }
 
 
-        setFragmentResultListener("inquireFragment") { requestKey, bundle ->
+        setFragmentResultListener("inquireFragment") { _, bundle ->
             val inquirySucceed = bundle.getBoolean("inquirySucceed", false)
             viewModel.setShowInquirySucceedSheet(inquirySucceed)
         }
-        setFragmentResultListener("suggestQuestionFragment") { requestKey, bundle ->
+        setFragmentResultListener("suggestQuestionFragment") { _, bundle ->
             val suggestionSucceed = bundle.getBoolean("suggestionSucceed", false)
             viewModel.setShowSuggestionSucceedSheet(suggestionSucceed)
         }

@@ -14,9 +14,12 @@ class Constants {
 
 
         const val VOICE_CACHE_FILE_NAME = "voiceCache.wav"
+        const val IMAGE_CACHE_FILE_NAME = "imageCache.png"
         const val CHAT_PAGE_SIZE = 4
         const val QUESTION_PAGE_SIZE = 4
         const val ONGOING_CHALLENGE_PAGE_SIZE = 4
+
+
 
 
         const val EXCHANGE_KEY_WAIT_DELAY = 500L
