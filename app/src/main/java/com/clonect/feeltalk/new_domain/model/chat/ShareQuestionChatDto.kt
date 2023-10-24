@@ -5,5 +5,6 @@ data class ShareQuestionChatDto(
     val pageNo: Long,
     val isRead: Boolean,
     val createAt: String,
+    val chatSender: String,
     val coupleQuestion: ChatQuestionDto,
 ): java.io.Serializable

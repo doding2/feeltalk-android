@@ -7,6 +7,8 @@ import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatRemoteDataSo
 import com.clonect.feeltalk.new_data.repository.chat.paging.ChatPagingSource
 import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.question.paging.QuestionPagingSource
+import com.clonect.feeltalk.new_domain.repository.challenge.ChallengeRepository
+import com.clonect.feeltalk.new_domain.repository.question.QuestionRepository
 import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 import dagger.Module
 import dagger.Provides
@@ -20,9 +22,11 @@ class PagingSourceModule {
     @Provides
     fun providesChatPagingSource(
         tokenRepository: TokenRepository,
+        questionRepository: QuestionRepository,
+        challengeRepository: ChallengeRepository,
         chatRemoteDataSource: ChatRemoteDataSource
     ): ChatPagingSource {
-        return ChatPagingSource(tokenRepository, chatRemoteDataSource)
+        return ChatPagingSource(tokenRepository, questionRepository, challengeRepository, chatRemoteDataSource)
     }
 
     @Provides

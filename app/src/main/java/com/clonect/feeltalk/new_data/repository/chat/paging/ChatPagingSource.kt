@@ -3,11 +3,16 @@ package com.clonect.feeltalk.new_data.repository.chat.paging
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.new_data.mapper.toChallenge
 import com.clonect.feeltalk.new_data.mapper.toChatList
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatRemoteDataSource
+import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.ChatListDto
 import com.clonect.feeltalk.new_domain.model.chat.LastChatPageNoDto
+import com.clonect.feeltalk.new_domain.model.question.Question
+import com.clonect.feeltalk.new_domain.repository.challenge.ChallengeRepository
+import com.clonect.feeltalk.new_domain.repository.question.QuestionRepository
 import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 import com.clonect.feeltalk.presentation.utils.infoLog
 import kotlinx.coroutines.CancellationException
@@ -16,6 +21,8 @@ import kotlinx.coroutines.runBlocking
 
 class ChatPagingSource(
     private val tokenRepository: TokenRepository,
+    private val questionRepository: QuestionRepository,
+    private val challengeRepository: ChallengeRepository,
     private val chatRemoteDataSource: ChatRemoteDataSource,
 ): PagingSource<Long, Chat>() {
 
@@ -39,7 +46,10 @@ class ChatPagingSource(
             val pageKey = params.key
                 ?: getLastChatPageNo().pageNo
 
-            val result = getChatList(pageKey).toChatList()
+            val result = getChatList(pageKey).toChatList(
+                loadQuestion = ::getQuestion,
+                loadChallenge = ::getChallenge
+            )
             LoadResult.Page(
                 data = result,
                 prevKey = if (pageKey <= 0) null else pageKey - 1,
@@ -68,5 +78,21 @@ class ChatPagingSource(
 
     private suspend fun getChatList(pageNo: Long): ChatListDto {
         return chatRemoteDataSource.getChatList(getAccessToken(), pageNo)
+    }
+
+    private suspend fun getQuestion(index: Long): Question {
+        val result = questionRepository.getQuestion(getAccessToken(), index)
+        if (result is Resource.Error) {
+            throw result.throwable
+        }
+        return (result as Resource.Success).data
+    }
+
+    private suspend fun getChallenge(index: Long): Challenge {
+        val result = challengeRepository.getChallenge(getAccessToken(), index)
+        if (result is Resource.Error) {
+            throw result.throwable
+        }
+        return (result as Resource.Success).data.toChallenge()
     }
 }

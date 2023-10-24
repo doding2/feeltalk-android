@@ -15,19 +15,37 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.R
-import com.clonect.feeltalk.databinding.*
-import com.clonect.feeltalk.new_domain.model.chat.*
+import com.clonect.feeltalk.databinding.ItemChatDividerBinding
+import com.clonect.feeltalk.databinding.ItemQuestionChatMineBinding
+import com.clonect.feeltalk.databinding.ItemQuestionChatPartnerBinding
+import com.clonect.feeltalk.databinding.ItemTextChatMineBinding
+import com.clonect.feeltalk.databinding.ItemTextChatPartnerBinding
+import com.clonect.feeltalk.databinding.ItemVoiceChatMineBinding
+import com.clonect.feeltalk.databinding.ItemVoiceChatPartnerBinding
+import com.clonect.feeltalk.new_domain.model.chat.Chat
+import com.clonect.feeltalk.new_domain.model.chat.ChatType
+import com.clonect.feeltalk.new_domain.model.chat.DividerChat
+import com.clonect.feeltalk.new_domain.model.chat.QuestionChat
+import com.clonect.feeltalk.new_domain.model.chat.TextChat
+import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.audioVisualizer.RecordingReplayer
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.presentation.utils.infoLog
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLConnection
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
+import java.util.Timer
+import java.util.TimerTask
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -72,7 +90,14 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 voiceViewHolders.add(holder)
                 holder
             }
-            // TODO
+            TYPE_QUESTION_MINE -> {
+                val binding = ItemQuestionChatMineBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                QuestionChatMineViewHolder(binding)
+            }
+            TYPE_QUESTION_PARTNER -> {
+                val binding = ItemQuestionChatPartnerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                QuestionChatPartnerViewHolder(binding)
+            }
             else -> {
                 val binding = ItemChatDividerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 ChatDividerViewHolder(binding)
@@ -122,17 +147,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 else TYPE_CHALLENGE_PARTNER
             }
             ChatType.QuestionChatting -> {
-                val chat = item as? QuestionChat
-                    ?: return TYPE_QUESTION_MINE
-                // TODO
-                return TYPE_QUESTION_MINE
-//                if (chat.question.selfAnswer == null || chat.question.partnerAnswer == null) {
-//                    if (item.chatSender == myNickname) TYPE_QUESTION_EMPTY_ANSWER_MINE
-//                    else TYPE_QUESTION_EMPTY_ANSWER_PARTNER
-//                } else {
-//                    if (item.chatSender == myNickname) TYPE_QUESTION_MINE
-//                    else TYPE_QUESTION_PARTNER
-//                }
+                if (item.chatSender == myNickname) TYPE_QUESTION_MINE
+                else TYPE_QUESTION_PARTNER
             }
             else -> TYPE_DIVIDER
         }
@@ -220,9 +236,6 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
         const val TYPE_QUESTION_MINE = 13
         const val TYPE_QUESTION_PARTNER = 14
-
-        const val TYPE_QUESTION_EMPTY_ANSWER_MINE = 15
-        const val TYPE_QUESTION_EMPTY_ANSWER_PARTNER = 16
     }
 
 
@@ -1099,12 +1112,15 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 )
                 tvTime.text = getFormatted(chat.createAt)
 
-//                tvQuestionHeader.text = root.context.getString(R.string.question_chat_header_deco) + chat.question.title
-//                tvQuestionBody.text = chat.question.title
-//                tvMyAnswer.text = chat.question.selfAnswer
-//                tvPartnerAnswer.text = chat.question.partnerAnswer
+                tvQuestionHeader.text = root.context.getString(R.string.question_chat_header_deco) + chat.question.header
+                tvQuestionBody.text = chat.question.body
+                tvMyAnswer.text = chat.question.myAnswer
+                tvPartnerAnswer.text = chat.question.partnerAnswer
 
+                val serverFormat = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
+                val date = serverFormat.parse(chat.question.createAt)
                 val questionFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
+                tvQuestionDate.text = date?.let { questionFormat.format(it) }
 
                 if (chat.isSending) {
                     tvRead.visibility = View.GONE
@@ -1114,8 +1130,14 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                     tvTime.visibility = View.VISIBLE
                 }
 
-                root.setOnLongClickListener {
-//                    copyText(chat)
+                tvMyAnswer.setOnLongClickListener {
+                    val myAnswer = chat.question.myAnswer ?: return@setOnLongClickListener false
+                    copyText(myAnswer)
+                    false
+                }
+                tvPartnerAnswer.setOnLongClickListener {
+                    val partnerAnswer = chat.question.partnerAnswer ?: return@setOnLongClickListener false
+                    copyText(partnerAnswer)
                     false
                 }
 
@@ -1124,9 +1146,9 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
         }
 
 
-        private fun copyText(chat: TextChat) {
+        private fun copyText(text: String) {
             val clipboard = binding.root.context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-            val clip = ClipData.newPlainText("채팅", chat.message)
+            val clip = ClipData.newPlainText("채팅", text)
             clipboard.setPrimaryClip(clip)
         }
 
@@ -1192,6 +1214,115 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 val prevPrevItem = if (position - 1 < 0) null
                 else snapshot().items[position - 1]
                 if (prevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+            }
+        }
+    }
+
+    inner class QuestionChatPartnerViewHolder(
+        private val binding: ItemQuestionChatPartnerBinding
+    ): ChatViewHolder(binding.root) {
+
+        override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
+            val chat = item as QuestionChat
+            binding.run {
+
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.VISIBLE
+                llPartnerInfo.visibility = View.VISIBLE
+
+                tvTime.text = getFormatted(chat.createAt)
+
+//           TODO
+//            tvPartnerNickname.text = "연인 닉네임"
+//            ivPartnerProfile.setImageResource()
+
+                tvQuestionHeader.text = root.context.getString(R.string.question_chat_header_deco) + chat.question.header
+                tvQuestionBody.text = chat.question.body
+                tvMyAnswer.text = chat.question.myAnswer
+                tvPartnerAnswer.text = chat.question.partnerAnswer
+
+                val serverFormat = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
+                val date = serverFormat.parse(chat.question.createAt)
+                val questionFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
+                tvQuestionDate.text = date?.let { questionFormat.format(it) }
+
+                tvMyAnswer.setOnLongClickListener {
+                    val myAnswer = chat.question.myAnswer ?: return@setOnLongClickListener false
+                    copyText(myAnswer)
+                    false
+                }
+                tvPartnerAnswer.setOnLongClickListener {
+                    val partnerAnswer = chat.question.partnerAnswer ?: return@setOnLongClickListener false
+                    copyText(partnerAnswer)
+                    false
+                }
+
+                makeContinuous(prevItem, item, nextItem)
+            }
+        }
+
+        private fun copyText(text: String) {
+            val clipboard = binding.root.context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+            val clip = ClipData.newPlainText("채팅", text)
+            clipboard.setPrimaryClip(clip)
+        }
+
+        override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+            root.updateLayoutParams<RecyclerView.LayoutParams> {
+                topMargin = defaultVerticalMargin
+                bottomMargin = defaultVerticalMargin
+            }
+
+            if (item.isSending)
+                return
+
+            val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+
+            val isStartChat = !isTopSame && isBottomSame
+            val isEndChat = isTopSame && !isBottomSame
+            val isMiddleChat = isTopSame && isBottomSame
+
+            if (isMiddleChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvTime.visibility = View.GONE
+                llPartnerInfo.visibility = View.GONE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+                return@run
+            }
+
+            if (isStartChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = defaultVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvTime.visibility = View.GONE
+                llPartnerInfo.visibility = View.VISIBLE
+            }
+
+            if (isEndChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = defaultVerticalMargin
+                }
+                tvTime.visibility = View.VISIBLE
+                llPartnerInfo.visibility = View.GONE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
                     viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
                 }
             }

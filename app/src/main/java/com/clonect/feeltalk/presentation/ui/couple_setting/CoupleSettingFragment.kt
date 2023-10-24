@@ -23,7 +23,11 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.databinding.FragmentCoupleSettingBinding
 import com.clonect.feeltalk.new_presentation.ui.util.makeLoadingDialog
-import com.clonect.feeltalk.presentation.utils.*
+import com.clonect.feeltalk.new_presentation.ui.util.toBitmap
+import com.clonect.feeltalk.presentation.utils.showAlertDialog
+import com.clonect.feeltalk.presentation.utils.showEditBirthDialog
+import com.clonect.feeltalk.presentation.utils.showEditCoupleAnniversaryDialog
+import com.clonect.feeltalk.presentation.utils.showEditNicknameDialog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.kakao.sdk.user.UserApiClient
@@ -34,7 +38,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.math.ceil

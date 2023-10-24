@@ -1,8 +1,17 @@
 package com.clonect.feeltalk.new_data.mapper
 
-import com.clonect.feeltalk.new_domain.model.chat.*
+import com.clonect.feeltalk.new_domain.model.challenge.Challenge
+import com.clonect.feeltalk.new_domain.model.chat.Chat
+import com.clonect.feeltalk.new_domain.model.chat.ChatListDto
+import com.clonect.feeltalk.new_domain.model.chat.QuestionChat
+import com.clonect.feeltalk.new_domain.model.chat.TextChat
+import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
+import com.clonect.feeltalk.new_domain.model.question.Question
 
-fun ChatListDto.toChatList(): List<Chat> {
+suspend fun ChatListDto.toChatList(
+    loadQuestion: suspend (Long) -> Question,
+    loadChallenge: suspend (Long) -> Challenge
+): List<Chat> {
     val newChatList = mutableListOf<Chat>()
     for (chatDto in chatting) {
         val chat = when (chatDto.type) {
@@ -41,7 +50,7 @@ fun ChatListDto.toChatList(): List<Chat> {
                             chatSender = if (mine) "me" else "partner",
                             isRead = isRead,
                             createAt = createAt,
-                            question = coupleQuestion!!
+                            question = loadQuestion(coupleQuestion!!)
                         )
                     }
                 }

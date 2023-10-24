@@ -251,7 +251,7 @@
     <string name="chat_read" />
     <string name="chat_unread">안읽음</string>
     <string name="chat_camera">카메라</string>
-    <string name="chat_album">앨범</string>
+    <string name="chat_album">갤러리</string>
     <string name="chat_voice_guide">연인에게 음성메시지를 보내보세요 !</string>
     <string name="chat_voice_record_time_default">00:00</string>
 
@@ -507,6 +507,8 @@
     <string name="suggestion_succeed_confirm">알겠어요</string>
 
 
+    <!--  ImageShare  -->
+    <string name="image_share_send">전송</string>
 
 
     <!--  old ui  -->

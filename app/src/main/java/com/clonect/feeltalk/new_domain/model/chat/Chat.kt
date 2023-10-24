@@ -1,5 +1,8 @@
 package com.clonect.feeltalk.new_domain.model.chat
 
+import com.clonect.feeltalk.new_domain.model.challenge.Challenge
+import com.clonect.feeltalk.new_domain.model.question.Question
+
 abstract class Chat(
     open val index: Long,
     open var pageNo: Long,
@@ -173,7 +176,7 @@ data class ChallengeChat(
     override var isRead: Boolean,
     override val createAt: String,
     override var isSending: Boolean = false,
-    val challenge: Long
+    val challenge: Challenge
 ): Chat(index, pageNo, ChatType.ChallengeChatting, chatSender, isRead, createAt, isSending)
 
 data class QuestionChat(
@@ -183,5 +186,5 @@ data class QuestionChat(
     override var isRead: Boolean,
     override val createAt: String,
     override var isSending: Boolean = false,
-    val question: Long
+    val question: Question
 ): Chat(index, pageNo, ChatType.QuestionChatting, chatSender, isRead, createAt, isSending)
