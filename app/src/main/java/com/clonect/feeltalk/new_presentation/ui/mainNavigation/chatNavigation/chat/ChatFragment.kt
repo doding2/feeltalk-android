@@ -1,10 +1,13 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +15,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -34,6 +38,7 @@ import com.clonect.feeltalk.new_presentation.ui.util.toBytesInt
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -86,6 +91,8 @@ class ChatFragment : Fragment() {
             ivSendVoiceChat.setOnClickListener { sendVoiceChat() }
 
             ivContentsShare.setOnClickListener { navigateToContentsShare() }
+            ivAlbum.setOnClickListener { selectAlbumImage() }
+            ivCamera.setOnClickListener { selectCameraImage() }
         }
     }
 
@@ -117,6 +124,50 @@ class ChatFragment : Fragment() {
             .findNavController()
             .navigate(R.id.action_mainNavigationFragment_to_contentsShareFragment)
     }
+
+    private fun selectCameraImage() {
+        cancel()
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        cameraLauncher.launch(intent)
+    }
+
+    private fun selectAlbumImage() {
+        cancel()
+        val intent = Intent(Intent.ACTION_PICK).apply {
+            type = "image/*"
+            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*"))
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false)
+        }
+
+        albumLauncher.launch(intent)
+    }
+
+    private val cameraLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (it.resultCode != Activity.RESULT_OK) return@registerForActivityResult
+        val intent = it.data ?: return@registerForActivityResult
+        navigateToImageShare(intent)
+    }
+
+    private val albumLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (it.resultCode != Activity.RESULT_OK) return@registerForActivityResult
+        val intent = it.data ?: return@registerForActivityResult
+        navigateToImageShare(intent)
+    }
+
+    private fun navigateToImageShare(intent: Intent) {
+        val uri = intent.data ?: return
+
+        requireParentFragment()
+            .requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_mainNavigationFragment_to_imageShareFragment, bundleOf("uri" to uri))
+    }
+
+
 
 
     private fun cancel(includeVoiceChats: Boolean = true) {
@@ -213,8 +264,6 @@ class ChatFragment : Fragment() {
             setMaxRecycledViews(ChatAdapter.TYPE_CHALLENGE_PARTNER, 0)
             setMaxRecycledViews(ChatAdapter.TYPE_QUESTION_MINE, 0)
             setMaxRecycledViews(ChatAdapter.TYPE_QUESTION_PARTNER, 0)
-            setMaxRecycledViews(ChatAdapter.TYPE_QUESTION_EMPTY_ANSWER_MINE, 0)
-            setMaxRecycledViews(ChatAdapter.TYPE_QUESTION_EMPTY_ANSWER_PARTNER, 0)
         })
         rvChat.setItemViewCacheSize(512)
         rvChat.adapter = adapter.apply {

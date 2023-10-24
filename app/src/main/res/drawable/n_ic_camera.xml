@@ -4,20 +4,25 @@
     android:viewportWidth="88"
     android:viewportHeight="88">
   <path
-      android:pathData="M44,0L44,0A44,44 0,0 1,88 44L88,44A44,44 0,0 1,44 88L44,88A44,44 0,0 1,0 44L0,44A44,44 0,0 1,44 0z"
-      android:fillColor="#ffffff"/>
+      android:pathData="M44,0.5L44,0.5A43.5,43.5 0,0 1,87.5 44L87.5,44A43.5,43.5 0,0 1,44 87.5L44,87.5A43.5,43.5 0,0 1,0.5 44L0.5,44A43.5,43.5 0,0 1,44 0.5z"
+      android:fillColor="#D7EEFF"/>
   <path
-      android:pathData="M47.334,33.333H40.667L37.334,37.333H33.334C32.626,37.333 31.948,37.614 31.448,38.114C30.948,38.615 30.667,39.293 30.667,40V52C30.667,52.707 30.948,53.386 31.448,53.886C31.948,54.386 32.626,54.667 33.334,54.667H54.667C55.374,54.667 56.053,54.386 56.553,53.886C57.053,53.386 57.334,52.707 57.334,52V40C57.334,39.293 57.053,38.615 56.553,38.114C56.053,37.614 55.374,37.333 54.667,37.333H50.667L47.334,33.333Z"
-      android:strokeLineJoin="round"
-      android:strokeWidth="2.5"
-      android:fillColor="#00000000"
-      android:strokeColor="#000000"
-      android:strokeLineCap="round"/>
+      android:pathData="M32,35L56,35A4,4 0,0 1,60 39L60,55A4,4 0,0 1,56 59L32,59A4,4 0,0 1,28 55L28,39A4,4 0,0 1,32 35z"
+      android:fillColor="#A1D7FF"/>
   <path
-      android:pathData="M44,49.333C46.209,49.333 48,47.543 48,45.333C48,43.124 46.209,41.333 44,41.333C41.791,41.333 40,43.124 40,45.333C40,47.543 41.791,49.333 44,49.333Z"
-      android:strokeLineJoin="round"
-      android:strokeWidth="2.5"
+      android:pathData="M41.5,31L46.5,31A4.5,4.5 0,0 1,51 35.5L51,35.5A4.5,4.5 0,0 1,46.5 40L41.5,40A4.5,4.5 0,0 1,37 35.5L37,35.5A4.5,4.5 0,0 1,41.5 31z"
+      android:fillColor="#A1D7FF"/>
+  <path
+      android:pathData="M44,47m-6,0a6,6 0,1 1,12 0a6,6 0,1 1,-12 0"
+      android:strokeWidth="2"
+      android:fillColor="#A1D7FF"
+      android:strokeColor="#ffffff"/>
+  <path
+      android:pathData="M33.5,30.5m-2.5,0a2.5,2.5 0,1 1,5 0a2.5,2.5 0,1 1,-5 0"
+      android:fillColor="#A1D7FF"/>
+  <path
+      android:strokeWidth="1"
+      android:pathData="M44,0.5L44,0.5A43.5,43.5 0,0 1,87.5 44L87.5,44A43.5,43.5 0,0 1,44 87.5L44,87.5A43.5,43.5 0,0 1,0.5 44L0.5,44A43.5,43.5 0,0 1,44 0.5z"
       android:fillColor="#00000000"
-      android:strokeColor="#000000"
-      android:strokeLineCap="round"/>
+      android:strokeColor="#A1D7FF"/>
 </vector>

@@ -75,6 +75,9 @@
         <action
             android:id="@+id/action_mainNavigationFragment_to_partnerSettingFragment"
             app:destination="@id/partnerSettingFragment" />
+        <action
+            android:id="@+id/action_mainNavigationFragment_to_imageShareFragment"
+            app:destination="@id/imageShareFragment" />
     </fragment>
     <fragment
         android:id="@+id/agreementPrivacyDetailFragment"
@@ -277,4 +280,9 @@
             android:id="@+id/action_partnerSettingFragment_to_breakUpCoupleFragment"
             app:destination="@id/breakUpCoupleFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/imageShareFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageShare.ImageShareFragment"
+        android:label="fragment_image_share"
+        tools:layout="@layout/fragment_image_share" />
 </navigation>
