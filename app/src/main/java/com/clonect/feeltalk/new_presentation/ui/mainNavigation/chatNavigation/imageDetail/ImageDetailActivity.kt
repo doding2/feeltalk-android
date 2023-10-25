@@ -16,13 +16,17 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.ActivityImageDetailBinding
 import com.clonect.feeltalk.new_domain.model.chat.ImageChat
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageShare.ImageShareViewModel
 import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
+import com.clonect.feeltalk.new_presentation.ui.util.extendRootViewLayout
+import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.makeLoadingDialog
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
+import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
 import com.clonect.feeltalk.new_presentation.ui.util.stateFlow
 import com.clonect.feeltalk.new_presentation.ui.util.toBitmap
 import com.google.android.material.snackbar.Snackbar
@@ -39,21 +43,17 @@ class ImageDetailActivity : TransformationAppCompatActivity() {
 
     private lateinit var binding: ActivityImageDetailBinding
     private val viewModel: ImageDetailViewModel by viewModels()
-    private lateinit var onBackCallback: OnBackPressedCallback
     private lateinit var loadingDialog: Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityImageDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        extendRootViewLayout(window)
+        setLightStatusBars(false, this, binding.root)
+        binding.llActionBar.setPadding(0, getStatusBarHeight(), 0, 0)
 
         loadingDialog = makeLoadingDialog()
-        registerBackCallback()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            WindowCompat.setDecorFitsSystemWindows(window, false)
-            binding.root.setPadding(0, getStatusBarHeight(), 0, 0)
-            setLightStatusBars(false, this, binding.root)
-        }
 
         viewModel.imageChat = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("imageChat", ImageChat::class.java)
@@ -65,16 +65,17 @@ class ImageDetailActivity : TransformationAppCompatActivity() {
         collectViewModel()
 
         binding.run {
-            ivExit.setOnClickListener { onBackCallback.handleOnBackPressed() }
+            ivExit.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
             ivDownload.setOnClickListener { downloadImage() }
 
             zlImage.registerDoubleTouchReset()
         }
     }
 
+
     private fun downloadImage() {
         viewModel.downloadImage {
-            onBackCallback.handleOnBackPressed()
+            onBackPressedDispatcher.onBackPressed()
         }
     }
 
@@ -136,17 +137,5 @@ class ImageDetailActivity : TransformationAppCompatActivity() {
         }
     }
 
-    private fun registerBackCallback() {
-        onBackCallback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                finish()
-            }
-        }
-        onBackPressedDispatcher.addCallback(this, onBackCallback)
-    }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        onBackCallback.remove()
-    }
 }

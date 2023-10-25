@@ -1,6 +1,7 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageShare
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Dialog
 import com.clonect.feeltalk.R
 import android.content.Context
@@ -24,6 +25,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.databinding.FragmentImageShareBinding
 import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
+import com.clonect.feeltalk.new_presentation.ui.util.closeRootViewLayout
+import com.clonect.feeltalk.new_presentation.ui.util.extendRootViewLayout
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.makeLoadingDialog
@@ -58,13 +61,10 @@ class ImageShareFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentImageShareBinding.inflate(inflater, container, false)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            binding.ivImage.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
-            binding.llActionBar.setPadding(0, getStatusBarHeight(), 0, 0)
-            setLightStatusBars(false, activity, binding.root)
-        } else {
-            activity.setStatusBarColor(binding.root, requireContext().getColor(R.color.black), false)
-        }
+        extendRootViewLayout(requireActivity().window)
+        setLightStatusBars(false, requireActivity(), binding.root)
+        binding.llActionBar.setPadding(0, getStatusBarHeight(), 0, 0)
+
         viewModel.uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             requireArguments().getParcelable("uri", Uri::class.java)
         } else {
@@ -159,6 +159,7 @@ class ImageShareFragment : Fragment() {
         super.onAttach(context)
         onBackCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
+                closeRootViewLayout(requireActivity().window)
                 findNavController().popBackStack()
             }
         }
