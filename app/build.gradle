@@ -144,8 +144,8 @@ dependencies {
     implementation "net.zetetic:android-database-sqlcipher:4.5.3"
     implementation "androidx.sqlite:sqlite-ktx:2.4.0"
     // dagger hilt
-    implementation "com.google.dagger:hilt-android:2.44"
-    kapt "com.google.dagger:hilt-compiler:2.44"
+    implementation "com.google.dagger:hilt-android:2.46.1"
+    kapt "com.google.dagger:hilt-compiler:2.46.1"
 
     // Firebase BoM (version control)
     implementation platform('com.google.firebase:firebase-bom:31.2.0')
