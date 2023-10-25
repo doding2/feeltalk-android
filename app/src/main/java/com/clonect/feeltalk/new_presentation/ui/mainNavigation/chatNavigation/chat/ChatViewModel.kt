@@ -33,6 +33,7 @@ import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.ch
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.audioVisualizer.RecordingSampler
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.audioVisualizer.VisualizerView
 import com.clonect.feeltalk.new_presentation.ui.util.mutableStateFlow
+import com.clonect.feeltalk.new_presentation.ui.util.resize
 import com.clonect.feeltalk.new_presentation.ui.util.toBitmap
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -526,6 +527,9 @@ class ChatViewModel @Inject constructor(
     fun sendImageChat(context: Context, uri: Uri?) = viewModelScope.launch {
         if (uri == null) return@launch
         val bitmap = uri.toBitmap(context)
+        if (bitmap != null) {
+            infoLog("bitmap length: ${bitmap.byteCount / 512} mb")
+        }
 
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         val now = Date()
@@ -538,7 +542,8 @@ class ChatViewModel @Inject constructor(
             createAt = format.format(Date()),
             isSending = true,
             url = "index",
-            bitmap = bitmap
+            bitmap = bitmap,
+            uri = uri
         )
 
         launch {
@@ -561,7 +566,8 @@ class ChatViewModel @Inject constructor(
                 createAt = format.format(next),
                 isSending = false,
                 url = "index",
-                bitmap = bitmap
+                bitmap = bitmap,
+                uri = uri
             )
 
             removeLoadingChat(loadingImageChat)

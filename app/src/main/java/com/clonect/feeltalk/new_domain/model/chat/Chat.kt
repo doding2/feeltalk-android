@@ -1,6 +1,7 @@
 package com.clonect.feeltalk.new_domain.model.chat
 
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Parcelable
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.question.Question
@@ -159,7 +160,8 @@ data class ImageChat(
     override val createAt: String,
     override var isSending: Boolean = false,
     val url: String,
-    val bitmap: Bitmap?
+    val bitmap: Bitmap?,
+    val uri: Uri?
 ): Chat(index, pageNo, ChatType.ImageChatting, chatSender, isRead, createAt, isSending), Parcelable
 
 

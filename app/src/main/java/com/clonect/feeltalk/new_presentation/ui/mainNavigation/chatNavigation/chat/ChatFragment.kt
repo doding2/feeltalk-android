@@ -5,12 +5,10 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.text.TextUtils.replace
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,10 +27,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavDirections
-import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.navOptions
 import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
@@ -42,15 +37,14 @@ import com.clonect.feeltalk.new_domain.model.chat.ImageChat
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
-import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageDetail.ImageDetailFragment
+import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageDetail.ImageDetailActivity
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageShare.ImageShareFragment
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.toBytesInt
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
+import com.skydoves.transformationlayout.TransformationCompat
 import com.skydoves.transformationlayout.TransformationLayout
-import com.skydoves.transformationlayout.addTransformation
-import com.skydoves.transformationlayout.onTransformationStartContainer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -91,7 +85,6 @@ class ChatFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        onTransformationStartContainer()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -155,20 +148,9 @@ class ChatFragment : Fragment() {
 
     private fun navigateToImageDetail(view: View, imageChat: ImageChat) {
         val transformationLayout = view as? TransformationLayout ?: return
-        val extras = FragmentNavigatorExtras(view to imageChat.index.toString())
-        val bundle = transformationLayout.getBundle("TransformationParams").apply {
-            putParcelable("imageChat", imageChat)
-        }
-
-        requireParentFragment()
-            .requireParentFragment()
-            .findNavController()
-            .navigate(
-                resId = R.id.action_mainNavigationFragment_to_imageDetailFragment,
-                args = bundle,
-                navOptions = null,
-                navigatorExtras = extras
-            )
+        val intent = Intent(requireContext(), ImageDetailActivity::class.java)
+        intent.putExtra("imageChat", imageChat.copy(bitmap = null))
+        TransformationCompat.startActivity(transformationLayout, intent)
     }
 
     private fun navigateToImageShare(uri: Uri) {

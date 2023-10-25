@@ -18,6 +18,7 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.ActivityMainBinding
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
+import com.skydoves.transformationlayout.onTransformationStartContainer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     private val mainNavViewModel: MainNavigationViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        onTransformationStartContainer()
         super.onCreate(savedInstanceState)
         installSplashScreen()
         binding = ActivityMainBinding.inflate(layoutInflater)

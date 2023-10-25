@@ -1,15 +1,30 @@
 package com.clonect.feeltalk.new_presentation.ui.util
 
 import android.app.Dialog
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.View
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.DialogConfirmBinding
 
 fun Fragment.makeLoadingDialog(onDismiss: () -> Unit = {}): Dialog {
     val dialog = Dialog(requireContext()).apply {
+        setContentView(R.layout.dialog_loading)
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        window?.setDimAmount(0f)
+    }
+
+    dialog.setCancelable(false)
+    dialog.setOnDismissListener { onDismiss() }
+
+    return dialog
+}
+
+fun Context.makeLoadingDialog(onDismiss: () -> Unit = {}): Dialog {
+    val dialog = Dialog(this).apply {
         setContentView(R.layout.dialog_loading)
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         window?.setDimAmount(0f)

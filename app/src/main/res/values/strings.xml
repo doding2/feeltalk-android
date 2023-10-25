@@ -122,7 +122,7 @@
     <string name="home_answer_state_title_2">님이 답변을 기다리고 있어요!</string>
     <string name="home_answer_state_title_3">상대방의 답변을 기다리고 있어요</string>
     <string name="home_answer_state_title_4">오늘의 질문에 대해 필로우톡해봐요</string>
-    
+
     <string name="home_today_question_mention">오늘도 서로에 대해 더 알아가봐요!</string>
     <string name="home_sub_title">두근두근!</string>
     <string name="home_main_title_deco">번째 질문이 도착했어요</string>
@@ -297,7 +297,6 @@
     <string name="setting_log_out">로그아웃</string>
 
 
-
     <!--  AccountSetting  -->
     <string name="account_setting_title">내 필로우톡 정보</string>
     <string name="account_setting_privacy_policy">개인정보처리방침</string>
@@ -318,8 +317,8 @@
     <string name="lock_setting_title">화면잠금</string>
     <string name="lock_setting_switch">화면잠금</string>
     <string name="lock_setting_change_password">암호변경</string>
-    
-    
+
+
     <!--  PasswordSetting  -->
     <string name="password_setting_title_disabled">암호설정</string>
     <string name="password_setting_default_guide_disabled">사용하고자 하는 암호를 입력해주세요.</string>
@@ -456,7 +455,7 @@
     <string name="delete_account_done_thanks_body">비록 지금은 헤어지지만\n언젠가 다시 만날 수 있을거라 믿어요.\n필톡 팀은 언제나 당신의 사랑을 응원해요!</string>
     <string name="delete_account_done_confirm">메인으로</string>
 
-    
+
     <!--  PrivacyPolicyDetail  -->
     <string name="privacy_policy_detail_title">개인정보처리방침</string>
     <string name="privacy_policy_detail_dummy">이력서를 작성할 때 글자수를 확인하기 위해 포털사이트에 내용을 복사 붙여 넣기를 하여 확인하곤 합니다. 또한 공모전에 응모한다면 200자 원고지 100매와 같은 기준에 맞추기</string>

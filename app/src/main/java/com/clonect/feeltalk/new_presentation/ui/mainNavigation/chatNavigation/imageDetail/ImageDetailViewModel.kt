@@ -1,6 +1,5 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageDetail
 
-import com.clonect.feeltalk.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.new_domain.model.chat.ImageChat

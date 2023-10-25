@@ -2,91 +2,65 @@ package com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.i
 
 import android.annotation.SuppressLint
 import android.app.Dialog
-import com.clonect.feeltalk.R
 import android.content.Context
-import android.graphics.Color
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.GestureDetector
-import android.view.LayoutInflater
 import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.fragment.app.Fragment
+import androidx.activity.viewModels
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.view.WindowCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.clonect.feeltalk.databinding.FragmentImageDetailBinding
+import com.clonect.feeltalk.databinding.ActivityImageDetailBinding
 import com.clonect.feeltalk.new_domain.model.chat.ImageChat
+import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageShare.ImageShareViewModel
 import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
-import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.makeLoadingDialog
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
-import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
 import com.clonect.feeltalk.new_presentation.ui.util.stateFlow
+import com.clonect.feeltalk.new_presentation.ui.util.toBitmap
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.transition.MaterialContainerTransform
 import com.otaliastudios.zoom.ZoomLayout
-import com.skydoves.transformationlayout.TransformationLayout
-import com.skydoves.transformationlayout.onTransformationEndContainer
-import com.skydoves.transformationlayout.onTransformationStartContainer
+import com.skydoves.transformationlayout.TransformationAppCompatActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-/**
- * Created by doding2 on 2023/10/25.
- */
 @AndroidEntryPoint
-class ImageDetailFragment : Fragment() {
+class ImageDetailActivity : TransformationAppCompatActivity() {
 
-    companion object {
-        const val TAG = "ImageDetailFragment"
-    }
-
-    private lateinit var binding: FragmentImageDetailBinding
+    private lateinit var binding: ActivityImageDetailBinding
     private val viewModel: ImageDetailViewModel by viewModels()
     private lateinit var onBackCallback: OnBackPressedCallback
     private lateinit var loadingDialog: Dialog
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        binding = FragmentImageDetailBinding.inflate(inflater, container, false)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            binding.ivImage.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
-            binding.llActionBar.setPadding(0, getStatusBarHeight(), 0, 0)
-            setLightStatusBars(false, activity, binding.root)
-        } else {
-            activity.setStatusBarColor(binding.root, requireContext().getColor(R.color.black), false)
-        }
-        viewModel.imageChat = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requireArguments().getParcelable("imageChat", ImageChat::class.java)
-        } else {
-            requireArguments().getParcelable("imageChat") as? ImageChat
-        }
-        loadingDialog = makeLoadingDialog()
-        return binding.root
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val transformationParams = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            arguments?.getParcelable("TransformationParams", TransformationLayout.Params::class.java)
-        } else {
-            arguments?.getParcelable("TransformationParams")
-        }
-        onTransformationEndContainer(transformationParams)
-    }
+        binding = ActivityImageDetailBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        loadingDialog = makeLoadingDialog()
+        registerBackCallback()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+            binding.root.setPadding(0, getStatusBarHeight(), 0, 0)
+            setLightStatusBars(false, this, binding.root)
+        }
+
+        viewModel.imageChat = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("imageChat", ImageChat::class.java)
+        } else {
+            intent.getParcelableExtra("imageChat")
+        }
+
 
         collectViewModel()
 
@@ -106,7 +80,7 @@ class ImageDetailFragment : Fragment() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun ZoomLayout.registerDoubleTouchReset() {
-        val detector = GestureDetector(requireContext(), GestureDetector.SimpleOnGestureListener())
+        val detector = GestureDetector(this@ImageDetailActivity, GestureDetector.SimpleOnGestureListener())
         detector.setOnDoubleTapListener(object: GestureDetector.OnDoubleTapListener {
             override fun onSingleTapConfirmed(p0: MotionEvent): Boolean { return true }
             override fun onDoubleTap(p0: MotionEvent): Boolean { return true }
@@ -116,19 +90,23 @@ class ImageDetailFragment : Fragment() {
             }
         })
 
-        setOnTouchListener { view, event ->
+        setOnTouchListener { _, event ->
             detector.onTouchEvent(event)
             false
         }
     }
 
 
-    private fun applyImageChatChanges(imageChat: ImageChat?) = binding.run {
-        ivImage.setImageBitmap(imageChat?.bitmap)
-        tvNickname.text = imageChat?.chatSender
-        tvDate.text = imageChat?.createAt
-        root.transitionName = imageChat?.index?.toString()
+    private fun applyImageChatChanges(imageChat: ImageChat?) = lifecycleScope.launch {
+        binding.run {
+            tvNickname.text = imageChat?.chatSender
+            tvDate.text = imageChat?.createAt
+
+            val bitmap = withContext(Dispatchers.IO) { imageChat?.uri?.toBitmap(this@ImageDetailActivity) }
+            ivImage.setImageBitmap(bitmap)
+        }
     }
+
 
     private fun showLoading(isLoading: Boolean) {
         if (isLoading) {
@@ -139,7 +117,7 @@ class ImageDetailFragment : Fragment() {
     }
 
     private fun showSnackBar(message: String) {
-        val decorView = activity?.window?.decorView ?: return
+        val decorView = window?.decorView ?: return
         TextSnackbar.make(
             view = decorView,
             message = message,
@@ -158,18 +136,17 @@ class ImageDetailFragment : Fragment() {
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
+    private fun registerBackCallback() {
         onBackCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                findNavController().popBackStack()
+                finish()
             }
         }
-        requireActivity().onBackPressedDispatcher.addCallback(this, onBackCallback)
+        onBackPressedDispatcher.addCallback(this, onBackCallback)
     }
 
-    override fun onDetach() {
-        super.onDetach()
+    override fun onDestroy() {
+        super.onDestroy()
         onBackCallback.remove()
     }
 }
