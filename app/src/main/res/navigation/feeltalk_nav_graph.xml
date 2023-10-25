@@ -78,6 +78,9 @@
         <action
             android:id="@+id/action_mainNavigationFragment_to_imageShareFragment"
             app:destination="@id/imageShareFragment" />
+        <action
+            android:id="@+id/action_mainNavigationFragment_to_imageDetailFragment"
+            app:destination="@id/imageDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/agreementPrivacyDetailFragment"
@@ -285,4 +288,9 @@
         android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageShare.ImageShareFragment"
         android:label="fragment_image_share"
         tools:layout="@layout/fragment_image_share" />
+    <fragment
+        android:id="@+id/imageDetailFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageDetail.ImageDetailFragment"
+        android:label="fragment_image_detail"
+        tools:layout="@layout/fragment_image_detail" />
 </navigation>

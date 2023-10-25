@@ -215,8 +215,6 @@ class MainNavigationFragment : Fragment() {
             viewChatBehind.visibility = View.GONE
             flChatContainer.visibility = View.GONE
 
-            viewModel.setPartnerLastChat(null)
-
             if (viewModel.showAnswerSheet.value) {
                 viewAnswerBehind.visibility = View.VISIBLE
             }

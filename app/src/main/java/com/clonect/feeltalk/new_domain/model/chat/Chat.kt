@@ -1,8 +1,10 @@
 package com.clonect.feeltalk.new_domain.model.chat
 
 import android.graphics.Bitmap
+import android.os.Parcelable
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.question.Question
+import kotlinx.parcelize.Parcelize
 
 abstract class Chat(
     open val index: Long,
@@ -148,6 +150,7 @@ data class EmojiChat(
     val emoji: String
 ): Chat(index, pageNo, ChatType.EmojiChatting, chatSender, isRead, createAt, isSending)
 
+@Parcelize
 data class ImageChat(
     override val index: Long,
     override var pageNo: Long,
@@ -157,7 +160,7 @@ data class ImageChat(
     override var isSending: Boolean = false,
     val url: String,
     val bitmap: Bitmap?
-): Chat(index, pageNo, ChatType.ImageChatting, chatSender, isRead, createAt, isSending)
+): Chat(index, pageNo, ChatType.ImageChatting, chatSender, isRead, createAt, isSending), Parcelable
 
 
 data class VideoChat(

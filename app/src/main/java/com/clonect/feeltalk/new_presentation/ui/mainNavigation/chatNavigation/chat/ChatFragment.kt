@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.TextUtils.replace
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +29,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavDirections
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
 import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
@@ -38,11 +42,15 @@ import com.clonect.feeltalk.new_domain.model.chat.ImageChat
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
+import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageDetail.ImageDetailFragment
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageShare.ImageShareFragment
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.toBytesInt
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
+import com.skydoves.transformationlayout.TransformationLayout
+import com.skydoves.transformationlayout.addTransformation
+import com.skydoves.transformationlayout.onTransformationStartContainer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -79,6 +87,11 @@ class ChatFragment : Fragment() {
                 viewModel.sendImageChat(requireContext(), uri)
             }
         return binding.root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        onTransformationStartContainer()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -132,11 +145,37 @@ class ChatFragment : Fragment() {
     }
 
 
+
     private fun navigateToContentsShare() {
         requireParentFragment()
             .requireParentFragment()
             .findNavController()
             .navigate(R.id.action_mainNavigationFragment_to_contentsShareFragment)
+    }
+
+    private fun navigateToImageDetail(view: View, imageChat: ImageChat) {
+        val transformationLayout = view as? TransformationLayout ?: return
+        val extras = FragmentNavigatorExtras(view to imageChat.index.toString())
+        val bundle = transformationLayout.getBundle("TransformationParams").apply {
+            putParcelable("imageChat", imageChat)
+        }
+
+        requireParentFragment()
+            .requireParentFragment()
+            .findNavController()
+            .navigate(
+                resId = R.id.action_mainNavigationFragment_to_imageDetailFragment,
+                args = bundle,
+                navOptions = null,
+                navigatorExtras = extras
+            )
+    }
+
+    private fun navigateToImageShare(uri: Uri) {
+        requireParentFragment()
+            .requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_mainNavigationFragment_to_imageShareFragment, bundleOf("uri" to uri))
     }
 
     private fun selectCameraImage() {
@@ -179,13 +218,6 @@ class ChatFragment : Fragment() {
         val intent = it.data ?: return@registerForActivityResult
         val uri = intent.data ?: return@registerForActivityResult
         navigateToImageShare(uri)
-    }
-
-    private fun navigateToImageShare(uri: Uri) {
-        requireParentFragment()
-            .requireParentFragment()
-            .findNavController()
-            .navigate(R.id.action_mainNavigationFragment_to_imageShareFragment, bundleOf("uri" to uri))
     }
 
 
@@ -291,7 +323,6 @@ class ChatFragment : Fragment() {
             setMyNickname("me")
             setPartnerNickname("partner")
             setOnClickItem(::onClickChat)
-            setOnUrlLoad(::onUrlLoad)
         }
         rvChat.addOnScrollListener(object: RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -305,17 +336,9 @@ class ChatFragment : Fragment() {
         })
     }
 
-    private fun onClickChat(chat: Chat) {
+    private fun onClickChat(view: View, chat: Chat) {
         when (chat) {
-            is ImageChat -> {}
-        }
-    }
-
-    private fun onUrlLoad(chat: Chat) = lifecycleScope.launch {
-        viewModel.run {
-            if (!isUserInBottom.value) return@run
-            delay(50)
-            setScrollToBottom()
+            is ImageChat -> { navigateToImageDetail(view, chat) }
         }
     }
 

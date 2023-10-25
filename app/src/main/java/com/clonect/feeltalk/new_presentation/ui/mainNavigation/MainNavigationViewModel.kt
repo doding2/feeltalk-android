@@ -156,10 +156,12 @@ class MainNavigationViewModel @Inject constructor(
         _showPartnerLastChat.value = run {
             if (_showChatNavigation.value) return@run false
             if (_showAnswerSheet.value) return@run false
+            if (_showInquirySucceedSheet.value) return@run false
+            if (_showSuggestionSucceedSheet.value) return@run false
+            if (_showSignalCompleteSheet.value) return@run false
             if (_partnerLastChat.value == null) return@run false
             if (_partnerLastChat.value?.isRead == true) return@run false
-            if (!isShowQuestionPage.value) return@run true
-            if (!isInQuestionTop.value) return@run false
+            if (isShowQuestionPage.value && !isInQuestionTop.value) return@run false
 
             return@run true
         }
@@ -168,11 +170,17 @@ class MainNavigationViewModel @Inject constructor(
 
     fun toggleShowChatNavigation() {
         _showChatNavigation.value = _showChatNavigation.value.not()
+        if (_showChatNavigation.value) {
+            setPartnerLastChat(null)
+        }
         calculateShowingPartnerLastChat()
     }
 
     fun setShowChatNavigation(showChat: Boolean) {
         _showChatNavigation.value = showChat
+        if (showChat) {
+            setPartnerLastChat(null)
+        }
         calculateShowingPartnerLastChat()
     }
 

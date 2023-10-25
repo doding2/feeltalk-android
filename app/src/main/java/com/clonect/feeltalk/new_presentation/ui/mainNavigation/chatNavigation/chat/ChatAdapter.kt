@@ -70,8 +70,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
     private var isPartnerInChat = false
 
-    private var onClick: ((Chat) -> Unit) = {}
-    private var onUrlLoad: ((Chat) -> Unit) = {}
+    private var onClick: ((View, Chat) -> Unit) = { _, _ -> }
 
     override fun onViewRecycled(holder: ChatViewHolder) {
         super.onViewRecycled(holder)
@@ -197,12 +196,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
     }
 
 
-    fun setOnClickItem(onClick: (Chat) -> Unit) {
+    fun setOnClickItem(onClick: (View, Chat) -> Unit) {
         this.onClick = onClick
-    }
-
-    fun setOnUrlLoad(onLoad: (Chat) -> Unit) {
-        this.onUrlLoad = onLoad
     }
 
     fun setMyNickname(nickname: String) {
@@ -1392,6 +1387,9 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                     tvRead.visibility = View.VISIBLE
                     tvTime.visibility = View.VISIBLE
                 }
+
+                tlTransformation.transitionName = chat.index.toString()
+                mcvChatContainer.setOnClickListener { onClick(tlTransformation, chat) }
 
                 makeContinuous(prevItem, item, nextItem)
             }

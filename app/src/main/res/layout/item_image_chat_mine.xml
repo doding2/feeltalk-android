@@ -47,25 +47,31 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/mcv_chat_container"
+        <com.skydoves.transformationlayout.TransformationLayout
+            android:id="@+id/tl_transformation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            app:cardCornerRadius="16dp"
-            app:cardBackgroundColor="@color/black"
-            app:cardElevation="0dp"
             app:layout_constraintStart_toEndOf="@id/tv_time"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
 
-            <ImageView
-                android:id="@+id/iv_image"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/mcv_chat_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxWidth="252dp"
-                android:maxHeight="300dp"
-                android:adjustViewBounds="true"/>
-        </com.google.android.material.card.MaterialCardView>
+                android:layout_marginStart="4dp"
+                app:cardCornerRadius="16dp"
+                app:cardBackgroundColor="@color/black"
+                app:cardElevation="0dp">
+
+                <ImageView
+                    android:id="@+id/iv_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxWidth="252dp"
+                    android:maxHeight="300dp"
+                    android:adjustViewBounds="true"/>
+            </com.google.android.material.card.MaterialCardView>
+        </com.skydoves.transformationlayout.TransformationLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>
