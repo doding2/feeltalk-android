@@ -65,6 +65,7 @@ class AppleSignInDialog(
 
     inner class AppleWebViewClient: WebViewClient() {
 
+        @Deprecated("Deprecated in Java")
         override fun shouldInterceptRequest(view: WebView?, url: String?): WebResourceResponse? {
             if (url == BuildConfig.APPLE_AUTH_REDIRECT_URI) {
                 CoroutineScope(Dispatchers.Main).launch {
