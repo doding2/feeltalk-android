@@ -13,10 +13,18 @@
         <action
             android:id="@+id/action_bubbleChatFragment_to_contentsShareFragment2"
             app:destination="@id/contentsShareFragment2" />
+        <action
+            android:id="@+id/action_bubbleChatFragment_to_imageShareFragment2"
+            app:destination="@id/imageShareFragment2" />
     </fragment>
     <fragment
         android:id="@+id/contentsShareFragment2"
         android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.contentsShare.ContentsShareFragment"
         android:label="ContentsShareFragment"
         tools:layout="@layout/fragment_contents_share" />
+    <fragment
+        android:id="@+id/imageShareFragment2"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageShare.ImageShareFragment"
+        android:label="fragment_image_share"
+        tools:layout="@layout/fragment_image_share" />
 </navigation>

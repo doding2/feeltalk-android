@@ -27,7 +27,7 @@
         android:layout_height="150dp"
         android:layout_marginTop="4dp"
         android:layout_gravity="center"
-        android:src="@drawable/n_background_submit_succeed"/>
+        android:src="@drawable/n_image_submit_succeed"/>
 
     <TextView
         android:layout_width="wrap_content"

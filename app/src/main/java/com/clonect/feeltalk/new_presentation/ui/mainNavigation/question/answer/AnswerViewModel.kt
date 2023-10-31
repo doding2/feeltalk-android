@@ -11,6 +11,7 @@ import com.clonect.feeltalk.new_domain.usecase.question.PressForAnswerUseCase
 import com.clonect.feeltalk.new_presentation.notification.observer.QuestionAnswerObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,7 +49,8 @@ class AnswerViewModel @Inject constructor(
         collectQuestionAnswer()
     }
 
-    fun answerQuestion(context: Context, onComplete: () -> Unit = {}) = viewModelScope.launch {
+    fun answerQuestion(context: Context, onComplete: () -> Unit = {}) = viewModelScope.launch(
+        Dispatchers.IO) {
         val index = _question.value?.index ?: return@launch
         val answer = _answer.value
         when (val result = answerQuestionUseCase(index, answer)) {
@@ -68,7 +70,7 @@ class AnswerViewModel @Inject constructor(
         }
     }
 
-    fun pressForAnswer(context: Context) = viewModelScope.launch {
+    fun pressForAnswer(context: Context) = viewModelScope.launch(Dispatchers.IO) {
         when (val result = pressForAnswerUseCase(_question.value?.index ?: return@launch)) {
             is Resource.Success -> {
                 sendSnackbar(context.getString(R.string.answer_poke_partner_snack_bar))
@@ -118,7 +120,7 @@ class AnswerViewModel @Inject constructor(
     }
 
 
-    private fun collectQuestionAnswer() = viewModelScope.launch {
+    private fun collectQuestionAnswer() = viewModelScope.launch(Dispatchers.IO) {
         QuestionAnswerObserver
             .getInstance()
             .setAnsweredQuestion(null)

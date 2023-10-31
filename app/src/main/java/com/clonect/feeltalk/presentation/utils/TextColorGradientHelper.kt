@@ -17,12 +17,12 @@ fun TextView.addTextGradient() {
         sin(Math.PI * angle / 180).toFloat() * width,
         cos(Math.PI * angle / 180).toFloat() * width,
         intArrayOf(
-            ContextCompat.getColor(context, R.color.gradient_start),
-            ContextCompat.getColor(context, R.color.gradient_end)
+            ContextCompat.getColor(context, R.color.main_gradient_start),
+            ContextCompat.getColor(context, R.color.main_gradient_end)
         ),
         floatArrayOf(0f, 1f),
         Shader.TileMode.CLAMP
     )
     paint.shader = textShader
-    setTextColor(ContextCompat.getColor(context, R.color.gradient_start))
+    setTextColor(ContextCompat.getColor(context, R.color.main_gradient_start))
 }

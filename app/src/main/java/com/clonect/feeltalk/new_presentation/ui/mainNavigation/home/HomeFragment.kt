@@ -132,9 +132,7 @@ class HomeFragment : Fragment() {
 
 
     private fun changeTodayQuestionView(todayQuestion: Question?) = binding.run {
-        if (todayQuestion == null) return
-
-        val index = todayQuestion.index.toString()
+        val index = (todayQuestion?.index ?: 0).toString()
         val title = index + getString(R.string.home_main_title_deco)
         val countFont = ResourcesCompat.getFont(requireContext(), R.font.pretendard_bold)
         val decoFont = ResourcesCompat.getFont(requireContext(), R.font.pretendard_regular)
@@ -147,7 +145,7 @@ class HomeFragment : Fragment() {
         }
         tvQuestionCount.text = spanString
 
-        if (todayQuestion.myAnswer != null) {
+        if (todayQuestion?.myAnswer != null) {
             tvAnswer.setText(R.string.home_main_answer_button_2)
 //            mcvAnswer.setCardBackgroundColor(requireContext().getColor(R.color.main_500))
             mcvAnswer.strokeWidth = requireContext().dpToPx(1f)

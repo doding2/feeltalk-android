@@ -1,10 +1,14 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.bubble
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,10 +16,12 @@ import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -24,18 +30,26 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.insertSeparators
 import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.R
+import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.databinding.FragmentChatBinding
+import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.DividerChat
+import com.clonect.feeltalk.new_domain.model.chat.ImageChat
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.ChatAdapter
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.ChatViewModel
+import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageDetail.ImageDetailActivity
+import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageShare.ImageShareFragment
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
+import com.skydoves.transformationlayout.TransformationCompat
+import com.skydoves.transformationlayout.TransformationLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.io.File
 
 @AndroidEntryPoint
 class BubbleChatFragment : Fragment() {
@@ -54,6 +68,13 @@ class BubbleChatFragment : Fragment() {
         binding = FragmentChatBinding.inflate(inflater, container, false)
         setKeyboardInsets()
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, onBackCallback)
+        requireParentFragment()
+            .setFragmentResultListener(ImageShareFragment.REQUEST_KEY) { _, bundle ->
+                val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) bundle.getParcelable(
+                    ImageShareFragment.RESULT_KEY_URI, Uri::class.java)
+                else bundle.getParcelable(ImageShareFragment.RESULT_KEY_URI) as? Uri
+                viewModel.sendImageChat(requireContext(), uri)
+            }
         setRecyclerView()
         return binding.root
     }
@@ -102,6 +123,8 @@ class BubbleChatFragment : Fragment() {
             ivSendVoiceChat.setOnClickListener { sendVoiceChat() }
 
             ivContentsShare.setOnClickListener { navigateToContentsShare() }
+            ivAlbum.setOnClickListener { selectAlbumImage() }
+            ivCamera.setOnClickListener { selectCameraImage() }
         }
 
     }
@@ -135,6 +158,63 @@ class BubbleChatFragment : Fragment() {
         findNavController()
             .navigate(R.id.action_bubbleChatFragment_to_contentsShareFragment2, bundle)
     }
+
+    private fun navigateToImageDetail(view: View, imageChat: ImageChat) {
+        val transformationLayout = view as? TransformationLayout ?: return
+        val intent = Intent(requireContext(), ImageDetailActivity::class.java)
+        intent.putExtra("imageChat", imageChat.copy(bitmap = null))
+        TransformationCompat.startActivity(transformationLayout, intent)
+    }
+
+    private fun navigateToImageShare(uri: Uri) {
+        requireParentFragment()
+            .requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_bubbleChatFragment_to_imageShareFragment2, bundleOf("uri" to uri))
+    }
+
+    private fun selectCameraImage() {
+        cancel()
+        val intent = Intent("android.media.action.IMAGE_CAPTURE").apply {
+            val file = File(requireContext().cacheDir, Constants.IMAGE_CACHE_FILE_NAME)
+            val contentUri = FileProvider.getUriForFile(requireContext(), "com.clonect.feeltalk.fileprovider", file)
+            putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
+        }
+        cameraLauncher.launch(intent)
+    }
+
+    private fun selectAlbumImage() {
+        cancel()
+        val intent = Intent(Intent.ACTION_PICK).apply {
+            type = "image/*"
+            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*"))
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false)
+        }
+
+        albumLauncher.launch(intent)
+    }
+
+    private val cameraLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (it.resultCode != Activity.RESULT_OK)
+            return@registerForActivityResult
+
+        val file = File(requireContext().cacheDir, Constants.IMAGE_CACHE_FILE_NAME)
+        val contentUri = FileProvider.getUriForFile(requireContext(), "com.clonect.feeltalk.fileprovider", file) ?: return@registerForActivityResult
+
+        navigateToImageShare(contentUri)
+    }
+
+    private val albumLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (it.resultCode != Activity.RESULT_OK) return@registerForActivityResult
+        val intent = it.data ?: return@registerForActivityResult
+        val uri = intent.data ?: return@registerForActivityResult
+        navigateToImageShare(uri)
+    }
+
 
 
     private fun cancel(includeVoiceChats: Boolean = true) {
@@ -219,24 +299,33 @@ class BubbleChatFragment : Fragment() {
         rvChat.setRecycledViewPool(RecyclerView.RecycledViewPool().apply {
             setMaxRecycledViews(ChatAdapter.TYPE_TEXT_MINE, 0)
             setMaxRecycledViews(ChatAdapter.TYPE_TEXT_PARTNER, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_SIGNAL_MINE, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_SIGNAL_PARTNER, 0)
 //            setMaxRecycledViews(ChatAdapter.TYPE_VOICE_MINE, 0)
 //            setMaxRecycledViews(ChatAdapter.TYPE_VOICE_PARTNER, 0)
-            setMaxRecycledViews(ChatAdapter.TYPE_EMOJI_MINE, 0)
-            setMaxRecycledViews(ChatAdapter.TYPE_EMOJI_PARTNER, 0)
             setMaxRecycledViews(ChatAdapter.TYPE_IMAGE_MINE, 0)
             setMaxRecycledViews(ChatAdapter.TYPE_IMAGE_PARTNER, 0)
-            setMaxRecycledViews(ChatAdapter.TYPE_VIDEO_MINE, 0)
-            setMaxRecycledViews(ChatAdapter.TYPE_VIDEO_PARTNER, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_ADD_CHALLENGE_MINE, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_ADD_CHALLENGE_PARTNER, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_COMPLETE_CHALLENGE_MINE, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_COMPLETE_CHALLENGE_PARTNER, 0)
             setMaxRecycledViews(ChatAdapter.TYPE_CHALLENGE_MINE, 0)
             setMaxRecycledViews(ChatAdapter.TYPE_CHALLENGE_PARTNER, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_ANSWER_MINE, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_ANSWER_PARTNER, 0)
             setMaxRecycledViews(ChatAdapter.TYPE_QUESTION_MINE, 0)
             setMaxRecycledViews(ChatAdapter.TYPE_QUESTION_PARTNER, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_POKE_MINE, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_POKE_PARTNER, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_RESET_PARTNER_PASSWORD_MINE, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_RESET_PARTNER_PASSWORD_PARTNER, 0)
         })
         rvChat.setItemViewCacheSize(512)
         adapter = ChatAdapter()
         rvChat.adapter = adapter.apply {
             setMyNickname("me")
             setPartnerNickname("partner")
+            setOnClickItem(::onClickChat)
         }
         rvChat.addOnScrollListener(object: RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -248,6 +337,12 @@ class BubbleChatFragment : Fragment() {
                 }
             }
         })
+    }
+
+    private fun onClickChat(view: View, chat: Chat) {
+        when (chat) {
+            is ImageChat -> { navigateToImageDetail(view, chat) }
+        }
     }
 
     private fun setKeyboardInsets() {
@@ -478,20 +573,7 @@ class BubbleChatFragment : Fragment() {
             }
             launch {
                 viewModel.pagingChat.collectLatest {
-                    adapter.submitData(lifecycle,
-                        it.insertSeparators { before, after ->
-                            val beforeCreate = before?.createAt?.substringBefore("T")
-                            val afterCreate = after?.createAt?.substringBefore("T")
-
-                            return@insertSeparators if (beforeCreate.isNullOrBlank() && !afterCreate.isNullOrBlank()) {
-                                DividerChat(afterCreate)
-                            } else if (!beforeCreate.isNullOrBlank() && !afterCreate.isNullOrBlank() && beforeCreate != afterCreate) {
-                                DividerChat(afterCreate)
-                            } else {
-                                null
-                            }
-                        }
-                    )
+                    adapter.submitData(requireParentFragment().lifecycle, it)
                 }
             }
             launch {

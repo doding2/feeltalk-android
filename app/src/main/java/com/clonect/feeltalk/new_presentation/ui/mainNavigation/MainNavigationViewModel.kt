@@ -25,6 +25,7 @@ import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
 import com.clonect.feeltalk.new_presentation.ui.util.mutableStateFlow
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -125,7 +126,7 @@ class MainNavigationViewModel @Inject constructor(
         shortcutManager.pushDynamicShortcut(shortcut)
     }
     
-    private fun getPartnerLastChat() = viewModelScope.launch { 
+    private fun getPartnerLastChat() = viewModelScope.launch(Dispatchers.IO) {
         when (val result = getPartnerLastChatUseCase()) {
             is Resource.Success -> {
                 _partnerLastChat.value = result.data
@@ -218,7 +219,7 @@ class MainNavigationViewModel @Inject constructor(
 
 
 
-    fun initShowQuestionAnswerSheet(index: Long) = viewModelScope.launch {
+    fun initShowQuestionAnswerSheet(index: Long) = viewModelScope.launch(Dispatchers.IO) {
         if (index < 0) return@launch
 
         when (val result = getQuestionUseCase(index)) {
@@ -232,7 +233,7 @@ class MainNavigationViewModel @Inject constructor(
         }
     }
 
-    fun initShowChallengeDetail(index: Long) = viewModelScope.launch {
+    fun initShowChallengeDetail(index: Long) = viewModelScope.launch(Dispatchers.IO) {
         if (index < 0) return@launch
 
         when (val result = getChallengeUseCase(index)) {
@@ -248,7 +249,7 @@ class MainNavigationViewModel @Inject constructor(
 
 
 
-    private fun collectNewChat() = viewModelScope.launch {
+    private fun collectNewChat() = viewModelScope.launch(Dispatchers.IO) {
         NewChatObserver
             .getInstance()
             .newChat

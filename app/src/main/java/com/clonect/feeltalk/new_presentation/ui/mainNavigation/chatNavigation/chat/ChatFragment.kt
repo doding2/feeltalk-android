@@ -27,7 +27,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.R
@@ -82,10 +81,6 @@ class ChatFragment : Fragment() {
                 viewModel.sendImageChat(requireContext(), uri)
             }
         return binding.root
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -288,18 +283,26 @@ class ChatFragment : Fragment() {
         rvChat.setRecycledViewPool(RecyclerView.RecycledViewPool().apply {
             setMaxRecycledViews(ChatAdapter.TYPE_TEXT_MINE, 0)
             setMaxRecycledViews(ChatAdapter.TYPE_TEXT_PARTNER, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_SIGNAL_MINE, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_SIGNAL_PARTNER, 0)
 //            setMaxRecycledViews(ChatAdapter.TYPE_VOICE_MINE, 0)
 //            setMaxRecycledViews(ChatAdapter.TYPE_VOICE_PARTNER, 0)
-            setMaxRecycledViews(ChatAdapter.TYPE_EMOJI_MINE, 0)
-            setMaxRecycledViews(ChatAdapter.TYPE_EMOJI_PARTNER, 0)
             setMaxRecycledViews(ChatAdapter.TYPE_IMAGE_MINE, 0)
             setMaxRecycledViews(ChatAdapter.TYPE_IMAGE_PARTNER, 0)
-            setMaxRecycledViews(ChatAdapter.TYPE_VIDEO_MINE, 0)
-            setMaxRecycledViews(ChatAdapter.TYPE_VIDEO_PARTNER, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_ADD_CHALLENGE_MINE, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_ADD_CHALLENGE_PARTNER, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_COMPLETE_CHALLENGE_MINE, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_COMPLETE_CHALLENGE_PARTNER, 0)
             setMaxRecycledViews(ChatAdapter.TYPE_CHALLENGE_MINE, 0)
             setMaxRecycledViews(ChatAdapter.TYPE_CHALLENGE_PARTNER, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_ANSWER_MINE, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_ANSWER_PARTNER, 0)
             setMaxRecycledViews(ChatAdapter.TYPE_QUESTION_MINE, 0)
             setMaxRecycledViews(ChatAdapter.TYPE_QUESTION_PARTNER, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_POKE_MINE, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_POKE_PARTNER, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_RESET_PARTNER_PASSWORD_MINE, 0)
+            setMaxRecycledViews(ChatAdapter.TYPE_RESET_PARTNER_PASSWORD_PARTNER, 0)
         })
         rvChat.setItemViewCacheSize(512)
         rvChat.adapter = adapter.apply {

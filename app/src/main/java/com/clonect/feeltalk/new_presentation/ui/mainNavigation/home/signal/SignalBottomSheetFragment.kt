@@ -2,11 +2,13 @@ package com.clonect.feeltalk.new_presentation.ui.mainNavigation.home.signal
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -212,7 +214,7 @@ class SignalBottomSheetFragment(
         mcvSignal0.setCardBackgroundColor(requireContext().getColor(R.color.gray_400))
         mcvSignal25.setCardBackgroundColor(requireContext().getColor(R.color.gray_400))
         mcvSignal50.setCardBackgroundColor(requireContext().getColor(R.color.gray_400))
-        mcvSignal75.setCardBackgroundColor(requireContext().getColor(R.color.gray_400))
+        flSignal75Dot.setBackgroundColor(requireContext().getColor(R.color.gray_400))
         mcvSignal100.setCardBackgroundColor(requireContext().getColor(R.color.gray_400))
 
         when (signal) {
@@ -222,7 +224,7 @@ class SignalBottomSheetFragment(
                 tvSignalPercent.setTextColor(requireContext().getColor(R.color.signal_0))
                 mcvSignalPercent.strokeColor = requireContext().getColor(R.color.signal_0)
                 ivSignal.setImageResource(R.drawable.n_image_signal_0)
-                mcvSignal0.setCardBackgroundColor(requireContext().getColor(R.color.black))
+                mcvSignal0.setCardBackgroundColor(Color.BLACK)
             }
             Signal.Quarter -> {
                 tvSignalSubtitle.setText(R.string.signal_subtitle_25)
@@ -246,7 +248,7 @@ class SignalBottomSheetFragment(
                 tvSignalPercent.setTextColor(requireContext().getColor(R.color.signal_75))
                 mcvSignalPercent.strokeColor = requireContext().getColor(R.color.signal_75)
                 ivSignal.setImageResource(R.drawable.n_image_signal_75)
-                mcvSignal75.setCardBackgroundColor(requireContext().getColor(R.color.signal_75))
+                flSignal75Dot.background = AppCompatResources.getDrawable(requireContext(), R.drawable.n_background_gradient_signal_75)
             }
             Signal.One -> {
                 tvSignalSubtitle.setText(R.string.signal_subtitle_100)

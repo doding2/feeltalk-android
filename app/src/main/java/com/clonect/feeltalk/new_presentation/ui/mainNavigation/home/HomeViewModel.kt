@@ -14,6 +14,7 @@ import com.clonect.feeltalk.new_presentation.notification.observer.QuestionAnswe
 import com.clonect.feeltalk.new_presentation.notification.observer.TodayQuestionObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -46,7 +47,7 @@ class HomeViewModel @Inject constructor(
         collectQuestionAnswer()
     }
 
-    fun getTodayQuestion() = viewModelScope.launch {
+    fun getTodayQuestion() = viewModelScope.launch(Dispatchers.IO) {
         when (val result = getTodayQuestionUseCase()) {
             is Resource.Success -> {
                 _todayQuestion.value = result.data
@@ -57,7 +58,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun pressForAnswer(context: Context) = viewModelScope.launch {
+    fun pressForAnswer(context: Context) = viewModelScope.launch(Dispatchers.IO) {
         when (val result = pressForAnswerUseCase(_todayQuestion.value?.index ?: return@launch)) {
             is Resource.Success -> {
                 _snackbarMessage.emit(context.getString(R.string.answer_poke_partner_snack_bar))
@@ -70,16 +71,16 @@ class HomeViewModel @Inject constructor(
     }
 
 
-    fun setMySignal(signal: Signal) {
+    fun setMySignal(signal: Signal) = viewModelScope.launch {
         _mySignal.value = signal
     }
 
-    fun setPartnerSignal(signal: Signal) {
+    fun setPartnerSignal(signal: Signal) = viewModelScope.launch {
         _partnerSignal.value = signal
     }
 
 
-    private fun collectTodayQuestion() = viewModelScope.launch {
+    private fun collectTodayQuestion() = viewModelScope.launch(Dispatchers.IO) {
         TodayQuestionObserver
             .getInstance()
             .setTodayQuestion(null)
@@ -92,7 +93,7 @@ class HomeViewModel @Inject constructor(
             }
     }
 
-    private fun collectQuestionAnswer() = viewModelScope.launch {
+    private fun collectQuestionAnswer() = viewModelScope.launch(Dispatchers.IO) {
         QuestionAnswerObserver
             .getInstance()
             .setAnsweredQuestion(null)

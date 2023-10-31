@@ -12,8 +12,8 @@
     <!--  Old Main Color  -->
     <color name="main">#FF2C77</color>
     <color name="sub">#C8C5DB</color>
-    <color name="gradient_start">#FF2BAA</color>
-    <color name="gradient_end">#FF2B64</color>
+    <color name="main_gradient_start">#FF2BAA</color>
+    <color name="main_gradient_end">#FF2B64</color>
 
 
     <!--  New Main Color  -->
@@ -23,24 +23,28 @@
     <color name="main_300">#FFEBF2</color>
     <color name="main_100">#FFF9FA</color>
 
-    <color name="gray_700">#8B898D</color>
-    <color name="gray_600">#A09EA3</color>
-    <color name="gray_500">#B5B3B7</color>
-    <color name="gray_400">#D7D5D9</color>
-    <color name="gray_300">#E6E4E8</color>
-    <color name="gray_200">#F6F4F9</color>
-    <color name="gray_100">#F8F7F9</color>
+    <color name="gray_800">#4C4A4F</color>
+    <color name="gray_700">#88858C</color>
+    <color name="gray_600">#9F9CA2</color>
+    <color name="gray_500">#B4AFB8</color>
+    <color name="gray_400">#D6D1DB</color>
+    <color name="gray_300">#E9E6EC</color>
+    <color name="gray_200">#F7F5FA</color>
+    <color name="gray_100">#FCFAFF</color>
 
     <color name="system_alert">#B3000000</color>
     <color name="system_error">#F10000</color>
     <color name="answer_status_bar">#808080</color>
 
-    <!--  Signal(임시)  -->
+    <!--  Signal  -->
     <color name="signal_100">#FF2980</color>
     <color name="signal_75">#F2635A</color>
     <color name="signal_50">#FAC16D</color>
     <color name="signal_25">#9483E5</color>
-    <color name="signal_0">#D2D1DC</color>
+    <color name="signal_0">#BDBCC7</color>
+
+    <color name="signal_75_gradient_start">#FF5449</color>
+    <color name="signal_75_gradient_end">#FFAF92</color>
 
     <!--  old ui  -->
 

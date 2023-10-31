@@ -2,7 +2,6 @@ package com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.c
 
 import android.content.ClipData
 import android.content.Context
-import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.StrictMode
@@ -15,9 +14,6 @@ import androidx.core.view.updateLayoutParams
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.target.SimpleTarget
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.ItemChatDividerBinding
 import com.clonect.feeltalk.databinding.ItemImageChatMineBinding
@@ -36,9 +32,6 @@ import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.audioVisualizer.RecordingReplayer
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
-import com.clonect.feeltalk.new_presentation.ui.util.resize
-import com.clonect.feeltalk.new_presentation.ui.util.resizeIfMin
-import com.clonect.feeltalk.new_presentation.ui.util.toBitmap
 import com.clonect.feeltalk.presentation.utils.infoLog
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -164,17 +157,9 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 if (item.chatSender == myNickname) TYPE_VOICE_MINE
                 else TYPE_VOICE_PARTNER
             }
-            ChatType.EmojiChatting -> {
-                if (item.chatSender == myNickname) TYPE_EMOJI_MINE
-                else TYPE_EMOJI_PARTNER
-            }
             ChatType.ImageChatting -> {
                 if (item.chatSender == myNickname) TYPE_IMAGE_MINE
                 else TYPE_IMAGE_PARTNER
-            }
-            ChatType.VideoChatting -> {
-                if (item.chatSender == myNickname) TYPE_VIDEO_MINE
-                else TYPE_VIDEO_PARTNER
             }
             ChatType.ChallengeChatting -> {
                 if (item.chatSender == myNickname) TYPE_CHALLENGE_MINE
@@ -253,23 +238,35 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
         const val TYPE_TEXT_MINE = 1
         const val TYPE_TEXT_PARTNER = 2
 
-        const val TYPE_VOICE_MINE = 3
-        const val TYPE_VOICE_PARTNER = 4
+        const val TYPE_SIGNAL_MINE = 3
+        const val TYPE_SIGNAL_PARTNER = 4
 
-        const val TYPE_EMOJI_MINE = 5
-        const val TYPE_EMOJI_PARTNER = 6
+        const val TYPE_VOICE_MINE = 5
+        const val TYPE_VOICE_PARTNER = 6
 
         const val TYPE_IMAGE_MINE = 7
         const val TYPE_IMAGE_PARTNER = 8
 
-        const val TYPE_VIDEO_MINE = 9
-        const val TYPE_VIDEO_PARTNER = 10
+        const val TYPE_ADD_CHALLENGE_MINE = 9
+        const val TYPE_ADD_CHALLENGE_PARTNER = 10
 
-        const val TYPE_CHALLENGE_MINE = 11
-        const val TYPE_CHALLENGE_PARTNER = 12
+        const val TYPE_COMPLETE_CHALLENGE_MINE = 11
+        const val TYPE_COMPLETE_CHALLENGE_PARTNER = 12
 
-        const val TYPE_QUESTION_MINE = 13
-        const val TYPE_QUESTION_PARTNER = 14
+        const val TYPE_CHALLENGE_MINE = 13
+        const val TYPE_CHALLENGE_PARTNER = 14
+
+        const val TYPE_ANSWER_MINE = 15
+        const val TYPE_ANSWER_PARTNER = 16
+
+        const val TYPE_QUESTION_MINE = 17
+        const val TYPE_QUESTION_PARTNER = 18
+
+        const val TYPE_POKE_MINE = 19
+        const val TYPE_POKE_PARTNER = 20
+
+        const val TYPE_RESET_PARTNER_PASSWORD_MINE = 21
+        const val TYPE_RESET_PARTNER_PASSWORD_PARTNER = 22
     }
 
 

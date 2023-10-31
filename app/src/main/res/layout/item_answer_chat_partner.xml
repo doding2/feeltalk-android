@@ -63,7 +63,6 @@
                 app:cardCornerRadius="16dp"
                 app:cardBackgroundColor="@color/gray_100"
                 app:cardElevation="0dp"
-                app:layout_constraintWidth_max="250dp"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toStartOf="@id/tv_time"
                 app:layout_constraintStart_toStartOf="parent"
@@ -114,100 +113,48 @@
                         android:id="@+id/tv_question_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
                         android:text="2023.06.01"
                         android:textSize="12sp"
                         android:textColor="@color/gray_500"
                         android:lineSpacingExtra="4dp"
                         android:letterSpacing="-0.01" />
 
-                    <com.google.android.material.card.MaterialCardView
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        app:cardElevation="0dp"
-                        app:cardBackgroundColor="@color/white"
-                        app:cardCornerRadius="8dp">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_marginHorizontal="10dp"
-                            android:layout_marginVertical="12dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="4dp"
-                                android:text="@string/question_chat_partner_answer"
-                                android:textSize="12sp"
-                                android:textColor="@color/gray_600"
-                                android:fontFamily="@font/pretendard_regular"
-                                android:lineSpacingExtra="4dp"
-                                android:letterSpacing="-0.01"/>
-
-                            <TextView
-                                android:id="@+id/tv_partner_answer"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:minLines="4"
-                                android:minEms="12"
-                                android:maxEms="12"
-                                android:text="가장 좋아하는 스킨십이라하면.....가장 좋아하는 스킨십이라하면.....가장 좋아하는 스킨십이라하면.....가장 좋아하는 스킨십이라하면....."
-                                android:textSize="14sp"
-                                android:textColor="@color/black"
-                                android:fontFamily="@font/pretendard_regular"
-                                android:includeFontPadding="false"
-                                android:lineSpacingExtra="4dp"
-                                android:letterSpacing="-0.01"/>
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
-
+                        android:layout_marginVertical="18dp"
+                        android:gravity="center_horizontal"
+                        android:text="@string/question_chat_wait_answer"
+                        android:textColor="@color/gray_600"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/pretendard_regular"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="4dp"
+                        android:letterSpacing="-0.01"/>
 
                     <com.google.android.material.card.MaterialCardView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:id="@+id/mcv_answer"
+                        android:layout_width="226dp"
+                        android:layout_height="40dp"
+                        android:baselineAligned="false"
+                        app:cardCornerRadius="30dp"
                         app:cardElevation="0dp"
-                        app:cardBackgroundColor="@color/white"
-                        app:cardCornerRadius="8dp">
+                        app:rippleColor="@android:color/transparent">
 
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_marginHorizontal="10dp"
-                            android:layout_marginVertical="12dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="4dp"
-                                android:text="@string/question_chat_my_answer"
-                                android:textSize="12sp"
-                                android:textColor="@color/gray_600"
-                                android:fontFamily="@font/pretendard_regular"
-                                android:lineSpacingExtra="4dp"
-                                android:letterSpacing="-0.01"/>
-
-                            <TextView
-                                android:id="@+id/tv_my_answer"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:minLines="4"
-                                android:minEms="12"
-                                android:maxEms="12"
-                                android:text="가장 좋아하는 스킨십이라하면.....가장 좋아하는 스킨십이라하면.....가장 좋아하는 스킨십이라하면.....가장 좋아하는 스킨십이라하면....."
-                                android:textSize="14sp"
-                                android:textColor="@color/black"
-                                android:fontFamily="@font/pretendard_regular"
-                                android:includeFontPadding="false"
-                                android:lineSpacingExtra="4dp"
-                                android:letterSpacing="-0.01"/>
-                        </LinearLayout>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:background="@drawable/n_background_button_main"
+                            android:fontFamily="@font/pretendard_regular"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:letterSpacing="-0.01"
+                            android:lineSpacingExtra="5dp"
+                            android:text="@string/question_chat_go_to_answer"
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
                     </com.google.android.material.card.MaterialCardView>
-
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

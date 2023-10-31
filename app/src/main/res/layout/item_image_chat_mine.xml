@@ -51,6 +51,7 @@
             android:id="@+id/tl_transformation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constrainedWidth="true"
             app:layout_constraintStart_toEndOf="@id/tv_time"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
@@ -61,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 app:cardCornerRadius="16dp"
-                app:cardBackgroundColor="@color/black"
+                app:cardBackgroundColor="@color/white"
                 app:cardElevation="0dp">
 
                 <ImageView
@@ -70,6 +71,7 @@
                     android:layout_height="wrap_content"
                     android:maxWidth="252dp"
                     android:maxHeight="300dp"
+                    android:background="@color/white"
                     android:adjustViewBounds="true"/>
             </com.google.android.material.card.MaterialCardView>
         </com.skydoves.transformationlayout.TransformationLayout>

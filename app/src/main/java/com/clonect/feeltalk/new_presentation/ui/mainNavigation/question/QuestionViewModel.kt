@@ -17,6 +17,7 @@ import com.clonect.feeltalk.new_presentation.notification.observer.QuestionAnswe
 import com.clonect.feeltalk.new_presentation.notification.observer.TodayQuestionObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -40,7 +41,7 @@ class QuestionViewModel @Inject constructor(
         collectQuestionAnswer()
     }
 
-    fun pressForAnswer(index: Long, onComplete: () -> Unit) = viewModelScope.launch {
+    fun pressForAnswer(index: Long, onComplete: () -> Unit) = viewModelScope.launch(Dispatchers.IO) {
         when (val result = pressForAnswerUseCase(index)) {
             is Resource.Success -> {
                 onComplete()
@@ -104,7 +105,7 @@ class QuestionViewModel @Inject constructor(
         }
 
 
-    private fun collectTodayQuestion() = viewModelScope.launch {
+    private fun collectTodayQuestion() = viewModelScope.launch(Dispatchers.IO) {
         TodayQuestionObserver
             .getInstance()
             .setTodayQuestion(null)
@@ -121,7 +122,7 @@ class QuestionViewModel @Inject constructor(
             }
     }
 
-    private fun collectQuestionAnswer() = viewModelScope.launch {
+    private fun collectQuestionAnswer() = viewModelScope.launch(Dispatchers.IO) {
         QuestionAnswerObserver
             .getInstance()
             .setAnsweredQuestion(null)
