@@ -76,10 +76,10 @@ class CompletedFragment : Fragment() {
     private fun applyIsEmptyChanges(isEmpty: Boolean) = binding.run {
         if (isEmpty) {
             rvCompletedChallenge.visibility = View.GONE
-            llEmptyChallenge.visibility = View.VISIBLE
+            svEmptyChallenge.visibility = View.VISIBLE
         } else {
             rvCompletedChallenge.visibility = View.VISIBLE
-            llEmptyChallenge.visibility = View.GONE
+            svEmptyChallenge.visibility = View.GONE
         }
     }
 

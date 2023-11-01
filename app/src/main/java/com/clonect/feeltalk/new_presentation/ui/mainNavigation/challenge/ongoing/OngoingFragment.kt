@@ -115,10 +115,10 @@ class OngoingFragment : Fragment() {
     private fun applyIsEmptyChanges(isEmpty: Boolean) = binding.run {
         if (isEmpty) {
             rvOngoingChallenge.visibility = View.GONE
-            llEmptyChallenge.visibility = View.VISIBLE
+            svEmptyChallenge.visibility = View.VISIBLE
         } else {
             rvOngoingChallenge.visibility = View.VISIBLE
-            llEmptyChallenge.visibility = View.GONE
+            svEmptyChallenge.visibility = View.GONE
         }
     }
 
