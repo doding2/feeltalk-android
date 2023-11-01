@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
+import android.graphics.Color
 import android.os.Build
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.ViewModel
@@ -48,7 +49,8 @@ class MainNavigationViewModel @Inject constructor(
     private val _partnerLastChat = MutableStateFlow<PartnerLastChatDto?>(null)
     val partnerLastChat = _partnerLastChat.asStateFlow()
 
-    var lastChatColor: Int by mutableStateFlow(R.color.white)
+    private val _lastChatColor = MutableStateFlow(Color.WHITE)
+    val lastChatColor = _lastChatColor.asStateFlow()
 
     private val _showPartnerLastChat = MutableStateFlow(true)
     val showPartnerLastChat = _showPartnerLastChat.asStateFlow()
@@ -99,8 +101,8 @@ class MainNavigationViewModel @Inject constructor(
     }
 
 
-    fun setShortcut(context: Context) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return
+    fun setShortcut(context: Context) = viewModelScope.launch {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return@launch
 
         val intent = Intent(context, MainActivity::class.java).apply {
             action = Intent.ACTION_VIEW
@@ -138,6 +140,10 @@ class MainNavigationViewModel @Inject constructor(
         }
     }
 
+    fun setLastChatColor(color: Int) {
+        _lastChatColor.value = color
+    }
+
     fun setPartnerLastChat(partnerLastChatDto: PartnerLastChatDto?) {
         _partnerLastChat.value = partnerLastChatDto
         calculateShowingPartnerLastChat()
@@ -167,6 +173,7 @@ class MainNavigationViewModel @Inject constructor(
             return@run true
         }
     }
+
 
 
     fun toggleShowChatNavigation() {

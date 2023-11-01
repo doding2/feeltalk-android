@@ -105,12 +105,12 @@ class TodayQuestionFragment : Fragment() {
     private fun navigateToChatPage(question2: Question2) {
         val bundle = bundleOf("selectedQuestion" to question2)
 
-        requireParentFragment()
-            .findNavController()
-            .navigate(
-                R.id.action_todayQuestionFragment_to_chatFragment,
-                bundle
-            )
+//        requireParentFragment()
+//            .findNavController()
+//            .navigate(
+//                R.id.action_todayQuestionFragment_to_chatFragment,
+//                bundle
+//            )
     }
 
     private fun enableEnterAnswerButton(enabled: Boolean) {

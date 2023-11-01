@@ -65,7 +65,11 @@
             app:destination="@id/completedChallengeDetailFragment" />
         <action
             android:id="@+id/action_mainNavigationFragment_to_settingFragment"
-            app:destination="@id/settingFragment" />
+            app:destination="@id/settingFragment"
+            app:enterAnim="@anim/slide_from_bottom"
+            app:exitAnim="@anim/do_noting"
+            app:popEnterAnim="@anim/do_noting"
+            app:popExitAnim="@anim/slide_to_bottom" />
         <action
             android:id="@+id/action_mainNavigationFragment_to_inquireFragment"
             app:destination="@id/inquireFragment" />

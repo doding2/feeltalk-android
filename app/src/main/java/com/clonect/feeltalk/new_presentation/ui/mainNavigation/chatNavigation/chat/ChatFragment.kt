@@ -32,6 +32,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.databinding.FragmentChatBinding
+import com.clonect.feeltalk.databinding.FragmentMainNavigationBinding
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.ImageChat
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
@@ -46,6 +47,7 @@ import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
 import com.skydoves.transformationlayout.TransformationCompat
 import com.skydoves.transformationlayout.TransformationLayout
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -71,6 +73,7 @@ class ChatFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentChatBinding.inflate(inflater, container, false)
+
         setKeyboardInsets()
         requireActivity().onBackPressedDispatcher.addCallback(this.viewLifecycleOwner, onBackCallback)
         requireParentFragment()
@@ -80,6 +83,7 @@ class ChatFragment : Fragment() {
                 else bundle.getParcelable(ImageShareFragment.RESULT_KEY_URI) as? Uri
                 viewModel.sendImageChat(requireContext(), uri)
             }
+
         return binding.root
     }
 
@@ -584,7 +588,7 @@ class ChatFragment : Fragment() {
                     adapter.submitData(requireParentFragment().lifecycle, it)
                 }
             }
-            launch {
+            launch(Dispatchers.IO) {
                 viewModel.isPartnerInChat.collectLatest {
                     if (it != null) {
                         adapter.setPartnerInChat(it)

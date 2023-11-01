@@ -7,7 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.new_presentation.ui.util.mutableStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,15 +24,29 @@ class ImageShareViewModel @Inject constructor(
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage = _errorMessage.asSharedFlow()
 
-    var isLoading: Boolean by mutableStateFlow(false)
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
 
-    var uri: Uri? by mutableStateFlow(null)
+    private val _uri = MutableStateFlow<Uri?>(null)
+    val uri = _uri.asStateFlow()
 
-    var bitmap: Bitmap? by mutableStateFlow(null)
-
+    private val _bitmap = MutableStateFlow<Bitmap?>(null)
+    val bitmap = _bitmap.asStateFlow()
 
     fun sendErrorMessage(message: String) = viewModelScope.launch {
         _errorMessage.emit(message)
+    }
+
+    fun setLoading(isLoading: Boolean) {
+        _isLoading.value = isLoading
+    }
+
+    fun setUri(uri: Uri?) {
+        _uri.value = uri
+    }
+
+    fun setBitmap(bitmap: Bitmap?) {
+        _bitmap.value = bitmap
     }
 
 }

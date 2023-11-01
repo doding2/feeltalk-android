@@ -72,7 +72,7 @@ class GuideFragment : Fragment() {
             }
         })
 
-        ariIndicator.attachTo(vpGuide)
+//        ariIndicator.attachTo(vpGuide)
         enableNextButton(false)
     }
 

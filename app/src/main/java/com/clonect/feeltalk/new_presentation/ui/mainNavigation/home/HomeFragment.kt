@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.home
 
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
@@ -58,7 +59,7 @@ class HomeFragment : Fragment() {
         } else {
             activity.setStatusBarColor(binding.root, requireContext().getColor(R.color.white), false)
         }
-        navViewModel.lastChatColor = requireContext().getColor(R.color.gray_200)
+        navViewModel.setLastChatColor(requireContext().getColor(R.color.gray_200))
         return binding.root
     }
 
@@ -208,6 +209,6 @@ class HomeFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        navViewModel.lastChatColor = requireContext().getColor(R.color.white)
+        navViewModel.setLastChatColor(Color.WHITE)
     }
 }

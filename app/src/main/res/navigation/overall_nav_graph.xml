@@ -49,13 +49,6 @@
             app:popEnterAnim="@anim/do_noting"
             app:popExitAnim="@anim/slide_to_right" />
         <action
-            android:id="@+id/action_bottomNavigationFragment_to_chatFragment"
-            app:destination="@id/chatFragment"
-            app:enterAnim="@anim/slide_from_right"
-            app:exitAnim="@anim/do_noting"
-            app:popEnterAnim="@anim/do_noting"
-            app:popExitAnim="@anim/slide_to_right" />
-        <action
             android:id="@+id/action_bottomNavigationFragment_to_newsFragment"
             app:destination="@id/newsFragment"
             app:enterAnim="@anim/slide_from_bottom"
@@ -105,21 +98,6 @@
         android:name="com.clonect.feeltalk.presentation.ui.today_question.TodayQuestionFragment"
         android:label="fragment_today_question"
         tools:layout="@layout/fragment_today_question" >
-        <action
-            android:id="@+id/action_todayQuestionFragment_to_chatFragment"
-            app:destination="@id/chatFragment"
-            app:enterAnim="@anim/slide_from_right"
-            app:exitAnim="@anim/do_noting"
-            app:popEnterAnim="@anim/do_noting"
-            app:popExitAnim="@anim/slide_to_right"
-            app:popUpTo="@id/todayQuestionFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
-    <fragment
-        android:id="@+id/chatFragment"
-        android:name="com.clonect.feeltalk.presentation.ui.chat.ChatFragment"
-        android:label="fragment_chat"
-        tools:layout="@layout/fragment_chat" >
     </fragment>
     <fragment
         android:id="@+id/newsFragment"

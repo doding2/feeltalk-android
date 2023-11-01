@@ -92,8 +92,6 @@ dependencies {
     implementation "androidx.core:core-splashscreen:1.0.0"
     // masked edit text
     implementation 'com.github.santalu:maskara:1.0.0'
-    // custom image indicator
-    implementation 'com.github.martinstamenkovski:ARIndicatorView:2.0.0'
     // androidx browser
     implementation 'androidx.browser:browser:1.5.0'
     // insets helper
@@ -101,7 +99,7 @@ dependencies {
     // paging
     implementation "androidx.paging:paging-runtime-ktx:3.2.1"
     // lottie animation
-    implementation 'com.airbnb.android:lottie:6.1.0'
+//    implementation 'com.airbnb.android:lottie:6.1.0'
     // more shadow card view
     implementation 'com.github.sina-seyfi:AdvancedCardView:1.0.1'
     // zoom image view

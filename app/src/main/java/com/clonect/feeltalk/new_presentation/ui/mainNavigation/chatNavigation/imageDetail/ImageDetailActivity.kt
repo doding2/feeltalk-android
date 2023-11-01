@@ -55,11 +55,12 @@ class ImageDetailActivity : TransformationAppCompatActivity() {
 
         loadingDialog = makeLoadingDialog()
 
-        viewModel.imageChat = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val imageChat = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("imageChat", ImageChat::class.java)
         } else {
             intent.getParcelableExtra("imageChat")
         }
+        viewModel.setImageChat(imageChat)
 
 
         collectViewModel()
@@ -133,7 +134,7 @@ class ImageDetailActivity : TransformationAppCompatActivity() {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.isLoading.collectLatest(::showLoading) }
             launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
-            launch { viewModel::imageChat.stateFlow.collectLatest(::applyImageChatChanges) }
+            launch { viewModel.imageChat.collectLatest(::applyImageChatChanges) }
         }
     }
 

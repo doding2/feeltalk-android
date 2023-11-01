@@ -18,13 +18,16 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.clonect.feeltalk.R
+import com.clonect.feeltalk.databinding.FragmentChatBinding
 import com.clonect.feeltalk.databinding.FragmentMainNavigationBinding
 import com.clonect.feeltalk.new_domain.model.chat.PartnerLastChatDto
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.showConfirmDialog
 import com.clonect.feeltalk.new_presentation.ui.util.stateFlow
+import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -39,21 +42,25 @@ class MainNavigationFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
+        infoLog("main inflate start")
         binding = FragmentMainNavigationBinding.inflate(inflater, container, false)
+        infoLog("main inflate end")
 
         setUpBottomNavigation()
         setUpBottomSheets()
+        parseArguments()
 
         // set fullscreen
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            binding.clFloatingChatContainer.setPadding(0, getStatusBarHeight(), 0, 0)
-            binding.flInquirySucceedSheet.setPadding(0, 0, 0, getNavigationBarHeight())
-            binding.flSuggestionSucceedSheet.setPadding(0, 0, 0, getNavigationBarHeight())
-            binding.flSignalCompleteSheet.setPadding(0, 0, 0, getNavigationBarHeight())
+            val statusHeight = getStatusBarHeight()
+            val navHeight = getNavigationBarHeight()
+            binding.clFloatingChatContainer.setPadding(0, statusHeight, 0, 0)
+            binding.flInquirySucceedSheet.setPadding(0, 0, 0, navHeight)
+            binding.flSuggestionSucceedSheet.setPadding(0, 0, 0, navHeight)
+            binding.flSignalCompleteSheet.setPadding(0, 0, 0, navHeight)
         } else {
             activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         }
-
 
         setFragmentResultListener("inquireFragment") { _, bundle ->
             val inquirySucceed = bundle.getBoolean("inquirySucceed", false)
@@ -64,32 +71,7 @@ class MainNavigationFragment : Fragment() {
             viewModel.setShowSuggestionSucceedSheet(suggestionSucceed)
         }
 
-        val showChat = arguments?.getBoolean("showChat", false) ?: false
-        if (showChat) {
-            viewModel.setShowChatNavigation(showChat)
-        }
-
-        val questionIndex = arguments?.getLong("questionIndex", -1) ?: -1
-        val isTodayQuestion = arguments?.getBoolean("isTodayQuestion", false) ?: false
-        viewModel.initShowQuestionAnswerSheet(questionIndex)
-        if (questionIndex >= 0 && !isTodayQuestion) {
-            navigateFragment("question")
-        }
-
-        val challengeIndex = arguments?.getLong("challengeIndex", -1) ?: -1
-        viewModel.initShowChallengeDetail(challengeIndex)
-        if (challengeIndex >= 0) {
-            navigateFragment("challenge")
-        }
-
-        val isLockReset = arguments?.getBoolean("isLockReset", false) ?: false
-        if (isLockReset) {
-            navigateFragment("mypage")
-        }
-
         viewModel.setShortcut(requireContext())
-
-        arguments?.clear()
 
         return binding.root
     }
@@ -134,6 +116,32 @@ class MainNavigationFragment : Fragment() {
         }
     }
 
+    private fun parseArguments() = lifecycleScope.launch(Dispatchers.IO) {
+        val showChat = arguments?.getBoolean("showChat", false) ?: false
+        if (showChat) {
+            viewModel.setShowChatNavigation(showChat)
+        }
+
+        val questionIndex = arguments?.getLong("questionIndex", -1) ?: -1
+        val isTodayQuestion = arguments?.getBoolean("isTodayQuestion", false) ?: false
+        viewModel.initShowQuestionAnswerSheet(questionIndex)
+        if (questionIndex >= 0 && !isTodayQuestion) {
+            navigateFragment("question")
+        }
+
+        val challengeIndex = arguments?.getLong("challengeIndex", -1) ?: -1
+        viewModel.initShowChallengeDetail(challengeIndex)
+        if (challengeIndex >= 0) {
+            navigateFragment("challenge")
+        }
+
+        val isLockReset = arguments?.getBoolean("isLockReset", false) ?: false
+        if (isLockReset) {
+            navigateFragment("mypage")
+        }
+
+        arguments?.clear()
+    }
 
     private fun setUpBottomNavigation() {
         val bottomNav = binding.mnvBottomNavigation.apply {
@@ -317,7 +325,7 @@ class MainNavigationFragment : Fragment() {
             launch { viewModel.showInquirySucceedSheet.collectLatest(::showSubmitSucceedSheet) }
             launch { viewModel.showSuggestionSucceedSheet.collectLatest(::showSuggestionSucceedSheet) }
             launch { viewModel.showSignalCompleteSheet.collectLatest(::showSignalCompleteSheet) }
-            launch { viewModel::lastChatColor.stateFlow.collectLatest(::applyLastChatColorChange) }
+            launch { viewModel.lastChatColor.collectLatest(::applyLastChatColorChange) }
         }
     }
 

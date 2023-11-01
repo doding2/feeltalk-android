@@ -197,13 +197,14 @@
 
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/cl_bottom_sheets_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         android:elevation="11dp"
         android:outlineProvider="none"
-        android:clipChildren="false"
         android:clipToPadding="false"
+        android:clipChildren="false"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -216,8 +217,8 @@
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
             app:behavior_peekHeight="0dp"
             app:behavior_hideable="true"
-            android:clipChildren="false"
-            android:clipToPadding="false">
+            android:clipToPadding="false"
+            android:clipChildren="false">
 
             <include
                 layout="@layout/dialog_signal_complete_bottom_sheet"
@@ -249,8 +250,8 @@
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
             app:behavior_peekHeight="0dp"
             app:behavior_hideable="true"
-            android:clipChildren="false"
-            android:clipToPadding="false">
+            android:clipToPadding="false"
+            android:clipChildren="false">
 
             <include
                 layout="@layout/dialog_inquiry_succeed_bottom_sheet"
@@ -266,8 +267,8 @@
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
             app:behavior_peekHeight="0dp"
             app:behavior_hideable="true"
-            android:clipChildren="false"
-            android:clipToPadding="false">
+            android:clipToPadding="false"
+            android:clipChildren="false">
 
             <include
                 layout="@layout/dialog_suggestion_succeed_bottom_sheet"
@@ -308,13 +309,12 @@
             app:cardElevation="0dp"
             app:cardBackgroundColor="@color/white">
 
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/fcv_chat_fragment"
-                android:name="androidx.navigation.fragment.NavHostFragment"
+            <fragment
+                android:id="@+id/fragment_chat"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:defaultNavHost="true"
-                app:navGraph="@navigation/chat_nav_graph" />
+                android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.ChatFragment"
+                tools:layout="@layout/fragment_chat" />
         </com.google.android.material.card.MaterialCardView>
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

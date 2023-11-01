@@ -93,13 +93,13 @@ class QuestionListFragment : Fragment() {
     private fun navigateToChatPage(question2: Question2) {
         val bundle = bundleOf("selectedQuestion" to question2)
 
-        requireParentFragment()
-            .requireParentFragment()
-            .findNavController()
-            .navigate(
-                R.id.action_bottomNavigationFragment_to_chatFragment,
-                bundle
-            )
+//        requireParentFragment()
+//            .requireParentFragment()
+//            .findNavController()
+//            .navigate(
+//                R.id.action_bottomNavigationFragment_to_chatFragment,
+//                bundle
+//            )
     }
 
 

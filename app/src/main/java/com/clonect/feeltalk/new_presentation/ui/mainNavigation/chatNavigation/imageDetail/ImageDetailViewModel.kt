@@ -26,7 +26,8 @@ class ImageDetailViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
 
-    var imageChat: ImageChat? by mutableStateFlow(null)
+    private val _imageChat = MutableStateFlow<ImageChat?>(null)
+    val imageChat = _imageChat.asStateFlow()
 
     fun sendErrorMessage(message: String) = viewModelScope.launch {
         _errorMessage.emit(message)
@@ -34,6 +35,10 @@ class ImageDetailViewModel @Inject constructor(
 
     fun setLoading(isLoading: Boolean) = viewModelScope.launch {
         _isLoading.value = isLoading
+    }
+
+    fun setImageChat(imageChat: ImageChat?) {
+        _imageChat.value = imageChat
     }
 
 

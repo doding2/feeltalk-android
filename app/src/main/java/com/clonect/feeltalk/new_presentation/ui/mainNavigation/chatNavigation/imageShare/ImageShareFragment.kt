@@ -65,11 +65,13 @@ class ImageShareFragment : Fragment() {
         setLightStatusBars(false, requireActivity(), binding.root)
         binding.llActionBar.setPadding(0, getStatusBarHeight(), 0, 0)
 
-        viewModel.uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             requireArguments().getParcelable("uri", Uri::class.java)
         } else {
             requireArguments().getParcelable("uri") as? Uri
         }
+        viewModel.setUri(uri)
+
         loadingDialog = makeLoadingDialog()
         return binding.root
     }
@@ -117,9 +119,9 @@ class ImageShareFragment : Fragment() {
     }
 
     private fun applyUriChanges(uri: Uri?) = lifecycleScope.launch {
-        viewModel.isLoading = true
-        viewModel.bitmap = uri?.toBitmap(requireContext())
-        viewModel.isLoading = false
+        viewModel.setLoading(true)
+        viewModel.setBitmap(uri?.toBitmap(requireContext()))
+        viewModel.setLoading(false)
     }
 
     private fun applyBitmapChanges(bitmap: Bitmap?) = lifecycleScope.launch {
@@ -148,10 +150,10 @@ class ImageShareFragment : Fragment() {
 
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-            launch { viewModel::isLoading.stateFlow.collectLatest(::showLoading) }
+            launch { viewModel.isLoading.collectLatest(::showLoading) }
             launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
-            launch { viewModel::uri.stateFlow.collectLatest(::applyUriChanges) }
-            launch { viewModel::bitmap.stateFlow.collectLatest(::applyBitmapChanges) }
+            launch { viewModel.uri.collectLatest(::applyUriChanges) }
+            launch { viewModel.bitmap.collectLatest(::applyBitmapChanges) }
         }
     }
 
