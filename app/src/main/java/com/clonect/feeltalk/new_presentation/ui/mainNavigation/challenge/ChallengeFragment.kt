@@ -125,7 +125,7 @@ class ChallengeFragment : Fragment() {
                 when (tab?.position) {
                     0 -> {
                         tab.enableOngoingTabView(true)
-                        setAddButtonHidden(false)
+//                        setAddButtonHidden(false)
                     }
                     1 -> tab.enableCompletedTabView(true)
                     else -> return
@@ -136,7 +136,7 @@ class ChallengeFragment : Fragment() {
                 when (tab?.position) {
                     0 -> {
                         tab.enableOngoingTabView(false)
-                        setAddButtonHidden(true)
+//                        setAddButtonHidden(true)
                         viewModel.setSnackbarState(
                             SnackbarState(
                                 isVisible = false,

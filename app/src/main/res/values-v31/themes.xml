@@ -27,5 +27,6 @@
         <!-- Customize your theme here. -->
         <item name="editTextStyle">@style/GradientEditTextStyle</item>
         <item name="bottomSheetDialogTheme">@style/RoundBottomSheetDialogTheme</item>
+        <item name="bottomNavigationStyle">@style/CustomBottomNavigationStyle</item>
     </style>
 </resources>

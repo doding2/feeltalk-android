@@ -1,7 +1,6 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation
 
 import android.content.Context
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -21,12 +20,10 @@ import androidx.navigation.ui.setupWithNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentMainNavigationBinding
 import com.clonect.feeltalk.new_domain.model.chat.PartnerLastChatDto
-import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageShare.ImageShareFragment
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.showConfirmDialog
 import com.clonect.feeltalk.new_presentation.ui.util.stateFlow
-import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -298,7 +295,7 @@ class MainNavigationFragment : Fragment() {
             selectedItemId = R.id.navigation_question
         }
         if (target == "challenge") {
-            selectedItemId = R.id.navigation_bucket_list
+            selectedItemId = R.id.navigation_challenge
         }
         if (target == "mypage") {
             selectedItemId = R.id.navigation_my_page

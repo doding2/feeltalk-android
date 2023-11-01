@@ -11,6 +11,7 @@ import com.clonect.feeltalk.new_presentation.notification.observer.DeleteComplet
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,9 +21,16 @@ class CompletedViewModel @Inject constructor(
     getPagingCompletedChallengeUseCase: GetPagingCompletedChallengeUseCase,
 ): ViewModel() {
 
+    private val _isEmpty = MutableStateFlow(true)
+    val isEmpty = _isEmpty.asStateFlow()
+
     init {
         collectAddChallenge()
         collectDeleteChallenge()
+    }
+
+    fun setEmpty(isEmpty: Boolean) {
+        _isEmpty.value = isEmpty
     }
 
     /** Pagination **/

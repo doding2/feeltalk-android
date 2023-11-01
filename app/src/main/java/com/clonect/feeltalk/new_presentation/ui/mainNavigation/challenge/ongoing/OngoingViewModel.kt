@@ -13,6 +13,7 @@ import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,16 +23,24 @@ class OngoingViewModel @Inject constructor(
     getPagingOngoingChallengeUseCase: GetPagingOngoingChallengeUseCase,
 ): ViewModel() {
 
+    private val _isEmpty = MutableStateFlow(true)
+    val isEmpty = _isEmpty.asStateFlow()
+
     init {
         collectAddChallenge()
         collectEditChallenge()
         collectDeleteChallenge()
     }
 
+    fun setEmpty(isEmpty: Boolean) {
+        _isEmpty.value = isEmpty
+    }
+
+
     /** Pagination **/
     private val pageModificationEvents = MutableStateFlow<List<PageEvents<Challenge>>>(emptyList())
 
-    private suspend fun applyPageModification(paging: PagingData<Challenge>, event: PageEvents<Challenge>): PagingData<Challenge> {
+    private fun applyPageModification(paging: PagingData<Challenge>, event: PageEvents<Challenge>): PagingData<Challenge> {
         return when (event) {
             is PageEvents.Edit -> {
                 paging.map {
@@ -74,7 +83,7 @@ class OngoingViewModel @Inject constructor(
         }
     }
 
-    private fun modifyPage(event: PageEvents<Challenge>) {
+    fun modifyPage(event: PageEvents<Challenge>) {
         pageModificationEvents.value += event
     }
 

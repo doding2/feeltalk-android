@@ -13,6 +13,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.R
+import com.clonect.feeltalk.common.PageEvents
 import com.clonect.feeltalk.databinding.FragmentOngoingBinding
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.ChallengeViewModel
@@ -87,14 +88,14 @@ class OngoingFragment : Fragment() {
 
 
     private fun initRecyclerView() = binding.run {
-        rvOngoingChallenge.layoutManager = FlexboxLayoutManager(requireContext()).apply {
-            justifyContent = JustifyContent.SPACE_BETWEEN
+        rvOngoingChallenge.adapter = adapter.apply {
+            setOnItemClickListener(::onItemClick)
+            setOnFirstImminentItemListener(::onFirstImminentItemShow)
+            addOnPagesUpdatedListener {
+                val isEmpty = itemCount == 0
+                ongoingViewModel.setEmpty(isEmpty)
+            }
         }
-
-        adapter.calculateItemSize(requireActivity())
-        adapter.setOnItemClickListener(::onItemClick)
-        adapter.setOnFirstImminentItemListener(::onFirstImminentItemShow)
-        rvOngoingChallenge.adapter = adapter
 
         rvOngoingChallenge.addOnScrollListener(object: RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -111,14 +112,24 @@ class OngoingFragment : Fragment() {
         })
     }
 
+    private fun applyIsEmptyChanges(isEmpty: Boolean) = binding.run {
+        if (isEmpty) {
+            rvOngoingChallenge.visibility = View.GONE
+            llEmptyChallenge.visibility = View.VISIBLE
+        } else {
+            rvOngoingChallenge.visibility = View.VISIBLE
+            llEmptyChallenge.visibility = View.GONE
+        }
+    }
+
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch { ongoingViewModel.isEmpty.collectLatest(::applyIsEmptyChanges) }
             launch {
                 challengeViewModel.ongoingFragmentScrollToTop.collectLatest {
                     if (it) scrollToTop()
                 }
             }
-
             launch {
                 ongoingViewModel.pagingOngoingChallenge.collectLatest {
                     adapter.submitData(it)

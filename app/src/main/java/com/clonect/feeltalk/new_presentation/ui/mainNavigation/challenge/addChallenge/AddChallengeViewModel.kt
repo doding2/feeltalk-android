@@ -112,7 +112,8 @@ class AddChallengeViewModel @Inject constructor(
                             body = content,
                             deadline = deadlineDate,
                             owner = "me",
-                            isCompleted = false
+                            isCompleted = false,
+                            isNew = true
                         )
                     )
             }

@@ -10,9 +10,50 @@
         android:id="@+id/rv_completed_challenge"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="visible"
         android:background="@color/gray_100"
         android:paddingVertical="7.5dp"
         android:paddingHorizontal="12.5dp"
         android:clipToPadding="false"
+        app:spanCount="2"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         tools:listitem="@layout/item_challenge_completed"/>
+
+    <LinearLayout
+        android:id="@+id/ll_empty_challenge"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="72dp"
+            android:layout_marginBottom="10dp"
+            android:src="@drawable/n_ic_empty_challenge" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="@string/challenge_empty_title"
+            android:textColor="@color/gray_600"
+            android:textSize="18sp"
+            android:fontFamily="@font/pretendard_medium"
+            android:letterSpacing="-0.01" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:gravity="center"
+            android:text="@string/challenge_empty_body"
+            android:textColor="@color/gray_500"
+            android:textSize="14sp"
+            android:fontFamily="@font/pretendard_regular"
+            android:letterSpacing="-0.01"
+            android:lineSpacingExtra="4sp"
+            android:includeFontPadding="false" />
+    </LinearLayout>
 </FrameLayout>

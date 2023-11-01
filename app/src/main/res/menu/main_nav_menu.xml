@@ -13,13 +13,13 @@
         android:title="@string/main_navigation_question" />
 
     <item
-        android:id="@+id/navigation_bucket_list"
-        android:icon="@drawable/n_selector_bucket_list"
-        android:title="@string/main_navigation_bucket_list" />
+        android:id="@+id/navigation_challenge"
+        android:icon="@drawable/n_selector_challenge"
+        android:title="@string/main_navigation_challenge" />
 
     <item
         android:id="@+id/navigation_my_page"
-        android:icon="@drawable/n_selector_setting"
+        android:icon="@drawable/n_selector_my_page"
         android:title="@string/main_navigation_my_page" />
 
 </menu>

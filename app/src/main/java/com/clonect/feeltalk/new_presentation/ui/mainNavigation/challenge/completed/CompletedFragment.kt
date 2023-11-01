@@ -64,17 +64,28 @@ class CompletedFragment : Fragment() {
     }
 
     private fun initRecyclerView() = binding.run {
-        rvCompletedChallenge.layoutManager = FlexboxLayoutManager(requireContext()).apply {
-            justifyContent = JustifyContent.SPACE_BETWEEN
+        rvCompletedChallenge.adapter = adapter.apply {
+            setOnItemClickListener(::onItemClick)
+            addOnPagesUpdatedListener {
+                val isEmpty = itemCount == 0
+                completedViewModel.setEmpty(isEmpty)
+            }
         }
+    }
 
-        adapter.calculateItemSize(requireActivity())
-        adapter.setOnItemClickListener(::onItemClick)
-        rvCompletedChallenge.adapter = adapter
+    private fun applyIsEmptyChanges(isEmpty: Boolean) = binding.run {
+        if (isEmpty) {
+            rvCompletedChallenge.visibility = View.GONE
+            llEmptyChallenge.visibility = View.VISIBLE
+        } else {
+            rvCompletedChallenge.visibility = View.VISIBLE
+            llEmptyChallenge.visibility = View.GONE
+        }
     }
 
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch { completedViewModel.isEmpty.collectLatest(::applyIsEmptyChanges) }
             launch {
                 challengeViewModel.completedFragmentScrollToTop.collectLatest {
                     if (it) scrollToTop()

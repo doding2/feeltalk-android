@@ -2,6 +2,7 @@ package com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.ongoin
 
 import android.app.Activity
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.paging.PagingDataAdapter
@@ -30,8 +31,6 @@ class OngoingAdapter: PagingDataAdapter<Challenge, OngoingAdapter.OngoingChallen
             }
         }
     }
-
-    private var itemSize: Int = 0
 
     private var onItemClick: ((Challenge) -> Unit) = {}
 
@@ -65,12 +64,6 @@ class OngoingAdapter: PagingDataAdapter<Challenge, OngoingAdapter.OngoingChallen
         return ceil((target.time - from.time).toDouble() / Constants.ONE_DAY).toInt()
     }
 
-    fun calculateItemSize(activity: Activity) {
-        val screenWidth = activity.getScreenWidth()
-        // 12.5 * 2 + 7.5 * 4 = 55
-        itemSize = (screenWidth - activity.applicationContext.dpToPx(56f).toInt()) / 2
-    }
-
 
     inner class OngoingChallengeViewHolder(
         val binding: ItemChallengeOngoingBinding
@@ -79,8 +72,6 @@ class OngoingAdapter: PagingDataAdapter<Challenge, OngoingAdapter.OngoingChallen
         fun bind(item: Challenge) {
             binding.run {
                 root.setOnClickListener { onItemClick(item) }
-
-                root.layoutParams.width = itemSize
 
                 tvChallengeTitle.text = item.title
                 tvNickname.text = item.owner
@@ -96,11 +87,17 @@ class OngoingAdapter: PagingDataAdapter<Challenge, OngoingAdapter.OngoingChallen
                     root.context.getString(R.string.add_challenge_d_day_normal) + dDay
                 }
 
+                if (item.isNew) {
+                    ivNew.visibility = View.VISIBLE
+                } else {
+                    ivNew.visibility = View.GONE
+                }
+
                 if (item.deadline <= Date().plusDayBy(7)) {
                     mcvDDay.setCardBackgroundColor(root.context.getColor(R.color.main_300))
                     tvDDay.setTextColor(root.context.getColor(R.color.main_500))
                     tvDDay.typeface = ResourcesCompat.getFont(root.context, R.font.pretendard_semi_bold)
-                    mcvOngoing.strokeWidth = root.context.dpToPx(2f).toInt()
+                    mcvOngoing.stroke_Width = root.context.dpToPx(2f).toFloat()
 
                     if (isFirstImminentItem) {
                         isFirstImminentItem = false
@@ -110,7 +107,7 @@ class OngoingAdapter: PagingDataAdapter<Challenge, OngoingAdapter.OngoingChallen
                     mcvDDay.setCardBackgroundColor(root.context.getColor(R.color.gray_200))
                     tvDDay.setTextColor(root.context.getColor(R.color.gray_600))
                     tvDDay.typeface = ResourcesCompat.getFont(root.context, R.font.pretendard_regular)
-                    mcvOngoing.strokeWidth = 0
+                    mcvOngoing.stroke_Width = 0f
                 }
             }
         }

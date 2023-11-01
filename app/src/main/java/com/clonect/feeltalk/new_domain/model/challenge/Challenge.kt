@@ -9,5 +9,6 @@ data class Challenge(
     val body: String,
     val deadline: Date,
     val owner: String,
-    val isCompleted: Boolean
+    val isCompleted: Boolean,
+    val isNew: Boolean = false
 ): Serializable

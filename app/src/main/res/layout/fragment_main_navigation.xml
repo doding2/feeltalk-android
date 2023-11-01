@@ -21,10 +21,11 @@
             android:id="@+id/mnv_bottom_navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="40dp"
             android:background="?android:attr/windowBackground"
-            app:labelVisibilityMode="unlabeled"
+            style="@style/CustomBottomNavigationStyle"
+            app:labelVisibilityMode="labeled"
             app:menu="@menu/main_nav_menu"
+            app:itemTextAppearanceActiveBoldEnabled="false"
             app:itemRippleColor="@null"/>
     </LinearLayout>
 

@@ -21,6 +21,7 @@
         <!-- Customize your theme here. -->
         <item name="editTextStyle">@style/GradientEditTextStyle</item>
         <item name="bottomSheetDialogTheme">@style/RoundBottomSheetDialogTheme</item>
+        <item name="bottomNavigationStyle">@style/CustomBottomNavigationStyle</item>
     </style>
 
 
@@ -37,6 +38,25 @@
         <item name="android:windowLightStatusBar" >true</item>
     </style>
 
+    <!--  Custom BottomNavigation  -->
+    <style name="CustomBottomNavigationStyle" parent="Widget.Design.BottomNavigationView">
+        <item name="itemTextAppearanceActive">@style/BottomNavigationViewActiveTextStyle</item>
+        <item name="itemTextAppearanceInactive">@style/BottomNavigationViewInactiveTextStyle</item>
+    </style>
+    
+    <style name="BottomNavigationViewActiveTextStyle">
+        <item name="android:textColor">@color/gray_800</item>
+        <item name="fontFamily">@font/pretendard_regular</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:state_selected">false</item>
+    </style>
+
+    <style name="BottomNavigationViewInactiveTextStyle">
+        <item name="android:textColor">@color/gray_500</item>
+        <item name="fontFamily">@font/pretendard_regular</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:state_selected">false</item>
+    </style>
 
     <!--  Custom EditText  -->
     <style name="GradientTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">

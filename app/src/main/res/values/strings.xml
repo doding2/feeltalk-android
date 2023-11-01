@@ -114,8 +114,8 @@
     <string name="main_navigation_home">홈</string>
     <string name="main_navigation_question">질문</string>
     <string name="main_navigation_chat">채팅</string>
-    <string name="main_navigation_bucket_list">버킷리스트</string>
-    <string name="main_navigation_my_page">마이페이지</string>
+    <string name="main_navigation_challenge">챌린지</string>
+    <string name="main_navigation_my_page">마이</string>
 
     <!--  Home  -->
     <string name="home_answer_state_title_1">오늘도 서로에 대해 더 알아가봐요!</string>
@@ -182,6 +182,8 @@
     <string name="challenge_count_title_deco">개의 챌린지</string>
     <string name="challenge_tab_ongoing">진행중</string>
     <string name="challenge_tab_completed">완료</string>
+    <string name="challenge_empty_title">진행중인 챌린지가 없어요</string>
+    <string name="challenge_empty_body">연인과 함께 챌린지를 만들고\n서로의 취향에 대해 더 알아가봐요</string>
 
     <!--  Ongoing  -->
     <string name="ongoing_add_challenge">챌린지 추가</string>

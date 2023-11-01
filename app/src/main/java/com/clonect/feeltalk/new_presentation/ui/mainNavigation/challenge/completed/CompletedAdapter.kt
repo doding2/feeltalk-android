@@ -32,8 +32,6 @@ class CompletedAdapter: PagingDataAdapter<Challenge, CompletedAdapter.CompletedC
     }
 
     private var onItemClick: ((Challenge) -> Unit) = {}
-    private var itemSize: Int = 0
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CompletedChallengeViewHolder {
         val binding = ItemChallengeCompletedBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -56,12 +54,6 @@ class CompletedAdapter: PagingDataAdapter<Challenge, CompletedAdapter.CompletedC
         return ceil(((from.time - target.time).toDouble() / Constants.ONE_DAY).absoluteValue).toInt()
     }
 
-    fun calculateItemSize(activity: Activity) {
-        val screenWidth = activity.getScreenWidth()
-        // 12.5 * 2 + 7.5 * 4 = 55
-        itemSize = (screenWidth - activity.applicationContext.dpToPx(56f).toInt()) / 2
-    }
-
 
     inner class CompletedChallengeViewHolder(
         val binding: ItemChallengeCompletedBinding
@@ -70,8 +62,6 @@ class CompletedAdapter: PagingDataAdapter<Challenge, CompletedAdapter.CompletedC
         fun bind(item: Challenge) {
             binding.run {
                 root.setOnClickListener { onItemClick(item) }
-                root.layoutParams.width = itemSize
-
                 val format = SimpleDateFormat("yy.MM.dd", Locale.getDefault())
 
                 tvDDay.text = format.format(item.deadline)

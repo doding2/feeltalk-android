@@ -361,7 +361,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             .createPendingIntent()
 
         if (getAppRunning()) {
-            val challenge = (getChallengeUseCase(index) as? Resource.Success)?.data?.toChallenge()
+            val challenge = (getChallengeUseCase(index) as? Resource.Success)?.data?.toChallenge()?.copy(isNew = true)
             if (challenge != null && !challenge.isCompleted) {
                 AddOngoingChallengeObserver
                     .getInstance()
