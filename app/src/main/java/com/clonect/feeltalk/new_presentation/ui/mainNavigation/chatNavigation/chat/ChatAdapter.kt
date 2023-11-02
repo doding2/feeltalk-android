@@ -679,7 +679,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
         private fun setAudioDuration() {
             try {
                 val mmr = MediaMetadataRetriever()
-                mmr.setDataSource(binding.root.context, Uri.fromFile(audioFile))
+                mmr.setDataSource(binding.root.context, Uri.fromFile(audioFile ?: return))
                 val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
                 if (duration != null) {
                     audioDuration = duration.toLong()
@@ -1009,7 +1009,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
         private fun setAudioDuration() {
             val mmr = MediaMetadataRetriever()
-            mmr.setDataSource(binding.root.context, Uri.fromFile(audioFile))
+            mmr.setDataSource(binding.root.context, Uri.fromFile(audioFile ?: return))
             val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
             if (duration != null) {
                 audioDuration = duration.toLong()
