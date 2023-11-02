@@ -48,14 +48,12 @@
         <item name="android:textColor">@color/gray_800</item>
         <item name="fontFamily">@font/pretendard_regular</item>
         <item name="android:letterSpacing">-0.01</item>
-        <item name="android:state_selected">false</item>
     </style>
 
     <style name="BottomNavigationViewInactiveTextStyle">
         <item name="android:textColor">@color/gray_500</item>
         <item name="fontFamily">@font/pretendard_regular</item>
         <item name="android:letterSpacing">-0.01</item>
-        <item name="android:state_selected">false</item>
     </style>
 
     <!--  Custom EditText  -->

@@ -93,7 +93,7 @@ class ImageShareFragment : Fragment() {
         setFragmentResult(
             requestKey = REQUEST_KEY,
             result = bundleOf(
-                RESULT_KEY_URI to viewModel.uri,
+                RESULT_KEY_URI to viewModel.uri.value,
             )
         )
         onBackCallback.handleOnBackPressed()

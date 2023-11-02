@@ -42,9 +42,7 @@ class MainNavigationFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        infoLog("main inflate start")
         binding = FragmentMainNavigationBinding.inflate(inflater, container, false)
-        infoLog("main inflate end")
 
         setUpBottomNavigation()
         setUpBottomSheets()
@@ -116,7 +114,7 @@ class MainNavigationFragment : Fragment() {
         }
     }
 
-    private fun parseArguments() = lifecycleScope.launch(Dispatchers.IO) {
+    private fun parseArguments() {
         val showChat = arguments?.getBoolean("showChat", false) ?: false
         if (showChat) {
             viewModel.setShowChatNavigation(showChat)
@@ -335,6 +333,7 @@ class MainNavigationFragment : Fragment() {
         super.onAttach(context)
         onBackCallback = object: OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
+                infoLog("onBackPressed")
                 if (viewModel.showAnswerSheet.value && viewModel.isUserAnswering.value) {
                     showConfirmDialog(
                         title = requireContext().getString(R.string.answer_cancel_title),
@@ -367,10 +366,12 @@ class MainNavigationFragment : Fragment() {
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, onBackCallback)
+        infoLog("attach")
     }
 
     override fun onDetach() {
         super.onDetach()
         onBackCallback.remove()
+        infoLog("dettach")
     }
 }

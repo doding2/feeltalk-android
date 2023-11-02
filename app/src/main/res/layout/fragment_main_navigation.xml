@@ -22,7 +22,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?android:attr/windowBackground"
-            style="@style/CustomBottomNavigationStyle"
             app:labelVisibilityMode="labeled"
             app:menu="@menu/main_nav_menu"
             app:itemTextAppearanceActiveBoldEnabled="false"
@@ -309,12 +308,13 @@
             app:cardElevation="0dp"
             app:cardBackgroundColor="@color/white">
 
-            <fragment
-                android:id="@+id/fragment_chat"
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fcv_chat_fragment"
+                android:name="androidx.navigation.fragment.NavHostFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.ChatFragment"
-                tools:layout="@layout/fragment_chat" />
+                app:defaultNavHost="true"
+                app:navGraph="@navigation/chat_nav_graph" />
         </com.google.android.material.card.MaterialCardView>
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
