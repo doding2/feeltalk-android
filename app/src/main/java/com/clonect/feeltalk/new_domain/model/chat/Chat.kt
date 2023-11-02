@@ -14,8 +14,15 @@ abstract class Chat(
     open val chatSender: String,
     open var isRead: Boolean,
     open val createAt: String,
-    open var isSending: Boolean = false,
+    open var sendState: ChatSendState = ChatSendState.Completed,
 ) {
+    @Parcelize
+    sealed class ChatSendState: Parcelable {
+        object Sending: ChatSendState()
+        object Failed: ChatSendState()
+        object Completed: ChatSendState()
+    }
+
     fun clone(): Chat {
         return when (this) {
             is DividerChat -> this.copy()
@@ -42,7 +49,7 @@ abstract class Chat(
                     chatSender = chatSender,
                     isRead = isRead,
                     createAt = createAt,
-                    isSending = isSending,
+                    sendState = sendState,
                     message = message,
                 )
             }
@@ -53,7 +60,7 @@ abstract class Chat(
                     chatSender = chatSender,
                     isRead = isRead,
                     createAt = createAt,
-                    isSending = isSending,
+                    sendState = sendState,
                     url = url
                 )
             }
@@ -64,7 +71,7 @@ abstract class Chat(
                     chatSender = chatSender,
                     isRead = isRead,
                     createAt = createAt,
-                    isSending = isSending,
+                    sendState = sendState,
                     emoji = emoji
                 )
             }
@@ -75,7 +82,7 @@ abstract class Chat(
                     chatSender = chatSender,
                     isRead = isRead,
                     createAt = createAt,
-                    isSending = isSending,
+                    sendState = sendState,
                     url = url
                 )
             }
@@ -86,7 +93,7 @@ abstract class Chat(
                     chatSender = chatSender,
                     isRead = isRead,
                     createAt = createAt,
-                    isSending = isSending,
+                    sendState = sendState,
                     url = url
                 )
             }
@@ -97,7 +104,7 @@ abstract class Chat(
                     chatSender = chatSender,
                     isRead = isRead,
                     createAt = createAt,
-                    isSending = isSending,
+                    sendState = sendState,
                     challenge = challenge
                 )
             }
@@ -108,7 +115,7 @@ abstract class Chat(
                     chatSender = chatSender,
                     isRead = isRead,
                     createAt = createAt,
-                    isSending = isSending,
+                    sendState = sendState,
                     question = question
                 )
             }
@@ -127,9 +134,9 @@ data class TextChat(
     override val chatSender: String,
     override var isRead: Boolean,
     override val createAt: String,
-    override var isSending: Boolean = false,
+    override var sendState: ChatSendState = ChatSendState.Completed,
     val message: String
-): Chat(index, pageNo, ChatType.TextChatting, chatSender, isRead, createAt, isSending)
+): Chat(index, pageNo, ChatType.TextChatting, chatSender, isRead, createAt, sendState)
 
 data class VoiceChat(
     override val index: Long,
@@ -137,9 +144,9 @@ data class VoiceChat(
     override val chatSender: String,
     override var isRead: Boolean,
     override val createAt: String,
-    override var isSending: Boolean = false,
+    override var sendState: ChatSendState = ChatSendState.Completed,
     val url: String
-): Chat(index, pageNo, ChatType.VoiceChatting, chatSender, isRead, createAt, isSending)
+): Chat(index, pageNo, ChatType.VoiceChatting, chatSender, isRead, createAt, sendState)
 
 data class EmojiChat(
     override val index: Long,
@@ -147,9 +154,9 @@ data class EmojiChat(
     override val chatSender: String,
     override var isRead: Boolean,
     override val createAt: String,
-    override var isSending: Boolean = false,
+    override var sendState: ChatSendState = ChatSendState.Completed,
     val emoji: String
-): Chat(index, pageNo, ChatType.EmojiChatting, chatSender, isRead, createAt, isSending)
+): Chat(index, pageNo, ChatType.EmojiChatting, chatSender, isRead, createAt, sendState)
 
 @Parcelize
 data class ImageChat(
@@ -158,11 +165,11 @@ data class ImageChat(
     override val chatSender: String,
     override var isRead: Boolean,
     override val createAt: String,
-    override var isSending: Boolean = false,
+    override var sendState: ChatSendState = ChatSendState.Completed,
     val url: String,
     val bitmap: Bitmap?,
     val uri: Uri?
-): Chat(index, pageNo, ChatType.ImageChatting, chatSender, isRead, createAt, isSending), Parcelable
+): Chat(index, pageNo, ChatType.ImageChatting, chatSender, isRead, createAt, sendState), Parcelable
 
 
 data class VideoChat(
@@ -171,9 +178,9 @@ data class VideoChat(
     override val chatSender: String,
     override var isRead: Boolean,
     override val createAt: String,
-    override var isSending: Boolean = false,
+    override var sendState: ChatSendState = ChatSendState.Completed,
     val url: String
-): Chat(index, pageNo, ChatType.VideoChatting, chatSender, isRead, createAt, isSending)
+): Chat(index, pageNo, ChatType.VideoChatting, chatSender, isRead, createAt, sendState)
 
 
 data class ChallengeChat(
@@ -182,9 +189,9 @@ data class ChallengeChat(
     override val chatSender: String,
     override var isRead: Boolean,
     override val createAt: String,
-    override var isSending: Boolean = false,
+    override var sendState: ChatSendState = ChatSendState.Completed,
     val challenge: Challenge
-): Chat(index, pageNo, ChatType.ChallengeChatting, chatSender, isRead, createAt, isSending)
+): Chat(index, pageNo, ChatType.ChallengeChatting, chatSender, isRead, createAt, sendState)
 
 data class QuestionChat(
     override val index: Long,
@@ -192,6 +199,6 @@ data class QuestionChat(
     override val chatSender: String,
     override var isRead: Boolean,
     override val createAt: String,
-    override var isSending: Boolean = false,
+    override var sendState: ChatSendState = ChatSendState.Completed,
     val question: Question
-): Chat(index, pageNo, ChatType.QuestionChatting, chatSender, isRead, createAt, isSending)
+): Chat(index, pageNo, ChatType.QuestionChatting, chatSender, isRead, createAt, sendState)

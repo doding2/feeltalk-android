@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.usecase.chat.ChangeChatRoomStateUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.SendTextChatUseCase
@@ -53,7 +54,7 @@ class NotificationReplyReceiver: BroadcastReceiver() {
                             chatSender = "me",
                             isRead = isRead,
                             createAt = createAt,
-                            isSending = false,
+                            sendState = Chat.ChatSendState.Completed,
                             message = message
                         )
                     }

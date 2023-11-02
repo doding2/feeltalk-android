@@ -18,6 +18,52 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
+        <ImageView
+            android:id="@+id/iv_sending"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:visibility="gone"
+            android:src="@drawable/n_ic_chat_sending"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/mcv_chat_container"/>
+
+        <LinearLayout
+            android:id="@+id/ll_failed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/mcv_chat_container">
+
+            <ImageView
+                android:id="@+id/iv_retry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:src="@drawable/n_ic_chat_fail_retry"
+                android:background="?selectableItemBackgroundBorderless"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="3dp"
+                android:layout_marginVertical="6dp"
+                android:src="@drawable/n_ic_chat_fail_divider"/>
+
+            <ImageView
+                android:id="@+id/iv_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:src="@drawable/n_ic_chat_fail_cancel"
+                android:background="?selectableItemBackgroundBorderless"/>
+        </LinearLayout>
+
         <TextView
             android:id="@+id/tv_read"
             android:layout_width="wrap_content"

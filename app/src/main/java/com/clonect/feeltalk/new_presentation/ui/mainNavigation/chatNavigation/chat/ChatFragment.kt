@@ -35,6 +35,8 @@ import com.clonect.feeltalk.databinding.FragmentChatBinding
 import com.clonect.feeltalk.databinding.FragmentMainNavigationBinding
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.ImageChat
+import com.clonect.feeltalk.new_domain.model.chat.TextChat
+import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
@@ -313,6 +315,8 @@ class ChatFragment : Fragment() {
             setMyNickname("me")
             setPartnerNickname("partner")
             setOnClickItem(::onClickChat)
+            setOnRetry(::onRetryChat)
+            setOnCancel(::onCancelChat)
         }
         rvChat.addOnScrollListener(object: RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -331,6 +335,20 @@ class ChatFragment : Fragment() {
             is ImageChat -> { navigateToImageDetail(view, chat) }
         }
     }
+
+    private fun onRetryChat(chat: Chat) {
+        viewModel.cancelFailedChat(chat)
+        when (chat) {
+            is TextChat -> viewModel.sendTextChat(retryChat = chat)
+            is VoiceChat -> viewModel.sendVoiceChat(context = requireContext(), retryChat = chat)
+            is ImageChat -> viewModel.sendImageChat(context = requireContext(), retryChat = chat)
+        }
+    }
+
+    private fun onCancelChat(chat: Chat) {
+        viewModel.cancelFailedChat(chat)
+    }
+
 
     private fun setKeyboardInsets() {
         binding.root.setOnApplyWindowInsetsListener { v, insets ->
@@ -588,7 +606,7 @@ class ChatFragment : Fragment() {
                     adapter.submitData(requireParentFragment().lifecycle, it)
                 }
             }
-            launch(Dispatchers.IO) {
+            launch {
                 viewModel.isPartnerInChat.collectLatest {
                     if (it != null) {
                         adapter.setPartnerInChat(it)

@@ -1,7 +1,6 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -32,8 +31,6 @@ import com.clonect.feeltalk.new_presentation.notification.observer.PartnerChatRo
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.audioVisualizer.RecordingReplayer
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.audioVisualizer.RecordingSampler
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.audioVisualizer.VisualizerView
-import com.clonect.feeltalk.new_presentation.ui.util.mutableStateFlow
-import com.clonect.feeltalk.new_presentation.ui.util.resize
 import com.clonect.feeltalk.new_presentation.ui.util.toBitmap
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -46,9 +43,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.lastOrNull
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -134,7 +128,7 @@ class ChatViewModel @Inject constructor(
             is PageEvents.Edit -> {
                 paging.map {
                     return@map if (it.index == event.item.index)
-                        it.copy(event.item)
+                        event.item
                     else
                         it
                 }
@@ -163,7 +157,7 @@ class ChatViewModel @Inject constructor(
         val event = PageEvents.InsertItemFooter(chat)
         if (event in pageModificationEvents.value) return
         
-        val firstSendingChatIndex = pageModificationEvents.value.indexOfFirst { it.item.isSending }
+        val firstSendingChatIndex = pageModificationEvents.value.indexOfFirst { it.item.sendState == Chat.ChatSendState.Sending }
         if (firstSendingChatIndex != -1) {
             pageModificationEvents.value = pageModificationEvents.value.toMutableList().apply {
                 add(firstSendingChatIndex, event)
@@ -173,8 +167,16 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    private fun removeLoadingChat(chat: Chat) {
+    fun removeLoadingChat(chat: Chat) {
         pageModificationEvents.value -= PageEvents.InsertItemFooter(chat)
+    }
+
+    private fun editLoadingChat(chat: Chat) {
+        pageModificationEvents.value += PageEvents.Edit(chat)
+    }
+
+    fun cancelFailedChat(chat: Chat) {
+        pageModificationEvents.value += PageEvents.Remove(chat)
     }
 
     private fun PagingData<Chat>.insertDividerChat(): PagingData<Chat> {
@@ -219,9 +221,13 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    fun sendTextChat(onStart: () -> Unit) = viewModelScope.launch {
-        val message = _textChat.value
-        _textChat.value = ""
+    fun sendTextChat(retryChat: TextChat? = null, onStart: () -> Unit = {}) = viewModelScope.launch {
+        var message = retryChat?.message
+        if (message == null) {
+            message = _textChat.value
+            _textChat.value = ""
+        }
+        if (message.isEmpty()) return@launch
         onStart()
 
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
@@ -233,7 +239,7 @@ class ChatViewModel @Inject constructor(
             chatSender = "me",
             isRead = true,
             createAt = format.format(now),
-            isSending = true,
+            sendState = Chat.ChatSendState.Sending,
             message = message
         )
         launch {
@@ -252,18 +258,17 @@ class ChatViewModel @Inject constructor(
                         chatSender = "me",
                         isRead = isRead,
                         createAt = createAt,
-                        isSending = false,
+                        sendState = Chat.ChatSendState.Completed,
                         message = message
                     )
                 }
 
                 removeLoadingChat(loadingTextChat)
-
                 NewChatObserver.getInstance().setNewChat(textChat)
             }
             is Resource.Error -> {
                 infoLog("텍스트 채팅 전송 실패: ${result.throwable.stackTrace.joinToString("\n")}")
-                removeLoadingChat(loadingTextChat)
+                editLoadingChat(loadingTextChat.copy(sendState = Chat.ChatSendState.Failed))
             }
         }
     }
@@ -373,28 +378,32 @@ class ChatViewModel @Inject constructor(
     val isVoiceRecordingReplayCompleted = _isVoiceRecordingReplayCompleted.asStateFlow()
 
 
-    fun sendVoiceChat(context: Context, onSend: () -> Unit) = viewModelScope.launch {
+    fun sendVoiceChat(context: Context, retryChat: VoiceChat? = null, onSend: () -> Unit = {}) = viewModelScope.launch {
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         val now = Date()
 
-        val voiceCacheFile = File(context.cacheDir, Constants.VOICE_CACHE_FILE_NAME)
-        if (!voiceCacheFile.exists() || !voiceCacheFile.canRead()) {
-            infoLog("보이스 캐시 파일을 읽을 수 없습니다.")
-            onSend()
-            return@launch
+        val voiceFile = if (retryChat == null) {
+            val voiceCacheFile = File(context.cacheDir, Constants.VOICE_CACHE_FILE_NAME)
+            if (!voiceCacheFile.exists() || !voiceCacheFile.canRead()) {
+                infoLog("보이스 캐시 파일을 읽을 수 없습니다.")
+                onSend()
+                return@launch
+            }
+            voiceCacheFile.copyTo(
+                target = File(context.cacheDir, "${now.time}.wav"),
+                overwrite = true
+            )
+        } else {
+            File(context.cacheDir, "${retryChat.index}.wav")
         }
-        val voiceFile = voiceCacheFile.copyTo(
-            target = File(context.cacheDir, "${now.time}.wav"),
-            overwrite = true
-        )
 
         val loadingVoiceChat = VoiceChat(
-            index = now.time,
+            index = retryChat?.index ?: now.time,
             pageNo = 0,
             chatSender = "me",
             isRead = true,
             createAt = format.format(Date()),
-            isSending = true,
+            sendState = Chat.ChatSendState.Sending,
             url = "index",
         )
 
@@ -410,7 +419,7 @@ class ChatViewModel @Inject constructor(
             is Resource.Success -> {
                 val voiceChat = result.data.run {
                     withContext(Dispatchers.IO) {
-                        val file = voiceFile.copyTo(
+                        voiceFile.copyTo(
                             target = File(context.cacheDir, "${index}.wav"),
                             overwrite = true
                         )
@@ -423,19 +432,17 @@ class ChatViewModel @Inject constructor(
                         chatSender = "me",
                         isRead = isRead,
                         createAt = createAt,
-                        isSending = false,
+                        sendState = Chat.ChatSendState.Completed,
                         url = "index"
                     )
                 }
 
                 removeLoadingChat(loadingVoiceChat)
-
                 NewChatObserver.getInstance().setNewChat(voiceChat)
             }
             is Resource.Error -> {
                 infoLog("보이스 채팅 전송 실패: ${result.throwable.stackTrace.joinToString("\n")}")
-
-                removeLoadingChat(loadingVoiceChat)
+                editLoadingChat(loadingVoiceChat.copy(sendState = Chat.ChatSendState.Failed))
             }
         }
     }
@@ -527,7 +534,7 @@ class ChatViewModel @Inject constructor(
 
     /** Image **/
 
-    fun sendImageChat(context: Context, uri: Uri?) = viewModelScope.launch {
+    fun sendImageChat(context: Context, uri: Uri? = null, retryChat: ImageChat? = null) = viewModelScope.launch {
         if (uri == null) return@launch
         val bitmap = uri.toBitmap(context)
         if (bitmap != null) {
@@ -543,7 +550,7 @@ class ChatViewModel @Inject constructor(
             chatSender = "me",
             isRead = true,
             createAt = format.format(Date()),
-            isSending = true,
+            sendState = Chat.ChatSendState.Sending,
             url = "index",
             bitmap = bitmap,
             uri = uri
@@ -568,14 +575,18 @@ class ChatViewModel @Inject constructor(
                 chatSender = "me",
                 isRead = true,
                 createAt = format.format(next),
-                isSending = false,
+                sendState = Chat.ChatSendState.Completed,
                 url = "index",
                 bitmap = bitmap,
                 uri = uri
             )
 
-            removeLoadingChat(loadingImageChat)
-            NewChatObserver.getInstance().setNewChat(imageChat)
+            // 성공했을 때
+//            removeLoadingChat(loadingImageChat)
+//            NewChatObserver.getInstance().setNewChat(imageChat)
+
+            // 실패했을 때
+            editLoadingChat(loadingImageChat.copy(sendState = Chat.ChatSendState.Failed))
         }
 
 

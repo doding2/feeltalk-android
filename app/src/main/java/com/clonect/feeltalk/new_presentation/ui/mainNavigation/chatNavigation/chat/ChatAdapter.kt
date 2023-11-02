@@ -64,6 +64,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
     private var isPartnerInChat = false
 
     private var onClick: ((View, Chat) -> Unit) = { _, _ -> }
+    private var onRetry: (Chat) -> Unit = { }
+    private var onCancel: (Chat) -> Unit = { }
 
     override fun onViewRecycled(holder: ChatViewHolder) {
         super.onViewRecycled(holder)
@@ -185,6 +187,15 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
         this.onClick = onClick
     }
 
+    fun setOnRetry(onRetry: (Chat) -> Unit) {
+        this.onRetry = onRetry
+    }
+
+    fun setOnCancel(onCancel: (Chat) -> Unit) {
+        this.onCancel = onCancel
+    }
+
+
     fun setMyNickname(nickname: String) {
         myNickname = nickname
     }
@@ -219,7 +230,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
     companion object {
         private val diffCallback = object: DiffUtil.ItemCallback<Chat>() {
             override fun areItemsTheSame(oldItem: Chat, newItem: Chat): Boolean {
-                return oldItem.index == newItem.index && oldItem.createAt == newItem.createAt && oldItem.isSending == newItem.isSending
+                return oldItem.index == newItem.index && oldItem.createAt == newItem.createAt && oldItem.sendState == newItem.sendState
             }
 
             override fun areContentsTheSame(oldItem: Chat, newItem: Chat): Boolean {
@@ -228,7 +239,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                         && oldItem.chatSender == newItem.chatSender
                         && oldItem.isRead == newItem.isRead
                         && oldItem.createAt == newItem.createAt
-                        && oldItem.isSending == newItem.isSending
+                        && oldItem.sendState == newItem.sendState
             }
         }
 
@@ -319,15 +330,11 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 tvTime.text = getFormatted(chat.createAt)
                 tvMessage.text = chat.message
 
-                if (chat.isSending) {
-                    tvRead.visibility = View.GONE
-                    tvTime.visibility = View.GONE
-                } else {
-                    tvRead.visibility = View.VISIBLE
-                    tvTime.visibility = View.VISIBLE
-                }
+                applyChatSendState(chat.sendState)
+                ivRetry.setOnClickListener { onRetry(chat) }
+                ivCancel.setOnClickListener { onCancel(chat) }
 
-                root.setOnLongClickListener {
+                tvMessage.setOnLongClickListener {
                     copyText(chat)
                     false
                 }
@@ -343,6 +350,25 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
             clipboard.setPrimaryClip(clip)
         }
 
+        private fun applyChatSendState(state: Chat.ChatSendState) = binding.run {
+            tvRead.visibility = View.GONE
+            tvTime.visibility = View.GONE
+            ivSending.visibility = View.GONE
+            llFailed.visibility = View.GONE
+            when (state) {
+                is Chat.ChatSendState.Sending -> {
+                    ivSending.visibility = View.VISIBLE
+                }
+                Chat.ChatSendState.Failed -> {
+                    llFailed.visibility = View.VISIBLE
+                }
+                Chat.ChatSendState.Completed -> {
+                    tvRead.visibility = View.VISIBLE
+                    tvTime.visibility = View.VISIBLE
+                }
+            }
+        }
+
         override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
             root.updateLayoutParams<RecyclerView.LayoutParams> {
                 topMargin = defaultVerticalMargin
@@ -351,18 +377,17 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
             tvRead.visibility = View.VISIBLE
             tvTime.visibility = View.VISIBLE
-
-            if (item.isSending) {
+            if (item.sendState != Chat.ChatSendState.Completed) {
                 tvRead.visibility = View.GONE
                 tvTime.visibility = View.GONE
-                return
+                return@run
             }
 
             val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
             val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
 
             val isStartChat = !isTopSame && isBottomSame
-            val isEndChat = isTopSame && !isBottomSame
+            val isEndChat = (nextItem?.sendState != Chat.ChatSendState.Completed) || (isTopSame && !isBottomSame)
             val isMiddleChat = isTopSame && isBottomSame
 
             if (isMiddleChat) {
@@ -429,7 +454,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 //            tvPartnerNickname.text = "연인 닉네임"
 //            ivPartnerProfile.setImageResource()
 
-                root.setOnLongClickListener {
+                tvMessage.setOnLongClickListener {
                     copyText(chat)
                     false
                 }
@@ -451,8 +476,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 bottomMargin = defaultVerticalMargin
             }
 
-            if (item.isSending)
-                return
+            if (item.sendState != Chat.ChatSendState.Completed) return
 
             val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
             val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
@@ -544,19 +568,15 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 tvTime.text = getFormatted(chat.createAt)
 
                 ivReplay.setOnClickListener {
-                    if (chat.isSending) return@setOnClickListener
+                    if (chat.sendState == Chat.ChatSendState.Sending) return@setOnClickListener
                     if (isPaused) resume()
                     else replay()
                 }
                 ivPause.setOnClickListener { pause() }
 
-                if (chat.isSending) {
-                    tvRead.visibility = View.GONE
-                    tvTime.visibility = View.GONE
-                } else {
-                    tvRead.visibility = View.VISIBLE
-                    tvTime.visibility = View.VISIBLE
-                }
+                applyChatSendState(chat.sendState)
+                ivRetry.setOnClickListener { onRetry(chat) }
+                ivCancel.setOnClickListener { onCancel(chat) }
 
                 CoroutineScope(Dispatchers.IO).launch {
                     vvCount = 5
@@ -758,7 +778,24 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
             vvVoiceVisualizer.setRenderColor(root.context.getColor(R.color.gray_700))
         }
 
-
+        private fun applyChatSendState(state: Chat.ChatSendState) = binding.run {
+            tvRead.visibility = View.GONE
+            tvTime.visibility = View.GONE
+            ivSending.visibility = View.GONE
+            llFailed.visibility = View.GONE
+            when (state) {
+                is Chat.ChatSendState.Sending -> {
+                    ivSending.visibility = View.VISIBLE
+                }
+                Chat.ChatSendState.Failed -> {
+                    llFailed.visibility = View.VISIBLE
+                }
+                Chat.ChatSendState.Completed -> {
+                    tvRead.visibility = View.VISIBLE
+                    tvTime.visibility = View.VISIBLE
+                }
+            }
+        }
 
         override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
             root.updateLayoutParams<RecyclerView.LayoutParams> {
@@ -768,18 +805,17 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
             tvRead.visibility = View.VISIBLE
             tvTime.visibility = View.VISIBLE
-
-            if (item.isSending) {
+            if (item.sendState != Chat.ChatSendState.Completed) {
                 tvRead.visibility = View.GONE
                 tvTime.visibility = View.GONE
-                return
+                return@run
             }
 
             val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
             val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
 
             val isStartChat = !isTopSame && isBottomSame
-            val isEndChat = isTopSame && !isBottomSame
+            val isEndChat = (nextItem?.sendState != Chat.ChatSendState.Completed) || (isTopSame && !isBottomSame)
             val isMiddleChat = isTopSame && isBottomSame
 
             if (isMiddleChat) {
@@ -1075,8 +1111,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 bottomMargin = defaultVerticalMargin
             }
 
-            if (item.isSending)
-                return
+            if (item.sendState != Chat.ChatSendState.Completed) return
 
             val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
             val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
@@ -1153,13 +1188,9 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 val questionFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
                 tvQuestionDate.text = date?.let { questionFormat.format(it) }
 
-                if (chat.isSending) {
-                    tvRead.visibility = View.GONE
-                    tvTime.visibility = View.GONE
-                } else {
-                    tvRead.visibility = View.VISIBLE
-                    tvTime.visibility = View.VISIBLE
-                }
+                applyChatSendState(chat.sendState)
+                ivRetry.setOnClickListener { onRetry(chat) }
+                ivCancel.setOnClickListener { onCancel(chat) }
 
                 tvMyAnswer.setOnLongClickListener {
                     val myAnswer = chat.question.myAnswer ?: return@setOnLongClickListener false
@@ -1183,6 +1214,25 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
             clipboard.setPrimaryClip(clip)
         }
 
+        private fun applyChatSendState(state: Chat.ChatSendState) = binding.run {
+            tvRead.visibility = View.GONE
+            tvTime.visibility = View.GONE
+            ivSending.visibility = View.GONE
+            llFailed.visibility = View.GONE
+            when (state) {
+                is Chat.ChatSendState.Sending -> {
+                    ivSending.visibility = View.VISIBLE
+                }
+                Chat.ChatSendState.Failed -> {
+                    llFailed.visibility = View.VISIBLE
+                }
+                Chat.ChatSendState.Completed -> {
+                    tvRead.visibility = View.VISIBLE
+                    tvTime.visibility = View.VISIBLE
+                }
+            }
+        }
+
         override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
             root.updateLayoutParams<RecyclerView.LayoutParams> {
                 topMargin = defaultVerticalMargin
@@ -1191,18 +1241,17 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
             tvRead.visibility = View.VISIBLE
             tvTime.visibility = View.VISIBLE
-
-            if (item.isSending) {
+            if (item.sendState != Chat.ChatSendState.Completed) {
                 tvRead.visibility = View.GONE
                 tvTime.visibility = View.GONE
-                return
+                return@run
             }
 
             val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
             val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
 
             val isStartChat = !isTopSame && isBottomSame
-            val isEndChat = isTopSame && !isBottomSame
+            val isEndChat = (nextItem?.sendState != Chat.ChatSendState.Completed) || (isTopSame && !isBottomSame)
             val isMiddleChat = isTopSame && isBottomSame
 
             if (isMiddleChat) {
@@ -1306,8 +1355,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 bottomMargin = defaultVerticalMargin
             }
 
-            if (item.isSending)
-                return
+            if (item.sendState != Chat.ChatSendState.Completed) return
 
             val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
             val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
@@ -1377,18 +1425,33 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 )
                 tvTime.text = getFormatted(chat.createAt)
 
-                if (chat.isSending) {
-                    tvRead.visibility = View.GONE
-                    tvTime.visibility = View.GONE
-                } else {
-                    tvRead.visibility = View.VISIBLE
-                    tvTime.visibility = View.VISIBLE
-                }
+                applyChatSendState(chat.sendState)
+                ivRetry.setOnClickListener { onRetry(chat) }
+                ivCancel.setOnClickListener { onCancel(chat) }
 
                 tlTransformation.transitionName = chat.index.toString()
                 mcvChatContainer.setOnClickListener { onClick(tlTransformation, chat) }
 
                 makeContinuous(prevItem, item, nextItem)
+            }
+        }
+
+        private fun applyChatSendState(state: Chat.ChatSendState) = binding.run {
+            tvRead.visibility = View.GONE
+            tvTime.visibility = View.GONE
+            ivSending.visibility = View.GONE
+            llFailed.visibility = View.GONE
+            when (state) {
+                is Chat.ChatSendState.Sending -> {
+                    ivSending.visibility = View.VISIBLE
+                }
+                Chat.ChatSendState.Failed -> {
+                    llFailed.visibility = View.VISIBLE
+                }
+                Chat.ChatSendState.Completed -> {
+                    tvRead.visibility = View.VISIBLE
+                    tvTime.visibility = View.VISIBLE
+                }
             }
         }
 
@@ -1400,18 +1463,17 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
             tvRead.visibility = View.VISIBLE
             tvTime.visibility = View.VISIBLE
-
-            if (item.isSending) {
+            if (item.sendState != Chat.ChatSendState.Completed) {
                 tvRead.visibility = View.GONE
                 tvTime.visibility = View.GONE
-                return
+                return@run
             }
 
             val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
             val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
 
             val isStartChat = !isTopSame && isBottomSame
-            val isEndChat = isTopSame && !isBottomSame
+            val isEndChat = (nextItem?.sendState != Chat.ChatSendState.Completed) || (isTopSame && !isBottomSame)
             val isMiddleChat = isTopSame && isBottomSame
 
             if (isMiddleChat) {

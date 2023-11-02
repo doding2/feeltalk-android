@@ -366,12 +366,10 @@ class MainNavigationFragment : Fragment() {
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, onBackCallback)
-        infoLog("attach")
     }
 
     override fun onDetach() {
         super.onDetach()
         onBackCallback.remove()
-        infoLog("dettach")
     }
 }
