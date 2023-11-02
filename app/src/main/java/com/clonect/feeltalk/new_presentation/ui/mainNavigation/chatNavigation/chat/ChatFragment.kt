@@ -317,6 +317,17 @@ class ChatFragment : Fragment() {
             setOnClickItem(::onClickChat)
             setOnRetry(::onRetryChat)
             setOnCancel(::onCancelChat)
+            registerAdapterDataObserver(object: RecyclerView.AdapterDataObserver() {
+                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                    super.onItemRangeInserted(positionStart, itemCount)
+                    if (positionStart == 0) return
+                    if (positionStart >= adapter.itemCount) return
+                    val item = adapter.snapshot()[positionStart] ?: return
+                    if (item.chatSender == "me" || (viewModel.isUserInBottom.value && item.chatSender == "partner")) {
+                        scrollToBottom()
+                    }
+                }
+            })
         }
         rvChat.addOnScrollListener(object: RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -399,7 +410,7 @@ class ChatFragment : Fragment() {
 
     private fun scrollToBottom() {
         scrollRemainHeight -= computeRemainScrollHeight()
-        var position = adapter.itemCount - 1
+        val position = adapter.itemCount - 1
         binding.rvChat.scrollToPosition(position)
     }
 
@@ -595,12 +606,6 @@ class ChatFragment : Fragment() {
             launch { viewModel.isVoiceRecordingReplayPaused.collectLatest(::changePauseVoiceRecordingReplayingView) }
             launch { viewModel.voiceRecordTime.collectLatest(::changeVoiceRecordingTimeView) }
             launch { viewModel.isKeyboardUp.collectLatest(::applyKeyboardUp) }
-
-            launch {
-                viewModel.scrollToBottom.collectLatest {
-                    if (it) scrollToBottom()
-                }
-            }
             launch {
                 viewModel.pagingChat.collectLatest {
                     adapter.submitData(requireParentFragment().lifecycle, it)

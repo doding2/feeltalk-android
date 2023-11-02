@@ -75,9 +75,6 @@ class ChatViewModel @Inject constructor(
     private val _isUserInBottom = MutableStateFlow(true)
     val isUserInBottom = _isUserInBottom.asStateFlow()
 
-    private val _scrollToBottom = MutableSharedFlow<Boolean>()
-    val scrollToBottom = _scrollToBottom.asSharedFlow()
-
     private val _isKeyboardUp = MutableStateFlow(false)
     val isKeyboardUp = _isKeyboardUp.asStateFlow()
 
@@ -101,10 +98,6 @@ class ChatViewModel @Inject constructor(
 
     fun setUserInBottom(isInBottom: Boolean) {
         _isUserInBottom.value = isInBottom
-    }
-
-    fun setScrollToBottom() = viewModelScope.launch {
-        _scrollToBottom.emit(true)
     }
 
     fun cancelJob() = viewModelScope.launch {
@@ -242,12 +235,7 @@ class ChatViewModel @Inject constructor(
             sendState = Chat.ChatSendState.Sending,
             message = message
         )
-        launch {
-            insertLoadingChat(loadingTextChat)
-
-            delay(50)
-            setScrollToBottom()
-        }
+        insertLoadingChat(loadingTextChat)
 
         when (val result = sendTextChatUseCase(message)) {
             is Resource.Success -> {
@@ -283,39 +271,10 @@ class ChatViewModel @Inject constructor(
             .newChat
             .collect { newChat ->
                 runCatching {
-                    val chat = when (newChat?.type) {
-                        ChatType.TextChatting -> {
-                            val textChat = newChat as? TextChat ?: return@collect
-                            textChat
-                        }
-                        ChatType.VoiceChatting -> {
-                            val voiceChat = newChat as? VoiceChat ?: return@collect
-                            voiceChat
-                        }
-                        ChatType.QuestionChatting -> {
-                            val questionChat = newChat as? QuestionChat ?: return@collect
-                            questionChat
-                        }
-                        ChatType.ImageChatting -> {
-                            val imageChat = newChat as? ImageChat ?: return@collect
-                            imageChat
-                        }
-                        null -> return@collect
-                        else -> {
-                            infoLog("아직 미지원")
-                            return@collect
-                        }
-                    }
-
-                    insertCompleteChat(chat)
-                    infoLog("new chat: $chat")
-
-                    if (isUserInBottom.value && (chat.chatSender == "partner" || chat.type == ChatType.QuestionChatting)) {
-                        delay(50)
-                        setScrollToBottom()
-                    }
+                    insertCompleteChat(newChat ?: return@runCatching)
+                    infoLog("new chat: $newChat")
                 }.onFailure {
-                    infoLog("collectNewChat(): ${it.localizedMessage}")
+                    infoLog("Fail to collectNewChat(): ${it.localizedMessage}")
                 }
             }
     }
@@ -406,13 +365,7 @@ class ChatViewModel @Inject constructor(
             sendState = Chat.ChatSendState.Sending,
             url = "index",
         )
-
-        launch {
-            insertLoadingChat(loadingVoiceChat)
-
-            delay(50)
-            setScrollToBottom()
-        }
+        insertLoadingChat(loadingVoiceChat)
         onSend()
 
         when (val result = sendVoiceChatUseCase(voiceFile)) {
@@ -555,12 +508,7 @@ class ChatViewModel @Inject constructor(
             bitmap = bitmap,
             uri = uri
         )
-
-        launch {
-            insertLoadingChat(loadingImageChat)
-            delay(50)
-            setScrollToBottom()
-        }
+        insertLoadingChat(loadingImageChat)
 
         // after send chat
 

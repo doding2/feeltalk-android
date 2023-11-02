@@ -35,6 +35,8 @@ import com.clonect.feeltalk.databinding.FragmentChatBinding
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.DividerChat
 import com.clonect.feeltalk.new_domain.model.chat.ImageChat
+import com.clonect.feeltalk.new_domain.model.chat.TextChat
+import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.ChatAdapter
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.ChatViewModel
@@ -326,6 +328,19 @@ class BubbleChatFragment : Fragment() {
             setMyNickname("me")
             setPartnerNickname("partner")
             setOnClickItem(::onClickChat)
+            setOnRetry(::onRetryChat)
+            setOnCancel(::onCancelChat)
+            registerAdapterDataObserver(object: RecyclerView.AdapterDataObserver() {
+                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                    super.onItemRangeInserted(positionStart, itemCount)
+                    if (positionStart == 0) return
+                    if (positionStart >= adapter.itemCount) return
+                    val item = adapter.snapshot()[positionStart] ?: return
+                    if (item.chatSender == "me" || (viewModel.isUserInBottom.value && item.chatSender == "partner")) {
+                        scrollToBottom()
+                    }
+                }
+            })
         }
         rvChat.addOnScrollListener(object: RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -343,6 +358,19 @@ class BubbleChatFragment : Fragment() {
         when (chat) {
             is ImageChat -> { navigateToImageDetail(view, chat) }
         }
+    }
+
+    private fun onRetryChat(chat: Chat) {
+        viewModel.cancelFailedChat(chat)
+        when (chat) {
+            is TextChat -> viewModel.sendTextChat(retryChat = chat)
+            is VoiceChat -> viewModel.sendVoiceChat(context = requireContext(), retryChat = chat)
+            is ImageChat -> viewModel.sendImageChat(context = requireContext(), retryChat = chat)
+        }
+    }
+
+    private fun onCancelChat(chat: Chat) {
+        viewModel.cancelFailedChat(chat)
     }
 
     private fun setKeyboardInsets() {
@@ -565,12 +593,6 @@ class BubbleChatFragment : Fragment() {
             launch { viewModel.isVoiceRecordingReplayPaused.collectLatest(::changePauseVoiceRecordingReplayingView) }
             launch { viewModel.voiceRecordTime.collectLatest(::changeVoiceRecordingTimeView) }
             launch { viewModel.isKeyboardUp.collectLatest(::applyKeyboardUp) }
-
-            launch {
-                viewModel.scrollToBottom.collectLatest {
-                    if (it) scrollToBottom()
-                }
-            }
             launch {
                 viewModel.pagingChat.collectLatest {
                     adapter.submitData(requireParentFragment().lifecycle, it)
