@@ -104,7 +104,7 @@
             app:cardBackgroundColor="@color/gray_100"
             app:cardElevation="0dp"
             app:layout_constrainedWidth="true"
-            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintHorizontal_bias="1"
             app:layout_constraintStart_toEndOf="@id/tv_time"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
