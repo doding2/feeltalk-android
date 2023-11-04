@@ -123,7 +123,6 @@ class AnswerFragment : Fragment() {
     private fun changeQuestionView(question: Question?) {
         if (question == null) {
             navViewModel.setUserAnswering(false)
-            navViewModel.setShowAnswerSheet(false)
             return
         }
 

@@ -70,17 +70,13 @@ class ContentsShareFragment : Fragment() {
         val selectedTab = tbContentsTabs.selectedTabPosition
         if (selectedTab == 0) {
             viewModel.shareQuestion {
-                navigateBack()
+                findNavController().popBackStack()
             }
         } else {
             viewModel.shareChallenge {
-                navigateBack()
+                findNavController().popBackStack()
             }
         }
-    }
-
-    private fun navigateBack() {
-        findNavController().popBackStack()
     }
 
 

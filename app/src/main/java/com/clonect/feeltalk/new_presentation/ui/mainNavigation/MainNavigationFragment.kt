@@ -161,7 +161,7 @@ class MainNavigationFragment : Fragment() {
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {}
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                        viewModel.setAnswerTargetQuestion(null)
+                        viewModel.setShowAnswerSheet(false)
                     }
                 }
             })
@@ -333,14 +333,13 @@ class MainNavigationFragment : Fragment() {
         super.onAttach(context)
         onBackCallback = object: OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                infoLog("onBackPressed")
                 if (viewModel.showAnswerSheet.value && viewModel.isUserAnswering.value) {
                     showConfirmDialog(
                         title = requireContext().getString(R.string.answer_cancel_title),
                         body = requireContext().getString(R.string.answer_cancel_body),
                         confirmButton = requireContext().getString(R.string.answer_cancel_confirm),
                     ) {
-                        viewModel.setAnswerTargetQuestion(null)
+                        viewModel.setShowAnswerSheet(false)
                     }
                     return
                 }

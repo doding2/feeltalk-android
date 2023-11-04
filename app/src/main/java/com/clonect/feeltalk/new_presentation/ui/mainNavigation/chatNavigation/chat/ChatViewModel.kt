@@ -149,7 +149,7 @@ class ChatViewModel @Inject constructor(
     private fun insertCompleteChat(chat: Chat) {
         val event = PageEvents.InsertItemFooter(chat)
         if (event in pageModificationEvents.value) return
-        
+
         val firstSendingChatIndex = pageModificationEvents.value.indexOfFirst { it.item.sendState == Chat.ChatSendState.Sending }
         if (firstSendingChatIndex != -1) {
             pageModificationEvents.value = pageModificationEvents.value.toMutableList().apply {
