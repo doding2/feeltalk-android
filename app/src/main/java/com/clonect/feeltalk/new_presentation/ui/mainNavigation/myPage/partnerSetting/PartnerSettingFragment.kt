@@ -65,8 +65,7 @@ class PartnerSettingFragment : Fragment() {
 
 
     private fun changePartnerInfoView(partnerInfo: PartnerInfo?) = binding.run {
-        val snsType = SocialType.Google     // TODO 나중에 PartnerInfo가 snsType Property를 가지게 수정해야 됨
-        val snsRes = when (snsType) {
+        val snsRes = when (partnerInfo?.snsType) {
             SocialType.Google -> R.drawable.n_ic_setting_sns_google
             SocialType.Kakao -> R.drawable.n_ic_setting_sns_kakao
             SocialType.Naver -> R.drawable.n_ic_setting_sns_naver
@@ -77,7 +76,7 @@ class PartnerSettingFragment : Fragment() {
             }
         }
         ivSnsType.setImageResource(snsRes)
-        tvNickname.text = partnerInfo?.nickname
+        tvNickname.text = partnerInfo.nickname
     }
 
     private fun showLoading(isLoading: Boolean) {

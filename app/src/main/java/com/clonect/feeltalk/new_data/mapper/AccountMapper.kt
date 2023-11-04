@@ -14,8 +14,8 @@ fun MyInfoDto.toMyInfo(): MyInfo {
             "kakao" -> SocialType.Kakao
             "naver" -> SocialType.Naver
             "google" -> SocialType.Google
-            "appleAndroid" -> SocialType.AppleAndroid
-            "appleIOS" -> SocialType.AppleIOS
+            "appleandroid" -> SocialType.AppleAndroid
+            "appleiOS" -> SocialType.AppleIOS
             else -> SocialType.valueOf(snsType)
         }
     )

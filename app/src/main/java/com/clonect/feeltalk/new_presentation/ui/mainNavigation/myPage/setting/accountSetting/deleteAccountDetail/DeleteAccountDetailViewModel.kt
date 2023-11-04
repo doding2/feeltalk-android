@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.usecase.account.DeleteMyAccountUseCase
+import com.clonect.feeltalk.new_presentation.service.FirebaseCloudMessagingService
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -106,8 +107,10 @@ class DeleteAccountDetailViewModel @Inject constructor(
         setLoading(true)
         when (val result = deleteMyAccountUseCase(deleteReasonType, deleteReason, etcReason)) {
             is Resource.Success -> {
+                FirebaseCloudMessagingService.clearFcmToken()
                 onComplete()
             }
+
             is Resource.Error -> {
                 infoLog("Fail to delete account: ${result.throwable.localizedMessage}")
                 result.throwable.localizedMessage?.let { sendErrorMessage(it) }

@@ -65,7 +65,7 @@ interface ClonectService {
         @Header("Authorization") token: String,
     ): Response<ApiResponse<Unit>>
 
-    @GET("")
+    @HTTP(method = "DELETE", path = "api/v1/member", hasBody = true)
     suspend fun deleteMyAccount(
         @Header("Authorization") token: String,
         @Body body: JsonObject
