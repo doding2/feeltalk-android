@@ -245,7 +245,7 @@ class LockResetFragment : Fragment() {
 
 
     private fun changeLockAnswerDateView(deadline: Date) {
-        val formatter = SimpleDateFormat("yyyy년 M월 dd일", Locale.getDefault())
+        val formatter = SimpleDateFormat("yyyy년 M월 d일", Locale.getDefault())
         val str = formatter.format(deadline)
         binding.tvDeadline.text = str
     }

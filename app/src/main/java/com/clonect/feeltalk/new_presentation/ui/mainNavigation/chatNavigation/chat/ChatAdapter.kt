@@ -14,22 +14,48 @@ import androidx.core.view.updateLayoutParams
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.clonect.feeltalk.R
+import com.clonect.feeltalk.common.Constants
+import com.clonect.feeltalk.databinding.ItemAddChallengeChatMineBinding
+import com.clonect.feeltalk.databinding.ItemAddChallengeChatPartnerBinding
+import com.clonect.feeltalk.databinding.ItemAnswerChatMineBinding
+import com.clonect.feeltalk.databinding.ItemAnswerChatPartnerBinding
+import com.clonect.feeltalk.databinding.ItemChallengeChatMineBinding
+import com.clonect.feeltalk.databinding.ItemChallengeChatPartnerBinding
 import com.clonect.feeltalk.databinding.ItemChatDividerBinding
+import com.clonect.feeltalk.databinding.ItemCompleteChallengeChatMineBinding
+import com.clonect.feeltalk.databinding.ItemCompleteChallengeChatPartnerBinding
 import com.clonect.feeltalk.databinding.ItemImageChatMineBinding
+import com.clonect.feeltalk.databinding.ItemImageChatPartnerBinding
+import com.clonect.feeltalk.databinding.ItemPokeChatMineBinding
+import com.clonect.feeltalk.databinding.ItemPokeChatPartnerBinding
 import com.clonect.feeltalk.databinding.ItemQuestionChatMineBinding
 import com.clonect.feeltalk.databinding.ItemQuestionChatPartnerBinding
+import com.clonect.feeltalk.databinding.ItemResetPartnerPasswordChatMineBinding
+import com.clonect.feeltalk.databinding.ItemResetPartnerPasswordChatPartnerBinding
+import com.clonect.feeltalk.databinding.ItemSignalChatMineBinding
+import com.clonect.feeltalk.databinding.ItemSignalChatPartnerBinding
 import com.clonect.feeltalk.databinding.ItemTextChatMineBinding
 import com.clonect.feeltalk.databinding.ItemTextChatPartnerBinding
 import com.clonect.feeltalk.databinding.ItemVoiceChatMineBinding
 import com.clonect.feeltalk.databinding.ItemVoiceChatPartnerBinding
+import com.clonect.feeltalk.new_domain.model.chat.AddChallengeChat
+import com.clonect.feeltalk.new_domain.model.chat.AnswerChat
+import com.clonect.feeltalk.new_domain.model.chat.ChallengeChat
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.ChatType
+import com.clonect.feeltalk.new_domain.model.chat.CompleteChallengeChat
 import com.clonect.feeltalk.new_domain.model.chat.DividerChat
 import com.clonect.feeltalk.new_domain.model.chat.ImageChat
+import com.clonect.feeltalk.new_domain.model.chat.PokeChat
 import com.clonect.feeltalk.new_domain.model.chat.QuestionChat
+import com.clonect.feeltalk.new_domain.model.chat.ResetPartnerPasswordChat
+import com.clonect.feeltalk.new_domain.model.chat.SignalChat
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
+import com.clonect.feeltalk.new_domain.model.signal.Signal
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.audioVisualizer.RecordingReplayer
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.presentation.utils.infoLog
@@ -45,11 +71,13 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLConnection
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlin.math.ceil
 
 
 class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallback) {
@@ -111,6 +139,46 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 voiceViewHolders.add(holder)
                 holder
             }
+            TYPE_IMAGE_MINE -> {
+                val binding = ItemImageChatMineBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ImageChatMineViewHolder(binding)
+            }
+            TYPE_IMAGE_PARTNER -> {
+                val binding = ItemImageChatPartnerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ImageChatPartnerViewHolder(binding)
+            }
+            TYPE_SIGNAL_MINE -> {
+                val binding = ItemSignalChatMineBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                SignalChatMineViewHolder(binding)
+            }
+            TYPE_SIGNAL_PARTNER -> {
+                val binding = ItemSignalChatPartnerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                SignalChatPartnerViewHolder(binding)
+            }
+            TYPE_CHALLENGE_MINE -> {
+                val binding = ItemChallengeChatMineBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ChallengeChatMineViewHolder(binding)
+            }
+            TYPE_CHALLENGE_PARTNER -> {
+                val binding = ItemChallengeChatPartnerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ChallengeChatPartnerViewHolder(binding)
+            }
+            TYPE_ADD_CHALLENGE_MINE -> {
+                val binding = ItemAddChallengeChatMineBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                AddChallengeChatMineViewHolder(binding)
+            }
+            TYPE_ADD_CHALLENGE_PARTNER -> {
+                val binding = ItemAddChallengeChatPartnerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                AddChallengeChatPartnerViewHolder(binding)
+            }
+            TYPE_COMPLETE_CHALLENGE_MINE -> {
+                val binding = ItemCompleteChallengeChatMineBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                CompleteChallengeChatMineViewHolder(binding)
+            }
+            TYPE_COMPLETE_CHALLENGE_PARTNER -> {
+                val binding = ItemCompleteChallengeChatPartnerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                CompleteChallengeChatPartnerViewHolder(binding)
+            }
             TYPE_QUESTION_MINE -> {
                 val binding = ItemQuestionChatMineBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 QuestionChatMineViewHolder(binding)
@@ -119,13 +187,29 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 val binding = ItemQuestionChatPartnerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 QuestionChatPartnerViewHolder(binding)
             }
-            TYPE_IMAGE_MINE -> {
-                val binding = ItemImageChatMineBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                ImageChatMineViewHolder(binding)
+            TYPE_ANSWER_MINE -> {
+                val binding = ItemAnswerChatMineBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                AnswerChatMineViewHolder(binding)
             }
-            TYPE_IMAGE_PARTNER -> {
-                val binding = ItemImageChatMineBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                ImageChatMineViewHolder(binding)
+            TYPE_ANSWER_PARTNER -> {
+                val binding = ItemAnswerChatPartnerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                AnswerChatPartnerViewHolder(binding)
+            }
+            TYPE_POKE_MINE -> {
+                val binding = ItemPokeChatMineBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                PokeChatMineViewHolder(binding)
+            }
+            TYPE_POKE_PARTNER -> {
+                val binding = ItemPokeChatPartnerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                PokeChatPartnerViewHolder(binding)
+            }
+            TYPE_RESET_PARTNER_PASSWORD_MINE -> {
+                val binding = ItemResetPartnerPasswordChatMineBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ResetPartnerPasswordChatMineViewHolder(binding)
+            }
+            TYPE_RESET_PARTNER_PASSWORD_PARTNER -> {
+                val binding = ItemResetPartnerPasswordChatPartnerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ResetPartnerPasswordChatPartnerViewHolder(binding)
             }
             else -> {
                 val binding = ItemChatDividerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -163,13 +247,37 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 if (item.chatSender == myNickname) TYPE_IMAGE_MINE
                 else TYPE_IMAGE_PARTNER
             }
+            ChatType.SignalChatting -> {
+                if (item.chatSender == myNickname) TYPE_SIGNAL_MINE
+                else TYPE_SIGNAL_PARTNER
+            }
             ChatType.ChallengeChatting -> {
                 if (item.chatSender == myNickname) TYPE_CHALLENGE_MINE
                 else TYPE_CHALLENGE_PARTNER
             }
+            ChatType.AddChallengeChatting -> {
+                if (item.chatSender == myNickname) TYPE_ADD_CHALLENGE_MINE
+                else TYPE_ADD_CHALLENGE_PARTNER
+            }
+            ChatType.CompleteChallengeChatting -> {
+                if (item.chatSender == myNickname) TYPE_COMPLETE_CHALLENGE_MINE
+                else TYPE_COMPLETE_CHALLENGE_PARTNER
+            }
             ChatType.QuestionChatting -> {
                 if (item.chatSender == myNickname) TYPE_QUESTION_MINE
                 else TYPE_QUESTION_PARTNER
+            }
+            ChatType.AnswerChatting -> {
+                if (item.chatSender == myNickname) TYPE_ANSWER_MINE
+                else TYPE_ANSWER_PARTNER
+            }
+            ChatType.PokeChatting -> {
+                if (item.chatSender == myNickname) TYPE_POKE_MINE
+                else TYPE_POKE_PARTNER
+            }
+            ChatType.ResetPartnerPasswordChatting -> {
+                if (item.chatSender == myNickname) TYPE_RESET_PARTNER_PASSWORD_MINE
+                else TYPE_RESET_PARTNER_PASSWORD_PARTNER
             }
             else -> TYPE_DIVIDER
         }
@@ -1165,6 +1273,1124 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
     }
 
 
+    inner class ImageChatMineViewHolder(
+        val binding: ItemImageChatMineBinding,
+    ) : ChatViewHolder(binding.root) {
+
+        override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
+            val chat = item as ImageChat
+
+            binding.run {
+                ivImage.updateLayoutParams {
+                    width = chat.width
+                    height = chat.height
+                }
+
+                Glide.with(root).run {
+                    if (chat.file != null) {
+                        load(chat.file)
+                    } else if (chat.url != null) {
+                        load(chat.url)
+                    } else {
+                        load(chat.uri)
+                    }
+                }.placeholder(R.drawable.n_background_image_chat_placeholder)
+                    .error(R.drawable.n_background_image_chat_placeholder)
+                    .fallback(R.drawable.n_background_image_chat_placeholder)
+                    .into(ivImage)
+
+                tvRead.text = root.context.getString(
+                    if (isPartnerInChat || chat.isRead) R.string.chat_read
+                    else R.string.chat_unread
+                )
+                tvTime.text = getFormatted(chat.createAt)
+
+                applyChatSendState(chat.sendState)
+                ivRetry.setOnClickListener { onRetry(chat) }
+                ivCancel.setOnClickListener { onCancel(chat) }
+
+                tlTransformation.transitionName = chat.index.toString()
+                mcvChatContainer.setOnClickListener { onClick(tlTransformation, chat) }
+
+                makeContinuous(prevItem, item, nextItem)
+            }
+        }
+
+
+
+        private fun applyChatSendState(state: Chat.ChatSendState) = binding.run {
+            tvRead.visibility = View.GONE
+            tvTime.visibility = View.GONE
+            ivSending.visibility = View.GONE
+            llFailed.visibility = View.GONE
+            when (state) {
+                is Chat.ChatSendState.Sending -> {
+                    ivSending.visibility = View.VISIBLE
+                }
+                Chat.ChatSendState.Failed -> {
+                    llFailed.visibility = View.VISIBLE
+                }
+                Chat.ChatSendState.Completed -> {
+                    tvRead.visibility = View.VISIBLE
+                    tvTime.visibility = View.VISIBLE
+                }
+            }
+        }
+
+        override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+            root.updateLayoutParams<RecyclerView.LayoutParams> {
+                topMargin = defaultVerticalMargin
+                bottomMargin = defaultVerticalMargin
+            }
+
+            tvRead.visibility = View.VISIBLE
+            tvTime.visibility = View.VISIBLE
+            if (item.sendState != Chat.ChatSendState.Completed) {
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+                return@run
+            }
+
+            val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+
+            val isStartChat = !isTopSame && isBottomSame
+            val isEndChat = (nextItem?.sendState != Chat.ChatSendState.Completed) || (isTopSame && !isBottomSame)
+            val isMiddleChat = isTopSame && isBottomSame
+
+            if (isMiddleChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+                return@run
+            }
+
+            if (isStartChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = defaultVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+            }
+
+            if (isEndChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = defaultVerticalMargin
+                }
+                tvRead.visibility = View.VISIBLE
+                tvTime.visibility = View.VISIBLE
+
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+            }
+        }
+    }
+
+    inner class ImageChatPartnerViewHolder(
+        val binding: ItemImageChatPartnerBinding,
+    ) : ChatViewHolder(binding.root) {
+
+        override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
+            val chat = item as ImageChat
+
+            binding.run {
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.VISIBLE
+                llPartnerInfo.visibility = View.VISIBLE
+
+                tvTime.text = getFormatted(chat.createAt)
+
+//           TODO
+//            tvPartnerNickname.text = "연인 닉네임"
+//            ivPartnerProfile.setImageResource()
+
+                ivImage.updateLayoutParams {
+                    width = chat.width
+                    height = chat.height
+                }
+
+                Glide.with(root).run {
+                    if (chat.file != null) {
+                        load(chat.file)
+                    } else if (chat.url != null) {
+                        load(chat.url)
+                    } else {
+                        load(chat.uri)
+                    }
+                }.placeholder(R.drawable.n_background_image_chat_placeholder)
+                    .error(R.drawable.n_background_image_chat_placeholder)
+                    .fallback(R.drawable.n_background_image_chat_placeholder)
+                    .apply(RequestOptions().override(chat.width, chat.height))
+                    .into(ivImage)
+
+                tlTransformation.transitionName = chat.index.toString()
+                mcvChatContainer.setOnClickListener { onClick(tlTransformation, chat) }
+
+                makeContinuous(prevItem, item, nextItem)
+            }
+        }
+
+        override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+            root.updateLayoutParams<RecyclerView.LayoutParams> {
+                topMargin = defaultVerticalMargin
+                bottomMargin = defaultVerticalMargin
+            }
+
+            if (item.sendState != Chat.ChatSendState.Completed) return
+
+            val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+
+            val isStartChat = !isTopSame && isBottomSame
+            val isEndChat = isTopSame && !isBottomSame
+            val isMiddleChat = isTopSame && isBottomSame
+
+            if (isMiddleChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvTime.visibility = View.GONE
+                llPartnerInfo.visibility = View.GONE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+                return@run
+            }
+
+            if (isStartChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = defaultVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvTime.visibility = View.GONE
+                llPartnerInfo.visibility = View.VISIBLE
+            }
+
+            if (isEndChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = defaultVerticalMargin
+                }
+                tvTime.visibility = View.VISIBLE
+                llPartnerInfo.visibility = View.GONE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+            }
+        }
+    }
+
+
+    inner class SignalChatMineViewHolder(
+        val binding: ItemSignalChatMineBinding,
+    ) : ChatViewHolder(binding.root) {
+
+        override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
+            val chat = item as SignalChat
+            binding.run {
+                tvRead.text = root.context.getString(
+                    if (isPartnerInChat || chat.isRead) R.string.chat_read
+                    else R.string.chat_unread
+                )
+                tvTime.text = getFormatted(chat.createAt)
+
+                applyChatSendState(chat.sendState)
+                ivRetry.setOnClickListener { onRetry(chat) }
+                ivCancel.setOnClickListener { onCancel(chat) }
+
+                when (chat.signal) {
+                    Signal.Zero -> {
+                        ivSignal.setImageResource(R.drawable.n_image_signal_0)
+                        tvSignalPercent.setText(R.string.signal_chat_percent_0)
+                        tvSignalSubtitle.setText(R.string.signal_subtitle_0)
+                    }
+                    Signal.Quarter -> {
+                        ivSignal.setImageResource(R.drawable.n_image_signal_25)
+                        tvSignalPercent.setText(R.string.signal_chat_percent_25)
+                        tvSignalSubtitle.setText(R.string.signal_subtitle_25)
+                    }
+                    Signal.Half -> {
+                        ivSignal.setImageResource(R.drawable.n_image_signal_50)
+                        tvSignalPercent.setText(R.string.signal_chat_percent_50)
+                        tvSignalSubtitle.setText(R.string.signal_subtitle_50)
+                    }
+                    Signal.ThreeFourth -> {
+                        ivSignal.setImageResource(R.drawable.n_image_signal_75)
+                        tvSignalPercent.setText(R.string.signal_chat_percent_75)
+                        tvSignalSubtitle.setText(R.string.signal_subtitle_75)
+                    }
+                    Signal.One -> {
+                        ivSignal.setImageResource(R.drawable.n_image_signal_100)
+                        tvSignalPercent.setText(R.string.signal_chat_percent_100)
+                        tvSignalSubtitle.setText(R.string.signal_subtitle_100)
+                    }
+                }
+
+
+                makeContinuous(prevItem, item, nextItem)
+            }
+        }
+
+        private fun applyChatSendState(state: Chat.ChatSendState) = binding.run {
+            tvRead.visibility = View.GONE
+            tvTime.visibility = View.GONE
+            ivSending.visibility = View.GONE
+            llFailed.visibility = View.GONE
+            when (state) {
+                is Chat.ChatSendState.Sending -> {
+                    ivSending.visibility = View.VISIBLE
+                }
+                Chat.ChatSendState.Failed -> {
+                    llFailed.visibility = View.VISIBLE
+                }
+                Chat.ChatSendState.Completed -> {
+                    tvRead.visibility = View.VISIBLE
+                    tvTime.visibility = View.VISIBLE
+                }
+            }
+        }
+
+        override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+            root.updateLayoutParams<RecyclerView.LayoutParams> {
+                topMargin = defaultVerticalMargin
+                bottomMargin = defaultVerticalMargin
+            }
+
+            tvRead.visibility = View.VISIBLE
+            tvTime.visibility = View.VISIBLE
+            if (item.sendState != Chat.ChatSendState.Completed) {
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+                return@run
+            }
+
+            val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+
+            val isStartChat = !isTopSame && isBottomSame
+            val isEndChat = (nextItem?.sendState != Chat.ChatSendState.Completed) || (isTopSame && !isBottomSame)
+            val isMiddleChat = isTopSame && isBottomSame
+
+            if (isMiddleChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+                return@run
+            }
+
+            if (isStartChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = defaultVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+            }
+
+            if (isEndChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = defaultVerticalMargin
+                }
+                tvRead.visibility = View.VISIBLE
+                tvTime.visibility = View.VISIBLE
+
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+            }
+        }
+    }
+
+    inner class SignalChatPartnerViewHolder(
+        val binding: ItemSignalChatPartnerBinding,
+    ) : ChatViewHolder(binding.root) {
+
+        override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
+            val chat = item as SignalChat
+            binding.run {
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.VISIBLE
+                llPartnerInfo.visibility = View.VISIBLE
+
+                tvTime.text = getFormatted(chat.createAt)
+
+//           TODO
+//            tvPartnerNickname.text = "연인 닉네임"
+//            ivPartnerProfile.setImageResource()
+
+                when (chat.signal) {
+                    Signal.Zero -> {
+                        ivSignal.setImageResource(R.drawable.n_image_signal_0)
+                        tvSignalPercent.setText(R.string.signal_chat_percent_0)
+                        tvSignalSubtitle.setText(R.string.signal_subtitle_0)
+                    }
+                    Signal.Quarter -> {
+                        ivSignal.setImageResource(R.drawable.n_image_signal_25)
+                        tvSignalPercent.setText(R.string.signal_chat_percent_25)
+                        tvSignalSubtitle.setText(R.string.signal_subtitle_25)
+                    }
+                    Signal.Half -> {
+                        ivSignal.setImageResource(R.drawable.n_image_signal_50)
+                        tvSignalPercent.setText(R.string.signal_chat_percent_50)
+                        tvSignalSubtitle.setText(R.string.signal_subtitle_50)
+                    }
+                    Signal.ThreeFourth -> {
+                        ivSignal.setImageResource(R.drawable.n_image_signal_75)
+                        tvSignalPercent.setText(R.string.signal_chat_percent_75)
+                        tvSignalSubtitle.setText(R.string.signal_subtitle_75)
+                    }
+                    Signal.One -> {
+                        ivSignal.setImageResource(R.drawable.n_image_signal_100)
+                        tvSignalPercent.setText(R.string.signal_chat_percent_100)
+                        tvSignalSubtitle.setText(R.string.signal_subtitle_100)
+                    }
+                }
+
+                makeContinuous(prevItem, item, nextItem)
+            }
+        }
+
+        override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+            root.updateLayoutParams<RecyclerView.LayoutParams> {
+                topMargin = defaultVerticalMargin
+                bottomMargin = defaultVerticalMargin
+            }
+
+            if (item.sendState != Chat.ChatSendState.Completed) return
+
+            val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+
+            val isStartChat = !isTopSame && isBottomSame
+            val isEndChat = isTopSame && !isBottomSame
+            val isMiddleChat = isTopSame && isBottomSame
+
+            if (isMiddleChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvTime.visibility = View.GONE
+                llPartnerInfo.visibility = View.GONE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+                return@run
+            }
+
+            if (isStartChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = defaultVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvTime.visibility = View.GONE
+                llPartnerInfo.visibility = View.VISIBLE
+            }
+
+            if (isEndChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = defaultVerticalMargin
+                }
+                tvTime.visibility = View.VISIBLE
+                llPartnerInfo.visibility = View.GONE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+            }
+        }
+    }
+
+
+    inner class ChallengeChatMineViewHolder(
+        val binding: ItemChallengeChatMineBinding,
+    ) : ChatViewHolder(binding.root) {
+
+        override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
+            val chat = item as ChallengeChat
+            binding.run {
+                tvRead.text = root.context.getString(
+                    if (isPartnerInChat || chat.isRead) R.string.chat_read
+                    else R.string.chat_unread
+                )
+                tvTime.text = getFormatted(chat.createAt)
+
+                applyChatSendState(chat.sendState)
+                ivRetry.setOnClickListener { onRetry(chat) }
+                ivCancel.setOnClickListener { onCancel(chat) }
+
+                tvChallengeTitle.text = chat.challenge.title
+                val dDay = ceil((chat.challenge.deadline.time - Date().time).toDouble() / Constants.ONE_DAY).toInt()
+                val formatter = SimpleDateFormat(root.context.getString(R.string.challenge_chat_date_format), Locale.getDefault())
+                val str = formatter.format(chat.challenge.deadline)
+                tvChallengeDeadline.text = str
+                tvDDay.text = if (dDay >= 999) {
+                    root.context.getString(R.string.add_challenge_d_day_over)
+                } else if (dDay == 0) {
+                    root.context.getString(R.string.add_challenge_d_day_today)
+                } else {
+                    root.context.getString(R.string.add_challenge_d_day_normal) + dDay
+                }
+
+                mcvChallengeButton.setOnClickListener { onClick(root, chat) }
+
+                makeContinuous(prevItem, item, nextItem)
+            }
+        }
+
+        private fun applyChatSendState(state: Chat.ChatSendState) = binding.run {
+            tvRead.visibility = View.GONE
+            tvTime.visibility = View.GONE
+            ivSending.visibility = View.GONE
+            llFailed.visibility = View.GONE
+            when (state) {
+                is Chat.ChatSendState.Sending -> {
+                    ivSending.visibility = View.VISIBLE
+                }
+                Chat.ChatSendState.Failed -> {
+                    llFailed.visibility = View.VISIBLE
+                }
+                Chat.ChatSendState.Completed -> {
+                    tvRead.visibility = View.VISIBLE
+                    tvTime.visibility = View.VISIBLE
+                }
+            }
+        }
+
+        override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+            root.updateLayoutParams<RecyclerView.LayoutParams> {
+                topMargin = defaultVerticalMargin
+                bottomMargin = defaultVerticalMargin
+            }
+
+            tvRead.visibility = View.VISIBLE
+            tvTime.visibility = View.VISIBLE
+            if (item.sendState != Chat.ChatSendState.Completed) {
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+                return@run
+            }
+
+            val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+
+            val isStartChat = !isTopSame && isBottomSame
+            val isEndChat = (nextItem?.sendState != Chat.ChatSendState.Completed) || (isTopSame && !isBottomSame)
+            val isMiddleChat = isTopSame && isBottomSame
+
+            if (isMiddleChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+                return@run
+            }
+
+            if (isStartChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = defaultVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+            }
+
+            if (isEndChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = defaultVerticalMargin
+                }
+                tvRead.visibility = View.VISIBLE
+                tvTime.visibility = View.VISIBLE
+
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+            }
+        }
+    }
+
+    inner class ChallengeChatPartnerViewHolder(
+        val binding: ItemChallengeChatPartnerBinding,
+    ) : ChatViewHolder(binding.root) {
+
+        override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
+            val chat = item as ChallengeChat
+            binding.run {
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.VISIBLE
+                llPartnerInfo.visibility = View.VISIBLE
+
+                tvTime.text = getFormatted(chat.createAt)
+
+//           TODO
+//            tvPartnerNickname.text = "연인 닉네임"
+//            ivPartnerProfile.setImageResource()
+
+                tvChallengeTitle.text = chat.challenge.title
+                val dDay = ceil((chat.challenge.deadline.time - Date().time).toDouble() / Constants.ONE_DAY).toInt()
+                val formatter = SimpleDateFormat(root.context.getString(R.string.challenge_chat_date_format), Locale.getDefault())
+                val str = formatter.format(chat.challenge.deadline)
+                tvChallengeDeadline.text = str
+                tvDDay.text = if (dDay >= 999) {
+                    root.context.getString(R.string.add_challenge_d_day_over)
+                } else if (dDay == 0) {
+                    root.context.getString(R.string.add_challenge_d_day_today)
+                } else {
+                    root.context.getString(R.string.add_challenge_d_day_normal) + dDay
+                }
+
+                mcvChallengeButton.setOnClickListener { onClick(root, chat) }
+
+                makeContinuous(prevItem, item, nextItem)
+            }
+        }
+
+        override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+            root.updateLayoutParams<RecyclerView.LayoutParams> {
+                topMargin = defaultVerticalMargin
+                bottomMargin = defaultVerticalMargin
+            }
+
+            if (item.sendState != Chat.ChatSendState.Completed) return
+
+            val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+
+            val isStartChat = !isTopSame && isBottomSame
+            val isEndChat = isTopSame && !isBottomSame
+            val isMiddleChat = isTopSame && isBottomSame
+
+            if (isMiddleChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvTime.visibility = View.GONE
+                llPartnerInfo.visibility = View.GONE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+                return@run
+            }
+
+            if (isStartChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = defaultVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvTime.visibility = View.GONE
+                llPartnerInfo.visibility = View.VISIBLE
+            }
+
+            if (isEndChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = defaultVerticalMargin
+                }
+                tvTime.visibility = View.VISIBLE
+                llPartnerInfo.visibility = View.GONE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+            }
+        }
+    }
+    
+    
+    inner class AddChallengeChatMineViewHolder(
+        val binding: ItemAddChallengeChatMineBinding,
+    ) : ChatViewHolder(binding.root) {
+
+        override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
+            val chat = item as AddChallengeChat
+            binding.run {
+                tvRead.text = root.context.getString(
+                    if (isPartnerInChat || chat.isRead) R.string.chat_read
+                    else R.string.chat_unread
+                )
+                tvTime.text = getFormatted(chat.createAt)
+
+                applyChatSendState(chat.sendState)
+                ivRetry.setOnClickListener { onRetry(chat) }
+                ivCancel.setOnClickListener { onCancel(chat) }
+
+                tvChallengeTitle.text = chat.challenge.title
+                val dDay = ceil((chat.challenge.deadline.time - Date().time).toDouble() / Constants.ONE_DAY).toInt()
+                val formatter = SimpleDateFormat(root.context.getString(R.string.add_challenge_chat_date_format), Locale.getDefault())
+                val str = formatter.format(chat.challenge.deadline)
+                tvChallengeDeadline.text = str
+                tvDDay.text = if (dDay >= 999) {
+                    root.context.getString(R.string.add_challenge_d_day_over)
+                } else if (dDay == 0) {
+                    root.context.getString(R.string.add_challenge_d_day_today)
+                } else {
+                    root.context.getString(R.string.add_challenge_d_day_normal) + dDay
+                }
+
+                mcvChallengeButton.setOnClickListener { onClick(root, chat) }
+
+                makeContinuous(prevItem, item, nextItem)
+            }
+        }
+
+        private fun applyChatSendState(state: Chat.ChatSendState) = binding.run {
+            tvRead.visibility = View.GONE
+            tvTime.visibility = View.GONE
+            ivSending.visibility = View.GONE
+            llFailed.visibility = View.GONE
+            when (state) {
+                is Chat.ChatSendState.Sending -> {
+                    ivSending.visibility = View.VISIBLE
+                }
+                Chat.ChatSendState.Failed -> {
+                    llFailed.visibility = View.VISIBLE
+                }
+                Chat.ChatSendState.Completed -> {
+                    tvRead.visibility = View.VISIBLE
+                    tvTime.visibility = View.VISIBLE
+                }
+            }
+        }
+
+        override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+            root.updateLayoutParams<RecyclerView.LayoutParams> {
+                topMargin = defaultVerticalMargin
+                bottomMargin = defaultVerticalMargin
+            }
+
+            tvRead.visibility = View.VISIBLE
+            tvTime.visibility = View.VISIBLE
+            if (item.sendState != Chat.ChatSendState.Completed) {
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+                return@run
+            }
+
+            val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+
+            val isStartChat = !isTopSame && isBottomSame
+            val isEndChat = (nextItem?.sendState != Chat.ChatSendState.Completed) || (isTopSame && !isBottomSame)
+            val isMiddleChat = isTopSame && isBottomSame
+
+            if (isMiddleChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+                return@run
+            }
+
+            if (isStartChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = defaultVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+            }
+
+            if (isEndChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = defaultVerticalMargin
+                }
+                tvRead.visibility = View.VISIBLE
+                tvTime.visibility = View.VISIBLE
+
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+            }
+        }
+    }
+
+    inner class AddChallengeChatPartnerViewHolder(
+        val binding: ItemAddChallengeChatPartnerBinding,
+    ) : ChatViewHolder(binding.root) {
+
+        override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
+            val chat = item as AddChallengeChat
+            binding.run {
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.VISIBLE
+                llPartnerInfo.visibility = View.VISIBLE
+
+                tvTime.text = getFormatted(chat.createAt)
+
+//           TODO
+//            tvPartnerNickname.text = "연인 닉네임"
+//            ivPartnerProfile.setImageResource()
+
+                tvChallengeTitle.text = chat.challenge.title
+                val dDay = ceil((chat.challenge.deadline.time - Date().time).toDouble() / Constants.ONE_DAY).toInt()
+                val formatter = SimpleDateFormat(root.context.getString(R.string.add_challenge_chat_date_format), Locale.getDefault())
+                val str = formatter.format(chat.challenge.deadline)
+                tvChallengeDeadline.text = str
+                tvDDay.text = if (dDay >= 999) {
+                    root.context.getString(R.string.add_challenge_d_day_over)
+                } else if (dDay == 0) {
+                    root.context.getString(R.string.add_challenge_d_day_today)
+                } else {
+                    root.context.getString(R.string.add_challenge_d_day_normal) + dDay
+                }
+
+                mcvChallengeButton.setOnClickListener { onClick(root, chat) }
+
+                makeContinuous(prevItem, item, nextItem)
+            }
+        }
+
+        override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+            root.updateLayoutParams<RecyclerView.LayoutParams> {
+                topMargin = defaultVerticalMargin
+                bottomMargin = defaultVerticalMargin
+            }
+
+            if (item.sendState != Chat.ChatSendState.Completed) return
+
+            val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+
+            val isStartChat = !isTopSame && isBottomSame
+            val isEndChat = isTopSame && !isBottomSame
+            val isMiddleChat = isTopSame && isBottomSame
+
+            if (isMiddleChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvTime.visibility = View.GONE
+                llPartnerInfo.visibility = View.GONE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+                return@run
+            }
+
+            if (isStartChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = defaultVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvTime.visibility = View.GONE
+                llPartnerInfo.visibility = View.VISIBLE
+            }
+
+            if (isEndChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = defaultVerticalMargin
+                }
+                tvTime.visibility = View.VISIBLE
+                llPartnerInfo.visibility = View.GONE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+            }
+        }
+    }
+    
+
+    inner class CompleteChallengeChatMineViewHolder(
+        val binding: ItemCompleteChallengeChatMineBinding,
+    ) : ChatViewHolder(binding.root) {
+
+        override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
+            val chat = item as CompleteChallengeChat
+            binding.run {
+                tvRead.text = root.context.getString(
+                    if (isPartnerInChat || chat.isRead) R.string.chat_read
+                    else R.string.chat_unread
+                )
+                tvTime.text = getFormatted(chat.createAt)
+
+                applyChatSendState(chat.sendState)
+                ivRetry.setOnClickListener { onRetry(chat) }
+                ivCancel.setOnClickListener { onCancel(chat) }
+
+                tvChallengeTitle.text = chat.challenge.title
+                
+                // TODO 완료일 생기면 변경해야됨
+                val formatter = SimpleDateFormat(root.context.getString(R.string.complete_challenge_chat_date_format), Locale.getDefault())
+                val str = formatter.format(chat.challenge.deadline)
+                tvChallengeSuccessDate.text = str
+
+                makeContinuous(prevItem, item, nextItem)
+            }
+        }
+
+        private fun applyChatSendState(state: Chat.ChatSendState) = binding.run {
+            tvRead.visibility = View.GONE
+            tvTime.visibility = View.GONE
+            ivSending.visibility = View.GONE
+            llFailed.visibility = View.GONE
+            when (state) {
+                is Chat.ChatSendState.Sending -> {
+                    ivSending.visibility = View.VISIBLE
+                }
+                Chat.ChatSendState.Failed -> {
+                    llFailed.visibility = View.VISIBLE
+                }
+                Chat.ChatSendState.Completed -> {
+                    tvRead.visibility = View.VISIBLE
+                    tvTime.visibility = View.VISIBLE
+                }
+            }
+        }
+
+        override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+            root.updateLayoutParams<RecyclerView.LayoutParams> {
+                topMargin = defaultVerticalMargin
+                bottomMargin = defaultVerticalMargin
+            }
+
+            tvRead.visibility = View.VISIBLE
+            tvTime.visibility = View.VISIBLE
+            if (item.sendState != Chat.ChatSendState.Completed) {
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+                return@run
+            }
+
+            val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+
+            val isStartChat = !isTopSame && isBottomSame
+            val isEndChat = (nextItem?.sendState != Chat.ChatSendState.Completed) || (isTopSame && !isBottomSame)
+            val isMiddleChat = isTopSame && isBottomSame
+
+            if (isMiddleChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+                return@run
+            }
+
+            if (isStartChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = defaultVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+            }
+
+            if (isEndChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = defaultVerticalMargin
+                }
+                tvRead.visibility = View.VISIBLE
+                tvTime.visibility = View.VISIBLE
+
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+            }
+        }
+    }
+
+    inner class CompleteChallengeChatPartnerViewHolder(
+        val binding: ItemCompleteChallengeChatPartnerBinding,
+    ) : ChatViewHolder(binding.root) {
+
+        override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
+            val chat = item as CompleteChallengeChat
+            binding.run {
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.VISIBLE
+                llPartnerInfo.visibility = View.VISIBLE
+
+                tvTime.text = getFormatted(chat.createAt)
+
+//           TODO
+//            tvPartnerNickname.text = "연인 닉네임"
+//            ivPartnerProfile.setImageResource()
+
+                tvChallengeTitle.text = chat.challenge.title
+
+                // TODO 완료일 생기면 변경해야됨
+                val formatter = SimpleDateFormat(root.context.getString(R.string.complete_challenge_chat_date_format), Locale.getDefault())
+                val str = formatter.format(chat.challenge.deadline)
+                tvChallengeSuccessDate.text = str
+
+                makeContinuous(prevItem, item, nextItem)
+            }
+        }
+
+        override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+            root.updateLayoutParams<RecyclerView.LayoutParams> {
+                topMargin = defaultVerticalMargin
+                bottomMargin = defaultVerticalMargin
+            }
+
+            if (item.sendState != Chat.ChatSendState.Completed) return
+
+            val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+
+            val isStartChat = !isTopSame && isBottomSame
+            val isEndChat = isTopSame && !isBottomSame
+            val isMiddleChat = isTopSame && isBottomSame
+
+            if (isMiddleChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvTime.visibility = View.GONE
+                llPartnerInfo.visibility = View.GONE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+                return@run
+            }
+
+            if (isStartChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = defaultVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvTime.visibility = View.GONE
+                llPartnerInfo.visibility = View.VISIBLE
+            }
+
+            if (isEndChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = defaultVerticalMargin
+                }
+                tvTime.visibility = View.VISIBLE
+                llPartnerInfo.visibility = View.GONE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+            }
+        }
+    }
+    
+
     inner class QuestionChatMineViewHolder(
         private val binding: ItemQuestionChatMineBinding
     ): ChatViewHolder(binding.root) {
@@ -1409,16 +2635,234 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
     }
 
 
-    inner class ImageChatMineViewHolder(
-        val binding: ItemImageChatMineBinding,
-    ) : ChatViewHolder(binding.root) {
+    inner class AnswerChatMineViewHolder(
+        private val binding: ItemAnswerChatMineBinding
+    ): ChatViewHolder(binding.root) {
 
         override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
-            val chat = item as ImageChat
-
+            val chat = item as AnswerChat
             binding.run {
-                ivImage.setImageBitmap(chat.bitmap)
+                tvRead.text = root.context.getString(
+                    if (isPartnerInChat || chat.isRead) R.string.chat_read
+                    else R.string.chat_unread
+                )
+                tvTime.text = getFormatted(chat.createAt)
 
+                tvQuestionHeader.text = root.context.getString(R.string.question_chat_header_deco) + chat.question.header
+                tvQuestionBody.text = chat.question.body
+
+                val serverFormat = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
+                val date = serverFormat.parse(chat.question.createAt)
+                val questionFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
+                tvQuestionDate.text = date?.let { questionFormat.format(it) }
+
+                applyChatSendState(chat.sendState)
+                ivRetry.setOnClickListener { onRetry(chat) }
+                ivCancel.setOnClickListener { onCancel(chat) }
+
+                mcvAnswer.setOnClickListener { onClick(root, chat) }
+
+                makeContinuous(prevItem, item, nextItem)
+            }
+        }
+
+
+        private fun copyText(text: String) {
+            val clipboard = binding.root.context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+            val clip = ClipData.newPlainText("채팅", text)
+            clipboard.setPrimaryClip(clip)
+        }
+
+        private fun applyChatSendState(state: Chat.ChatSendState) = binding.run {
+            tvRead.visibility = View.GONE
+            tvTime.visibility = View.GONE
+            ivSending.visibility = View.GONE
+            llFailed.visibility = View.GONE
+            when (state) {
+                is Chat.ChatSendState.Sending -> {
+                    ivSending.visibility = View.VISIBLE
+                }
+                Chat.ChatSendState.Failed -> {
+                    llFailed.visibility = View.VISIBLE
+                }
+                Chat.ChatSendState.Completed -> {
+                    tvRead.visibility = View.VISIBLE
+                    tvTime.visibility = View.VISIBLE
+                }
+            }
+        }
+
+        override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+            root.updateLayoutParams<RecyclerView.LayoutParams> {
+                topMargin = defaultVerticalMargin
+                bottomMargin = defaultVerticalMargin
+            }
+
+            tvRead.visibility = View.VISIBLE
+            tvTime.visibility = View.VISIBLE
+            if (item.sendState != Chat.ChatSendState.Completed) {
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+                return@run
+            }
+
+            val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+
+            val isStartChat = !isTopSame && isBottomSame
+            val isEndChat = (nextItem?.sendState != Chat.ChatSendState.Completed) || (isTopSame && !isBottomSame)
+            val isMiddleChat = isTopSame && isBottomSame
+
+            if (isMiddleChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+                return@run
+            }
+
+            if (isStartChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = defaultVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+            }
+
+            if (isEndChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = defaultVerticalMargin
+                }
+                tvRead.visibility = View.VISIBLE
+                tvTime.visibility = View.VISIBLE
+
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+            }
+        }
+    }
+
+    inner class AnswerChatPartnerViewHolder(
+        private val binding: ItemAnswerChatPartnerBinding
+    ): ChatViewHolder(binding.root) {
+
+        override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
+            val chat = item as AnswerChat
+            binding.run {
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.VISIBLE
+                llPartnerInfo.visibility = View.VISIBLE
+
+                tvTime.text = getFormatted(chat.createAt)
+
+//           TODO
+//            tvPartnerNickname.text = "연인 닉네임"
+//            ivPartnerProfile.setImageResource()
+
+                tvQuestionHeader.text = root.context.getString(R.string.question_chat_header_deco) + chat.question.header
+                tvQuestionBody.text = chat.question.body
+
+                val serverFormat = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
+                val date = serverFormat.parse(chat.question.createAt)
+                val questionFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
+                tvQuestionDate.text = date?.let { questionFormat.format(it) }
+
+                mcvAnswer.setOnClickListener { onClick(root, chat) }
+
+                makeContinuous(prevItem, item, nextItem)
+            }
+        }
+
+        private fun copyText(text: String) {
+            val clipboard = binding.root.context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+            val clip = ClipData.newPlainText("채팅", text)
+            clipboard.setPrimaryClip(clip)
+        }
+
+        override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+            root.updateLayoutParams<RecyclerView.LayoutParams> {
+                topMargin = defaultVerticalMargin
+                bottomMargin = defaultVerticalMargin
+            }
+
+            if (item.sendState != Chat.ChatSendState.Completed) return
+
+            val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+
+            val isStartChat = !isTopSame && isBottomSame
+            val isEndChat = isTopSame && !isBottomSame
+            val isMiddleChat = isTopSame && isBottomSame
+
+            if (isMiddleChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvTime.visibility = View.GONE
+                llPartnerInfo.visibility = View.GONE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+                return@run
+            }
+
+            if (isStartChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = defaultVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvTime.visibility = View.GONE
+                llPartnerInfo.visibility = View.VISIBLE
+            }
+
+            if (isEndChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = defaultVerticalMargin
+                }
+                tvTime.visibility = View.VISIBLE
+                llPartnerInfo.visibility = View.GONE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+            }
+        }
+    }
+
+
+    inner class PokeChatMineViewHolder(
+        private val binding: ItemPokeChatMineBinding
+    ): ChatViewHolder(binding.root) {
+
+        override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
+            val chat = item as PokeChat
+            binding.run {
                 tvRead.text = root.context.getString(
                     if (isPartnerInChat || chat.isRead) R.string.chat_read
                     else R.string.chat_unread
@@ -1429,8 +2873,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 ivRetry.setOnClickListener { onRetry(chat) }
                 ivCancel.setOnClickListener { onCancel(chat) }
 
-                tlTransformation.transitionName = chat.index.toString()
-                mcvChatContainer.setOnClickListener { onClick(tlTransformation, chat) }
+                mcvAnswer.setOnClickListener { onClick(root, chat) }
 
                 makeContinuous(prevItem, item, nextItem)
             }
@@ -1516,6 +2959,280 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 val prevPrevItem = if (position - 1 < 0) null
                 else snapshot().items[position - 1]
                 if (prevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+            }
+        }
+    }
+
+    inner class PokeChatPartnerViewHolder(
+        private val binding: ItemPokeChatPartnerBinding
+    ): ChatViewHolder(binding.root) {
+
+        override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
+            val chat = item as PokeChat
+            binding.run {
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.VISIBLE
+                llPartnerInfo.visibility = View.VISIBLE
+
+                tvTime.text = getFormatted(chat.createAt)
+
+//           TODO
+//            tvPartnerNickname.text = "연인 닉네임"
+//            ivPartnerProfile.setImageResource()
+
+                mcvAnswer.setOnClickListener { onClick(root, chat) }
+
+                makeContinuous(prevItem, item, nextItem)
+            }
+        }
+
+        override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+            root.updateLayoutParams<RecyclerView.LayoutParams> {
+                topMargin = defaultVerticalMargin
+                bottomMargin = defaultVerticalMargin
+            }
+
+            if (item.sendState != Chat.ChatSendState.Completed) return
+
+            val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+
+            val isStartChat = !isTopSame && isBottomSame
+            val isEndChat = isTopSame && !isBottomSame
+            val isMiddleChat = isTopSame && isBottomSame
+
+            if (isMiddleChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvTime.visibility = View.GONE
+                llPartnerInfo.visibility = View.GONE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+                return@run
+            }
+
+            if (isStartChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = defaultVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvTime.visibility = View.GONE
+                llPartnerInfo.visibility = View.VISIBLE
+            }
+
+            if (isEndChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = defaultVerticalMargin
+                }
+                tvTime.visibility = View.VISIBLE
+                llPartnerInfo.visibility = View.GONE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+            }
+        }
+    }
+
+
+    inner class ResetPartnerPasswordChatMineViewHolder(
+        private val binding: ItemResetPartnerPasswordChatMineBinding
+    ): ChatViewHolder(binding.root) {
+
+        override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
+            val chat = item as ResetPartnerPasswordChat
+            binding.run {
+                tvRead.text = root.context.getString(
+                    if (isPartnerInChat || chat.isRead) R.string.chat_read
+                    else R.string.chat_unread
+                )
+                tvTime.text = getFormatted(chat.createAt)
+
+                applyChatSendState(chat.sendState)
+                ivRetry.setOnClickListener { onRetry(chat) }
+                ivCancel.setOnClickListener { onCancel(chat) }
+
+                mcvHelp.setOnClickListener { onClick(root, chat) }
+
+                makeContinuous(prevItem, item, nextItem)
+            }
+        }
+
+        private fun applyChatSendState(state: Chat.ChatSendState) = binding.run {
+            tvRead.visibility = View.GONE
+            tvTime.visibility = View.GONE
+            ivSending.visibility = View.GONE
+            llFailed.visibility = View.GONE
+            when (state) {
+                is Chat.ChatSendState.Sending -> {
+                    ivSending.visibility = View.VISIBLE
+                }
+                Chat.ChatSendState.Failed -> {
+                    llFailed.visibility = View.VISIBLE
+                }
+                Chat.ChatSendState.Completed -> {
+                    tvRead.visibility = View.VISIBLE
+                    tvTime.visibility = View.VISIBLE
+                }
+            }
+        }
+
+        override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+            root.updateLayoutParams<RecyclerView.LayoutParams> {
+                topMargin = defaultVerticalMargin
+                bottomMargin = defaultVerticalMargin
+            }
+
+            tvRead.visibility = View.VISIBLE
+            tvTime.visibility = View.VISIBLE
+            if (item.sendState != Chat.ChatSendState.Completed) {
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+                return@run
+            }
+
+            val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+
+            val isStartChat = !isTopSame && isBottomSame
+            val isEndChat = (nextItem?.sendState != Chat.ChatSendState.Completed) || (isTopSame && !isBottomSame)
+            val isMiddleChat = isTopSame && isBottomSame
+
+            if (isMiddleChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+                return@run
+            }
+
+            if (isStartChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = defaultVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.GONE
+            }
+
+            if (isEndChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = defaultVerticalMargin
+                }
+                tvRead.visibility = View.VISIBLE
+                tvTime.visibility = View.VISIBLE
+
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+            }
+        }
+    }
+
+    inner class ResetPartnerPasswordChatPartnerViewHolder(
+        private val binding: ItemResetPartnerPasswordChatPartnerBinding
+    ): ChatViewHolder(binding.root) {
+
+        override fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?) {
+            val chat = item as ResetPartnerPasswordChat
+            binding.run {
+                tvRead.visibility = View.GONE
+                tvTime.visibility = View.VISIBLE
+                llPartnerInfo.visibility = View.VISIBLE
+
+                tvTime.text = getFormatted(chat.createAt)
+
+//           TODO
+//            tvPartnerNickname.text = "연인 닉네임"
+//            ivPartnerProfile.setImageResource()
+
+                mcvHelp.setOnClickListener { onClick(root, chat) }
+
+                makeContinuous(prevItem, item, nextItem)
+            }
+        }
+
+        override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
+            root.updateLayoutParams<RecyclerView.LayoutParams> {
+                topMargin = defaultVerticalMargin
+                bottomMargin = defaultVerticalMargin
+            }
+
+            if (item.sendState != Chat.ChatSendState.Completed) return
+
+            val isBottomSame = item.chatSender == nextItem?.chatSender && item.createAt.substringBeforeLast(":") == nextItem.createAt.substringBeforeLast(":")
+            val isTopSame = prevItem?.chatSender == item.chatSender && prevItem.createAt.substringBeforeLast(":") == item.createAt.substringBeforeLast(":")
+
+            val isStartChat = !isTopSame && isBottomSame
+            val isEndChat = isTopSame && !isBottomSame
+            val isMiddleChat = isTopSame && isBottomSame
+
+            if (isMiddleChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvTime.visibility = View.GONE
+                llPartnerInfo.visibility = View.GONE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
+                    viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
+                }
+                return@run
+            }
+
+            if (isStartChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = defaultVerticalMargin
+                    bottomMargin = continuousVerticalMargin
+                }
+                tvTime.visibility = View.GONE
+                llPartnerInfo.visibility = View.VISIBLE
+            }
+
+            if (isEndChat) {
+                root.updateLayoutParams<RecyclerView.LayoutParams> {
+                    topMargin = continuousVerticalMargin
+                    bottomMargin = defaultVerticalMargin
+                }
+                tvTime.visibility = View.VISIBLE
+                llPartnerInfo.visibility = View.GONE
+
+                val position = snapshot().items.indexOf(prevItem)
+                val prevPrevItem = if (position - 1 < 0) null
+                else snapshot().items[position - 1]
+                if (prevItem != null && prevPrevItem != null) {
                     viewHolders[prevItem]?.makeContinuous(prevPrevItem, prevItem, item)
                 }
             }

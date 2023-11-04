@@ -33,8 +33,14 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.databinding.FragmentChatBinding
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
+import com.clonect.feeltalk.new_domain.model.chat.AddChallengeChat
+import com.clonect.feeltalk.new_domain.model.chat.AnswerChat
+import com.clonect.feeltalk.new_domain.model.chat.ChallengeChat
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.ImageChat
+import com.clonect.feeltalk.new_domain.model.chat.PokeChat
+import com.clonect.feeltalk.new_domain.model.chat.QuestionChat
+import com.clonect.feeltalk.new_domain.model.chat.ResetPartnerPasswordChat
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
 import com.clonect.feeltalk.new_domain.model.question.Question
@@ -93,7 +99,9 @@ class ChatFragment : Fragment() {
             setFragmentResultListener(ImageShareFragment.REQUEST_KEY) { _, bundle ->
                 val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) bundle.getParcelable(ImageShareFragment.RESULT_KEY_URI, Uri::class.java)
                 else bundle.getParcelable(ImageShareFragment.RESULT_KEY_URI) as? Uri
-                viewModel.sendImageChat(requireContext(), uri)
+                val width = bundle.getInt(ImageShareFragment.RESULT_KEY_WIDTH, -1)
+                val height = bundle.getInt(ImageShareFragment.RESULT_KEY_HEIGHT, -1)
+                viewModel.sendImageChat(requireContext(), uri, width, height)
             }
         }
 
@@ -162,7 +170,7 @@ class ChatFragment : Fragment() {
     private fun navigateToImageDetail(view: View, imageChat: ImageChat) {
         val transformationLayout = view as? TransformationLayout ?: return
         val intent = Intent(requireContext(), ImageDetailActivity::class.java)
-        intent.putExtra("imageChat", imageChat.copy(bitmap = null))
+        intent.putExtra("imageChat", imageChat)
         TransformationCompat.startActivity(transformationLayout, intent)
     }
 
@@ -215,6 +223,39 @@ class ChatFragment : Fragment() {
         navigateToImageShare(uri)
     }
 
+    private fun navigateToAnswer(question: Question) {
+        navViewModel.setShowChatNavigation(false)
+        navViewModel.setAnswerTargetQuestion(question)
+        navViewModel.setShowAnswerSheet(true)
+    }
+
+    private fun navigateToAnswer(questionIndex: Long) {
+        lifecycleScope.launch {
+            val question = viewModel.getQuestion(questionIndex) ?: return@launch
+            navigateToAnswer(question)
+        }
+    }
+
+    private fun navigateToChallengeDetail(challenge: Challenge) {
+        if (challenge.isCompleted) navigateToOngoingChallengeDetail(challenge)
+        else navigateToCompletedChallengeDetail(challenge)
+    }
+
+    private fun navigateToOngoingChallengeDetail(challenge: Challenge) {
+        val bundle = bundleOf("challenge" to challenge)
+        requireParentFragment()
+            .requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_mainNavigationFragment_to_ongoingChallengeDetailFragment, bundle)
+    }
+
+    private fun navigateToCompletedChallengeDetail(challenge: Challenge) {
+        val bundle = bundleOf("challenge" to challenge)
+        requireParentFragment()
+            .requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_mainNavigationFragment_to_completedChallengeDetailFragment, bundle)
+    }
 
 
 
@@ -334,7 +375,9 @@ class ChatFragment : Fragment() {
                     if (positionStart == 0) return
                     if (positionStart >= adapter.itemCount) return
                     val item = adapter.snapshot()[positionStart] ?: return
-                    if (item.chatSender == "me" || (viewModel.isUserInBottom.value && item.chatSender == "partner")) {
+
+                    val shouldScroll = (item.chatSender == "me" && item.sendState == Chat.ChatSendState.Sending) || (viewModel.isUserInBottom.value && item.chatSender == "partner")
+                    if (shouldScroll) {
                         scrollToBottom()
                     }
                 }
@@ -354,7 +397,12 @@ class ChatFragment : Fragment() {
 
     private fun onClickChat(view: View, chat: Chat) {
         when (chat) {
-            is ImageChat -> { navigateToImageDetail(view, chat) }
+            is ImageChat -> navigateToImageDetail(view, chat)
+            is ChallengeChat -> navigateToChallengeDetail(chat.challenge)
+            is AddChallengeChat -> navigateToChallengeDetail(chat.challenge)
+            is PokeChat -> navigateToAnswer(chat.questionIndex)
+            is AnswerChat -> navigateToAnswer(chat.question)
+            is ResetPartnerPasswordChat -> viewModel.resetPartnerPassword()
         }
     }
 
@@ -364,6 +412,8 @@ class ChatFragment : Fragment() {
             is TextChat -> viewModel.sendTextChat(retryChat = chat)
             is VoiceChat -> viewModel.sendVoiceChat(context = requireContext(), retryChat = chat)
             is ImageChat -> viewModel.sendImageChat(context = requireContext(), retryChat = chat)
+            is QuestionChat -> viewModel.sendQuestionChat(question = chat.question)
+            is ChallengeChat -> viewModel.sendChallengeChat(challenge = chat.challenge)
         }
     }
 

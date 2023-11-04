@@ -164,7 +164,7 @@ class BubbleChatFragment : Fragment() {
     private fun navigateToImageDetail(view: View, imageChat: ImageChat) {
         val transformationLayout = view as? TransformationLayout ?: return
         val intent = Intent(requireContext(), ImageDetailActivity::class.java)
-        intent.putExtra("imageChat", imageChat.copy(bitmap = null))
+        intent.putExtra("imageChat", imageChat.copy())
         TransformationCompat.startActivity(transformationLayout, intent)
     }
 

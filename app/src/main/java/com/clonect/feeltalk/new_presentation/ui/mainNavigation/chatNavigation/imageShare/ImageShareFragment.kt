@@ -34,11 +34,13 @@ import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
 import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
 import com.clonect.feeltalk.new_presentation.ui.util.stateFlow
 import com.clonect.feeltalk.new_presentation.ui.util.toBitmap
+import com.davemorrissey.labs.subscaleview.ImageSource
 import com.google.android.material.snackbar.Snackbar
-import com.otaliastudios.zoom.ZoomLayout
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Created by doding2 on 2023/10/24.
@@ -49,6 +51,8 @@ class ImageShareFragment : Fragment() {
     companion object {
         const val REQUEST_KEY = "imageShareFragment"
         const val RESULT_KEY_URI = "bitmap"
+        const val RESULT_KEY_WIDTH = "width"
+        const val RESULT_KEY_HEIGHT = "height"
     }
 
     private lateinit var binding: FragmentImageShareBinding
@@ -82,50 +86,37 @@ class ImageShareFragment : Fragment() {
         collectViewModel()
 
         binding.run {
+            ssivImage.maxScale = 10f
+            ssivImage.setDoubleTapZoomScale(2f)
+            ssivImage.setDoubleTapZoomDuration(150)
             ivBack.setOnClickListener { onBackCallback.handleOnBackPressed() }
             tvSend.setOnClickListener { sendImageChat() }
-
-            zlImage.registerDoubleTouchReset()
         }
     }
 
     private fun sendImageChat() {
+        val bitmap = viewModel.bitmap.value ?: return
+
         setFragmentResult(
             requestKey = REQUEST_KEY,
             result = bundleOf(
                 RESULT_KEY_URI to viewModel.uri.value,
+                RESULT_KEY_WIDTH to bitmap.width,
+                RESULT_KEY_HEIGHT to bitmap.height,
             )
         )
         onBackCallback.handleOnBackPressed()
     }
 
-
-    @SuppressLint("ClickableViewAccessibility")
-    private fun ZoomLayout.registerDoubleTouchReset() {
-        val detector = GestureDetector(requireContext(), GestureDetector.SimpleOnGestureListener())
-        detector.setOnDoubleTapListener(object: GestureDetector.OnDoubleTapListener {
-            override fun onSingleTapConfirmed(p0: MotionEvent): Boolean { return true }
-            override fun onDoubleTap(p0: MotionEvent): Boolean { return true }
-            override fun onDoubleTapEvent(p0: MotionEvent): Boolean {
-                engine.zoomTo(1f, true)
-                return true
-            }
-        })
-
-        setOnTouchListener { view, event ->
-            detector.onTouchEvent(event)
-            false
-        }
-    }
-
     private fun applyUriChanges(uri: Uri?) = lifecycleScope.launch {
         viewModel.setLoading(true)
-        viewModel.setBitmap(uri?.toBitmap(requireContext()))
+        val bitmap = withContext(Dispatchers.IO) { uri?.toBitmap(requireContext()) }
+        viewModel.setBitmap(bitmap)
         viewModel.setLoading(false)
     }
 
     private fun applyBitmapChanges(bitmap: Bitmap?) = lifecycleScope.launch {
-        binding.ivImage.setImageBitmap(bitmap)
+        binding.ssivImage.setImage(ImageSource.bitmap(bitmap ?: return@launch))
     }
 
     private fun showLoading(isLoading: Boolean) {

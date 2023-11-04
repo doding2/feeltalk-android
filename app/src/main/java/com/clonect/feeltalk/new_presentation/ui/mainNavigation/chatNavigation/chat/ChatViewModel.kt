@@ -1,6 +1,7 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,15 +16,14 @@ import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.common.PageEvents
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
+import com.clonect.feeltalk.new_domain.model.chat.ChallengeChat
 import com.clonect.feeltalk.new_domain.model.chat.Chat
-import com.clonect.feeltalk.new_domain.model.chat.ChatType
 import com.clonect.feeltalk.new_domain.model.chat.DividerChat
 import com.clonect.feeltalk.new_domain.model.chat.ImageChat
 import com.clonect.feeltalk.new_domain.model.chat.QuestionChat
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
 import com.clonect.feeltalk.new_domain.model.question.Question
-import com.clonect.feeltalk.new_domain.usecase.challenge.GetChallengeUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.ChangeChatRoomStateUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPagingChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.SendTextChatUseCase
@@ -36,16 +36,16 @@ import com.clonect.feeltalk.new_presentation.notification.observer.PartnerChatRo
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.audioVisualizer.RecordingReplayer
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.audioVisualizer.RecordingSampler
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.audioVisualizer.VisualizerView
+import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.toBitmap
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
@@ -58,6 +58,7 @@ import java.util.Timer
 import java.util.TimerTask
 import javax.inject.Inject
 
+
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val getPagingChatUseCase: GetPagingChatUseCase,
@@ -65,6 +66,7 @@ class ChatViewModel @Inject constructor(
     private val sendTextChatUseCase: SendTextChatUseCase,
     private val sendVoiceChatUseCase: SendVoiceChatUseCase,
     private val shareQuestionUseCase: ShareQuestionUseCase,
+    private val getQuestionUseCase: GetQuestionUseCase,
 ) : ViewModel() {
 
     private val job = MutableStateFlow<Job?>(null)
@@ -116,6 +118,23 @@ class ChatViewModel @Inject constructor(
 
     fun setTextChat(message: String) {
         _textChat.value = message
+    }
+
+
+    fun resetPartnerPassword() = viewModelScope.launch {
+        TODO("Api is not implemented")
+    }
+
+    suspend fun getQuestion(index: Long) = withContext(viewModelScope.coroutineContext) {
+        when (val result = getQuestionUseCase(index)) {
+            is Resource.Success -> {
+                result.data
+            }
+            is Resource.Error -> {
+                infoLog("Fail to get question: ${result.throwable.localizedMessage}")
+                null
+            }
+        }
     }
 
     private fun collectNewChat() = viewModelScope.launch {
@@ -194,7 +213,7 @@ class ChatViewModel @Inject constructor(
         val event = PageEvents.InsertItemFooter(chat)
         if (event in pageModificationEvents.value) return
 
-        val firstSendingChatIndex = pageModificationEvents.value.indexOfFirst { it.item.sendState == Chat.ChatSendState.Sending }
+        val firstSendingChatIndex = pageModificationEvents.value.indexOfFirst { it.item.sendState != Chat.ChatSendState.Completed }
         if (firstSendingChatIndex != -1) {
             pageModificationEvents.value = pageModificationEvents.value.toMutableList().apply {
                 add(firstSendingChatIndex, event)
@@ -354,21 +373,74 @@ class ChatViewModel @Inject constructor(
     // NOTE Challenge Chat
 
     fun sendChallengeChat(challenge: Challenge?) = viewModelScope.launch {
+        if (challenge == null) return@launch
 
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val now = Date()
+
+        val loadingChallengeChat = ChallengeChat(
+            index = now.time,
+            pageNo = 0,
+            chatSender = "me",
+            isRead = true,
+            createAt = format.format(now),
+            sendState = Chat.ChatSendState.Sending,
+            challenge = challenge
+        )
+        insertLoadingChat(loadingChallengeChat)
+
+        // after send chat
+
+        launch {
+            delay(1000)
+
+//            val next = Date()
+//
+//            val challengeChat = ChallengeChat(
+//                index = next.time,
+//                pageNo = 0,
+//                chatSender = "me",
+//                isRead = true,
+//                createAt = format.format(next),
+//                sendState = Chat.ChatSendState.Completed,
+//                challenge = challenge
+//            )
+//
+//            removeLoadingChat(loadingChallengeChat)
+//            NewChatObserver.getInstance().setNewChat(challengeChat)
+
+            editLoadingChat(loadingChallengeChat.copy(sendState = Chat.ChatSendState.Failed))
+        }
     }
 
 
     // NOTE Image Chat
 
-    fun sendImageChat(context: Context, uri: Uri? = null, retryChat: ImageChat? = null) = viewModelScope.launch {
-        if (uri == null) return@launch
-        val bitmap = uri.toBitmap(context)
-        if (bitmap != null) {
-            infoLog("bitmap length: ${bitmap.byteCount / 512} mb")
-        }
-
+    fun sendImageChat(context: Context, uri: Uri? = null, width: Int = -1, height: Int = -1, retryChat: ImageChat? = null) = viewModelScope.launch {
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         val now = Date()
+
+        val imageUri = retryChat?.uri ?: uri ?: return@launch
+
+        // resize by ratio and scale
+        val maxWidth = context.dpToPx(252f).toFloat()
+        val maxHeight = context.dpToPx(300f).toFloat()
+        var mWidth = width.takeIf { it > 0 } ?: maxWidth.toInt()
+        var mHeight = height.takeIf { it > 0 } ?: maxHeight.toInt()
+
+        val ratio =  mWidth.toFloat() / mHeight.toFloat()
+
+        if (ratio >= 1f) {
+            val scale = if (mWidth > maxWidth) maxWidth / mWidth else mWidth / maxWidth
+            mWidth = (mWidth * scale).toInt()
+            mHeight = (mHeight * scale).toInt()
+        }
+        if (ratio < 1f) {
+            val scale = if (mHeight > maxHeight) maxHeight / mHeight else mHeight / maxHeight
+            mWidth = (mWidth * scale).toInt()
+            mHeight = (mHeight * scale).toInt()
+        }
+
 
         val loadingImageChat = ImageChat(
             index = now.time,
@@ -377,9 +449,9 @@ class ChatViewModel @Inject constructor(
             isRead = true,
             createAt = format.format(Date()),
             sendState = Chat.ChatSendState.Sending,
-            url = "index",
-            bitmap = bitmap,
-            uri = uri
+            uri = imageUri,
+            width = mWidth,
+            height = mHeight,
         )
         insertLoadingChat(loadingImageChat)
 
@@ -388,7 +460,22 @@ class ChatViewModel @Inject constructor(
         launch {
 
             delay(1000)
+
+
+            // 성공했을 때
             val next = Date()
+
+            val imageFile = File(context.cacheDir, "${next.time}.png")
+            val saveImageJob = async(Dispatchers.IO) {
+                val bitmap = imageUri.toBitmap(context)
+                imageFile.outputStream().use {
+                    bitmap?.compress(Bitmap.CompressFormat.PNG, 100, it)
+                    it.flush()
+                }
+            }
+
+
+            saveImageJob.await()
 
             val imageChat = ImageChat(
                 index = next.time,
@@ -397,19 +484,20 @@ class ChatViewModel @Inject constructor(
                 isRead = true,
                 createAt = format.format(next),
                 sendState = Chat.ChatSendState.Completed,
-                url = "index",
-                bitmap = bitmap,
-                uri = uri
+                url = "server file url",
+                file = imageFile,
+                width = mWidth,
+                height = mHeight,
             )
 
-            // 성공했을 때
-//            removeLoadingChat(loadingImageChat)
-//            NewChatObserver.getInstance().setNewChat(imageChat)
+            removeLoadingChat(loadingImageChat)
+            NewChatObserver.getInstance().setNewChat(imageChat)
 
             // 실패했을 때
-            editLoadingChat(loadingImageChat.copy(sendState = Chat.ChatSendState.Failed))
+//            editLoadingChat(loadingImageChat.copy(sendState = Chat.ChatSendState.Failed))
         }
     }
+
 
 
     // NOTE Voice

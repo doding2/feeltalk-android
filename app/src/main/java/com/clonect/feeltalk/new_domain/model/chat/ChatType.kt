@@ -6,9 +6,13 @@ enum class ChatType(val raw: String) : Serializable {
     TimeDivider("timeDivider"),
     TextChatting("textChatting"),
     VoiceChatting("voiceChatting"),
-    EmojiChatting("emojiChatting"),
     ImageChatting("imageChatting"),
-    VideoChatting("videoChatting"),
+    SignalChatting("SignalChatting"),
     ChallengeChatting("challengeChatting"),
-    QuestionChatting("questionChatting")
+    AddChallengeChatting("addChallengeChatting"),
+    CompleteChallengeChatting("completeChallengeChatting"),
+    QuestionChatting("questionChatting"),
+    AnswerChatting("answerChatting"),
+    PokeChatting("pressForAnswerChatting"),
+    ResetPartnerPasswordChatting("resetPartnerPasswordChatting"),
 }

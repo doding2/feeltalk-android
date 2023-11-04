@@ -7,19 +7,10 @@
     android:background="@color/black"
     tools:context=".new_presentation.ui.mainNavigation.chatNavigation.imageShare.ImageShareFragment">
 
-    <com.otaliastudios.zoom.ZoomLayout
-        android:id="@+id/zl_image"
+    <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+        android:id="@+id/ssiv_image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:minZoom="0.5"
-        app:maxZoom="4">
-
-        <ImageView
-            android:id="@+id/iv_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:transformation="centerInside"     />
-    </com.otaliastudios.zoom.ZoomLayout>
+        android:layout_height="match_parent" />
 
     <LinearLayout
         android:id="@+id/ll_action_bar"

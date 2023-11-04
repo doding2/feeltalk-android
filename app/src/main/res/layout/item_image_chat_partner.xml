@@ -59,7 +59,7 @@
                 android:id="@+id/tl_transformation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:transformation_duration="250"
+                app:transformation_duration="200"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toStartOf="@id/tv_time"
                 app:layout_constraintStart_toStartOf="parent"

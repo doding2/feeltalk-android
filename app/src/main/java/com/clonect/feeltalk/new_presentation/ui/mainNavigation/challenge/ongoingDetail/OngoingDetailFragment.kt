@@ -439,7 +439,7 @@ class OngoingDetailFragment : Fragment() {
 
     private fun changeDeadlineView(deadline: Date) {
         val dDay = ceil((deadline.time - Date().time).toDouble() / Constants.ONE_DAY).toInt()
-        val formatter = SimpleDateFormat("yyyy년 M월 dd일까지", Locale.getDefault())
+        val formatter = SimpleDateFormat("yyyy년 M월 d일까지", Locale.getDefault())
         val str = formatter.format(deadline)
         binding.tvDeadline.text = str
         binding.tvDDay.text = if (dDay >= 999) {

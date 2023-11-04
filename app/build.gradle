@@ -102,8 +102,8 @@ dependencies {
     implementation 'com.airbnb.android:lottie:6.1.0'
     // more shadow card view
     implementation 'com.github.sina-seyfi:AdvancedCardView:1.0.1'
-    // zoom image view
-    implementation "com.otaliastudios:zoomlayout:1.9.0"
+    // scalable image view
+    implementation 'com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0'
     // auto view translation animation
     implementation "com.github.skydoves:transformationlayout:1.1.3"
 

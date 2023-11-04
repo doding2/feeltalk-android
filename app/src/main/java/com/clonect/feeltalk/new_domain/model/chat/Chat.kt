@@ -5,7 +5,9 @@ import android.net.Uri
 import android.os.Parcelable
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.question.Question
+import com.clonect.feeltalk.new_domain.model.signal.Signal
 import kotlinx.parcelize.Parcelize
+import java.io.File
 
 abstract class Chat(
     open val index: Long,
@@ -28,9 +30,7 @@ abstract class Chat(
             is DividerChat -> this.copy()
             is TextChat -> this.copy()
             is VoiceChat -> this.copy()
-            is EmojiChat -> this.copy()
             is ImageChat -> this.copy()
-            is VideoChat -> this.copy()
             is ChallengeChat -> this.copy()
             is QuestionChat -> this.copy()
             else -> this
@@ -64,30 +64,8 @@ abstract class Chat(
                     url = url
                 )
             }
-            is EmojiChat -> {
-                (chat as? EmojiChat)?.copy(
-                    index = index,
-                    pageNo = pageNo,
-                    chatSender = chatSender,
-                    isRead = isRead,
-                    createAt = createAt,
-                    sendState = sendState,
-                    emoji = emoji
-                )
-            }
             is ImageChat -> {
                 (chat as? ImageChat)?.copy(
-                    index = index,
-                    pageNo = pageNo,
-                    chatSender = chatSender,
-                    isRead = isRead,
-                    createAt = createAt,
-                    sendState = sendState,
-                    url = url
-                )
-            }
-            is VideoChat -> {
-                (chat as? VideoChat)?.copy(
                     index = index,
                     pageNo = pageNo,
                     chatSender = chatSender,
@@ -148,16 +126,6 @@ data class VoiceChat(
     val url: String
 ): Chat(index, pageNo, ChatType.VoiceChatting, chatSender, isRead, createAt, sendState)
 
-data class EmojiChat(
-    override val index: Long,
-    override var pageNo: Long,
-    override val chatSender: String,
-    override var isRead: Boolean,
-    override val createAt: String,
-    override var sendState: ChatSendState = ChatSendState.Completed,
-    val emoji: String
-): Chat(index, pageNo, ChatType.EmojiChatting, chatSender, isRead, createAt, sendState)
-
 @Parcelize
 data class ImageChat(
     override val index: Long,
@@ -166,22 +134,22 @@ data class ImageChat(
     override var isRead: Boolean,
     override val createAt: String,
     override var sendState: ChatSendState = ChatSendState.Completed,
-    val url: String,
-    val bitmap: Bitmap?,
-    val uri: Uri?
+    val url: String? = null,
+    val file: File? = null,
+    val uri: Uri? = null,
+    val width: Int,
+    val height: Int,
 ): Chat(index, pageNo, ChatType.ImageChatting, chatSender, isRead, createAt, sendState), Parcelable
 
-
-data class VideoChat(
+data class SignalChat(
     override val index: Long,
     override var pageNo: Long,
     override val chatSender: String,
     override var isRead: Boolean,
     override val createAt: String,
     override var sendState: ChatSendState = ChatSendState.Completed,
-    val url: String
-): Chat(index, pageNo, ChatType.VideoChatting, chatSender, isRead, createAt, sendState)
-
+    val signal: Signal
+): Chat(index, pageNo, ChatType.SignalChatting, chatSender, isRead, createAt, sendState)
 
 data class ChallengeChat(
     override val index: Long,
@@ -193,6 +161,26 @@ data class ChallengeChat(
     val challenge: Challenge
 ): Chat(index, pageNo, ChatType.ChallengeChatting, chatSender, isRead, createAt, sendState)
 
+data class AddChallengeChat(
+    override val index: Long,
+    override var pageNo: Long,
+    override val chatSender: String,
+    override var isRead: Boolean,
+    override val createAt: String,
+    override var sendState: ChatSendState = ChatSendState.Completed,
+    val challenge: Challenge
+): Chat(index, pageNo, ChatType.AddChallengeChatting, chatSender, isRead, createAt, sendState)
+
+data class CompleteChallengeChat(
+    override val index: Long,
+    override var pageNo: Long,
+    override val chatSender: String,
+    override var isRead: Boolean,
+    override val createAt: String,
+    override var sendState: ChatSendState = ChatSendState.Completed,
+    val challenge: Challenge
+): Chat(index, pageNo, ChatType.CompleteChallengeChatting, chatSender, isRead, createAt, sendState)
+
 data class QuestionChat(
     override val index: Long,
     override var pageNo: Long,
@@ -202,3 +190,32 @@ data class QuestionChat(
     override var sendState: ChatSendState = ChatSendState.Completed,
     val question: Question
 ): Chat(index, pageNo, ChatType.QuestionChatting, chatSender, isRead, createAt, sendState)
+
+data class AnswerChat(
+    override val index: Long,
+    override var pageNo: Long,
+    override val chatSender: String,
+    override var isRead: Boolean,
+    override val createAt: String,
+    override var sendState: ChatSendState = ChatSendState.Completed,
+    val question: Question
+): Chat(index, pageNo, ChatType.AnswerChatting, chatSender, isRead, createAt, sendState)
+
+data class PokeChat(
+    override val index: Long,
+    override var pageNo: Long,
+    override val chatSender: String,
+    override var isRead: Boolean,
+    override val createAt: String,
+    override var sendState: ChatSendState = ChatSendState.Completed,
+    val questionIndex: Long
+): Chat(index, pageNo, ChatType.PokeChatting, chatSender, isRead, createAt, sendState)
+
+data class ResetPartnerPasswordChat(
+    override val index: Long,
+    override var pageNo: Long,
+    override val chatSender: String,
+    override var isRead: Boolean,
+    override val createAt: String,
+    override var sendState: ChatSendState = ChatSendState.Completed,
+): Chat(index, pageNo, ChatType.ResetPartnerPasswordChatting, chatSender, isRead, createAt, sendState)

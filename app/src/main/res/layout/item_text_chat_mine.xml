@@ -23,9 +23,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
-            android:visibility="gone"
+            android:layout_marginBottom="12dp"
+            android:visibility="visible"
             android:src="@drawable/n_ic_chat_sending"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/mcv_chat_container"/>
 
@@ -68,6 +68,7 @@
             android:id="@+id/tv_read"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="@string/chat_unread"
             android:textSize="12sp"
             android:fontFamily="@font/pretendard_regular"
@@ -83,6 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
+            android:visibility="gone"
             android:text="00:00"
             android:textSize="12sp"
             android:fontFamily="@font/pretendard_regular"
@@ -117,7 +119,6 @@
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:fontFamily="@font/pretendard_regular"
-                android:includeFontPadding="false"
                 android:lineSpacingExtra="5dp"
                 android:letterSpacing="-0.01"/>
         </com.google.android.material.card.MaterialCardView>

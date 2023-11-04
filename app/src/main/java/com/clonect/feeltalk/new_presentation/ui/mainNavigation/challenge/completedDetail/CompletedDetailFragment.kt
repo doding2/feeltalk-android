@@ -171,7 +171,7 @@ class CompletedDetailFragment : Fragment() {
     }
 
     private fun changeDeadlineView(deadline: Date) {
-        val formatter = SimpleDateFormat("yyyy년 M월 dd일까지", Locale.getDefault())
+        val formatter = SimpleDateFormat("yyyy년 M월 d일까지", Locale.getDefault())
         val str = formatter.format(deadline)
         binding.tvDeadline.text = str
     }

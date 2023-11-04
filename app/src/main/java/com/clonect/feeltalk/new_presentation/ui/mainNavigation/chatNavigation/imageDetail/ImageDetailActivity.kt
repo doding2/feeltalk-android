@@ -1,36 +1,30 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageDetail
 
-import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
-import android.view.GestureDetector
-import android.view.MotionEvent
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.view.WindowCompat
-import androidx.fragment.app.viewModels
+import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.BitmapImageViewTarget
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.ActivityImageDetailBinding
 import com.clonect.feeltalk.new_domain.model.chat.ImageChat
-import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageShare.ImageShareViewModel
 import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.extendRootViewLayout
-import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.makeLoadingDialog
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
-import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
-import com.clonect.feeltalk.new_presentation.ui.util.stateFlow
-import com.clonect.feeltalk.new_presentation.ui.util.toBitmap
+import com.clonect.feeltalk.presentation.utils.infoLog
+import com.davemorrissey.labs.subscaleview.ImageSource
 import com.google.android.material.snackbar.Snackbar
-import com.otaliastudios.zoom.ZoomLayout
 import com.skydoves.transformationlayout.TransformationAppCompatActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -66,10 +60,11 @@ class ImageDetailActivity : TransformationAppCompatActivity() {
         collectViewModel()
 
         binding.run {
+            ssivImage.maxScale = 10f
+            ssivImage.setDoubleTapZoomScale(2f)
+            ssivImage.setDoubleTapZoomDuration(150)
             ivExit.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
             ivDownload.setOnClickListener { downloadImage() }
-
-            zlImage.registerDoubleTouchReset()
         }
     }
 
@@ -80,32 +75,31 @@ class ImageDetailActivity : TransformationAppCompatActivity() {
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    private fun ZoomLayout.registerDoubleTouchReset() {
-        val detector = GestureDetector(this@ImageDetailActivity, GestureDetector.SimpleOnGestureListener())
-        detector.setOnDoubleTapListener(object: GestureDetector.OnDoubleTapListener {
-            override fun onSingleTapConfirmed(p0: MotionEvent): Boolean { return true }
-            override fun onDoubleTap(p0: MotionEvent): Boolean { return true }
-            override fun onDoubleTapEvent(p0: MotionEvent): Boolean {
-                engine.zoomTo(1f, true)
-                return true
-            }
-        })
-
-        setOnTouchListener { _, event ->
-            detector.onTouchEvent(event)
-            false
-        }
-    }
-
 
     private fun applyImageChatChanges(imageChat: ImageChat?) = lifecycleScope.launch {
         binding.run {
             tvNickname.text = imageChat?.chatSender
             tvDate.text = imageChat?.createAt
 
-            val bitmap = withContext(Dispatchers.IO) { imageChat?.uri?.toBitmap(this@ImageDetailActivity) }
-            ivImage.setImageBitmap(bitmap)
+            if (imageChat == null) return@launch
+
+            val result = withContext(Dispatchers.IO) {
+                Glide.with(this@ImageDetailActivity).run {
+                    if (imageChat.file != null) {
+                        load(imageChat.file)
+                    } else if (imageChat.url != null) {
+                        load(imageChat.url)
+                    } else {
+                        load(imageChat.uri)
+                    }
+                }.placeholder(R.drawable.n_background_image_detail_placeholder)
+                    .error(R.drawable.n_background_image_detail_placeholder)
+                    .fallback(R.drawable.n_background_image_detail_placeholder)
+                    .submit()
+                    .get()
+            }
+
+            ssivImage.setImage(ImageSource.cachedBitmap(result.toBitmap()))
         }
     }
 
