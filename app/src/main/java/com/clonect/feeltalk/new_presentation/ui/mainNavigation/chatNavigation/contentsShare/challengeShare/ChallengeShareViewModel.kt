@@ -130,7 +130,6 @@ class ChallengeShareViewModel @Inject constructor(
             .getInstance()
             .challenge
             .collect {
-                infoLog("new add ongoing challenge: ${it}")
                 if (it == null) return@collect
                 modifyPage(PageEvents.InsertItemFooter(it))
             }

@@ -14,6 +14,7 @@ import androidx.paging.map
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.common.PageEvents
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.ChatType
 import com.clonect.feeltalk.new_domain.model.chat.DividerChat
@@ -21,10 +22,14 @@ import com.clonect.feeltalk.new_domain.model.chat.ImageChat
 import com.clonect.feeltalk.new_domain.model.chat.QuestionChat
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
+import com.clonect.feeltalk.new_domain.model.question.Question
+import com.clonect.feeltalk.new_domain.usecase.challenge.GetChallengeUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.ChangeChatRoomStateUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPagingChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.SendTextChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.SendVoiceChatUseCase
+import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUseCase
+import com.clonect.feeltalk.new_domain.usecase.question.ShareQuestionUseCase
 import com.clonect.feeltalk.new_presentation.notification.observer.MyChatRoomStateObserver
 import com.clonect.feeltalk.new_presentation.notification.observer.NewChatObserver
 import com.clonect.feeltalk.new_presentation.notification.observer.PartnerChatRoomStateObserver
@@ -59,6 +64,7 @@ class ChatViewModel @Inject constructor(
     private val changeChatRoomStateUseCase: ChangeChatRoomStateUseCase,
     private val sendTextChatUseCase: SendTextChatUseCase,
     private val sendVoiceChatUseCase: SendVoiceChatUseCase,
+    private val shareQuestionUseCase: ShareQuestionUseCase,
 ) : ViewModel() {
 
     private val job = MutableStateFlow<Job?>(null)
@@ -112,8 +118,46 @@ class ChatViewModel @Inject constructor(
         _textChat.value = message
     }
 
+    private fun collectNewChat() = viewModelScope.launch {
+        NewChatObserver
+            .getInstance()
+            .setNewChat(null)
+        NewChatObserver
+            .getInstance()
+            .newChat
+            .collect { newChat ->
+                runCatching {
+                    insertCompleteChat(newChat ?: return@runCatching)
+                    infoLog("new chat: $newChat")
+                }.onFailure {
+                    infoLog("Fail to collectNewChat(): ${it.localizedMessage}")
+                }
+            }
+    }
 
-    /** Pagination **/
+    private fun collectPartnerChatRoomState() = viewModelScope.launch {
+        PartnerChatRoomStateObserver
+            .getInstance()
+            .setInChat(false)
+        PartnerChatRoomStateObserver
+            .getInstance()
+            .isInChat
+            .collect { isInChat ->
+                runCatching {
+                    _isPartnerInChat.value = isInChat
+                }.onFailure {
+                    infoLog("collectPartnerChatRoomState(): ${it.localizedMessage}")
+                }
+            }
+    }
+
+    fun toggleIsPartnerInChat() {
+        _isPartnerInChat.value = _isPartnerInChat.value?.not()
+        infoLog("isPartnerInChat: ${_isPartnerInChat.value}")
+    }
+
+
+    // NOTE Pagination
     private val pageModificationEvents = MutableStateFlow<List<PageEvents<Chat>>>(emptyList())
 
     private fun applyPageModification(paging: PagingData<Chat>, event: PageEvents<Chat>): PagingData<Chat> {
@@ -187,7 +231,7 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    /** Text Chat **/
+    // NOTE Text Chat
 
     val pagingChat: Flow<PagingData<Chat>> = getPagingChatUseCase()
         .cachedIn(viewModelScope)
@@ -261,47 +305,114 @@ class ChatViewModel @Inject constructor(
         }
     }
 
+    // NOTE Question Chat
 
-    private fun collectNewChat() = viewModelScope.launch {
-        NewChatObserver
-            .getInstance()
-            .setNewChat(null)
-        NewChatObserver
-            .getInstance()
-            .newChat
-            .collect { newChat ->
-                runCatching {
-                    insertCompleteChat(newChat ?: return@runCatching)
-                    infoLog("new chat: $newChat")
-                }.onFailure {
-                    infoLog("Fail to collectNewChat(): ${it.localizedMessage}")
+    fun sendQuestionChat(question: Question?) = viewModelScope.launch {
+        if (question == null) return@launch
+
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val now = Date()
+
+        val loadingQuestionChat = QuestionChat(
+            index = now.time,
+            pageNo = 0,
+            chatSender = "me",
+            isRead = true,
+            createAt = format.format(now),
+            sendState = Chat.ChatSendState.Sending,
+            question = question
+        )
+        insertLoadingChat(loadingQuestionChat)
+
+        when (val result = shareQuestionUseCase(question.index)) {
+            is Resource.Success -> {
+                val questionChat = result.data.run {
+                    QuestionChat(
+                        index = index,
+                        pageNo = pageNo,
+                        chatSender = "me",
+                        isRead = isRead,
+                        createAt = createAt,
+                        sendState = Chat.ChatSendState.Completed,
+                        question = question.copy(
+                            myAnswer = coupleQuestion.selfAnswer,
+                            partnerAnswer = coupleQuestion.partnerAnswer
+                        )
+                    )
                 }
+
+                removeLoadingChat(loadingQuestionChat)
+                NewChatObserver.getInstance().setNewChat(questionChat)
             }
-    }
-
-    private fun collectPartnerChatRoomState() = viewModelScope.launch {
-        PartnerChatRoomStateObserver
-            .getInstance()
-            .setInChat(false)
-        PartnerChatRoomStateObserver
-            .getInstance()
-            .isInChat
-            .collect { isInChat ->
-                runCatching {
-                    _isPartnerInChat.value = isInChat
-                }.onFailure {
-                    infoLog("collectPartnerChatRoomState(): ${it.localizedMessage}")
-                }
+            is Resource.Error -> {
+                infoLog("Fail to send question chat: ${result.throwable.stackTrace.joinToString("\n")}")
+                editLoadingChat(loadingQuestionChat.copy(sendState = Chat.ChatSendState.Failed))
             }
+        }
     }
 
-    fun toggleIsPartnerInChat() {
-        _isPartnerInChat.value = _isPartnerInChat.value?.not()
-        infoLog("isPartnerInChat: ${_isPartnerInChat.value}")
+    // NOTE Challenge Chat
+
+    fun sendChallengeChat(challenge: Challenge?) = viewModelScope.launch {
+
     }
 
 
-    /** Voice **/
+    // NOTE Image Chat
+
+    fun sendImageChat(context: Context, uri: Uri? = null, retryChat: ImageChat? = null) = viewModelScope.launch {
+        if (uri == null) return@launch
+        val bitmap = uri.toBitmap(context)
+        if (bitmap != null) {
+            infoLog("bitmap length: ${bitmap.byteCount / 512} mb")
+        }
+
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val now = Date()
+
+        val loadingImageChat = ImageChat(
+            index = now.time,
+            pageNo = 0,
+            chatSender = "me",
+            isRead = true,
+            createAt = format.format(Date()),
+            sendState = Chat.ChatSendState.Sending,
+            url = "index",
+            bitmap = bitmap,
+            uri = uri
+        )
+        insertLoadingChat(loadingImageChat)
+
+        // after send chat
+
+        launch {
+
+            delay(1000)
+            val next = Date()
+
+            val imageChat = ImageChat(
+                index = next.time,
+                pageNo = 0,
+                chatSender = "me",
+                isRead = true,
+                createAt = format.format(next),
+                sendState = Chat.ChatSendState.Completed,
+                url = "index",
+                bitmap = bitmap,
+                uri = uri
+            )
+
+            // 성공했을 때
+//            removeLoadingChat(loadingImageChat)
+//            NewChatObserver.getInstance().setNewChat(imageChat)
+
+            // 실패했을 때
+            editLoadingChat(loadingImageChat.copy(sendState = Chat.ChatSendState.Failed))
+        }
+    }
+
+
+    // NOTE Voice
 
     // 셋업
     private val _isVoiceSetupMode = MutableStateFlow(false)
@@ -484,62 +595,6 @@ class ChatViewModel @Inject constructor(
         voiceReplayer?.resume()
     }
 
-
-    /** Image **/
-
-    fun sendImageChat(context: Context, uri: Uri? = null, retryChat: ImageChat? = null) = viewModelScope.launch {
-        if (uri == null) return@launch
-        val bitmap = uri.toBitmap(context)
-        if (bitmap != null) {
-            infoLog("bitmap length: ${bitmap.byteCount / 512} mb")
-        }
-
-        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-        val now = Date()
-
-        val loadingImageChat = ImageChat(
-            index = now.time,
-            pageNo = 0,
-            chatSender = "me",
-            isRead = true,
-            createAt = format.format(Date()),
-            sendState = Chat.ChatSendState.Sending,
-            url = "index",
-            bitmap = bitmap,
-            uri = uri
-        )
-        insertLoadingChat(loadingImageChat)
-
-        // after send chat
-
-        launch {
-
-            delay(1000)
-            val next = Date()
-
-            val imageChat = ImageChat(
-                index = next.time,
-                pageNo = 0,
-                chatSender = "me",
-                isRead = true,
-                createAt = format.format(next),
-                sendState = Chat.ChatSendState.Completed,
-                url = "index",
-                bitmap = bitmap,
-                uri = uri
-            )
-
-            // 성공했을 때
-//            removeLoadingChat(loadingImageChat)
-//            NewChatObserver.getInstance().setNewChat(imageChat)
-
-            // 실패했을 때
-            editLoadingChat(loadingImageChat.copy(sendState = Chat.ChatSendState.Failed))
-        }
-
-
-
-    }
 
 
 

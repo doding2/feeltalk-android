@@ -32,14 +32,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.databinding.FragmentChatBinding
-import com.clonect.feeltalk.databinding.FragmentMainNavigationBinding
+import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.ImageChat
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
+import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
+import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.contentsShare.ContentsShareFragment
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageDetail.ImageDetailActivity
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageShare.ImageShareFragment
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
@@ -49,7 +51,6 @@ import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
 import com.skydoves.transformationlayout.TransformationCompat
 import com.skydoves.transformationlayout.TransformationLayout
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -78,13 +79,23 @@ class ChatFragment : Fragment() {
 
         setKeyboardInsets()
         requireActivity().onBackPressedDispatcher.addCallback(this.viewLifecycleOwner, onBackCallback)
-        requireParentFragment()
-            .requireParentFragment()
-            .setFragmentResultListener(ImageShareFragment.REQUEST_KEY) { _, bundle ->
+        requireParentFragment().requireParentFragment().apply {
+            setFragmentResultListener(ContentsShareFragment.REQUEST_KEY_QUESTION) { _, bundle ->
+                val question = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) bundle.getParcelable(ContentsShareFragment.RESULT_KEY_QUESTION, Question::class.java)
+                else bundle.getParcelable(ContentsShareFragment.RESULT_KEY_QUESTION) as? Question
+                viewModel.sendQuestionChat(question)
+            }
+            setFragmentResultListener(ContentsShareFragment.REQUEST_KEY_CHALLENGE) { _, bundle ->
+                val challenge = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) bundle.getParcelable(ContentsShareFragment.RESULT_KEY_CHALLENGE, Challenge::class.java)
+                else bundle.getParcelable(ContentsShareFragment.RESULT_KEY_CHALLENGE) as? Challenge
+                viewModel.sendChallengeChat(challenge)
+            }
+            setFragmentResultListener(ImageShareFragment.REQUEST_KEY) { _, bundle ->
                 val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) bundle.getParcelable(ImageShareFragment.RESULT_KEY_URI, Uri::class.java)
                 else bundle.getParcelable(ImageShareFragment.RESULT_KEY_URI) as? Uri
                 viewModel.sendImageChat(requireContext(), uri)
             }
+        }
 
         return binding.root
     }

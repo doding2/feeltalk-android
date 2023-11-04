@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.contentsShare
 
+import android.app.Dialog
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -7,7 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -16,11 +19,14 @@ import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentContentsShareBinding
 import com.clonect.feeltalk.databinding.TabItemContentsShareBinding
+import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
+import com.clonect.feeltalk.new_presentation.ui.util.makeLoadingDialog
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
 import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,18 +36,27 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class ContentsShareFragment : Fragment() {
 
+    companion object {
+        const val REQUEST_KEY_QUESTION = "contentsShareFragment_question"
+        const val REQUEST_KEY_CHALLENGE = "contentsShareFragment_challenge"
+        const val RESULT_KEY_QUESTION = "question"
+        const val RESULT_KEY_CHALLENGE = "challenge"
+    }
+
     private lateinit var binding: FragmentContentsShareBinding
     private val viewModel: ContentsShareViewModel by viewModels()
+    private lateinit var loadingDialog: Dialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentContentsShareBinding.inflate(inflater, container, false)
+        loadingDialog = makeLoadingDialog()
 
         val fromBubble = arguments?.getBoolean("fromBubble", false) ?: false
         if (fromBubble) {
-            binding.root.setPadding(0, 0, 0, requireContext().dpToPx(20f).toInt())
+            binding.root.setPadding(0, 0, 0, requireContext().dpToPx(20f))
             return binding.root
         }
 
@@ -51,6 +66,7 @@ class ContentsShareFragment : Fragment() {
         } else {
             activity.setStatusBarColor(binding.root, Color.WHITE, true)
         }
+
         return binding.root
     }
 
@@ -68,14 +84,25 @@ class ContentsShareFragment : Fragment() {
 
     private fun shareContents() = binding.run {
         val selectedTab = tbContentsTabs.selectedTabPosition
+
         if (selectedTab == 0) {
-            viewModel.shareQuestion {
-                findNavController().popBackStack()
-            }
+            val question = viewModel.selectedQuestion.value ?: return@run
+            setFragmentResult(
+                requestKey = REQUEST_KEY_QUESTION,
+                result = bundleOf(
+                    RESULT_KEY_QUESTION to question,
+                )
+            )
+            findNavController().popBackStack()
         } else {
-            viewModel.shareChallenge {
-                findNavController().popBackStack()
-            }
+            val challenge = viewModel.selectedChallenge.value ?: return@run
+            setFragmentResult(
+                requestKey = REQUEST_KEY_CHALLENGE,
+                result = bundleOf(
+                    RESULT_KEY_CHALLENGE to challenge,
+                )
+            )
+            findNavController().popBackStack()
         }
     }
 
@@ -162,6 +189,7 @@ class ContentsShareFragment : Fragment() {
             mcvShare.isEnabled = false
         }
     }
+
 
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {

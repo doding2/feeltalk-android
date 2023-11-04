@@ -1,7 +1,10 @@
 package com.clonect.feeltalk.new_domain.model.question
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import java.io.Serializable
 
+@Parcelize
 data class Question(
     val index: Long,
     val pageNo: Long,
@@ -12,4 +15,4 @@ data class Question(
     val createAt: String,
     var myAnswer: String?,
     val partnerAnswer: String?,
-): Serializable
+): Serializable, Parcelable

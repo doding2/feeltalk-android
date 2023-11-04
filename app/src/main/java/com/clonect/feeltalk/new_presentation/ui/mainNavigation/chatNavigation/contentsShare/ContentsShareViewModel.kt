@@ -13,7 +13,9 @@ import com.clonect.feeltalk.new_presentation.notification.observer.NewChatObserv
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -21,10 +23,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ContentsShareViewModel @Inject constructor(
-    private val shareQuestionUseCase: ShareQuestionUseCase,
-    private val getQuestionUseCase: GetQuestionUseCase,
-    private val getChallengeUseCase: GetChallengeUseCase,
+
 ): ViewModel() {
+
 
     private val _selectedQuestion = MutableStateFlow<Question?>(null)
     val selectedQuestion = _selectedQuestion.asStateFlow()
@@ -40,44 +41,6 @@ class ContentsShareViewModel @Inject constructor(
         _selectedChallenge.value = null
     }
 
-    fun shareQuestion(onComplete: () -> Unit) = viewModelScope.launch {
-        val question = _selectedQuestion.value ?: return@launch
-        when (val result = shareQuestionUseCase(question.index)) {
-            is Resource.Success -> {
-                val question = getQuestion(result.data.coupleQuestion.index) ?: return@launch
-
-                val questionChat = result.data.run {
-                    QuestionChat(
-                        index = index,
-                        pageNo = pageNo,
-                        chatSender = "me",
-                        isRead = isRead,
-                        createAt = createAt,
-                        question = question
-                    )
-                }
-
-                NewChatObserver.getInstance().setNewChat(questionChat)
-                onComplete()
-            }
-            is Resource.Error -> {
-                infoLog("질문 공유 실패: ${result.throwable.stackTrace.joinToString("\n")}")
-            }
-        }
-    }
-    
-    private suspend fun getQuestion(index: Long) = withContext(Dispatchers.IO) {
-        return@withContext when (val result = getQuestionUseCase(index)) {
-            is Resource.Success -> {
-                result.data
-            }
-            is Resource.Error -> {
-                infoLog("질문 로딩 실패: ${result.throwable.stackTrace.joinToString("\n")}")
-                null
-            }
-        }
-    }
-
 
     fun getShareChallengeEnabled() = _selectedChallenge.value != null
 
@@ -86,21 +49,4 @@ class ContentsShareViewModel @Inject constructor(
         _selectedChallenge.value = challenge
     }
 
-    // TODO
-    fun shareChallenge(onComplete: () -> Unit) = viewModelScope.launch {
-        val challenge = _selectedChallenge.value ?: return@launch
-        onComplete()
-    }
-
-    private suspend fun getChallenge(index: Long) = withContext(Dispatchers.IO) {
-        return@withContext when (val result = getChallengeUseCase(index)) {
-            is Resource.Success -> {
-                result.data
-            }
-            is Resource.Error -> {
-                infoLog("챌린지 로딩 실패: ${result.throwable.stackTrace.joinToString("\n")}")
-                null
-            }
-        }
-    }
 }
