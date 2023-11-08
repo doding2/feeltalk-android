@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
@@ -21,6 +22,7 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentChatBinding
 import com.clonect.feeltalk.databinding.FragmentMainNavigationBinding
 import com.clonect.feeltalk.new_domain.model.chat.PartnerLastChatDto
+import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.showConfirmDialog
@@ -313,6 +315,11 @@ class MainNavigationFragment : Fragment() {
         ivLatestChatTail.setColorFilter(color)
     }
 
+    @SuppressLint("SetTextI18n")
+    private fun applyPartnerInfoChanges(partnerInfo: PartnerInfo?) = binding.run {
+        sheetSignalComplete.tvBody.text = partnerInfo?.nickname + requireContext().getString(R.string.signal_complete_body)
+    }
+
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.navigateTo.collectLatest(::navigateFragment) }
@@ -324,6 +331,7 @@ class MainNavigationFragment : Fragment() {
             launch { viewModel.showSuggestionSucceedSheet.collectLatest(::showSuggestionSucceedSheet) }
             launch { viewModel.showSignalCompleteSheet.collectLatest(::showSignalCompleteSheet) }
             launch { viewModel.lastChatColor.collectLatest(::applyLastChatColorChange) }
+            launch { viewModel.partnerInfo.collectLatest(::applyPartnerInfoChanges) }
         }
     }
 

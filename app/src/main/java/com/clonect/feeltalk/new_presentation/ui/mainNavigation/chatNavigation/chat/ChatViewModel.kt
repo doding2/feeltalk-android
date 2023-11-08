@@ -15,6 +15,8 @@ import androidx.paging.map
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.common.PageEvents
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.common.onError
+import com.clonect.feeltalk.common.onSuccess
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.chat.ChallengeChat
 import com.clonect.feeltalk.new_domain.model.chat.Chat
@@ -23,11 +25,14 @@ import com.clonect.feeltalk.new_domain.model.chat.ImageChat
 import com.clonect.feeltalk.new_domain.model.chat.QuestionChat
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
+import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
 import com.clonect.feeltalk.new_domain.model.question.Question
+import com.clonect.feeltalk.new_domain.usecase.challenge.GetChallengeUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.ChangeChatRoomStateUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPagingChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.SendTextChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.SendVoiceChatUseCase
+import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.ShareQuestionUseCase
 import com.clonect.feeltalk.new_presentation.notification.observer.MyChatRoomStateObserver
@@ -67,9 +72,14 @@ class ChatViewModel @Inject constructor(
     private val sendVoiceChatUseCase: SendVoiceChatUseCase,
     private val shareQuestionUseCase: ShareQuestionUseCase,
     private val getQuestionUseCase: GetQuestionUseCase,
+    private val getChallengeUseCase: GetChallengeUseCase,
+    private val getPartnerInfoFlowUseCase: GetPartnerInfoFlowUseCase,
 ) : ViewModel() {
 
     private val job = MutableStateFlow<Job?>(null)
+
+    private val _partnerInfo = MutableStateFlow<PartnerInfo?>(null)
+    val partnerInfo = _partnerInfo.asStateFlow()
 
     private val _isUserInChat = MutableStateFlow<Boolean?>(null)
     val isUserInChat = _isUserInChat.asStateFlow()
@@ -87,6 +97,7 @@ class ChatViewModel @Inject constructor(
     val isKeyboardUp = _isKeyboardUp.asStateFlow()
 
     init {
+        getPartnerInfo()
         collectNewChat()
         collectPartnerChatRoomState()
     }
@@ -125,13 +136,36 @@ class ChatViewModel @Inject constructor(
         TODO("Api is not implemented")
     }
 
+    fun getPartnerInfo() = viewModelScope.launch {
+        getPartnerInfoFlowUseCase().collect { result ->
+            result.onSuccess {
+                _partnerInfo.value = it
+            }.onError {
+                infoLog("Fail to get partner info: ${it.localizedMessage}")
+            }
+        }
+    }
+
     suspend fun getQuestion(index: Long) = withContext(viewModelScope.coroutineContext) {
         when (val result = getQuestionUseCase(index)) {
             is Resource.Success -> {
                 result.data
             }
+
             is Resource.Error -> {
                 infoLog("Fail to get question: ${result.throwable.localizedMessage}")
+                null
+            }
+        }
+    }
+
+    suspend fun getChallenge(index: Long) = withContext(viewModelScope.coroutineContext) {
+        when (val result = getChallengeUseCase(index)) {
+            is Resource.Success -> {
+                result.data
+            }
+            is Resource.Error -> {
+                infoLog("Fail to get challenge: ${result.throwable.localizedMessage}")
                 null
             }
         }
@@ -428,18 +462,13 @@ class ChatViewModel @Inject constructor(
         var mWidth = width.takeIf { it > 0 } ?: maxWidth.toInt()
         var mHeight = height.takeIf { it > 0 } ?: maxHeight.toInt()
 
-        val ratio =  mWidth.toFloat() / mHeight.toFloat()
+        val heightScale = if (mHeight > maxHeight) maxHeight / mHeight else mHeight / maxHeight
+        mWidth = (mWidth * heightScale).toInt()
+        mHeight = (mHeight * heightScale).toInt()
 
-        if (ratio >= 1f) {
-            val scale = if (mWidth > maxWidth) maxWidth / mWidth else mWidth / maxWidth
-            mWidth = (mWidth * scale).toInt()
-            mHeight = (mHeight * scale).toInt()
-        }
-        if (ratio < 1f) {
-            val scale = if (mHeight > maxHeight) maxHeight / mHeight else mHeight / maxHeight
-            mWidth = (mWidth * scale).toInt()
-            mHeight = (mHeight * scale).toInt()
-        }
+        val widthScale = if (mWidth > maxWidth) maxWidth / mWidth else mWidth / maxWidth
+        mWidth = (mWidth * widthScale).toInt()
+        mHeight = (mHeight * widthScale).toInt()
 
 
         val loadingImageChat = ImageChat(
@@ -460,7 +489,6 @@ class ChatViewModel @Inject constructor(
         launch {
 
             delay(1000)
-
 
             // 성공했을 때
             val next = Date()

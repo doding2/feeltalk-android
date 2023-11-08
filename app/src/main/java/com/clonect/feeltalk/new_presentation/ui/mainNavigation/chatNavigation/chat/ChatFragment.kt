@@ -43,7 +43,9 @@ import com.clonect.feeltalk.new_domain.model.chat.QuestionChat
 import com.clonect.feeltalk.new_domain.model.chat.ResetPartnerPasswordChat
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
+import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
 import com.clonect.feeltalk.new_domain.model.question.Question
+import com.clonect.feeltalk.new_domain.model.signal.Signal
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
@@ -229,16 +231,15 @@ class ChatFragment : Fragment() {
         navViewModel.setShowAnswerSheet(true)
     }
 
-    private fun navigateToAnswer(questionIndex: Long) {
-        lifecycleScope.launch {
-            val question = viewModel.getQuestion(questionIndex) ?: return@launch
-            navigateToAnswer(question)
-        }
+    private fun navigateToAnswer(questionIndex: Long) = lifecycleScope.launch {
+        val question = viewModel.getQuestion(questionIndex) ?: return@launch
+        navigateToAnswer(question)
     }
 
-    private fun navigateToChallengeDetail(challenge: Challenge) {
-        if (challenge.isCompleted) navigateToOngoingChallengeDetail(challenge)
-        else navigateToCompletedChallengeDetail(challenge)
+    private fun navigateToChallengeDetail(challenge: Challenge) = lifecycleScope.launch {
+        val loadedChallenge = viewModel.getChallenge(challenge.index) ?: challenge
+        if (loadedChallenge.isCompleted) navigateToCompletedChallengeDetail(loadedChallenge)
+        else navigateToOngoingChallengeDetail(loadedChallenge)
     }
 
     private fun navigateToOngoingChallengeDetail(challenge: Challenge) {
@@ -365,7 +366,6 @@ class ChatFragment : Fragment() {
         rvChat.setItemViewCacheSize(512)
         rvChat.adapter = adapter.apply {
             setMyNickname("me")
-            setPartnerNickname("partner")
             setOnClickItem(::onClickChat)
             setOnRetry(::onRetryChat)
             setOnCancel(::onCancelChat)
@@ -378,7 +378,11 @@ class ChatFragment : Fragment() {
 
                     val shouldScroll = (item.chatSender == "me" && item.sendState == Chat.ChatSendState.Sending) || (viewModel.isUserInBottom.value && item.chatSender == "partner")
                     if (shouldScroll) {
-                        scrollToBottom()
+                        lifecycleScope.launch {
+                            // delay for fixing time divider chat not scrolled bug
+                            delay(100)
+                            scrollToBottom()
+                        }
                     }
                 }
             })
@@ -473,6 +477,9 @@ class ChatFragment : Fragment() {
         scrollRemainHeight -= computeRemainScrollHeight()
         val position = adapter.itemCount - 1
         binding.rvChat.scrollToPosition(position)
+        if (viewModel.isUserInChat.value == true) {
+            viewModel.setUserInBottom(true)
+        }
     }
 
     private fun hideKeyboard() {
@@ -631,6 +638,9 @@ class ChatFragment : Fragment() {
         }
     }
 
+    private fun applyPartnerInfoChanges(partnerInfo: PartnerInfo?) {
+        adapter.setPartnerNickname(partnerInfo?.nickname)
+    }
 
     val onBackCallback = object: OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -667,6 +677,7 @@ class ChatFragment : Fragment() {
             launch { viewModel.isVoiceRecordingReplayPaused.collectLatest(::changePauseVoiceRecordingReplayingView) }
             launch { viewModel.voiceRecordTime.collectLatest(::changeVoiceRecordingTimeView) }
             launch { viewModel.isKeyboardUp.collectLatest(::applyKeyboardUp) }
+            launch { viewModel.partnerInfo.collectLatest(::applyPartnerInfoChanges) }
             launch {
                 viewModel.pagingChat.collectLatest {
                     adapter.submitData(requireParentFragment().lifecycle, it)

@@ -361,7 +361,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             .createPendingIntent()
 
         if (getAppRunning()) {
-            val challenge = (getChallengeUseCase(index) as? Resource.Success)?.data?.toChallenge()?.copy(isNew = true)
+            val challenge = (getChallengeUseCase(index) as? Resource.Success)?.data?.copy(isNew = true)
             if (challenge != null && !challenge.isCompleted) {
                 AddOngoingChallengeObserver
                     .getInstance()
@@ -382,7 +382,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         val index = data["index"]?.toLong() ?: return@launch
         if (getAppRunning()) {
             val challenge = (getChallengeUseCase(index) as? Resource.Success)
-                ?.data?.toChallenge() ?: return@launch
+                ?.data ?: return@launch
             if (challenge.isCompleted) {
                 DeleteCompletedChallengeObserver
                     .getInstance()
@@ -408,7 +408,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             .createPendingIntent()
 
         if (getAppRunning()) {
-            val challenge = (getChallengeUseCase(index) as? Resource.Success)?.data?.toChallenge()
+            val challenge = (getChallengeUseCase(index) as? Resource.Success)?.data
             if (challenge != null && !challenge.isCompleted) {
                 EditOngoingChallengeObserver
                     .getInstance()
@@ -438,7 +438,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             .createPendingIntent()
 
         if (getAppRunning()) {
-            val challenge = (getChallengeUseCase(index) as? Resource.Success)?.data?.toChallenge()
+            val challenge = (getChallengeUseCase(index) as? Resource.Success)?.data
             if (challenge != null && challenge.isCompleted) {
                 DeleteOngoingChallengeObserver
                     .getInstance()

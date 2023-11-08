@@ -92,14 +92,10 @@ class ImageDetailActivity : TransformationAppCompatActivity() {
                     } else {
                         load(imageChat.uri)
                     }
-                }.placeholder(R.drawable.n_background_image_detail_placeholder)
-                    .error(R.drawable.n_background_image_detail_placeholder)
-                    .fallback(R.drawable.n_background_image_detail_placeholder)
-                    .submit()
-                    .get()
+                }.submit().get().toBitmap()
             }
 
-            ssivImage.setImage(ImageSource.cachedBitmap(result.toBitmap()))
+            ssivImage.setImage(ImageSource.cachedBitmap(result))
         }
     }
 

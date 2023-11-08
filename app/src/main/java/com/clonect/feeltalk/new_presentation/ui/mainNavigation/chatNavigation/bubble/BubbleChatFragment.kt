@@ -32,11 +32,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.databinding.FragmentChatBinding
+import com.clonect.feeltalk.new_domain.model.challenge.Challenge
+import com.clonect.feeltalk.new_domain.model.chat.AddChallengeChat
+import com.clonect.feeltalk.new_domain.model.chat.AnswerChat
+import com.clonect.feeltalk.new_domain.model.chat.ChallengeChat
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.DividerChat
 import com.clonect.feeltalk.new_domain.model.chat.ImageChat
+import com.clonect.feeltalk.new_domain.model.chat.PokeChat
+import com.clonect.feeltalk.new_domain.model.chat.QuestionChat
+import com.clonect.feeltalk.new_domain.model.chat.ResetPartnerPasswordChat
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
+import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.ChatAdapter
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.ChatViewModel
@@ -217,6 +225,38 @@ class BubbleChatFragment : Fragment() {
         navigateToImageShare(uri)
     }
 
+    private fun navigateToAnswer(question: Question) {
+//        navViewModel.setShowChatNavigation(false)
+//        navViewModel.setAnswerTargetQuestion(question)
+//        navViewModel.setShowAnswerSheet(true)
+    }
+
+    private fun navigateToAnswer(questionIndex: Long) = lifecycleScope.launch {
+        val question = viewModel.getQuestion(questionIndex) ?: return@launch
+        navigateToAnswer(question)
+    }
+
+    private fun navigateToChallengeDetail(challenge: Challenge) = lifecycleScope.launch {
+        val loadedChallenge = viewModel.getChallenge(challenge.index) ?: challenge
+        if (loadedChallenge.isCompleted) navigateToCompletedChallengeDetail(loadedChallenge)
+        else navigateToOngoingChallengeDetail(loadedChallenge)
+    }
+
+    private fun navigateToOngoingChallengeDetail(challenge: Challenge) {
+        val bundle = bundleOf("challenge" to challenge)
+        requireParentFragment()
+            .requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_mainNavigationFragment_to_ongoingChallengeDetailFragment, bundle)
+    }
+
+    private fun navigateToCompletedChallengeDetail(challenge: Challenge) {
+        val bundle = bundleOf("challenge" to challenge)
+        requireParentFragment()
+            .requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_mainNavigationFragment_to_completedChallengeDetailFragment, bundle)
+    }
 
 
     private fun cancel(includeVoiceChats: Boolean = true) {
@@ -326,7 +366,6 @@ class BubbleChatFragment : Fragment() {
         adapter = ChatAdapter()
         rvChat.adapter = adapter.apply {
             setMyNickname("me")
-            setPartnerNickname("partner")
             setOnClickItem(::onClickChat)
             setOnRetry(::onRetryChat)
             setOnCancel(::onCancelChat)
@@ -356,7 +395,12 @@ class BubbleChatFragment : Fragment() {
 
     private fun onClickChat(view: View, chat: Chat) {
         when (chat) {
-            is ImageChat -> { navigateToImageDetail(view, chat) }
+            is ImageChat -> navigateToImageDetail(view, chat)
+            is ChallengeChat -> navigateToChallengeDetail(chat.challenge)
+            is AddChallengeChat -> navigateToChallengeDetail(chat.challenge)
+            is PokeChat -> navigateToAnswer(chat.questionIndex)
+            is AnswerChat -> navigateToAnswer(chat.question)
+            is ResetPartnerPasswordChat -> viewModel.resetPartnerPassword()
         }
     }
 
@@ -366,6 +410,8 @@ class BubbleChatFragment : Fragment() {
             is TextChat -> viewModel.sendTextChat(retryChat = chat)
             is VoiceChat -> viewModel.sendVoiceChat(context = requireContext(), retryChat = chat)
             is ImageChat -> viewModel.sendImageChat(context = requireContext(), retryChat = chat)
+            is QuestionChat -> viewModel.sendQuestionChat(question = chat.question)
+            is ChallengeChat -> viewModel.sendChallengeChat(challenge = chat.challenge)
         }
     }
 

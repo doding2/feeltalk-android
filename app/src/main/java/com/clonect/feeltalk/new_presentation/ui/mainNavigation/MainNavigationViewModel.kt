@@ -11,14 +11,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.common.onError
+import com.clonect.feeltalk.common.onSuccess
 import com.clonect.feeltalk.new_data.mapper.toChallenge
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.chat.ChatType
 import com.clonect.feeltalk.new_domain.model.chat.PartnerLastChatDto
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
+import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.usecase.challenge.GetChallengeUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPartnerLastChatUseCase
+import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUseCase
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.notification.observer.NewChatObserver
@@ -40,11 +44,15 @@ class MainNavigationViewModel @Inject constructor(
     private val getPartnerLastChatUseCase: GetPartnerLastChatUseCase,
     private val getQuestionUseCase: GetQuestionUseCase,
     private val getChallengeUseCase: GetChallengeUseCase,
+    private val getPartnerInfoFlowUseCase: GetPartnerInfoFlowUseCase,
 ): ViewModel() {
 
     private val _navigateTo = MutableSharedFlow<String>()
     val navigateTo = _navigateTo.asSharedFlow()
 
+
+    private val _partnerInfo = MutableStateFlow<PartnerInfo?>(null)
+    val partnerInfo = _partnerInfo.asStateFlow()
 
     private val _partnerLastChat = MutableStateFlow<PartnerLastChatDto?>(null)
     val partnerLastChat = _partnerLastChat.asStateFlow()
@@ -89,6 +97,7 @@ class MainNavigationViewModel @Inject constructor(
 
 
     init {
+        getPartnerInfo()
         getPartnerLastChat()
         collectNewChat()
         calculateShowingPartnerLastChat()
@@ -127,7 +136,17 @@ class MainNavigationViewModel @Inject constructor(
         val shortcutManager = context.getSystemService(Context.SHORTCUT_SERVICE) as ShortcutManager
         shortcutManager.pushDynamicShortcut(shortcut)
     }
-    
+
+    fun getPartnerInfo() = viewModelScope.launch {
+        getPartnerInfoFlowUseCase().collect { result ->
+            result.onSuccess {
+                _partnerInfo.value = it
+            }.onError {
+                infoLog("Fail to get partner info: ${it.localizedMessage}")
+            }
+        }
+    }
+
     private fun getPartnerLastChat() = viewModelScope.launch(Dispatchers.IO) {
         when (val result = getPartnerLastChatUseCase()) {
             is Resource.Success -> {
@@ -245,7 +264,7 @@ class MainNavigationViewModel @Inject constructor(
 
         when (val result = getChallengeUseCase(index)) {
             is Resource.Success -> {
-                val challenge = result.data.toChallenge()
+                val challenge = result.data
                 setShowChallengeDetail(challenge)
             }
             is Resource.Error -> {

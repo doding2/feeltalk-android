@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.new_data.mapper.toChallenge
 import com.clonect.feeltalk.new_data.repository.challenge.dataSource.ChallengeCacheDataSource
 import com.clonect.feeltalk.new_data.repository.challenge.dataSource.ChallengeLocalDataSource
 import com.clonect.feeltalk.new_data.repository.challenge.dataSource.ChallengeRemoteDataSource
@@ -154,9 +155,9 @@ class ChallengeRepositoryImpl(
         }
     }
 
-    override suspend fun getChallenge(accessToken: String, index: Long): Resource<ChallengeDto> {
+    override suspend fun getChallenge(accessToken: String, index: Long): Resource<Challenge> {
         return try {
-            val result = remoteDataSource.getChallenge(accessToken, index)
+            val result = remoteDataSource.getChallenge(accessToken, index).toChallenge()
             Resource.Success(result)
         } catch (e: CancellationException) {
             throw e

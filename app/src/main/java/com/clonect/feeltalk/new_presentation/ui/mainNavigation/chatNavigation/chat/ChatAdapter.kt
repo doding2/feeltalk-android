@@ -84,7 +84,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
     private var myNickname: String? = null
     private var partnerNickname: String? = null
-    private var partnerProfileUrl: String? = null
+    private var partnerSignal: Signal = Signal.One
 
     private val viewHolders = mutableMapOf<Chat, ChatViewHolder>()
     private val voiceViewHolders = mutableListOf<ChatViewHolder>()
@@ -290,6 +290,11 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
         }
     }
 
+    fun applyPartnerInfoChanges() {
+        viewHolders.filter { it.key.chatSender == "partner" }
+            .forEach { it.value.setPartnerInfo(partnerNickname, partnerSignal) }
+    }
+
 
     fun setOnClickItem(onClick: (View, Chat) -> Unit) {
         this.onClick = onClick
@@ -308,12 +313,13 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
         myNickname = nickname
     }
 
-    fun setPartnerNickname(nickname: String) {
-        partnerNickname = nickname
+    fun setPartnerNickname(nickname: String?) {
+        this.partnerNickname = nickname
+//        applyPartnerInfoChanges()
     }
 
-    fun setPartnerProfileUrl(url: String) {
-        partnerProfileUrl = url
+    fun setPartnerSignal(signal: Signal) {
+        this.partnerSignal = signal
     }
 
     fun setPartnerInChat(isInChat: Boolean) {
@@ -398,6 +404,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
         abstract fun bind(prevItem: Chat?, item: Chat, nextItem: Chat?)
 
         open fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) { }
+
+        open fun setPartnerInfo(nickname: String?, signal: Signal) { }
 
         fun getFormatted(date: String): String {
             return date.substringAfter("T").substringBeforeLast(":")
@@ -558,9 +566,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 tvTime.text = getFormatted(chat.createAt)
                 tvMessage.text = chat.message
 
-//           TODO
-//            tvPartnerNickname.text = "연인 닉네임"
-//            ivPartnerProfile.setImageResource()
+                setPartnerInfo(partnerNickname, partnerSignal)
 
                 tvMessage.setOnLongClickListener {
                     copyText(chat)
@@ -569,6 +575,18 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 makeContinuous(prevItem, item, nextItem)
             }
+        }
+
+        override fun setPartnerInfo(nickname: String?, signal: Signal) = binding.run {
+            tvPartnerNickname.text = partnerNickname
+            val signalRes = when (partnerSignal) {
+                Signal.One -> R.drawable.n_image_signal_100
+                Signal.ThreeFourth -> R.drawable.n_image_signal_75
+                Signal.Half -> R.drawable.n_image_signal_50
+                Signal.Quarter -> R.drawable.n_image_signal_25
+                Signal.Zero -> R.drawable.n_image_signal_0
+            }
+            ivPartnerProfile.setImageResource(signalRes)
         }
 
 
@@ -1294,7 +1312,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                     } else {
                         load(chat.uri)
                     }
-                }.placeholder(R.drawable.n_background_image_chat_placeholder)
+                }.override(chat.width, chat.height)
+                    .placeholder(R.drawable.n_background_image_chat_placeholder)
                     .error(R.drawable.n_background_image_chat_placeholder)
                     .fallback(R.drawable.n_background_image_chat_placeholder)
                     .into(ivImage)
@@ -1418,9 +1437,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 tvTime.text = getFormatted(chat.createAt)
 
-//           TODO
-//            tvPartnerNickname.text = "연인 닉네임"
-//            ivPartnerProfile.setImageResource()
+                setPartnerInfo(partnerNickname, partnerSignal)
 
                 ivImage.updateLayoutParams {
                     width = chat.width
@@ -1435,7 +1452,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                     } else {
                         load(chat.uri)
                     }
-                }.placeholder(R.drawable.n_background_image_chat_placeholder)
+                }.override(chat.width, chat.height)
+                    .placeholder(R.drawable.n_background_image_chat_placeholder)
                     .error(R.drawable.n_background_image_chat_placeholder)
                     .fallback(R.drawable.n_background_image_chat_placeholder)
                     .apply(RequestOptions().override(chat.width, chat.height))
@@ -1446,6 +1464,18 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 makeContinuous(prevItem, item, nextItem)
             }
+        }
+
+        override fun setPartnerInfo(nickname: String?, signal: Signal) = binding.run {
+            tvPartnerNickname.text = partnerNickname
+            val signalRes = when (partnerSignal) {
+                Signal.One -> R.drawable.n_image_signal_100
+                Signal.ThreeFourth -> R.drawable.n_image_signal_75
+                Signal.Half -> R.drawable.n_image_signal_50
+                Signal.Quarter -> R.drawable.n_image_signal_25
+                Signal.Zero -> R.drawable.n_image_signal_0
+            }
+            ivPartnerProfile.setImageResource(signalRes)
         }
 
         override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
@@ -1657,9 +1687,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 tvTime.text = getFormatted(chat.createAt)
 
-//           TODO
-//            tvPartnerNickname.text = "연인 닉네임"
-//            ivPartnerProfile.setImageResource()
+                setPartnerInfo(partnerNickname, partnerSignal)
 
                 when (chat.signal) {
                     Signal.Zero -> {
@@ -1691,6 +1719,18 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 makeContinuous(prevItem, item, nextItem)
             }
+        }
+
+        override fun setPartnerInfo(nickname: String?, signal: Signal) = binding.run {
+            tvPartnerNickname.text = partnerNickname
+            val signalRes = when (partnerSignal) {
+                Signal.One -> R.drawable.n_image_signal_100
+                Signal.ThreeFourth -> R.drawable.n_image_signal_75
+                Signal.Half -> R.drawable.n_image_signal_50
+                Signal.Quarter -> R.drawable.n_image_signal_25
+                Signal.Zero -> R.drawable.n_image_signal_0
+            }
+            ivPartnerProfile.setImageResource(signalRes)
         }
 
         override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
@@ -1888,9 +1928,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 tvTime.text = getFormatted(chat.createAt)
 
-//           TODO
-//            tvPartnerNickname.text = "연인 닉네임"
-//            ivPartnerProfile.setImageResource()
+                setPartnerInfo(partnerNickname, partnerSignal)
 
                 tvChallengeTitle.text = chat.challenge.title
                 val dDay = ceil((chat.challenge.deadline.time - Date().time).toDouble() / Constants.ONE_DAY).toInt()
@@ -1909,6 +1947,18 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 makeContinuous(prevItem, item, nextItem)
             }
+        }
+
+        override fun setPartnerInfo(nickname: String?, signal: Signal) = binding.run {
+            tvPartnerNickname.text = partnerNickname
+            val signalRes = when (partnerSignal) {
+                Signal.One -> R.drawable.n_image_signal_100
+                Signal.ThreeFourth -> R.drawable.n_image_signal_75
+                Signal.Half -> R.drawable.n_image_signal_50
+                Signal.Quarter -> R.drawable.n_image_signal_25
+                Signal.Zero -> R.drawable.n_image_signal_0
+            }
+            ivPartnerProfile.setImageResource(signalRes)
         }
 
         override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
@@ -2106,9 +2156,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 tvTime.text = getFormatted(chat.createAt)
 
-//           TODO
-//            tvPartnerNickname.text = "연인 닉네임"
-//            ivPartnerProfile.setImageResource()
+                setPartnerInfo(partnerNickname, partnerSignal)
 
                 tvChallengeTitle.text = chat.challenge.title
                 val dDay = ceil((chat.challenge.deadline.time - Date().time).toDouble() / Constants.ONE_DAY).toInt()
@@ -2127,6 +2175,18 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 makeContinuous(prevItem, item, nextItem)
             }
+        }
+
+        override fun setPartnerInfo(nickname: String?, signal: Signal) = binding.run {
+            tvPartnerNickname.text = partnerNickname
+            val signalRes = when (partnerSignal) {
+                Signal.One -> R.drawable.n_image_signal_100
+                Signal.ThreeFourth -> R.drawable.n_image_signal_75
+                Signal.Half -> R.drawable.n_image_signal_50
+                Signal.Quarter -> R.drawable.n_image_signal_25
+                Signal.Zero -> R.drawable.n_image_signal_0
+            }
+            ivPartnerProfile.setImageResource(signalRes)
         }
 
         override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
@@ -2316,9 +2376,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 tvTime.text = getFormatted(chat.createAt)
 
-//           TODO
-//            tvPartnerNickname.text = "연인 닉네임"
-//            ivPartnerProfile.setImageResource()
+                setPartnerInfo(partnerNickname, partnerSignal)
 
                 tvChallengeTitle.text = chat.challenge.title
 
@@ -2329,6 +2387,18 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 makeContinuous(prevItem, item, nextItem)
             }
+        }
+
+        override fun setPartnerInfo(nickname: String?, signal: Signal) = binding.run {
+            tvPartnerNickname.text = partnerNickname
+            val signalRes = when (partnerSignal) {
+                Signal.One -> R.drawable.n_image_signal_100
+                Signal.ThreeFourth -> R.drawable.n_image_signal_75
+                Signal.Half -> R.drawable.n_image_signal_50
+                Signal.Quarter -> R.drawable.n_image_signal_25
+                Signal.Zero -> R.drawable.n_image_signal_0
+            }
+            ivPartnerProfile.setImageResource(signalRes)
         }
 
         override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
@@ -2540,9 +2610,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 tvTime.text = getFormatted(chat.createAt)
 
-//           TODO
-//            tvPartnerNickname.text = "연인 닉네임"
-//            ivPartnerProfile.setImageResource()
+                setPartnerInfo(partnerNickname, partnerSignal)
 
                 tvQuestionHeader.text = root.context.getString(R.string.question_chat_header_deco) + chat.question.header
                 tvQuestionBody.text = chat.question.body
@@ -2567,6 +2635,18 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 makeContinuous(prevItem, item, nextItem)
             }
+        }
+
+        override fun setPartnerInfo(nickname: String?, signal: Signal) = binding.run {
+            tvPartnerNickname.text = partnerNickname
+            val signalRes = when (partnerSignal) {
+                Signal.One -> R.drawable.n_image_signal_100
+                Signal.ThreeFourth -> R.drawable.n_image_signal_75
+                Signal.Half -> R.drawable.n_image_signal_50
+                Signal.Quarter -> R.drawable.n_image_signal_25
+                Signal.Zero -> R.drawable.n_image_signal_0
+            }
+            ivPartnerProfile.setImageResource(signalRes)
         }
 
         private fun copyText(text: String) {
@@ -2772,9 +2852,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 tvTime.text = getFormatted(chat.createAt)
 
-//           TODO
-//            tvPartnerNickname.text = "연인 닉네임"
-//            ivPartnerProfile.setImageResource()
+                setPartnerInfo(partnerNickname, partnerSignal)
 
                 tvQuestionHeader.text = root.context.getString(R.string.question_chat_header_deco) + chat.question.header
                 tvQuestionBody.text = chat.question.body
@@ -2788,6 +2866,18 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 makeContinuous(prevItem, item, nextItem)
             }
+        }
+
+        override fun setPartnerInfo(nickname: String?, signal: Signal) = binding.run {
+            tvPartnerNickname.text = partnerNickname
+            val signalRes = when (partnerSignal) {
+                Signal.One -> R.drawable.n_image_signal_100
+                Signal.ThreeFourth -> R.drawable.n_image_signal_75
+                Signal.Half -> R.drawable.n_image_signal_50
+                Signal.Quarter -> R.drawable.n_image_signal_25
+                Signal.Zero -> R.drawable.n_image_signal_0
+            }
+            ivPartnerProfile.setImageResource(signalRes)
         }
 
         private fun copyText(text: String) {
@@ -2978,14 +3068,24 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 tvTime.text = getFormatted(chat.createAt)
 
-//           TODO
-//            tvPartnerNickname.text = "연인 닉네임"
-//            ivPartnerProfile.setImageResource()
+                setPartnerInfo(partnerNickname, partnerSignal)
 
                 mcvAnswer.setOnClickListener { onClick(root, chat) }
 
                 makeContinuous(prevItem, item, nextItem)
             }
+        }
+
+        override fun setPartnerInfo(nickname: String?, signal: Signal) = binding.run {
+            tvPartnerNickname.text = partnerNickname
+            val signalRes = when (partnerSignal) {
+                Signal.One -> R.drawable.n_image_signal_100
+                Signal.ThreeFourth -> R.drawable.n_image_signal_75
+                Signal.Half -> R.drawable.n_image_signal_50
+                Signal.Quarter -> R.drawable.n_image_signal_25
+                Signal.Zero -> R.drawable.n_image_signal_0
+            }
+            ivPartnerProfile.setImageResource(signalRes)
         }
 
         override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {
@@ -3170,14 +3270,24 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 tvTime.text = getFormatted(chat.createAt)
 
-//           TODO
-//            tvPartnerNickname.text = "연인 닉네임"
-//            ivPartnerProfile.setImageResource()
+                setPartnerInfo(partnerNickname, partnerSignal)
 
                 mcvHelp.setOnClickListener { onClick(root, chat) }
 
                 makeContinuous(prevItem, item, nextItem)
             }
+        }
+
+        override fun setPartnerInfo(nickname: String?, signal: Signal) = binding.run {
+            tvPartnerNickname.text = partnerNickname
+            val signalRes = when (partnerSignal) {
+                Signal.One -> R.drawable.n_image_signal_100
+                Signal.ThreeFourth -> R.drawable.n_image_signal_75
+                Signal.Half -> R.drawable.n_image_signal_50
+                Signal.Quarter -> R.drawable.n_image_signal_25
+                Signal.Zero -> R.drawable.n_image_signal_0
+            }
+            ivPartnerProfile.setImageResource(signalRes)
         }
 
         override fun makeContinuous(prevItem: Chat?, item: Chat, nextItem: Chat?) = binding.run {

@@ -95,6 +95,6 @@ class ChatPagingSource(
         if (result is Resource.Error) {
             throw result.throwable
         }
-        (result as Resource.Success).data.toChallenge()
+        (result as Resource.Success).data
     }
 }

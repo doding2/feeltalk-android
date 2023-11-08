@@ -19,6 +19,6 @@ interface ChallengeRepository {
     suspend fun deleteChallenge(accessToken: String, index: Long): Resource<Unit>
     suspend fun completeChallenge(accessToken: String, index: Long): Resource<Unit>
 
-    suspend fun getChallenge(accessToken: String, index: Long): Resource<ChallengeDto>
+    suspend fun getChallenge(accessToken: String, index: Long): Resource<Challenge>
     suspend fun getChallengeCount(accessToken: String): Resource<ChallengeCountDto>
 }
