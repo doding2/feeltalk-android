@@ -11,10 +11,10 @@ import androidx.paging.map
 import com.clonect.feeltalk.common.PageEvents
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.question.Question
+import com.clonect.feeltalk.new_domain.usecase.question.GetAnswerQuestionFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetPagingQuestionUseCase
+import com.clonect.feeltalk.new_domain.usecase.question.GetTodayQuestionFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.PressForAnswerUseCase
-import com.clonect.feeltalk.new_presentation.notification.observer.QuestionAnswerObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.TodayQuestionObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -29,6 +29,8 @@ import javax.inject.Inject
 class QuestionViewModel @Inject constructor(
     getPagingQuestionUseCase: GetPagingQuestionUseCase,
     private val pressForAnswerUseCase: PressForAnswerUseCase,
+    private val getAnswerQuestionFlowUseCase: GetAnswerQuestionFlowUseCase,
+    private val getTodayQuestionFlowUseCase: GetTodayQuestionFlowUseCase,
 ) : ViewModel() {
 
     private val isInQuestionTop = MutableStateFlow(true)
@@ -105,35 +107,21 @@ class QuestionViewModel @Inject constructor(
         }
 
 
-    private fun collectTodayQuestion() = viewModelScope.launch(Dispatchers.IO) {
-        TodayQuestionObserver
-            .getInstance()
-            .setTodayQuestion(null)
-        TodayQuestionObserver
-            .getInstance()
-            .todayQuestion
-            .collect {
-                if (it == null) return@collect
-                modifyPage(PageEvents.InsertItemHeader(it))
+    private fun collectTodayQuestion() = viewModelScope.launch {
+        getTodayQuestionFlowUseCase().collect {
+            if (it == null) return@collect
+            modifyPage(PageEvents.InsertItemHeader(it))
 
-                if (isInQuestionTop.value) {
-                    setScrollToTop(true)
-                }
+            if (isInQuestionTop.value) {
+                setScrollToTop(true)
             }
+        }
     }
 
-    private fun collectQuestionAnswer() = viewModelScope.launch(Dispatchers.IO) {
-        QuestionAnswerObserver
-            .getInstance()
-            .setAnsweredQuestion(null)
-        QuestionAnswerObserver
-            .getInstance()
-            .answeredQuestion
-            .collect {
-                if (it == null) return@collect
-
-                modifyPage(PageEvents.Edit(it))
-            }
+    private fun collectQuestionAnswer() = viewModelScope.launch {
+        getAnswerQuestionFlowUseCase().collect {
+            modifyPage(PageEvents.Edit(it))
+        }
     }
 
 }

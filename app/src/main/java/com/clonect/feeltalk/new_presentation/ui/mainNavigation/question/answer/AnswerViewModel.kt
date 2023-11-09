@@ -5,10 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.common.onError
+import com.clonect.feeltalk.common.onSuccess
 import com.clonect.feeltalk.new_domain.model.question.Question
+import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.AnswerQuestionUseCase
+import com.clonect.feeltalk.new_domain.usecase.question.GetAnswerQuestionFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.PressForAnswerUseCase
-import com.clonect.feeltalk.new_presentation.notification.observer.QuestionAnswerObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +20,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,6 +29,8 @@ import javax.inject.Inject
 class AnswerViewModel @Inject constructor(
     private val answerQuestionUseCase: AnswerQuestionUseCase,
     private val pressForAnswerUseCase: PressForAnswerUseCase,
+    private val getAnswerQuestionFlowUseCase: GetAnswerQuestionFlowUseCase,
+    private val getPartnerInfoFlowUseCase: GetPartnerInfoFlowUseCase,
 ) : ViewModel() {
 
     private val job = MutableStateFlow<Job?>(null)
@@ -51,16 +57,15 @@ class AnswerViewModel @Inject constructor(
 
     fun answerQuestion(context: Context, onComplete: () -> Unit = {}) = viewModelScope.launch(
         Dispatchers.IO) {
-        val index = _question.value?.index ?: return@launch
+        val question = _question.value ?: return@launch
         val answer = _answer.value
-        when (val result = answerQuestionUseCase(index, answer)) {
+        when (val result = answerQuestionUseCase(question, answer)) {
             is Resource.Success -> {
-                QuestionAnswerObserver
-                    .getInstance()
-                    .setAnsweredQuestion(
-                        _question.value?.copy(myAnswer = answer)
-                    )
-                sendSnackbar("UserName" + context.getString(R.string.answer_done_snack_bar))
+                getPartnerInfoFlowUseCase().first().onSuccess {
+                    sendSnackbar(it.nickname + context.getString(R.string.answer_done_snack_bar))
+                }.onError {
+                    infoLog("Fail to get partner info when answering question completed: ${it.localizedMessage}")
+                }
                 onComplete()
             }
             is Resource.Error -> {
@@ -120,20 +125,12 @@ class AnswerViewModel @Inject constructor(
     }
 
 
-    private fun collectQuestionAnswer() = viewModelScope.launch(Dispatchers.IO) {
-        QuestionAnswerObserver
-            .getInstance()
-            .setAnsweredQuestion(null)
-        QuestionAnswerObserver
-            .getInstance()
-            .answeredQuestion
-            .collect { new ->
-                val old = _question.value
-                if (new == null || old == null) return@collect
-
-                if (new.index == old.index && old.partnerAnswer == null && new.partnerAnswer != null) {
-                    _question.value = old.copy(partnerAnswer = new.partnerAnswer)
-                }
+    private fun collectQuestionAnswer() = viewModelScope.launch {
+        getAnswerQuestionFlowUseCase().collect { new ->
+            val old = _question.value ?: return@collect
+            if (new.index == old.index && old.partnerAnswer == null && new.partnerAnswer != null) {
+                _question.value = old.copy(partnerAnswer = new.partnerAnswer)
             }
+        }
     }
 }

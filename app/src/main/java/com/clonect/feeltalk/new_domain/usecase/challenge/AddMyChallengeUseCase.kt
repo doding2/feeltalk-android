@@ -5,7 +5,7 @@ import com.clonect.feeltalk.new_domain.model.challenge.AddChallengeDto
 import com.clonect.feeltalk.new_domain.repository.challenge.ChallengeRepository
 import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 
-class AddChallengeUseCase(
+class AddMyChallengeUseCase(
     private val tokenRepository: TokenRepository,
     private val challengeRepository: ChallengeRepository,
 ) {
@@ -15,6 +15,6 @@ class AddChallengeUseCase(
             return Resource.Error(tokenInfo.throwable)
         }
         val accessToken = (tokenInfo as Resource.Success).data.accessToken
-        return challengeRepository.addChallenge(accessToken, title, deadline, content)
+        return challengeRepository.addMyChallenge(accessToken, title, deadline, content)
     }
 }

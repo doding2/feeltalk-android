@@ -4,7 +4,7 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.repository.chat.ChatRepository
 import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 
-class ChangeChatRoomStateUseCase(
+class ChangeMyChatRoomStateUseCase(
     private val tokenRepository: TokenRepository,
     private val chatRepository: ChatRepository,
 ) {
@@ -14,6 +14,6 @@ class ChangeChatRoomStateUseCase(
             return Resource.Error(tokenInfo.throwable)
         }
         val accessToken = (tokenInfo as Resource.Success).data.accessToken
-        return chatRepository.changeChatRoomState(accessToken, isInChat)
+        return chatRepository.changeMyChatRoomState(accessToken, isInChat)
     }
 }

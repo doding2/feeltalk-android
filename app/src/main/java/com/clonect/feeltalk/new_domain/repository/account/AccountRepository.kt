@@ -37,4 +37,7 @@ interface AccountRepository {
     suspend fun unlockAccount(accessToken: String): Resource<Unit>
     suspend fun getLockResetQuestion(accessToken: String): Resource<Int>
     suspend fun validateLockResetAnswer(accessToken: String, answer: String): Resource<ValidateLockAnswerDto>
+
+    suspend fun setCoupleCrated(isCreated: Boolean)
+    suspend fun getCoupleCreatedFlow(): Flow<Boolean>
 }

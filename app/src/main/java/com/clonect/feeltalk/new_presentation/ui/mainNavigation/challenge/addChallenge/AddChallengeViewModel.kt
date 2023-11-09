@@ -3,10 +3,8 @@ package com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.addCha
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.challenge.ChallengeCategory
-import com.clonect.feeltalk.new_domain.usecase.challenge.AddChallengeUseCase
-import com.clonect.feeltalk.new_presentation.notification.observer.AddOngoingChallengeObserver
+import com.clonect.feeltalk.new_domain.usecase.challenge.AddMyChallengeUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddChallengeViewModel @Inject constructor(
-    private val addChallengeUseCase: AddChallengeUseCase
+    private val addMyChallengeUseCase: AddMyChallengeUseCase,
 ): ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
@@ -100,22 +98,9 @@ class AddChallengeViewModel @Inject constructor(
         }
         val deadlineDate = deadline.value
         val deadline = format.format(deadlineDate)
-        when (val result = addChallengeUseCase(title, deadline, content)) {
+        when (val result = addMyChallengeUseCase(title, deadline, content)) {
             is Resource.Success -> {
                 onSuccess()
-                AddOngoingChallengeObserver
-                    .getInstance()
-                    .setChallenge(
-                        Challenge(
-                            index = result.data.index,
-                            title = title,
-                            body = content,
-                            deadline = deadlineDate,
-                            owner = "me",
-                            isCompleted = false,
-                            isNew = true
-                        )
-                    )
             }
             is Resource.Error -> {
                 infoLog("Fail to add challenge: ${result.throwable.localizedMessage}")

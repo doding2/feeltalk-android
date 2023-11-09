@@ -14,11 +14,13 @@ import com.clonect.feeltalk.new_data.repository.challenge.paging.OngoingChalleng
 import com.clonect.feeltalk.new_domain.model.challenge.AddChallengeDto
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.challenge.ChallengeCountDto
-import com.clonect.feeltalk.new_domain.model.challenge.ChallengeDto
 import com.clonect.feeltalk.new_domain.model.challenge.ChallengeListDto
 import com.clonect.feeltalk.new_domain.model.challenge.LastChallengePageNoDto
 import com.clonect.feeltalk.new_domain.repository.challenge.ChallengeRepository
 import kotlinx.coroutines.flow.Flow
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlin.coroutines.cancellation.CancellationException
 
 class ChallengeRepositoryImpl(
@@ -100,7 +102,7 @@ class ChallengeRepositoryImpl(
         }.flow
     }
 
-    override suspend fun addChallenge(
+    override suspend fun addMyChallenge(
         accessToken: String,
         title: String,
         deadline: String,
@@ -108,6 +110,18 @@ class ChallengeRepositoryImpl(
     ): Resource<AddChallengeDto> {
         return try {
             val result = remoteDataSource.addChallenge(accessToken, title, deadline, content)
+            val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            cacheDataSource.addChallenge(
+                Challenge(
+                    index = result.index,
+                    title = title,
+                    body = content,
+                    deadline = format.parse(deadline),
+                    owner = "me",
+                    isCompleted = false,
+                    isNew = true
+                )
+            )
             Resource.Success(result)
         } catch (e: CancellationException) {
             throw e
@@ -122,9 +136,21 @@ class ChallengeRepositoryImpl(
         title: String,
         deadline: String,
         content: String,
+        owner: String
     ): Resource<Unit> {
         return try {
             val result = remoteDataSource.modifyChallenge(accessToken, index, title, deadline, content)
+            val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            cacheDataSource.modifyChallenge(
+                Challenge(
+                    index = index,
+                    title = title,
+                    body = content,
+                    deadline = format.parse(deadline),
+                    owner = owner,
+                    isCompleted = false
+                )
+            )
             Resource.Success(result)
         } catch (e: CancellationException) {
             throw e
@@ -133,9 +159,10 @@ class ChallengeRepositoryImpl(
         }
     }
 
-    override suspend fun deleteChallenge(accessToken: String, index: Long): Resource<Unit> {
+    override suspend fun deleteChallenge(accessToken: String, challenge: Challenge): Resource<Unit> {
         return try {
-            val result = remoteDataSource.deleteChallenge(accessToken, index)
+            val result = remoteDataSource.deleteChallenge(accessToken, challenge.index)
+            cacheDataSource.deleteChallenge(challenge)
             Resource.Success(result)
         } catch (e: CancellationException) {
             throw e
@@ -144,9 +171,11 @@ class ChallengeRepositoryImpl(
         }
     }
 
-    override suspend fun completeChallenge(accessToken: String, index: Long): Resource<Unit> {
+    override suspend fun completeChallenge(accessToken: String, challenge: Challenge): Resource<Unit> {
         return try {
-            val result = remoteDataSource.completeChallenge(accessToken, index)
+            val result = remoteDataSource.completeChallenge(accessToken, challenge.index)
+            cacheDataSource.deleteChallenge(challenge)
+            cacheDataSource.addChallenge(challenge.copy(isCompleted = true))
             Resource.Success(result)
         } catch (e: CancellationException) {
             throw e
@@ -175,5 +204,27 @@ class ChallengeRepositoryImpl(
         } catch (e: Exception) {
             Resource.Error(e)
         }
+    }
+
+
+    override suspend fun addPartnerChallengeCache(challenge: Challenge) {
+        cacheDataSource.addChallenge(challenge)
+    }
+    override suspend fun getAddChallengeFlow(): Flow<Challenge> {
+        return cacheDataSource.getAddChallengeFlow()
+    }
+
+    override suspend fun deletePartnerChallengeCache(challenge: Challenge) {
+        cacheDataSource.deleteChallenge(challenge)
+    }
+    override suspend fun getDeleteChallengeFlow(): Flow<Challenge> {
+        return cacheDataSource.getDeleteChallengeFlow()
+    }
+
+    override suspend fun modifyPartnerChallengeCache(challenge: Challenge) {
+        cacheDataSource.modifyChallenge(challenge)
+    }
+    override suspend fun getModifyChallengeFlow(): Flow<Challenge> {
+        return cacheDataSource.getModifyChallengeFlow()
     }
 }

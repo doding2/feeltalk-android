@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.common.PageEvents
+import com.clonect.feeltalk.new_domain.usecase.challenge.GetAddChallengeFlowUseCase
+import com.clonect.feeltalk.new_domain.usecase.challenge.GetDeleteChallengeFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.challenge.GetPagingCompletedChallengeUseCase
-import com.clonect.feeltalk.new_presentation.notification.observer.AddCompletedChallengeObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.DeleteCompletedChallengeObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class CompletedViewModel @Inject constructor(
     getPagingCompletedChallengeUseCase: GetPagingCompletedChallengeUseCase,
+    private val getAddChallengeFlowUseCase: GetAddChallengeFlowUseCase,
+    private val getDeleteChallengeFlowUseCase: GetDeleteChallengeFlowUseCase,
 ): ViewModel() {
 
     private val _isEmpty = MutableStateFlow(true)
@@ -93,28 +95,18 @@ class CompletedViewModel @Inject constructor(
 
 
     private fun collectAddChallenge() = viewModelScope.launch {
-        AddCompletedChallengeObserver
-            .getInstance()
-            .setChallenge(null)
-        AddCompletedChallengeObserver
-            .getInstance()
-            .challenge
-            .collect {
-                if (it == null) return@collect
+        getAddChallengeFlowUseCase().collect {
+            if (it.isCompleted) {
                 modifyPage(PageEvents.InsertItemFooter(it))
             }
+        }
     }
 
     private fun collectDeleteChallenge() = viewModelScope.launch {
-        DeleteCompletedChallengeObserver
-            .getInstance()
-            .setChallenge(null)
-        DeleteCompletedChallengeObserver
-            .getInstance()
-            .challenge
-            .collect {
-                if (it == null) return@collect
+        getDeleteChallengeFlowUseCase().collect {
+            if (it.isCompleted) {
                 modifyPage(PageEvents.Remove(it))
             }
+        }
     }
 }

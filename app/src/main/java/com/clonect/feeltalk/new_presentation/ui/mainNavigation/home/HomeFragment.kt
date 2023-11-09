@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.home
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -22,6 +23,7 @@ import com.clonect.feeltalk.databinding.FragmentHomeBinding
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.model.signal.Signal
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
+import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.home.signal.SignalBottomSheetFragment
 import com.clonect.feeltalk.new_presentation.ui.util.CustomTypefaceSpan
@@ -74,7 +76,9 @@ class HomeFragment : Fragment() {
 
         binding.run {
             mcvAnswer.setOnClickListener { clickAnswerButton() }
-            acvMySignal.setOnClickListener { showSignalBottomSheet() }
+            acvMySignal.setOnClickListener {
+                showSignalBottomSheet()
+            }
         }
     }
 

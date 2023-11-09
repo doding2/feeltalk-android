@@ -9,11 +9,10 @@ import androidx.paging.insertSeparators
 import androidx.paging.map
 import com.clonect.feeltalk.common.PageEvents
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
+import com.clonect.feeltalk.new_domain.usecase.challenge.GetAddChallengeFlowUseCase
+import com.clonect.feeltalk.new_domain.usecase.challenge.GetDeleteChallengeFlowUseCase
+import com.clonect.feeltalk.new_domain.usecase.challenge.GetModifyChallengeFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.challenge.GetPagingOngoingChallengeUseCase
-import com.clonect.feeltalk.new_presentation.notification.observer.AddOngoingChallengeObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.DeleteOngoingChallengeObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.EditOngoingChallengeObserver
-import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -29,7 +28,10 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class ChallengeShareViewModel @Inject constructor(
-    getPagingOngoingChallengeUseCase: GetPagingOngoingChallengeUseCase
+    getPagingOngoingChallengeUseCase: GetPagingOngoingChallengeUseCase,
+    private val addChallengeFlowUseCase: GetAddChallengeFlowUseCase,
+    private val getDeleteChallengeFlowUseCase: GetDeleteChallengeFlowUseCase,
+    private val getModifyChallengeFlowUseCase: GetModifyChallengeFlowUseCase
 ) : ViewModel() {
 
     private val _errorMessage = MutableSharedFlow<String>()
@@ -123,41 +125,26 @@ class ChallengeShareViewModel @Inject constructor(
 
 
     private fun collectAddChallenge() = viewModelScope.launch {
-        AddOngoingChallengeObserver
-            .getInstance()
-            .setChallenge(null)
-        AddOngoingChallengeObserver
-            .getInstance()
-            .challenge
-            .collect {
-                if (it == null) return@collect
+        addChallengeFlowUseCase().collect {
+            if (!it.isCompleted) {
                 modifyPage(PageEvents.InsertItemFooter(it))
             }
+        }
     }
 
     private fun collectDeleteChallenge() = viewModelScope.launch {
-        DeleteOngoingChallengeObserver
-            .getInstance()
-            .setChallenge(null)
-        DeleteOngoingChallengeObserver
-            .getInstance()
-            .challenge
-            .collect {
-                if (it == null) return@collect
+        getDeleteChallengeFlowUseCase().collect {
+            if (!it.isCompleted) {
                 modifyPage(PageEvents.Remove(it))
             }
+        }
     }
 
     private fun collectEditChallenge() = viewModelScope.launch {
-        EditOngoingChallengeObserver
-            .getInstance()
-            .setChallenge(null)
-        EditOngoingChallengeObserver
-            .getInstance()
-            .challenge
-            .collect {
-                if (it == null) return@collect
+        getModifyChallengeFlowUseCase().collect {
+            if (!it.isCompleted) {
                 modifyPage(PageEvents.Edit(it))
             }
+        }
     }
 }

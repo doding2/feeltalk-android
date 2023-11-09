@@ -187,6 +187,18 @@ class UseCaseModule {
         return GetServiceDataCountUseCase(tokenRepository, accountRepository)
     }
 
+    @Singleton
+    @Provides
+    fun providesSetCoupleCreatedUseCase(accountRepository: AccountRepository): SetCoupleCreatedUseCase {
+        return SetCoupleCreatedUseCase(accountRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetCoupleCreatedFlowUseCase(accountRepository: AccountRepository): GetCoupleCreatedFlowUseCase {
+        return GetCoupleCreatedFlowUseCase(accountRepository)
+    }
+
 
 
     /** Partner **/
@@ -237,8 +249,13 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesChangeChatRoomStateUseCase(tokenRepository: TokenRepository, chatRepository: ChatRepository): ChangeChatRoomStateUseCase {
-        return ChangeChatRoomStateUseCase(tokenRepository, chatRepository)
+    fun providesChangeChatRoomStateUseCase(tokenRepository: TokenRepository, chatRepository: ChatRepository): ChangeMyChatRoomStateUseCase {
+        return ChangeMyChatRoomStateUseCase(tokenRepository, chatRepository)
+    }
+    @Singleton
+    @Provides
+    fun providesGetMyChatRoomStateFlowUseCase(chatRepository: ChatRepository): GetMyChatRoomStateCacheUseCase {
+        return GetMyChatRoomStateCacheUseCase(chatRepository)
     }
 
     @Singleton
@@ -269,6 +286,30 @@ class UseCaseModule {
     @Provides
     fun providesSendVoiceChatUseCase(tokenRepository: TokenRepository, chatRepository: ChatRepository): SendVoiceChatUseCase {
         return SendVoiceChatUseCase(tokenRepository, chatRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesAddNewChatCacheUseCase(chatRepository: ChatRepository): AddNewChatCacheUseCase {
+        return AddNewChatCacheUseCase(chatRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetNewChatFlowUseCase(chatRepository: ChatRepository): GetNewChatFlowUseCase {
+        return GetNewChatFlowUseCase(chatRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesChangePartnerChatRoomStateCacheUseCase(chatRepository: ChatRepository): ChangePartnerChatRoomStateCacheUseCase {
+        return ChangePartnerChatRoomStateCacheUseCase(chatRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetPartnerChatRoomStateFlowUseCase(chatRepository: ChatRepository): GetPartnerChatRoomStateFlowUseCase {
+        return GetPartnerChatRoomStateFlowUseCase(chatRepository)
     }
 
 
@@ -316,6 +357,24 @@ class UseCaseModule {
         return ShareQuestionUseCase(tokenRepository, questionRepository)
     }
 
+    @Singleton
+    @Provides
+    fun providesAnswerPartnerQuestionCacheUseCase(questionRepository: QuestionRepository): AnswerPartnerQuestionCacheUseCase {
+        return AnswerPartnerQuestionCacheUseCase(questionRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetAnswerQuestionFlowUseCase(questionRepository: QuestionRepository): GetAnswerQuestionFlowUseCase {
+        return GetAnswerQuestionFlowUseCase(questionRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetTodayQuestionFlowUseCase(questionRepository: QuestionRepository): GetTodayQuestionFlowUseCase {
+        return GetTodayQuestionFlowUseCase(questionRepository)
+    }
+
 
     /** Challenge **/
 
@@ -333,8 +392,8 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesAddChallengeUseCase(tokenRepository: TokenRepository, challengeRepository: ChallengeRepository): AddChallengeUseCase {
-        return AddChallengeUseCase(tokenRepository, challengeRepository)
+    fun providesAddChallengeUseCase(tokenRepository: TokenRepository, challengeRepository: ChallengeRepository): AddMyChallengeUseCase {
+        return AddMyChallengeUseCase(tokenRepository, challengeRepository)
     }
 
     @Singleton
@@ -365,6 +424,42 @@ class UseCaseModule {
     @Provides
     fun providesGetChallengeCountUseCase(tokenRepository: TokenRepository, challengeRepository: ChallengeRepository): GetChallengeCountUseCase {
         return GetChallengeCountUseCase(tokenRepository, challengeRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesAddPartnerChallengeCacheUseCase(challengeRepository: ChallengeRepository): AddPartnerChallengeCacheUseCase {
+        return AddPartnerChallengeCacheUseCase(challengeRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetAddChallengeFlowUseCase(challengeRepository: ChallengeRepository): GetAddChallengeFlowUseCase {
+        return GetAddChallengeFlowUseCase(challengeRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesDeletePartnerChallengeCacheUseCase(challengeRepository: ChallengeRepository): DeletePartnerChallengeCacheUseCase {
+        return DeletePartnerChallengeCacheUseCase(challengeRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetDeleteChallengeFlowUseCase(challengeRepository: ChallengeRepository): GetDeleteChallengeFlowUseCase {
+        return GetDeleteChallengeFlowUseCase(challengeRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesModifyPartnerChallengeCacheUseCase(challengeRepository: ChallengeRepository): ModifyPartnerChallengeCacheUseCase {
+        return ModifyPartnerChallengeCacheUseCase(challengeRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetModifyChallengeFlowUseCase(challengeRepository: ChallengeRepository): GetModifyChallengeFlowUseCase {
+        return GetModifyChallengeFlowUseCase(challengeRepository)
     }
 
 

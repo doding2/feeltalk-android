@@ -278,9 +278,10 @@
                                     android:textColor="@color/black"
                                     android:textSize="16sp"
                                     app:layout_constrainedWidth="true"
+                                    app:layout_constraintHorizontal_bias="1"
                                     app:layout_constraintBottom_toBottomOf="parent"
                                     app:layout_constraintStart_toEndOf="@id/iv_calendar"
-                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintTop_toTopOf="parent" />
 
                                 <ImageView

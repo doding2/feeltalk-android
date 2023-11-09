@@ -14,8 +14,6 @@ import com.clonect.feeltalk.domain.usecase.chat.SendChatUseCase
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.question.GetQuestionDetailUseCase
 import com.clonect.feeltalk.domain.usecase.user.*
-import com.clonect.feeltalk.new_presentation.notification.observer.NewChatObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.QuestionAnswerObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -263,7 +261,5 @@ class ChatViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
 //        FeeltalkApp.setQuestionIdOfShowingChatFragment(null)
-        NewChatObserver.onCleared()
-        QuestionAnswerObserver.onCleared()
     }
 }

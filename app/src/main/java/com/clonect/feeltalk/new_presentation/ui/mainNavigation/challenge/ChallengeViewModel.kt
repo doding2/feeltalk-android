@@ -4,11 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.challenge.ChallengeCountDto
+import com.clonect.feeltalk.new_domain.usecase.challenge.GetAddChallengeFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.challenge.GetChallengeCountUseCase
-import com.clonect.feeltalk.new_presentation.notification.observer.AddCompletedChallengeObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.AddOngoingChallengeObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.DeleteCompletedChallengeObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.DeleteOngoingChallengeObserver
+import com.clonect.feeltalk.new_domain.usecase.challenge.GetDeleteChallengeFlowUseCase
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.completed.SnackbarState
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ChallengeViewModel @Inject constructor(
     private val getChallengeCountUseCase: GetChallengeCountUseCase,
+    private val getAddChallengeFlowUseCase: GetAddChallengeFlowUseCase,
+    private val getDeleteChallengeFlowUseCase: GetDeleteChallengeFlowUseCase,
 ) : ViewModel() {
 
     private val _snackbarState = MutableStateFlow(SnackbarState())
@@ -45,10 +45,8 @@ class ChallengeViewModel @Inject constructor(
 
     init {
         getChallengeCount()
-        collectAddOngoingChallenge()
-        collectDeleteOngoingChallenge()
-        collectAddCompletedChallenge()
-        collectDeleteCompletedChallenge()
+        collectAddChallenge()
+        collectDeleteChallenge()
     }
 
     private fun getChallengeCount() = viewModelScope.launch {
@@ -78,79 +76,41 @@ class ChallengeViewModel @Inject constructor(
 
 
 
-    private fun collectAddOngoingChallenge() = viewModelScope.launch(Dispatchers.IO) {
-        AddOngoingChallengeObserver
-            .getInstance()
-            .setChallenge(null)
-        AddOngoingChallengeObserver
-            .getInstance()
-            .challenge
-            .collect {
-                observerLock.withLock {
-                    if (it == null) return@withLock
-                    val original = _challengeCount.value
+    private fun collectAddChallenge() = viewModelScope.launch(Dispatchers.IO) {
+        getAddChallengeFlowUseCase().collect {
+            observerLock.withLock {
+                val original = _challengeCount.value
+                if (it.isCompleted) {
+                    _challengeCount.value = original?.copy(
+                        totalCount = original.totalCount + 1,
+                        completedCount = original.completedCount + 1
+                    )
+                } else {
                     _challengeCount.value = original?.copy(
                         totalCount = original.totalCount + 1,
                         ongoingCount = original.ongoingCount + 1
                     )
                 }
             }
+        }
     }
 
-    private fun collectDeleteOngoingChallenge() = viewModelScope.launch(Dispatchers.IO) {
-        DeleteOngoingChallengeObserver
-            .getInstance()
-            .setChallenge(null)
-        DeleteOngoingChallengeObserver
-            .getInstance()
-            .challenge
-            .collect {
-                observerLock.withLock {
-                    if (it == null) return@withLock
-                    val original = _challengeCount.value
+    private fun collectDeleteChallenge() = viewModelScope.launch(Dispatchers.IO) {
+        getDeleteChallengeFlowUseCase().collect {
+            observerLock.withLock {
+                val original = _challengeCount.value
+                if (it.isCompleted) {
+                    _challengeCount.value = original?.copy(
+                        totalCount = original.totalCount - 1,
+                        completedCount = original.completedCount - 1
+                    )
+                } else {
                     _challengeCount.value = original?.copy(
                         totalCount = original.totalCount - 1,
                         ongoingCount = original.ongoingCount - 1
                     )
                 }
             }
-    }
-
-    private fun collectAddCompletedChallenge() = viewModelScope.launch(Dispatchers.IO) {
-        AddCompletedChallengeObserver
-            .getInstance()
-            .setChallenge(null)
-        AddCompletedChallengeObserver
-            .getInstance()
-            .challenge
-            .collect {
-                observerLock.withLock {
-                    if (it == null) return@withLock
-                    val original = _challengeCount.value
-                    _challengeCount.value = original?.copy(
-                        totalCount = original.totalCount + 1,
-                        completedCount = original.completedCount + 1
-                    )
-                }
-            }
-    }
-
-    private fun collectDeleteCompletedChallenge() = viewModelScope.launch(Dispatchers.IO) {
-        DeleteCompletedChallengeObserver
-            .getInstance()
-            .setChallenge(null)
-        DeleteCompletedChallengeObserver
-            .getInstance()
-            .challenge
-            .collect {
-                observerLock.withLock {
-                    if (it == null) return@withLock
-                    val original = _challengeCount.value
-                    _challengeCount.value = original?.copy(
-                        totalCount = original.totalCount - 1,
-                        completedCount = original.completedCount - 1
-                    )
-                }
-            }
+        }
     }
 }

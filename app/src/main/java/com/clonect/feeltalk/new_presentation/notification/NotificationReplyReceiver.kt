@@ -7,10 +7,10 @@ import android.content.Intent
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
-import com.clonect.feeltalk.new_domain.usecase.chat.ChangeChatRoomStateUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.AddNewChatCacheUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.ChangeMyChatRoomStateUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.GetMyChatRoomStateCacheUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.SendTextChatUseCase
-import com.clonect.feeltalk.new_presentation.notification.observer.MyChatRoomStateObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.NewChatObserver
 import com.clonect.feeltalk.new_presentation.ui.util.toBytesInt
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,12 +23,11 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class NotificationReplyReceiver: BroadcastReceiver() {
 
-    @Inject
-    lateinit var notificationHelper: NotificationHelper
-    @Inject
-    lateinit var sendTextChatUseCase: SendTextChatUseCase
-    @Inject
-    lateinit var changeChatRoomStateUseCase: ChangeChatRoomStateUseCase
+    @Inject lateinit var notificationHelper: NotificationHelper
+    @Inject lateinit var addNewChatCacheUseCase: AddNewChatCacheUseCase
+    @Inject lateinit var sendTextChatUseCase: SendTextChatUseCase
+    @Inject lateinit var changeMyChatRoomStateUseCase: ChangeMyChatRoomStateUseCase
+    @Inject lateinit var getMyChatRoomStateCacheUseCase: GetMyChatRoomStateCacheUseCase
 
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -58,7 +57,7 @@ class NotificationReplyReceiver: BroadcastReceiver() {
                             message = message
                         )
                     }
-                    NewChatObserver.getInstance().setNewChat(textChat)
+                    addNewChatCacheUseCase(textChat)
                     true
                 }
                 is Resource.Error -> {
@@ -80,10 +79,9 @@ class NotificationReplyReceiver: BroadcastReceiver() {
 
     private suspend fun changeChatRoomState(isInChat: Boolean) {
         // 유저가 채팅을 키고있다면 패스
-        if (MyChatRoomStateObserver.getInstance().getUserInChat()) 
-            return
+        if (getMyChatRoomStateCacheUseCase()) return
 
-        when (val result = changeChatRoomStateUseCase(isInChat)) {
+        when (val result = changeMyChatRoomStateUseCase(isInChat)) {
             is Resource.Success -> {
                 infoLog("Success to change my chat room state")
             }

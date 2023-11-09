@@ -28,16 +28,16 @@ import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
 import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.usecase.challenge.GetChallengeUseCase
-import com.clonect.feeltalk.new_domain.usecase.chat.ChangeChatRoomStateUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.AddNewChatCacheUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.ChangeMyChatRoomStateUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.GetNewChatFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPagingChatUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.GetPartnerChatRoomStateFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.SendTextChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.SendVoiceChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.ShareQuestionUseCase
-import com.clonect.feeltalk.new_presentation.notification.observer.MyChatRoomStateObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.NewChatObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.PartnerChatRoomStateObserver
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.audioVisualizer.RecordingReplayer
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.audioVisualizer.RecordingSampler
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.audioVisualizer.VisualizerView
@@ -67,13 +67,16 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val getPagingChatUseCase: GetPagingChatUseCase,
-    private val changeChatRoomStateUseCase: ChangeChatRoomStateUseCase,
+    private val changeMyChatRoomStateUseCase: ChangeMyChatRoomStateUseCase,
     private val sendTextChatUseCase: SendTextChatUseCase,
     private val sendVoiceChatUseCase: SendVoiceChatUseCase,
     private val shareQuestionUseCase: ShareQuestionUseCase,
     private val getQuestionUseCase: GetQuestionUseCase,
     private val getChallengeUseCase: GetChallengeUseCase,
     private val getPartnerInfoFlowUseCase: GetPartnerInfoFlowUseCase,
+    private val getPartnerChatRoomStateFlowUseCase: GetPartnerChatRoomStateFlowUseCase,
+    private val addNewChatCacheUseCase: AddNewChatCacheUseCase,
+    private val getNewChatFlowUseCase: GetNewChatFlowUseCase,
 ) : ViewModel() {
 
     private val job = MutableStateFlow<Job?>(null)
@@ -172,36 +175,16 @@ class ChatViewModel @Inject constructor(
     }
 
     private fun collectNewChat() = viewModelScope.launch {
-        NewChatObserver
-            .getInstance()
-            .setNewChat(null)
-        NewChatObserver
-            .getInstance()
-            .newChat
-            .collect { newChat ->
-                runCatching {
-                    insertCompleteChat(newChat ?: return@runCatching)
-                    infoLog("new chat: $newChat")
-                }.onFailure {
-                    infoLog("Fail to collectNewChat(): ${it.localizedMessage}")
-                }
-            }
+        getNewChatFlowUseCase().collect {
+            insertCompleteChat(it)
+            infoLog("new chat: $it")
+        }
     }
 
     private fun collectPartnerChatRoomState() = viewModelScope.launch {
-        PartnerChatRoomStateObserver
-            .getInstance()
-            .setInChat(false)
-        PartnerChatRoomStateObserver
-            .getInstance()
-            .isInChat
-            .collect { isInChat ->
-                runCatching {
-                    _isPartnerInChat.value = isInChat
-                }.onFailure {
-                    infoLog("collectPartnerChatRoomState(): ${it.localizedMessage}")
-                }
-            }
+        getPartnerChatRoomStateFlowUseCase().collect {
+            _isPartnerInChat.value = it
+        }
     }
 
     fun toggleIsPartnerInChat() {
@@ -300,9 +283,8 @@ class ChatViewModel @Inject constructor(
     suspend fun changeChatRoomState(isInChat: Boolean) = withContext(Dispatchers.IO) {
         if (isUserInChat.value == isInChat) return@withContext
 
-        when (val result = changeChatRoomStateUseCase(isInChat)) {
+        when (val result = changeMyChatRoomStateUseCase(isInChat)) {
             is Resource.Success -> {
-                MyChatRoomStateObserver.getInstance().setUserInChat(isInChat)
                 _isUserInChat.value = isInChat
             }
             is Resource.Error -> {
@@ -349,7 +331,7 @@ class ChatViewModel @Inject constructor(
                 }
 
                 removeLoadingChat(loadingTextChat)
-                NewChatObserver.getInstance().setNewChat(textChat)
+                addNewChatCacheUseCase(textChat)
             }
             is Resource.Error -> {
                 infoLog("텍스트 채팅 전송 실패: ${result.throwable.stackTrace.joinToString("\n")}")
@@ -395,7 +377,7 @@ class ChatViewModel @Inject constructor(
                 }
 
                 removeLoadingChat(loadingQuestionChat)
-                NewChatObserver.getInstance().setNewChat(questionChat)
+                addNewChatCacheUseCase(questionChat)
             }
             is Resource.Error -> {
                 infoLog("Fail to send question chat: ${result.throwable.stackTrace.joinToString("\n")}")
@@ -441,7 +423,6 @@ class ChatViewModel @Inject constructor(
 //            )
 //
 //            removeLoadingChat(loadingChallengeChat)
-//            NewChatObserver.getInstance().setNewChat(challengeChat)
 
             editLoadingChat(loadingChallengeChat.copy(sendState = Chat.ChatSendState.Failed))
         }
@@ -519,7 +500,7 @@ class ChatViewModel @Inject constructor(
             )
 
             removeLoadingChat(loadingImageChat)
-            NewChatObserver.getInstance().setNewChat(imageChat)
+            addNewChatCacheUseCase(imageChat)
 
             // 실패했을 때
 //            editLoadingChat(loadingImageChat.copy(sendState = Chat.ChatSendState.Failed))
@@ -618,7 +599,7 @@ class ChatViewModel @Inject constructor(
                 }
 
                 removeLoadingChat(loadingVoiceChat)
-                NewChatObserver.getInstance().setNewChat(voiceChat)
+                addNewChatCacheUseCase(voiceChat)
             }
             is Resource.Error -> {
                 infoLog("보이스 채팅 전송 실패: ${result.throwable.stackTrace.joinToString("\n")}")

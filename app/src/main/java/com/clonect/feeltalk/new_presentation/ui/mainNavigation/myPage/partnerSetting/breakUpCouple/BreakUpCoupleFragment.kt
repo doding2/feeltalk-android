@@ -2,6 +2,7 @@ package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.partnerSe
 
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -18,6 +19,7 @@ import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentBreakUpCoupleBinding
 import com.clonect.feeltalk.new_domain.model.account.ServiceDataCountDto
+import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
 import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
@@ -28,6 +30,7 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+
 
 /**
  * Created by doding2 on 2023/09/21.
@@ -78,14 +81,23 @@ class BreakUpCoupleFragment : Fragment() {
 
     private fun breakUpCouple() {
         viewModel.breakUpCouple {
-            navigateToSignUp()
+//            navigateToSignUp()
+            restartApplication()
         }
     }
 
     private fun navigateToSignUp() {
         requireParentFragment()
             .findNavController()
-            .navigate(R.id.action_breakUpCoupleFragment_to_signUpFragment,)
+            .navigate(R.id.action_breakUpCoupleFragment_to_signUpFragment)
+    }
+
+    private fun restartApplication() {
+        val intent = Intent(requireContext(), MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        startActivity(intent)
     }
 
 

@@ -13,7 +13,6 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.common.onError
 import com.clonect.feeltalk.common.onSuccess
-import com.clonect.feeltalk.new_data.mapper.toChallenge
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.chat.ChatType
 import com.clonect.feeltalk.new_domain.model.chat.PartnerLastChatDto
@@ -21,13 +20,13 @@ import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.usecase.challenge.GetChallengeUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.AddNewChatCacheUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.GetNewChatFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPartnerLastChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUseCase
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
-import com.clonect.feeltalk.new_presentation.notification.observer.NewChatObserver
 import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
-import com.clonect.feeltalk.new_presentation.ui.util.mutableStateFlow
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -45,6 +44,7 @@ class MainNavigationViewModel @Inject constructor(
     private val getQuestionUseCase: GetQuestionUseCase,
     private val getChallengeUseCase: GetChallengeUseCase,
     private val getPartnerInfoFlowUseCase: GetPartnerInfoFlowUseCase,
+    private val getNewChatFlowUseCase: GetNewChatFlowUseCase,
 ): ViewModel() {
 
     private val _navigateTo = MutableSharedFlow<String>()
@@ -275,34 +275,26 @@ class MainNavigationViewModel @Inject constructor(
 
 
 
-    private fun collectNewChat() = viewModelScope.launch(Dispatchers.IO) {
-        NewChatObserver
-            .getInstance()
-            .newChat
-            .collect { newChat ->
-                runCatching {
-                    if (newChat?.chatSender == "me") return@collect
+    private fun collectNewChat() = viewModelScope.launch {
+        getNewChatFlowUseCase().collect {
+            if (it.chatSender == "me") return@collect
 
-                    val message  = when (newChat?.type) {
-                        ChatType.TextChatting -> {
-                            val textChat = newChat as? TextChat ?: return@collect
-                            textChat.message
-                        }
-                        ChatType.VoiceChatting -> {
-                            "(보이스 채팅)"
-                        }
-                        ChatType.QuestionChatting -> {
-                            "(질문 공유 채팅)"
-                        }
-                        else -> return@collect
-                    }
-
-                    _partnerLastChat.value = PartnerLastChatDto(message, newChat.isRead)
-                    calculateShowingPartnerLastChat()
-
-                }.onFailure {
-                    infoLog("collectNewChat(): ${it.localizedMessage}")
+            val message  = when (it.type) {
+                ChatType.TextChatting -> {
+                    val textChat = it as TextChat
+                    textChat.message
                 }
+                ChatType.VoiceChatting -> {
+                    "(보이스 채팅)"
+                }
+                ChatType.QuestionChatting -> {
+                    "(질문 공유 채팅)"
+                }
+                else -> "(${it.type.raw} 채팅)"
             }
+
+            _partnerLastChat.value = PartnerLastChatDto(message, it.isRead)
+            calculateShowingPartnerLastChat()
+        }
     }
 }

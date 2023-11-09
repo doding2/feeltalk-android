@@ -12,12 +12,17 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetUserIsActiveUseCase
 import com.clonect.feeltalk.domain.usecase.user.SetUserIsActiveUseCase
-import com.clonect.feeltalk.new_data.mapper.toChallenge
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
+import com.clonect.feeltalk.new_domain.usecase.account.SetCoupleCreatedUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
+import com.clonect.feeltalk.new_domain.usecase.challenge.AddPartnerChallengeCacheUseCase
+import com.clonect.feeltalk.new_domain.usecase.challenge.DeletePartnerChallengeCacheUseCase
 import com.clonect.feeltalk.new_domain.usecase.challenge.GetChallengeUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.AddNewChatCacheUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.ChangePartnerChatRoomStateCacheUseCase
+import com.clonect.feeltalk.new_domain.usecase.question.AnswerPartnerQuestionCacheUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.ChangeTodayQuestionCacheUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUseCase
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
@@ -33,16 +38,6 @@ import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Com
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_TEXT_CHATTING
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_TODAY_QUESTION
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_VOICE_CHATTING
-import com.clonect.feeltalk.new_presentation.notification.observer.AddCompletedChallengeObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.AddOngoingChallengeObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.CreateCoupleObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.DeleteCompletedChallengeObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.DeleteOngoingChallengeObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.EditOngoingChallengeObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.NewChatObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.PartnerChatRoomStateObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.QuestionAnswerObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.TodayQuestionObserver
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
 import com.clonect.feeltalk.presentation.utils.infoLog
@@ -64,32 +59,34 @@ import kotlin.coroutines.suspendCoroutine
 class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
     // Notification
-    @Inject
-    lateinit var notificationHelper: NotificationHelper
+    @Inject lateinit var notificationHelper: NotificationHelper
+
+    // Account
+    @Inject lateinit var setCoupleCreatedUseCase: SetCoupleCreatedUseCase
 
     // Question
-    @Inject
-    lateinit var getQuestionUseCase: GetQuestionUseCase
-    @Inject
-    lateinit var changeTodayQuestionCacheUseCase: ChangeTodayQuestionCacheUseCase
+    @Inject lateinit var getQuestionUseCase: GetQuestionUseCase
+    @Inject lateinit var changeTodayQuestionCacheUseCase: ChangeTodayQuestionCacheUseCase
+    @Inject lateinit var answerPartnerQuestionCacheUseCase: AnswerPartnerQuestionCacheUseCase
 
     // Challenge
-    @Inject
-    lateinit var getChallengeUseCase: GetChallengeUseCase
+    @Inject lateinit var getChallengeUseCase: GetChallengeUseCase
+    @Inject lateinit var addPartnerChallengeCacheUseCase: AddPartnerChallengeCacheUseCase
+    @Inject lateinit var deletePartnerChallengeCacheUseCase: DeletePartnerChallengeCacheUseCase
+    @Inject lateinit var modifyPartnerChallengeCacheUseCase: DeletePartnerChallengeCacheUseCase
+
+    // Chat
+    @Inject lateinit var addNewChatCacheUseCase: AddNewChatCacheUseCase
+    @Inject lateinit var changePartnerChatRoomStateCacheUseCase: ChangePartnerChatRoomStateCacheUseCase
 
     // App Settings
-    @Inject
-    lateinit var getAppSettingsUseCase: GetAppSettingsUseCase
-    @Inject
-    lateinit var saveAppSettingsUseCase: SaveAppSettingsUseCase
+    @Inject lateinit var getAppSettingsUseCase: GetAppSettingsUseCase
+    @Inject lateinit var saveAppSettingsUseCase: SaveAppSettingsUseCase
 
     // Mixpanel
-    @Inject
-    lateinit var getMixpanelAPIUseCase: GetMixpanelAPIUseCase
-    @Inject
-    lateinit var getUserIsActiveUseCase: GetUserIsActiveUseCase
-    @Inject
-    lateinit var setUserIsActiveUseCase: SetUserIsActiveUseCase
+    @Inject lateinit var getMixpanelAPIUseCase: GetMixpanelAPIUseCase
+    @Inject lateinit var getUserIsActiveUseCase: GetUserIsActiveUseCase
+    @Inject lateinit var setUserIsActiveUseCase: SetUserIsActiveUseCase
 
 
 
@@ -171,8 +168,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
 
     private fun handleCreateCoupleData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
-        CreateCoupleObserver.getInstance()
-            .setCoupleCreated(true)
+        setCoupleCreatedUseCase(true)
 
         if (FeeltalkApp.getAppScreenActive()) {
             return@launch
@@ -197,8 +193,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
     private fun handleChatRoomStateData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
         val isInChat = data["isInChat"]?.toBoolean() ?: return@launch
-        PartnerChatRoomStateObserver.getInstance()
-            .setInChat(isInChat)
+        changePartnerChatRoomStateCacheUseCase(isInChat)
     }
 
     private fun handleTextChatData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
@@ -208,17 +203,16 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         val isRead = data["isRead"]?.toBoolean() ?: return@launch
         val createAt = data["createAt"] ?: return@launch
 
-        NewChatObserver.getInstance()
-            .setNewChat(
-                TextChat(
-                    index = index,
-                    pageNo = pageIndex,
-                    chatSender = "partner",
-                    isRead = isRead,
-                    createAt = createAt,
-                    message = message
-                )
+        addNewChatCacheUseCase(
+            TextChat(
+                index = index,
+                pageNo = pageIndex,
+                chatSender = "partner",
+                isRead = isRead,
+                createAt = createAt,
+                message = message
             )
+        )
 
         if (FeeltalkApp.getAppScreenActive() && FeeltalkApp.getUserInChat()) {
             return@launch
@@ -236,17 +230,16 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         val isRead = data["isRead"]?.toBoolean() ?: return@launch
         val createAt = data["createAt"] ?: return@launch
 
-        NewChatObserver.getInstance()
-            .setNewChat(
-                VoiceChat(
-                    index = index,
-                    pageNo = pageIndex,
-                    chatSender = "partner",
-                    isRead = isRead,
-                    createAt = createAt,
-                    url = url
-                )
+        addNewChatCacheUseCase(
+            VoiceChat(
+                index = index,
+                pageNo = pageIndex,
+                chatSender = "partner",
+                isRead = isRead,
+                createAt = createAt,
+                url = url
             )
+        )
 
         if (FeeltalkApp.getAppScreenActive() && FeeltalkApp.getUserInChat()) {
             return@launch
@@ -300,9 +293,6 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             val todayQuestion = (getQuestionUseCase(index) as? Resource.Success)?.data
             if (todayQuestion != null) {
                 changeTodayQuestionCacheUseCase(todayQuestion)
-                TodayQuestionObserver
-                    .getInstance()
-                    .setTodayQuestion(todayQuestion)
             }
         }
 
@@ -333,9 +323,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         if (getAppRunning()) {
             val question = (getQuestionUseCase(index) as? Resource.Success)?.data
             if (question != null) {
-                QuestionAnswerObserver
-                    .getInstance()
-                    .setAnsweredQuestion(question)
+                answerPartnerQuestionCacheUseCase(question)
             }
         }
 
@@ -362,10 +350,8 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
         if (getAppRunning()) {
             val challenge = (getChallengeUseCase(index) as? Resource.Success)?.data?.copy(isNew = true)
-            if (challenge != null && !challenge.isCompleted) {
-                AddOngoingChallengeObserver
-                    .getInstance()
-                    .setChallenge(challenge)
+            if (challenge != null) {
+                addPartnerChallengeCacheUseCase(challenge)
             }
         }
 
@@ -381,17 +367,8 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     private fun handleDeleteChallengeData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
         val index = data["index"]?.toLong() ?: return@launch
         if (getAppRunning()) {
-            val challenge = (getChallengeUseCase(index) as? Resource.Success)
-                ?.data ?: return@launch
-            if (challenge.isCompleted) {
-                DeleteCompletedChallengeObserver
-                    .getInstance()
-                    .setChallenge(challenge)
-            } else {
-                DeleteOngoingChallengeObserver
-                    .getInstance()
-                    .setChallenge(challenge)
-            }
+            val challenge = (getChallengeUseCase(index) as? Resource.Success)?.data ?: return@launch
+            deletePartnerChallengeCacheUseCase(challenge)
         }
     }
 
@@ -410,9 +387,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         if (getAppRunning()) {
             val challenge = (getChallengeUseCase(index) as? Resource.Success)?.data
             if (challenge != null && !challenge.isCompleted) {
-                EditOngoingChallengeObserver
-                    .getInstance()
-                    .setChallenge(challenge)
+                modifyPartnerChallengeCacheUseCase(challenge)
             }
         }
 
@@ -439,13 +414,9 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
         if (getAppRunning()) {
             val challenge = (getChallengeUseCase(index) as? Resource.Success)?.data
-            if (challenge != null && challenge.isCompleted) {
-                DeleteOngoingChallengeObserver
-                    .getInstance()
-                    .setChallenge(challenge)
-                AddCompletedChallengeObserver
-                    .getInstance()
-                    .setChallenge(challenge)
+            if (challenge != null) {
+                deletePartnerChallengeCacheUseCase(challenge.copy(isCompleted = false))
+                addPartnerChallengeCacheUseCase(challenge.copy(isCompleted = true))
             }
         }
 

@@ -21,10 +21,30 @@ class ChatRepositoryImpl(
     private val remoteDataSource: ChatRemoteDataSource,
     private val pagingSource: ChatPagingSource,
 ): ChatRepository {
+    override suspend fun addNewChatCache(chat: Chat) {
+        cacheDataSource.addNewChat(chat)
+    }
 
-    override suspend fun getPartnerLastChat(accessToken: String): Resource<PartnerLastChatDto> {
+    override suspend fun getNewChatFlow(): Flow<Chat> {
+        return cacheDataSource.getNewChatFlow()
+    }
+
+    override suspend fun changePartnerChatRoomStateCache(isInChat: Boolean) {
+        cacheDataSource.changePartnerChatRoomState(isInChat)
+    }
+
+    override suspend fun getPartnerChatRoomStateFlow(): Flow<Boolean> {
+        return cacheDataSource.getPartnerChatRoomStateFlow()
+    }
+
+
+    override suspend fun changeMyChatRoomState(
+        accessToken: String,
+        isInChat: Boolean,
+    ): Resource<Unit> {
         return try {
-            val result = remoteDataSource.getPartnerLastChat(accessToken)
+            val result = remoteDataSource.changeChatRoomState(accessToken, isInChat)
+            cacheDataSource.changeMyChatRoomState(isInChat)
             Resource.Success(result)
         } catch (e: CancellationException) {
             throw e
@@ -33,12 +53,14 @@ class ChatRepositoryImpl(
         }
     }
 
-    override suspend fun changeChatRoomState(
-        accessToken: String,
-        isInChat: Boolean,
-    ): Resource<Unit> {
+    override suspend fun getMyChatRoomStateCache(): Boolean {
+        return cacheDataSource.getMyChatRoomState()
+    }
+
+
+    override suspend fun getPartnerLastChat(accessToken: String): Resource<PartnerLastChatDto> {
         return try {
-            val result = remoteDataSource.changeChatRoomState(accessToken, isInChat)
+            val result = remoteDataSource.getPartnerLastChat(accessToken)
             Resource.Success(result)
         } catch (e: CancellationException) {
             throw e

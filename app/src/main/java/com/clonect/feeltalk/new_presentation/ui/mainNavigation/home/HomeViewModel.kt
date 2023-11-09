@@ -8,10 +8,10 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.model.signal.Signal
 import com.clonect.feeltalk.new_domain.usecase.question.ChangeTodayQuestionCacheUseCase
+import com.clonect.feeltalk.new_domain.usecase.question.GetAnswerQuestionFlowUseCase
+import com.clonect.feeltalk.new_domain.usecase.question.GetTodayQuestionFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetTodayQuestionUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.PressForAnswerUseCase
-import com.clonect.feeltalk.new_presentation.notification.observer.QuestionAnswerObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.TodayQuestionObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -27,6 +27,8 @@ class HomeViewModel @Inject constructor(
     private val getTodayQuestionUseCase: GetTodayQuestionUseCase,
     private val changeTodayQuestionCacheUseCase: ChangeTodayQuestionCacheUseCase,
     private val pressForAnswerUseCase: PressForAnswerUseCase,
+    private val answerQuestionFlowUseCase: GetAnswerQuestionFlowUseCase,
+    private val getTodayQuestionFlowUseCase: GetTodayQuestionFlowUseCase,
 ) : ViewModel() {
 
     private val _todayQuestion = MutableStateFlow<Question?>(null)
@@ -42,12 +44,14 @@ class HomeViewModel @Inject constructor(
     val snackbarMessage = _snackbarMessage.asSharedFlow()
 
     init {
-        getTodayQuestion()
-        collectTodayQuestion()
-        collectQuestionAnswer()
+        viewModelScope.launch {
+            getTodayQuestion()
+            collectTodayQuestion()
+            collectQuestionAnswer()
+        }
     }
 
-    fun getTodayQuestion() = viewModelScope.launch(Dispatchers.IO) {
+    suspend fun getTodayQuestion() {
         when (val result = getTodayQuestionUseCase()) {
             is Resource.Success -> {
                 _todayQuestion.value = result.data
@@ -80,40 +84,25 @@ class HomeViewModel @Inject constructor(
     }
 
 
-    private fun collectTodayQuestion() = viewModelScope.launch(Dispatchers.IO) {
-        TodayQuestionObserver
-            .getInstance()
-            .setTodayQuestion(null)
-        TodayQuestionObserver
-            .getInstance()
-            .todayQuestion
-            .collect {
-                if (it == null) return@collect
-                _todayQuestion.value = it
-            }
+    private fun collectTodayQuestion() = viewModelScope.launch {
+        getTodayQuestionFlowUseCase().collect {
+            if (it == null) return@collect
+            _todayQuestion.value = it
+        }
     }
 
-    private fun collectQuestionAnswer() = viewModelScope.launch(Dispatchers.IO) {
-        QuestionAnswerObserver
-            .getInstance()
-            .setAnsweredQuestion(null)
-        QuestionAnswerObserver
-            .getInstance()
-            .answeredQuestion
-            .collect { new ->
-                if (new == null) return@collect
-
-                if (new.index == _todayQuestion.value?.index) {
-                    _todayQuestion.value = _todayQuestion.value?.let { old ->
-                        old.copy(
-                            myAnswer = old.myAnswer ?: new.myAnswer,
-                            partnerAnswer = old.partnerAnswer ?: new.partnerAnswer
-                        ).also {
-                            changeTodayQuestionCacheUseCase(it)
-                        }
+    private fun collectQuestionAnswer() = viewModelScope.launch {
+        answerQuestionFlowUseCase().collect { new ->
+            if (new.index == _todayQuestion.value?.index) {
+                _todayQuestion.value = _todayQuestion.value?.let { old ->
+                    old.copy(
+                        myAnswer = old.myAnswer ?: new.myAnswer,
+                        partnerAnswer = old.partnerAnswer ?: new.partnerAnswer
+                    ).also {
+                        changeTodayQuestionCacheUseCase(it)
                     }
-
                 }
             }
+        }
     }
 }

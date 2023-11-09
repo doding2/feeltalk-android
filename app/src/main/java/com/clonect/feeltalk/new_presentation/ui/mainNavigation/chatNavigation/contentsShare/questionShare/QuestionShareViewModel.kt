@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import com.clonect.feeltalk.common.PageEvents
 import com.clonect.feeltalk.new_domain.model.question.Question
+import com.clonect.feeltalk.new_domain.usecase.question.GetAnswerQuestionFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetPagingQuestionUseCase
-import com.clonect.feeltalk.new_presentation.notification.observer.QuestionAnswerObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.TodayQuestionObserver
+import com.clonect.feeltalk.new_domain.usecase.question.GetTodayQuestionFlowUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class QuestionShareViewModel @Inject constructor(
     getPagingQuestionUseCase: GetPagingQuestionUseCase,
+    private val getAnswerQuestionFlowUseCase: GetAnswerQuestionFlowUseCase,
+    private val getTodayQuestionFlowUseCase: GetTodayQuestionFlowUseCase,
 ) : ViewModel() {
 
     private val isInTop = MutableStateFlow(true)
@@ -85,34 +87,20 @@ class QuestionShareViewModel @Inject constructor(
 
 
     private fun collectTodayQuestion() = viewModelScope.launch {
-        TodayQuestionObserver
-            .getInstance()
-            .setTodayQuestion(null)
-        TodayQuestionObserver
-            .getInstance()
-            .todayQuestion
-            .collect {
-                if (it == null) return@collect
-                modifyPage(PageEvents.InsertItemHeader(it))
+        getTodayQuestionFlowUseCase().collect {
+            if (it == null) return@collect
+            modifyPage(PageEvents.InsertItemHeader(it))
 
-                if (isInTop.value) {
-                    setScrollToTop(true)
-                }
+            if (isInTop.value) {
+                setScrollToTop(true)
             }
+        }
     }
 
     private fun collectQuestionAnswer() = viewModelScope.launch {
-        QuestionAnswerObserver
-            .getInstance()
-            .setAnsweredQuestion(null)
-        QuestionAnswerObserver
-            .getInstance()
-            .answeredQuestion
-            .collect {
-                if (it == null) return@collect
-
-                modifyPage(PageEvents.Edit(it))
-            }
+        getAnswerQuestionFlowUseCase().collect {
+            modifyPage(PageEvents.Edit(it))
+        }
     }
 
 

@@ -7,10 +7,8 @@ import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.challenge.ChallengeCategory
 import com.clonect.feeltalk.new_domain.usecase.challenge.CompleteChallengeUseCase
 import com.clonect.feeltalk.new_domain.usecase.challenge.DeleteChallengeUseCase
+import com.clonect.feeltalk.new_domain.usecase.challenge.GetModifyChallengeFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.challenge.ModifyChallengeUseCase
-import com.clonect.feeltalk.new_presentation.notification.observer.AddCompletedChallengeObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.DeleteOngoingChallengeObserver
-import com.clonect.feeltalk.new_presentation.notification.observer.EditOngoingChallengeObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,6 +24,7 @@ class OngoingDetailViewModel @Inject constructor(
     private val modifyChallengeUseCase: ModifyChallengeUseCase,
     private val deleteChallengeUseCase: DeleteChallengeUseCase,
     private val completeChallengeUseCase: CompleteChallengeUseCase,
+    private val getModifyChallengeFlowUseCase: GetModifyChallengeFlowUseCase
 ) : ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
@@ -131,24 +130,10 @@ class OngoingDetailViewModel @Inject constructor(
 
 
     fun completeChallenge(onSuccess: () -> Unit) = viewModelScope.launch {
+        val challenge = _challenge.value ?: return@launch
         _isLoading.value = true
-        val index = _challenge.value?.index ?: run {
-            _isLoading.value = false
-            return@launch
-        }
-        when (val result = completeChallengeUseCase(index)) {
+        when (val result = completeChallengeUseCase(challenge)) {
             is Resource.Success -> {
-                val completed = challenge.value
-                DeleteOngoingChallengeObserver
-                    .getInstance()
-                    .setChallenge(
-                        completed
-                    )
-                AddCompletedChallengeObserver
-                    .getInstance()
-                    .setChallenge(
-                        completed
-                    )
                 onSuccess()
             }
             is Resource.Error -> {
@@ -180,22 +165,8 @@ class OngoingDetailViewModel @Inject constructor(
         val deadlineDate = deadline.value
         val deadline = format.format(deadlineDate)
 
-        when (val result = modifyChallengeUseCase(index, title, deadline, content)) {
+        when (val result = modifyChallengeUseCase(index, title, deadline, content, owner)) {
             is Resource.Success -> {
-                val challenge = Challenge(
-                    index = index,
-                    title = title,
-                    body = content,
-                    deadline = deadlineDate,
-                    owner = owner,
-                    isCompleted = false
-                )
-                _challenge.value = challenge
-                EditOngoingChallengeObserver
-                    .getInstance()
-                    .setChallenge(
-                        challenge
-                    )
                 onSuccess()
             }
             is Resource.Error -> {
@@ -206,18 +177,10 @@ class OngoingDetailViewModel @Inject constructor(
     }
 
     fun deleteChallenge(onSuccess: () -> Unit) = viewModelScope.launch {
+        val challenge = _challenge.value ?: return@launch
         _isLoading.value = true
-        val index = _challenge.value?.index ?: run {
-            _isLoading.value = false
-            return@launch
-        }
-        when (val result = deleteChallengeUseCase(index)) {
+        when (val result = deleteChallengeUseCase(challenge)) {
             is Resource.Success -> {
-                DeleteOngoingChallengeObserver
-                    .getInstance()
-                    .setChallenge(
-                        challenge.value
-                    )
                 onSuccess()
             }
             is Resource.Error -> {
@@ -230,24 +193,17 @@ class OngoingDetailViewModel @Inject constructor(
 
 
     private fun collectEditOngoingChallenge() = viewModelScope.launch {
-        EditOngoingChallengeObserver
-            .getInstance()
-            .setChallenge(null)
-        EditOngoingChallengeObserver
-            .getInstance()
-            .challenge
-            .collect { new ->
-                val old = _challenge.value
-                if (new == null || old == null) return@collect
-                if (new.index != old.index) return@collect
+        getModifyChallengeFlowUseCase().collect { new ->
+            val old = _challenge.value ?: return@collect
+            if (new.index != old.index) return@collect
 
-                val edited = old.copy(
-                    title = new.title,
-                    body = new.body,
-                    deadline = new.deadline,
-                )
-                initChallenge(edited)
-            }
+            val edited = old.copy(
+                title = new.title,
+                body = new.body,
+                deadline = new.deadline,
+            )
+            initChallenge(edited)
+        }
     }
 
 }

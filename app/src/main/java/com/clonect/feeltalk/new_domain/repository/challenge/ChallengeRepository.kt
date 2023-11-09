@@ -14,11 +14,20 @@ interface ChallengeRepository {
     suspend fun getCompletedChallengeList(accessToken: String, pageNo: Long): Resource<ChallengeListDto>
     fun getPagingCompletedChallenge(): Flow<PagingData<Challenge>>
 
-    suspend fun addChallenge(accessToken: String, title: String, deadline: String, content: String): Resource<AddChallengeDto>
-    suspend fun modifyChallenge(accessToken: String, index: Long, title: String, deadline: String, content: String): Resource<Unit>
-    suspend fun deleteChallenge(accessToken: String, index: Long): Resource<Unit>
-    suspend fun completeChallenge(accessToken: String, index: Long): Resource<Unit>
+    suspend fun addMyChallenge(accessToken: String, title: String, deadline: String, content: String): Resource<AddChallengeDto>
+    suspend fun modifyChallenge(accessToken: String, index: Long, title: String, deadline: String, content: String, owner: String): Resource<Unit>
+    suspend fun deleteChallenge(accessToken: String, challenge: Challenge): Resource<Unit>
+    suspend fun completeChallenge(accessToken: String, challenge: Challenge): Resource<Unit>
 
     suspend fun getChallenge(accessToken: String, index: Long): Resource<Challenge>
     suspend fun getChallengeCount(accessToken: String): Resource<ChallengeCountDto>
+
+    suspend fun addPartnerChallengeCache(challenge: Challenge)
+    suspend fun getAddChallengeFlow(): Flow<Challenge>
+
+    suspend fun deletePartnerChallengeCache(challenge: Challenge)
+    suspend fun getDeleteChallengeFlow(): Flow<Challenge>
+
+    suspend fun modifyPartnerChallengeCache(challenge: Challenge)
+    suspend fun getModifyChallengeFlow(): Flow<Challenge>
 }

@@ -8,9 +8,17 @@ import java.io.File
 
 interface ChatRepository {
 
+    suspend fun addNewChatCache(chat: Chat)
+    suspend fun getNewChatFlow(): Flow<Chat>
+    suspend fun changePartnerChatRoomStateCache(isInChat: Boolean)
+    suspend fun getPartnerChatRoomStateFlow(): Flow<Boolean>
+
+    suspend fun changeMyChatRoomState(accessToken: String, isInChat: Boolean): Resource<Unit>
+    suspend fun getMyChatRoomStateCache(): Boolean
+
+
     suspend fun getPartnerLastChat(accessToken: String): Resource<PartnerLastChatDto>
 
-    suspend fun changeChatRoomState(accessToken: String, isInChat: Boolean): Resource<Unit>
     suspend fun getLastChatPageNo(accessToken: String): Resource<LastChatPageNoDto>
     suspend fun sendTextChat(accessToken: String, message: String): Resource<SendTextChatDto>
     suspend fun sendVoiceChat(accessToken: String, voiceFile: File): Resource<SendVoiceChatDto>

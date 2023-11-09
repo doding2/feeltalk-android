@@ -91,13 +91,18 @@ class QuestionRepositoryImpl(
         cacheDataSource.saveTodayQuestion(question)
     }
 
+    override suspend fun getTodayQuestionFlow(): Flow<Question?> {
+        return cacheDataSource.getTodayQuestionFlow()
+    }
+
     override suspend fun answerQuestion(
         accessToken: String,
-        index: Long,
+        question: Question,
         myAnswer: String,
     ): Resource<Unit> {
         return try {
-            val result = remoteDataSource.answerQuestion(accessToken, index, myAnswer)
+            val result = remoteDataSource.answerQuestion(accessToken, question.index, myAnswer)
+            cacheDataSource.saveAnswerQuestion(question.copy(myAnswer = myAnswer))
             Resource.Success(result)
         } catch (e: CancellationException) {
             throw e
@@ -126,5 +131,13 @@ class QuestionRepositoryImpl(
         } catch (e: Exception) {
             Resource.Error(e)
         }
+    }
+
+    override suspend fun answerPartnerQuestionCache(question: Question) {
+        cacheDataSource.saveAnswerQuestion(question)
+    }
+
+    override suspend fun getAnswerQuestionFlow(): Flow<Question> {
+        return cacheDataSource.getAnswerQuestionFlow()
     }
 }

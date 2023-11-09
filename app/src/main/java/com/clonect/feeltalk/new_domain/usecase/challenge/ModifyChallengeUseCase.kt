@@ -8,12 +8,12 @@ class ModifyChallengeUseCase(
     private val tokenRepository: TokenRepository,
     private val challengeRepository: ChallengeRepository,
 ) {
-    suspend operator fun invoke(index: Long, title: String, deadline: String, content: String): Resource<Unit> {
+    suspend operator fun invoke(index: Long, title: String, deadline: String, content: String, owner: String): Resource<Unit> {
         val tokenInfo = tokenRepository.getTokenInfo()
         if (tokenInfo is Resource.Error) {
             return Resource.Error(tokenInfo.throwable)
         }
         val accessToken = (tokenInfo as Resource.Success).data.accessToken
-        return challengeRepository.modifyChallenge(accessToken, index, title, deadline, content)
+        return challengeRepository.modifyChallenge(accessToken, index, title, deadline, content, owner)
     }
 }

@@ -382,4 +382,11 @@ class AccountRepositoryImpl(
     }
 
 
+    override suspend fun setCoupleCrated(isCreated: Boolean) {
+        cacheDataSource.setCoupleCreated(isCreated)
+    }
+
+    override suspend fun getCoupleCreatedFlow(): Flow<Boolean> {
+        return cacheDataSource.getCoupleCreatedFlow()
+    }
 }

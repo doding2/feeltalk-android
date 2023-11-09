@@ -5,11 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
 import com.clonect.feeltalk.new_domain.usecase.account.GetCoupleCodeUseCase
+import com.clonect.feeltalk.new_domain.usecase.account.GetCoupleCreatedFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.account.MatchCoupleUseCase
+import com.clonect.feeltalk.new_domain.usecase.account.SetCoupleCreatedUseCase
 import com.clonect.feeltalk.new_domain.usecase.account.SignUpUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.GetCachedSocialTokenUseCase
-import com.clonect.feeltalk.new_presentation.notification.observer.CreateCoupleObserver
 import com.clonect.feeltalk.new_presentation.service.FirebaseCloudMessagingService
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +19,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -30,6 +30,8 @@ class SignUpNavigationViewModel @Inject constructor(
     private val signUpUseCase: SignUpUseCase,
     private val getCoupleCodeUseCase: GetCoupleCodeUseCase,
     private val matchCoupleUseCase: MatchCoupleUseCase,
+    private val getCoupleCreatedFlowUseCase: GetCoupleCreatedFlowUseCase,
+    private val setCoupleCreatedUseCase: SetCoupleCreatedUseCase,
 ) : ViewModel() {
 
     // note: Common
@@ -82,7 +84,9 @@ class SignUpNavigationViewModel @Inject constructor(
         _isNicknameProcessed.value = false
         _isCoupleConnected.value = false
 
-        CreateCoupleObserver.onCleared()
+        viewModelScope.launch {
+            setCoupleCreatedUseCase(false)
+        }
     }
 
 
@@ -220,19 +224,9 @@ class SignUpNavigationViewModel @Inject constructor(
     val isCoupleConnected = _isCoupleConnected.asStateFlow()
 
     fun registerService() = viewModelScope.launch {
-        CreateCoupleObserver
-            .getInstance()
-            .setCoupleCreated(false)
-        CreateCoupleObserver
-            .getInstance()
-            .isCoupleCreated
-            .collectLatest {
-                runCatching {
-                    _isCoupleConnected.value = it
-                }.onFailure {
-                    infoLog("CreateCoupleObserver Collect Error: ${it.localizedMessage}\n${it.stackTrace.joinToString("\n")}")
-                }
-            }
+        getCoupleCreatedFlowUseCase().collect {
+            _isCoupleConnected.value = it
+        }
     }
 
     fun setPartnerCoupleCode(code: String) {

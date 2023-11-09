@@ -4,9 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
-import com.clonect.feeltalk.new_domain.model.challenge.ChallengeCategory
 import com.clonect.feeltalk.new_domain.usecase.challenge.DeleteChallengeUseCase
-import com.clonect.feeltalk.new_presentation.notification.observer.DeleteCompletedChallengeObserver
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -58,21 +56,11 @@ class CompletedDetailViewModel @Inject constructor(
     }
 
 
-
-
     fun deleteChallenge(onSuccess: () -> Unit) = viewModelScope.launch {
+        val challenge = _challenge.value ?: return@launch
         _isLoading.value = true
-        val index = _challenge.value?.index ?: run {
-            _isLoading.value = false
-            return@launch
-        }
-        when (val result = deleteChallengeUseCase(index)) {
+        when (val result = deleteChallengeUseCase(challenge)) {
             is Resource.Success -> {
-                DeleteCompletedChallengeObserver
-                    .getInstance()
-                    .setChallenge(
-                        challenge.value
-                    )
                 onSuccess()
             }
             is Resource.Error -> {
