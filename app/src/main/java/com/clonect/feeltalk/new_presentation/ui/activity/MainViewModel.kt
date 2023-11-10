@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.FeelTalkException.ServerIsDownException
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.common.onError
+import com.clonect.feeltalk.common.onSuccess
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.new_domain.model.appSettings.AppSettings
@@ -12,6 +14,8 @@ import com.clonect.feeltalk.new_domain.usecase.account.CheckAccountLockedUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetTodayQuestionUseCase
+import com.clonect.feeltalk.new_domain.usecase.signal.GetMySignalUseCase
+import com.clonect.feeltalk.new_domain.usecase.signal.GetPartnerSignalUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,6 +35,8 @@ class MainViewModel @Inject constructor(
     private val autoLogInUseCase: AutoLogInUseCase,
     private val checkAccountLockedUseCase: CheckAccountLockedUseCase,
     private val getTodayQuestionUseCase: GetTodayQuestionUseCase,
+    private val getMySignalUseCase: GetMySignalUseCase,
+    private val getPartnerSignalUseCase: GetPartnerSignalUseCase,
     private val getAppSettingsUseCase: GetAppSettingsUseCase,
     private val saveAppSettingsUseCase: SaveAppSettingsUseCase,
     private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
@@ -132,8 +138,36 @@ class MainViewModel @Inject constructor(
             }
         }
 
+        val mySignal = async {
+            getMySignalUseCase()
+                .onError {
+                    if (it is ServerIsDownException) {
+                        _isServerDown.value = true
+                    }
+                    if (it is UnknownHostException) {
+                        _isNetworkErrorOccurred.value = true
+                    }
+                    infoLog("Fail to get my signal: ${it.localizedMessage}")
+                }
+        }
+
+        val partnerSignal = async {
+            getPartnerSignalUseCase()
+                .onError {
+                    if (it is ServerIsDownException) {
+                        _isServerDown.value = true
+                    }
+                    if (it is UnknownHostException) {
+                        _isNetworkErrorOccurred.value = true
+                    }
+                    infoLog("Fail to get partner signal: ${it.localizedMessage}")
+                }
+        }
+
         todayQuestion.await()
         isAccountLocked.await()
+        mySignal.await()
+        partnerSignal.await()
     }
 
 

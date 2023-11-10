@@ -320,6 +320,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
     fun setPartnerSignal(signal: Signal) {
         this.partnerSignal = signal
+        applyPartnerInfoChanges()
     }
 
     fun setPartnerInChat(isInChat: Boolean) {
@@ -1560,26 +1561,46 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                         ivSignal.setImageResource(R.drawable.n_image_signal_0)
                         tvSignalPercent.setText(R.string.signal_chat_percent_0)
                         tvSignalSubtitle.setText(R.string.signal_subtitle_0)
+                        root.context.getColor(R.color.signal_0).also {
+                            tvSignalPercent.setTextColor(it)
+                            mcvSignalPercent.strokeColor = it
+                        }
                     }
                     Signal.Quarter -> {
                         ivSignal.setImageResource(R.drawable.n_image_signal_25)
                         tvSignalPercent.setText(R.string.signal_chat_percent_25)
                         tvSignalSubtitle.setText(R.string.signal_subtitle_25)
+                        root.context.getColor(R.color.signal_25).also {
+                            tvSignalPercent.setTextColor(it)
+                            mcvSignalPercent.strokeColor = it
+                        }
                     }
                     Signal.Half -> {
                         ivSignal.setImageResource(R.drawable.n_image_signal_50)
                         tvSignalPercent.setText(R.string.signal_chat_percent_50)
                         tvSignalSubtitle.setText(R.string.signal_subtitle_50)
+                        root.context.getColor(R.color.signal_50).also {
+                            tvSignalPercent.setTextColor(it)
+                            mcvSignalPercent.strokeColor = it
+                        }
                     }
                     Signal.ThreeFourth -> {
                         ivSignal.setImageResource(R.drawable.n_image_signal_75)
                         tvSignalPercent.setText(R.string.signal_chat_percent_75)
                         tvSignalSubtitle.setText(R.string.signal_subtitle_75)
+                        root.context.getColor(R.color.signal_75).also {
+                            tvSignalPercent.setTextColor(it)
+                            mcvSignalPercent.strokeColor = it
+                        }
                     }
                     Signal.One -> {
                         ivSignal.setImageResource(R.drawable.n_image_signal_100)
                         tvSignalPercent.setText(R.string.signal_chat_percent_100)
                         tvSignalSubtitle.setText(R.string.signal_subtitle_100)
+                        root.context.getColor(R.color.signal_100).also {
+                            tvSignalPercent.setTextColor(it)
+                            mcvSignalPercent.strokeColor = it
+                        }
                     }
                 }
 
@@ -1694,26 +1715,46 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                         ivSignal.setImageResource(R.drawable.n_image_signal_0)
                         tvSignalPercent.setText(R.string.signal_chat_percent_0)
                         tvSignalSubtitle.setText(R.string.signal_subtitle_0)
+                        root.context.getColor(R.color.signal_0).also {
+                            tvSignalPercent.setTextColor(it)
+                            mcvSignalPercent.strokeColor = it
+                        }
                     }
                     Signal.Quarter -> {
                         ivSignal.setImageResource(R.drawable.n_image_signal_25)
                         tvSignalPercent.setText(R.string.signal_chat_percent_25)
                         tvSignalSubtitle.setText(R.string.signal_subtitle_25)
+                        root.context.getColor(R.color.signal_25).also {
+                            tvSignalPercent.setTextColor(it)
+                            mcvSignalPercent.strokeColor = it
+                        }
                     }
                     Signal.Half -> {
                         ivSignal.setImageResource(R.drawable.n_image_signal_50)
                         tvSignalPercent.setText(R.string.signal_chat_percent_50)
                         tvSignalSubtitle.setText(R.string.signal_subtitle_50)
+                        root.context.getColor(R.color.signal_50).also {
+                            tvSignalPercent.setTextColor(it)
+                            mcvSignalPercent.strokeColor = it
+                        }
                     }
                     Signal.ThreeFourth -> {
                         ivSignal.setImageResource(R.drawable.n_image_signal_75)
                         tvSignalPercent.setText(R.string.signal_chat_percent_75)
                         tvSignalSubtitle.setText(R.string.signal_subtitle_75)
+                        root.context.getColor(R.color.signal_75).also {
+                            tvSignalPercent.setTextColor(it)
+                            mcvSignalPercent.strokeColor = it
+                        }
                     }
                     Signal.One -> {
                         ivSignal.setImageResource(R.drawable.n_image_signal_100)
                         tvSignalPercent.setText(R.string.signal_chat_percent_100)
                         tvSignalSubtitle.setText(R.string.signal_subtitle_100)
+                        root.context.getColor(R.color.signal_100).also {
+                            tvSignalPercent.setTextColor(it)
+                            mcvSignalPercent.strokeColor = it
+                        }
                     }
                 }
 

@@ -3,7 +3,15 @@ package com.clonect.feeltalk.new_presentation.ui.mainNavigation.home.signal
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Point
+import com.clonect.feeltalk.common.onError
+import com.clonect.feeltalk.common.onSuccess
+import com.clonect.feeltalk.new_domain.model.chat.Chat
+import com.clonect.feeltalk.new_domain.model.chat.SignalChat
 import com.clonect.feeltalk.new_domain.model.signal.Signal
+import com.clonect.feeltalk.new_domain.usecase.chat.AddNewChatCacheUseCase
+import com.clonect.feeltalk.new_domain.usecase.signal.ChangeMySignalUseCase
+import com.clonect.feeltalk.new_domain.usecase.signal.GetMySignalUseCase
+import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +22,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignalViewModel @Inject constructor(
-
+    private val getMySignalUseCase: GetMySignalUseCase,
+    private val changeMySignalUseCase: ChangeMySignalUseCase,
+    private val addNewChatCacheUseCase: AddNewChatCacheUseCase,
 ) : ViewModel() {
 
     private val _errorMessage = MutableSharedFlow<String>()
@@ -27,6 +37,9 @@ class SignalViewModel @Inject constructor(
     private val _signal = MutableStateFlow<Signal?>(null)
     val signal = _signal.asStateFlow()
 
+    init {
+        getMySignal()
+    }
 
     fun sendErrorMessage(message: String) = viewModelScope.launch {
         _errorMessage.emit(message)
@@ -37,17 +50,45 @@ class SignalViewModel @Inject constructor(
     }
 
 
+    fun getMySignal() = viewModelScope.launch {
+        getMySignalUseCase().onSuccess {
+            _signal.value = it
+        }.onError {
+            infoLog("Fail to get my signal: ${it.localizedMessage}")
+        }
+    }
+
+
     fun setSignal(signal: Signal) {
         _signal.value = signal
     }
 
-    fun sendSignal(onComplete: (Signal) -> Unit) = viewModelScope.launch {
+    fun changeMySignal(onComplete: (Signal) -> Unit) = viewModelScope.launch {
+        if (isLoading.value) return@launch
         val signal = signal.value ?: return@launch
         setLoading(true)
-        onComplete(signal)
+        changeMySignalUseCase(signal)
+            .onSuccess {
+                launch {
+                    addNewChatCacheUseCase(
+                        SignalChat(
+                            index = it.index,
+                            pageNo = it.pageIndex,
+                            chatSender = "me",
+                            isRead = it.isRead,
+                            createAt = it.createAt,
+                            sendState = Chat.ChatSendState.Completed,
+                            signal = signal
+                        )
+                    )
+                    onComplete(signal)
+                }
+            }.onError {
+                infoLog("Fail to change my signal: ${it.localizedMessage}")
+                it.localizedMessage?.let { errorMessage -> sendErrorMessage(errorMessage) }
+            }
         setLoading(false)
     }
-
 
 
     private val _centerPoint = MutableStateFlow<Point<Float>?>(null)

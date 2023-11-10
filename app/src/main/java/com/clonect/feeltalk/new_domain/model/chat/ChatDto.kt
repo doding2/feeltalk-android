@@ -11,5 +11,5 @@ data class ChatDto(
     val coupleChallenge: ChatChallengeDto?,
     val coupleQuestion: Long?,
     val url: String?,
-    val signal: String?,
+    val signal: Long?,
 ): java.io.Serializable

@@ -12,8 +12,10 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetUserIsActiveUseCase
 import com.clonect.feeltalk.domain.usecase.user.SetUserIsActiveUseCase
+import com.clonect.feeltalk.new_domain.model.chat.SignalChat
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
+import com.clonect.feeltalk.new_domain.model.signal.Signal
 import com.clonect.feeltalk.new_domain.usecase.account.SetCoupleCreatedUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
@@ -25,6 +27,7 @@ import com.clonect.feeltalk.new_domain.usecase.chat.ChangePartnerChatRoomStateCa
 import com.clonect.feeltalk.new_domain.usecase.question.AnswerPartnerQuestionCacheUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.ChangeTodayQuestionCacheUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUseCase
+import com.clonect.feeltalk.new_domain.usecase.signal.ChangePartnerSignalCacheUseCase
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.CHANEL_ID_CREATE_COUPLE
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_ADD_CHALLENGE
@@ -35,6 +38,7 @@ import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Com
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_DELETE_CHALLENGE
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_MODIFY_CHALLENGE
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_PRESS_FOR_ANSWER
+import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_SIGNAL_CHATTING
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_TEXT_CHATTING
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_TODAY_QUESTION
 import com.clonect.feeltalk.new_presentation.notification.NotificationHelper.Companion.TYPE_VOICE_CHATTING
@@ -74,6 +78,9 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     @Inject lateinit var addPartnerChallengeCacheUseCase: AddPartnerChallengeCacheUseCase
     @Inject lateinit var deletePartnerChallengeCacheUseCase: DeletePartnerChallengeCacheUseCase
     @Inject lateinit var modifyPartnerChallengeCacheUseCase: DeletePartnerChallengeCacheUseCase
+
+    // Signal
+    @Inject lateinit var changePartnerSignalCacheUseCase: ChangePartnerSignalCacheUseCase
 
     // Chat
     @Inject lateinit var addNewChatCacheUseCase: AddNewChatCacheUseCase
@@ -155,6 +162,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 TYPE_CHAT_ROOM_STATE -> handleChatRoomStateData(data)
                 TYPE_TEXT_CHATTING -> handleTextChatData(data)
                 TYPE_VOICE_CHATTING -> handleVoiceChatData(data)
+                TYPE_SIGNAL_CHATTING -> handleSignalChatData(data)
                 TYPE_TODAY_QUESTION -> handleTodayQuestionData(data)
                 TYPE_PRESS_FOR_ANSWER -> handlePressForAnswerData(data)
                 TYPE_ANSWER_QUESTION -> handleAnswerQuestionData(data)
@@ -247,6 +255,40 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
         notificationHelper.showChatNotification(
             message = "(보이스 채팅)"
+        )
+    }
+
+    private fun handleSignalChatData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+        val index = data["index"]?.toLong() ?: return@launch
+        val signal = data["signal"]?.toInt() ?: return@launch
+        val pageIndex = data["pageIndex"]?.toLong() ?: 0
+        val isRead = data["isRead"]?.toBoolean() ?: return@launch
+        val createAt = data["createAt"] ?: return@launch
+
+        addNewChatCacheUseCase(
+            SignalChat(
+                index = index,
+                pageNo = pageIndex,
+                chatSender = "partner",
+                isRead = isRead,
+                createAt = createAt,
+                signal = when (signal) {
+                    1 -> Signal.Zero
+                    2 -> Signal.Quarter
+                    3 -> Signal.Half
+                    4 -> Signal.ThreeFourth
+                    5 -> Signal.One
+                    else -> return@launch
+                }
+            )
+        )
+
+        if (FeeltalkApp.getAppScreenActive() && FeeltalkApp.getUserInChat()) {
+            return@launch
+        }
+
+        notificationHelper.showChatNotification(
+            message = "(시그널 채팅)"
         )
     }
 

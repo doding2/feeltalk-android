@@ -19,6 +19,7 @@ import com.clonect.feeltalk.new_domain.repository.challenge.ChallengeRepository
 import com.clonect.feeltalk.new_domain.repository.chat.ChatRepository
 import com.clonect.feeltalk.new_domain.repository.partner.PartnerRepository
 import com.clonect.feeltalk.new_domain.repository.question.QuestionRepository
+import com.clonect.feeltalk.new_domain.repository.signal.SignalRepository
 import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 import com.clonect.feeltalk.new_domain.usecase.account.*
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
@@ -28,6 +29,11 @@ import com.clonect.feeltalk.new_domain.usecase.chat.*
 import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.*
+import com.clonect.feeltalk.new_domain.usecase.signal.ChangeMySignalUseCase
+import com.clonect.feeltalk.new_domain.usecase.signal.ChangePartnerSignalCacheUseCase
+import com.clonect.feeltalk.new_domain.usecase.signal.GetMySignalUseCase
+import com.clonect.feeltalk.new_domain.usecase.signal.GetPartnerSignalFlowUseCase
+import com.clonect.feeltalk.new_domain.usecase.signal.GetPartnerSignalUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.CacheSocialTokenUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.GetCachedSocialTokenUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.UpdateFcmTokenUseCase
@@ -463,6 +469,37 @@ class UseCaseModule {
     }
 
 
+    /** Signal **/
+
+    @Singleton
+    @Provides
+    fun providesGetMySignalUseCase(tokenRepository: TokenRepository, signalRepository: SignalRepository): GetMySignalUseCase {
+        return GetMySignalUseCase(tokenRepository, signalRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetPartnerSignalUseCase(tokenRepository: TokenRepository, signalRepository: SignalRepository): GetPartnerSignalUseCase {
+        return GetPartnerSignalUseCase(tokenRepository, signalRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesChangeMySignalUseCase(tokenRepository: TokenRepository, signalRepository: SignalRepository): ChangeMySignalUseCase {
+        return ChangeMySignalUseCase(tokenRepository, signalRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesChangePartnerSignalCacheUseCase(signalRepository: SignalRepository): ChangePartnerSignalCacheUseCase {
+        return ChangePartnerSignalCacheUseCase(signalRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetPartnerSignalFlowUseCase(signalRepository: SignalRepository): GetPartnerSignalFlowUseCase {
+        return GetPartnerSignalFlowUseCase(signalRepository)
+    }
 
 
 

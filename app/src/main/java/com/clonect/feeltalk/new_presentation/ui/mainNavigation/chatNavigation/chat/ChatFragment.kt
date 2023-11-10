@@ -37,6 +37,7 @@ import com.clonect.feeltalk.new_domain.model.chat.AddChallengeChat
 import com.clonect.feeltalk.new_domain.model.chat.AnswerChat
 import com.clonect.feeltalk.new_domain.model.chat.ChallengeChat
 import com.clonect.feeltalk.new_domain.model.chat.Chat
+import com.clonect.feeltalk.new_domain.model.chat.DividerChat
 import com.clonect.feeltalk.new_domain.model.chat.ImageChat
 import com.clonect.feeltalk.new_domain.model.chat.PokeChat
 import com.clonect.feeltalk.new_domain.model.chat.QuestionChat
@@ -63,6 +64,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 
@@ -369,6 +373,7 @@ class ChatFragment : Fragment() {
             setOnClickItem(::onClickChat)
             setOnRetry(::onRetryChat)
             setOnCancel(::onCancelChat)
+            val dividerFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             registerAdapterDataObserver(object: RecyclerView.AdapterDataObserver() {
                 override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                     super.onItemRangeInserted(positionStart, itemCount)
@@ -376,13 +381,25 @@ class ChatFragment : Fragment() {
                     if (positionStart >= adapter.itemCount) return
                     val item = adapter.snapshot()[positionStart] ?: return
 
+                    if (item is DividerChat && adapter.snapshot()[positionStart + 2] == null) {
+                        val now = dividerFormat.format(Date())
+                        if (item.createAt == now) {
+                            scrollToBottom()
+                            return
+                        }
+                    }
+
                     val shouldScroll = (item.chatSender == "me" && item.sendState == Chat.ChatSendState.Sending) || (viewModel.isUserInBottom.value && item.chatSender == "partner")
                     if (shouldScroll) {
-                        lifecycleScope.launch {
-                            // delay for fixing time divider chat not scrolled bug
-                            delay(100)
-                            scrollToBottom()
+                        if (item is ImageChat) {
+                            // delay for loading image
+                            lifecycleScope.launch {
+                                delay(200)
+                                scrollToBottom()
+                            }
+                            return
                         }
+                        scrollToBottom()
                     }
                 }
             })
@@ -639,7 +656,13 @@ class ChatFragment : Fragment() {
     }
 
     private fun applyPartnerInfoChanges(partnerInfo: PartnerInfo?) {
+        binding.tvNickname.text = partnerInfo?.nickname
         adapter.setPartnerNickname(partnerInfo?.nickname)
+    }
+
+    private fun applyPartnerSignalChanges(signal: Signal?) {
+        if (signal == null) return
+        adapter.setPartnerSignal(signal)
     }
 
     val onBackCallback = object: OnBackPressedCallback(true) {
@@ -678,6 +701,7 @@ class ChatFragment : Fragment() {
             launch { viewModel.voiceRecordTime.collectLatest(::changeVoiceRecordingTimeView) }
             launch { viewModel.isKeyboardUp.collectLatest(::applyKeyboardUp) }
             launch { viewModel.partnerInfo.collectLatest(::applyPartnerInfoChanges) }
+            launch { viewModel.partnerSignal.collectLatest(::applyPartnerSignalChanges) }
             launch {
                 viewModel.pagingChat.collectLatest {
                     adapter.submitData(requireParentFragment().lifecycle, it)

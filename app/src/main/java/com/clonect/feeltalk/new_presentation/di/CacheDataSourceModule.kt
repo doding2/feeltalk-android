@@ -18,6 +18,8 @@ import com.clonect.feeltalk.new_data.repository.partner.dataSource.PartnerCacheD
 import com.clonect.feeltalk.new_data.repository.partner.dataSourceImpl.PartnerCacheDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionCacheDataSource
 import com.clonect.feeltalk.new_data.repository.question.dataSourceImpl.QuestionCacheDataSourceImpl
+import com.clonect.feeltalk.new_data.repository.signal.dataSource.SignalCacheDataSource
+import com.clonect.feeltalk.new_data.repository.signal.dataSourceImpl.SignalCacheDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenCacheDataSource
 import com.clonect.feeltalk.new_data.repository.token.dataSourceImpl.TokenCacheDataSourceImpl
 import dagger.Module
@@ -64,6 +66,12 @@ class CacheDataSourceModule {
     @Provides
     fun providesPartnerCacheDataSource(): PartnerCacheDataSource {
         return PartnerCacheDataSourceImpl()
+    }
+
+    @Singleton
+    @Provides
+    fun providesSignalCacheDataSource(): SignalCacheDataSource {
+        return SignalCacheDataSourceImpl()
     }
 
 

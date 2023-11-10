@@ -86,7 +86,7 @@ class SignalBottomSheetFragment(
     }
 
     private fun sendSignal() {
-        viewModel.sendSignal {
+        viewModel.changeMySignal {
             onSendSignal(it)
             dismiss()
         }
@@ -264,11 +264,11 @@ class SignalBottomSheetFragment(
 
 
     private fun showLoading(isLoading: Boolean) {
-        if (isLoading) {
-            loadingDialog.show()
-        } else {
-            loadingDialog.dismiss()
-        }
+//        if (isLoading) {
+//            loadingDialog.show()
+//        } else {
+//            loadingDialog.dismiss()
+//        }
     }
 
     private fun showSnackBar(message: String) {

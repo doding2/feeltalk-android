@@ -22,6 +22,8 @@ import com.clonect.feeltalk.new_data.repository.partner.dataSource.PartnerLocalD
 import com.clonect.feeltalk.new_data.repository.partner.dataSourceImpl.PartnerLocalDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionLocalDataSource
 import com.clonect.feeltalk.new_data.repository.question.dataSourceImpl.QuestionLocalDataSourceImpl
+import com.clonect.feeltalk.new_data.repository.signal.dataSource.SignalLocalDataSource
+import com.clonect.feeltalk.new_data.repository.signal.dataSourceImpl.SignalLocalDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenLocalDataSource
 import com.clonect.feeltalk.new_data.repository.token.dataSourceImpl.TokenLocalDataSourceImpl
 import com.clonect.feeltalk.new_data.util.AppLevelEncryptHelper
@@ -78,6 +80,15 @@ class LocalDataSourceModule {
         appLevelEncryptHelper: AppLevelEncryptHelper
     ): PartnerLocalDataSource {
         return PartnerLocalDataSourceImpl(context, appLevelEncryptHelper)
+    }
+
+    @Singleton
+    @Provides
+    fun providesSignalLocalDataSource(
+        @ApplicationContext context: Context,
+        appLevelEncryptHelper: AppLevelEncryptHelper
+    ): SignalLocalDataSource {
+        return SignalLocalDataSourceImpl(context, appLevelEncryptHelper)
     }
 
 

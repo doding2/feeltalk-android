@@ -42,6 +42,7 @@ class NotificationHelper(
         const val TYPE_DELETE_CHALLENGE = "deleteChallenge"
         const val TYPE_MODIFY_CHALLENGE = "modifyChallenge"
         const val TYPE_COMPLETE_CHALLENGE = "completeChallenge"
+        const val TYPE_SIGNAL_CHATTING = "signalChatting"
 
         const val KEY_TEXT_REPLY = "key_text_reply"
 

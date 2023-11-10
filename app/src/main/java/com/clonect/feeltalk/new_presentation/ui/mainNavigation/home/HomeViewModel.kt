@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.common.onError
+import com.clonect.feeltalk.common.onSuccess
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.model.signal.Signal
 import com.clonect.feeltalk.new_domain.usecase.question.ChangeTodayQuestionCacheUseCase
@@ -12,6 +14,9 @@ import com.clonect.feeltalk.new_domain.usecase.question.GetAnswerQuestionFlowUse
 import com.clonect.feeltalk.new_domain.usecase.question.GetTodayQuestionFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetTodayQuestionUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.PressForAnswerUseCase
+import com.clonect.feeltalk.new_domain.usecase.signal.GetMySignalUseCase
+import com.clonect.feeltalk.new_domain.usecase.signal.GetPartnerSignalFlowUseCase
+import com.clonect.feeltalk.new_domain.usecase.signal.GetPartnerSignalUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -29,6 +34,9 @@ class HomeViewModel @Inject constructor(
     private val pressForAnswerUseCase: PressForAnswerUseCase,
     private val answerQuestionFlowUseCase: GetAnswerQuestionFlowUseCase,
     private val getTodayQuestionFlowUseCase: GetTodayQuestionFlowUseCase,
+    private val getMySignalUseCase: GetMySignalUseCase,
+    private val getPartnerSignalUseCase: GetPartnerSignalUseCase,
+    private val getPartnerSignalFlowUseCase: GetPartnerSignalFlowUseCase,
 ) : ViewModel() {
 
     private val _todayQuestion = MutableStateFlow<Question?>(null)
@@ -45,9 +53,12 @@ class HomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            getMySignal()
+            getPartnerSignal()
             getTodayQuestion()
             collectTodayQuestion()
             collectQuestionAnswer()
+            collectPartnerSignal()
         }
     }
 
@@ -59,6 +70,22 @@ class HomeViewModel @Inject constructor(
             is Resource.Error -> {
                 infoLog("Fail to get today question: ${result.throwable.localizedMessage}\n${result.throwable.stackTrace.joinToString("\n")}")
             }
+        }
+    }
+
+    private fun getMySignal() = viewModelScope.launch {
+        getMySignalUseCase().onSuccess {
+            _mySignal.value = it
+        }.onError {
+            infoLog("Fail to get my signal: ${it.localizedMessage}")
+        }
+    }
+
+    private fun getPartnerSignal() = viewModelScope.launch {
+        getPartnerSignalUseCase().onSuccess {
+            _partnerSignal.value = it
+        }.onError {
+            infoLog("Fail to get partner signal: ${it.localizedMessage}")
         }
     }
 
@@ -77,10 +104,6 @@ class HomeViewModel @Inject constructor(
 
     fun setMySignal(signal: Signal) = viewModelScope.launch {
         _mySignal.value = signal
-    }
-
-    fun setPartnerSignal(signal: Signal) = viewModelScope.launch {
-        _partnerSignal.value = signal
     }
 
 
@@ -103,6 +126,13 @@ class HomeViewModel @Inject constructor(
                     }
                 }
             }
+        }
+    }
+
+    private fun collectPartnerSignal() = viewModelScope.launch {
+        getPartnerSignalFlowUseCase().collect {
+            if (it == null) return@collect
+            _partnerSignal.value = it
         }
     }
 }

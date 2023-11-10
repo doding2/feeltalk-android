@@ -1,12 +1,18 @@
 package com.clonect.feeltalk.new_data.mapper
 
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
+import com.clonect.feeltalk.new_domain.model.chat.ChallengeChat
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.ChatListDto
+import com.clonect.feeltalk.new_domain.model.chat.ImageChat
 import com.clonect.feeltalk.new_domain.model.chat.QuestionChat
+import com.clonect.feeltalk.new_domain.model.chat.SignalChat
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
 import com.clonect.feeltalk.new_domain.model.question.Question
+import com.clonect.feeltalk.new_domain.model.signal.Signal
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 suspend fun ChatListDto.toChatList(
     loadQuestion: suspend (Long) -> Question,
@@ -36,6 +42,69 @@ suspend fun ChatListDto.toChatList(
                         isRead = isRead,
                         createAt = createAt,
                         url = url ?: ""
+                    )
+                }
+            }
+            "image", "imageChatting" -> {
+                if (chatDto.url == null) {
+                    continue
+                } else {
+                    chatDto.run {
+                        ImageChat(
+                            index = index,
+                            pageNo = page,
+                            chatSender = if (mine) "me" else "partner",
+                            isRead = isRead,
+                            createAt = createAt,
+                            url = url ?: "",
+                            width = 252,
+                            height = 300
+                        )
+                    }
+                }
+            }
+            "signal", "signalChatting" -> {
+                if (chatDto.signal == null) {
+                    continue
+                } else {
+                    SignalChat(
+                        index = chatDto.index,
+                        pageNo = page,
+                        chatSender = if (chatDto.mine) "me" else "partner",
+                        isRead = chatDto.isRead,
+                        createAt = chatDto.createAt,
+                        signal = when (chatDto.signal.toInt()) {
+                            1 -> Signal.Zero
+                            2 -> Signal.Quarter
+                            3 -> Signal.Half
+                            4 -> Signal.ThreeFourth
+                            5 -> Signal.One
+                            else -> continue
+                        }
+                    )
+                }
+            }
+            "challenge", "challengeChatting" -> {
+                if (chatDto.coupleChallenge == null) {
+                    continue
+                } else {
+                    val challenge = loadChallenge(chatDto.coupleChallenge.index)
+                    val format = SimpleDateFormat("", Locale.getDefault())
+                    ChallengeChat(
+                        index = chatDto.index,
+                        pageNo = page,
+                        chatSender = if (chatDto.mine) "me" else "partner",
+                        isRead = chatDto.isRead,
+                        createAt = chatDto.createAt,
+                        challenge = Challenge(
+                            index = chatDto.coupleChallenge.index,
+                            title = chatDto.coupleChallenge.challengeTitle,
+                            body = chatDto.coupleChallenge.challengeBody ?: "",
+                            deadline = format.parse(chatDto.coupleChallenge.deadline) ?: continue,
+                            owner = chatDto.coupleChallenge.creator,
+                            isCompleted = challenge.isCompleted,
+                            isNew = false
+                        )
                     )
                 }
             }

@@ -19,6 +19,8 @@ import com.clonect.feeltalk.new_data.repository.partner.dataSource.PartnerRemote
 import com.clonect.feeltalk.new_data.repository.partner.dataSourceImpl.PartnerRemoteDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.question.dataSourceImpl.QuestionRemoteDataSourceImpl
+import com.clonect.feeltalk.new_data.repository.signal.dataSource.SignalRemoteDataSource
+import com.clonect.feeltalk.new_data.repository.signal.dataSourceImpl.SignalRemoteDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.token.dataSourceImpl.TokenRemoteDataSourceImpl
 import dagger.Module
@@ -73,6 +75,14 @@ class RemoteDataSourceModule {
         clonectService: ClonectService
     ): PartnerRemoteDataSource {
         return PartnerRemoteDataSourceImpl(clonectService)
+    }
+
+    @Singleton
+    @Provides
+    fun providesSignalRemoteDataSource(
+        clonectService: ClonectService
+    ): SignalRemoteDataSource {
+        return SignalRemoteDataSourceImpl(clonectService)
     }
 
 

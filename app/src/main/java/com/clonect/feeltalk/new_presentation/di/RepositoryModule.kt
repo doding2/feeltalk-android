@@ -45,6 +45,10 @@ import com.clonect.feeltalk.new_data.repository.partner.PartnerRepositoryImpl
 import com.clonect.feeltalk.new_data.repository.partner.dataSource.PartnerCacheDataSource
 import com.clonect.feeltalk.new_data.repository.partner.dataSource.PartnerLocalDataSource
 import com.clonect.feeltalk.new_data.repository.partner.dataSource.PartnerRemoteDataSource
+import com.clonect.feeltalk.new_data.repository.signal.SignalRepositoryImpl
+import com.clonect.feeltalk.new_data.repository.signal.dataSource.SignalCacheDataSource
+import com.clonect.feeltalk.new_data.repository.signal.dataSource.SignalLocalDataSource
+import com.clonect.feeltalk.new_data.repository.signal.dataSource.SignalRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.token.TokenRepositoryImpl
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenCacheDataSource
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenLocalDataSource
@@ -54,6 +58,7 @@ import com.clonect.feeltalk.new_domain.repository.chat.ChatRepository
 import com.clonect.feeltalk.new_domain.repository.question.QuestionRepository
 import com.clonect.feeltalk.new_domain.repository.account.AccountRepository
 import com.clonect.feeltalk.new_domain.repository.partner.PartnerRepository
+import com.clonect.feeltalk.new_domain.repository.signal.SignalRepository
 import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 import dagger.Module
 import dagger.Provides
@@ -127,6 +132,16 @@ class RepositoryModule {
         cacheDataSource: PartnerCacheDataSource,
     ): PartnerRepository {
         return PartnerRepositoryImpl(cacheDataSource, localDataSource, remoteDataSource)
+    }
+
+    @Singleton
+    @Provides
+    fun providesSignalRepository(
+        remoteDataSource: SignalRemoteDataSource,
+        localDataSource: SignalLocalDataSource,
+        cacheDataSource: SignalCacheDataSource,
+    ): SignalRepository {
+        return SignalRepositoryImpl(cacheDataSource, localDataSource, remoteDataSource)
     }
 
 

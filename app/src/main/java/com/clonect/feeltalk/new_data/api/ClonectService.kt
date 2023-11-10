@@ -19,6 +19,8 @@ import com.clonect.feeltalk.new_domain.model.partner.PartnerInfoDto
 import com.clonect.feeltalk.new_domain.model.question.LastQuestionPageNoDto
 import com.clonect.feeltalk.new_domain.model.question.QuestionDto
 import com.clonect.feeltalk.new_domain.model.question.QuestionListDto
+import com.clonect.feeltalk.new_domain.model.signal.ChangeMySignalResponse
+import com.clonect.feeltalk.new_domain.model.signal.SignalResponse
 import com.clonect.feeltalk.new_domain.model.token.RenewTokenDto
 import com.google.gson.JsonObject
 import okhttp3.MultipartBody
@@ -292,6 +294,28 @@ interface ClonectService {
     suspend fun getPartnerInfo(
         @Header("Authorization") token: String,
     ): Response<ApiResponse<PartnerInfoDto>>
+
+
+    /** Signal **/
+
+    @GET("/api/v1/member/signal")
+    suspend fun getMySignal(
+        @Header("Authorization") token: String,
+    ): Response<ApiResponse<SignalResponse>>
+
+    @GET("/api/v1/member/partner/signal")
+    suspend fun getPartnerSignal(
+        @Header("Authorization") token: String,
+    ): Response<ApiResponse<SignalResponse>>
+
+    @POST("/api/v1/chatting-message/signal")
+    suspend fun changeMySignal(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<ApiResponse<ChangeMySignalResponse>>
+
+
+
 
 
     /** Old Apis **/

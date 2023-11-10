@@ -27,6 +27,7 @@ import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
 import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
 import com.clonect.feeltalk.new_domain.model.question.Question
+import com.clonect.feeltalk.new_domain.model.signal.Signal
 import com.clonect.feeltalk.new_domain.usecase.challenge.GetChallengeUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.AddNewChatCacheUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.ChangeMyChatRoomStateUseCase
@@ -38,6 +39,7 @@ import com.clonect.feeltalk.new_domain.usecase.chat.SendVoiceChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.ShareQuestionUseCase
+import com.clonect.feeltalk.new_domain.usecase.signal.GetPartnerSignalFlowUseCase
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.audioVisualizer.RecordingReplayer
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.audioVisualizer.RecordingSampler
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.audioVisualizer.VisualizerView
@@ -77,12 +79,16 @@ class ChatViewModel @Inject constructor(
     private val getPartnerChatRoomStateFlowUseCase: GetPartnerChatRoomStateFlowUseCase,
     private val addNewChatCacheUseCase: AddNewChatCacheUseCase,
     private val getNewChatFlowUseCase: GetNewChatFlowUseCase,
+    private val getPartnerSignalFlowUseCase: GetPartnerSignalFlowUseCase,
 ) : ViewModel() {
 
     private val job = MutableStateFlow<Job?>(null)
 
     private val _partnerInfo = MutableStateFlow<PartnerInfo?>(null)
     val partnerInfo = _partnerInfo.asStateFlow()
+
+    private val _partnerSignal = MutableStateFlow<Signal?>(null)
+    val partnerSignal = _partnerSignal.asStateFlow()
 
     private val _isUserInChat = MutableStateFlow<Boolean?>(null)
     val isUserInChat = _isUserInChat.asStateFlow()
@@ -101,6 +107,7 @@ class ChatViewModel @Inject constructor(
 
     init {
         getPartnerInfo()
+        getPartnerSignal()
         collectNewChat()
         collectPartnerChatRoomState()
     }
@@ -146,6 +153,12 @@ class ChatViewModel @Inject constructor(
             }.onError {
                 infoLog("Fail to get partner info: ${it.localizedMessage}")
             }
+        }
+    }
+
+    fun getPartnerSignal() = viewModelScope.launch {
+        getPartnerSignalFlowUseCase().collect {
+            _partnerSignal.value = it
         }
     }
 
