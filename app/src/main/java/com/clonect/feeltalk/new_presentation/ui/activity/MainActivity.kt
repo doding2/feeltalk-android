@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.ViewTreeObserver
 import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContracts
@@ -13,14 +14,20 @@ import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavDeepLink
 import androidx.navigation.fragment.NavHostFragment
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.ActivityMainBinding
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
+import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationFragment
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
 import com.skydoves.transformationlayout.onTransformationStartContainer
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -96,7 +103,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         navGraph.setStartDestination(startDestination)
-
         navController.graph = navGraph
     }
 

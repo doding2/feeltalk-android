@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.new_presentation.ui.activity
 
+import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.FeelTalkException.ServerIsDownException

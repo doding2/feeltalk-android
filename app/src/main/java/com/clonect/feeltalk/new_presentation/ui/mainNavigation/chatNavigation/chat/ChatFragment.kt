@@ -341,6 +341,48 @@ class ChatFragment : Fragment() {
         viewModel.toggleExpandChatMedia()
     }
 
+    // For scrolling auto when new chat arrived
+    private val dataObserver = object: RecyclerView.AdapterDataObserver() {
+        override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+            super.onItemRangeInserted(positionStart, itemCount)
+            val snapshot = adapter.snapshot()
+            if (positionStart == 0) return
+            if (positionStart >= snapshot.size) return
+            val item = adapter.snapshot()[positionStart] ?: return
+
+            val isNextDayItemInserted = snapshot.size - 1 < positionStart + 2 || snapshot[positionStart + 2] == null
+            if (item is DividerChat && isNextDayItemInserted) {
+                val dividerFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                val now = dividerFormat.format(Date())
+                if (item.createAt != now) return
+
+                val nextItem = snapshot[positionStart + 1]
+                if (nextItem is ImageChat) {
+                    // delay for loading image
+                    lifecycleScope.launch {
+                        delay(200)
+                        scrollToBottom()
+                    }
+                } else {
+                    scrollToBottom()
+                }
+                return
+            }
+
+            val shouldScroll = (item.chatSender == "me" && item.sendState == Chat.ChatSendState.Sending) || (viewModel.isUserInBottom.value && item.chatSender == "partner")
+            if (shouldScroll) {
+                if (item is ImageChat) {
+                    // delay for loading image
+                    lifecycleScope.launch {
+                        delay(200)
+                        scrollToBottom()
+                    }
+                    return
+                }
+                scrollToBottom()
+            }
+        }
+    }
 
     private fun setRecyclerView() = binding.run {
         rvChat.setRecycledViewPool(RecyclerView.RecycledViewPool().apply {
@@ -373,36 +415,7 @@ class ChatFragment : Fragment() {
             setOnClickItem(::onClickChat)
             setOnRetry(::onRetryChat)
             setOnCancel(::onCancelChat)
-            val dividerFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            registerAdapterDataObserver(object: RecyclerView.AdapterDataObserver() {
-                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                    super.onItemRangeInserted(positionStart, itemCount)
-                    if (positionStart == 0) return
-                    if (positionStart >= adapter.itemCount) return
-                    val item = adapter.snapshot()[positionStart] ?: return
-
-                    if (item is DividerChat && adapter.snapshot()[positionStart + 2] == null) {
-                        val now = dividerFormat.format(Date())
-                        if (item.createAt == now) {
-                            scrollToBottom()
-                            return
-                        }
-                    }
-
-                    val shouldScroll = (item.chatSender == "me" && item.sendState == Chat.ChatSendState.Sending) || (viewModel.isUserInBottom.value && item.chatSender == "partner")
-                    if (shouldScroll) {
-                        if (item is ImageChat) {
-                            // delay for loading image
-                            lifecycleScope.launch {
-                                delay(200)
-                                scrollToBottom()
-                            }
-                            return
-                        }
-                        scrollToBottom()
-                    }
-                }
-            })
+            registerAdapterDataObserver(dataObserver)
         }
         rvChat.addOnScrollListener(object: RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -740,6 +753,7 @@ class ChatFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        adapter.unregisterAdapterDataObserver(dataObserver)
         binding.rvChat.apply {
             layoutManager = null
             adapter = null
