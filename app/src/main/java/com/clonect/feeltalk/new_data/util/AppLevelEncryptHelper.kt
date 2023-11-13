@@ -110,7 +110,7 @@ class AppLevelEncryptHelper(
                 .build()
         )
 
-        infoLog("!!!!경고!!!! 앱 레벨 AES 키가 새로 생성됨")
+        infoLog("Android Key Store AES encryption key is generated.")
 
         return keyGen.generateKey()
     }

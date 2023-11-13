@@ -60,6 +60,7 @@ import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
 import com.skydoves.transformationlayout.TransformationCompat
 import com.skydoves.transformationlayout.TransformationLayout
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -76,12 +77,11 @@ class ChatFragment : Fragment() {
     private lateinit var binding: FragmentChatBinding
     private val viewModel: ChatViewModel by viewModels()
     private val navViewModel: MainNavigationViewModel by activityViewModels()
-    @Inject
-    lateinit var adapter: ChatAdapter
-    @Inject
-    lateinit var notificationHelper: NotificationHelper
+    @Inject lateinit var adapter: ChatAdapter
+    @Inject lateinit var notificationHelper: NotificationHelper
 
     private var scrollRemainHeight = 0
+    private var viewModelJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -117,10 +117,7 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.cancelJob()
-        viewModel.setJob(
-            collectViewModel()
-        )
+        collectViewModel()
         setRecyclerView()
 
         binding.run {
@@ -703,48 +700,51 @@ class ChatFragment : Fragment() {
         onBackCallback.isEnabled = isChatShown
     }
 
-    private fun collectViewModel() = lifecycleScope.launch {
-        repeatOnLifecycle(Lifecycle.State.STARTED) {
-            launch { viewModel.textChat.collectLatest(::prepareTextChat) }
-            launch { viewModel.expandChat.collectLatest(::changeChatMediaView) }
-            launch { viewModel.isVoiceSetupMode.collectLatest(::changeVoiceSetupView) }
-            launch { viewModel.isVoiceRecordingMode.collectLatest(::changeVoiceRecordingView) }
-            launch { viewModel.isVoiceRecordingFinished.collectLatest(::changeVoiceRecordingFinishedView) }
-            launch { viewModel.isVoiceRecordingReplayPaused.collectLatest(::changePauseVoiceRecordingReplayingView) }
-            launch { viewModel.voiceRecordTime.collectLatest(::changeVoiceRecordingTimeView) }
-            launch { viewModel.isKeyboardUp.collectLatest(::applyKeyboardUp) }
-            launch { viewModel.partnerInfo.collectLatest(::applyPartnerInfoChanges) }
-            launch { viewModel.partnerSignal.collectLatest(::applyPartnerSignalChanges) }
-            launch {
-                viewModel.pagingChat.collectLatest {
-                    adapter.submitData(requireParentFragment().lifecycle, it)
-                }
-            }
-            launch {
-                viewModel.isPartnerInChat.collectLatest {
-                    if (it != null) {
-                        adapter.setPartnerInChat(it)
+
+    private fun collectViewModel() {
+        viewModelJob = lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch { viewModel.textChat.collectLatest(::prepareTextChat) }
+                launch { viewModel.expandChat.collectLatest(::changeChatMediaView) }
+                launch { viewModel.isVoiceSetupMode.collectLatest(::changeVoiceSetupView) }
+                launch { viewModel.isVoiceRecordingMode.collectLatest(::changeVoiceRecordingView) }
+                launch { viewModel.isVoiceRecordingFinished.collectLatest(::changeVoiceRecordingFinishedView) }
+                launch { viewModel.isVoiceRecordingReplayPaused.collectLatest(::changePauseVoiceRecordingReplayingView) }
+                launch { viewModel.voiceRecordTime.collectLatest(::changeVoiceRecordingTimeView) }
+                launch { viewModel.isKeyboardUp.collectLatest(::applyKeyboardUp) }
+                launch { viewModel.partnerInfo.collectLatest(::applyPartnerInfoChanges) }
+                launch { viewModel.partnerSignal.collectLatest(::applyPartnerSignalChanges) }
+                launch {
+                    viewModel.pagingChat.collectLatest {
+                        adapter.submitData(requireParentFragment().lifecycle, it)
                     }
                 }
-            }
-            launch {
-                navViewModel.showChatNavigation.collectLatest { isShown ->
-                    setBackCallback(isShown)
-                    FeeltalkApp.setUserInChat(isShown)
-                    if (isShown) {
-                        notificationHelper.cancelNotification(NotificationHelper.CHANNEL_ID_CHAT.toBytesInt())
-                        viewModel.changeChatRoomState(true)
-                        if (viewModel.isUserInBottom.value) {
-                            scrollToBottom()
-                        }
-                        if (viewModel.isKeyboardUp.value) {
-                            binding.etTextMessage.requestFocus()
+                launch {
+                    viewModel.isPartnerInChat.collectLatest {
+                        if (it != null) {
+                            adapter.setPartnerInChat(it)
                         }
                     }
-                    else {
-                        hideKeyboard()
-                        cancel()
-                        viewModel.changeChatRoomState(false)
+                }
+                launch {
+                    navViewModel.showChatNavigation.collectLatest { isShown ->
+                        setBackCallback(isShown)
+                        FeeltalkApp.setUserInChat(isShown)
+                        if (isShown) {
+                            notificationHelper.cancelNotification(NotificationHelper.CHANNEL_ID_CHAT.toBytesInt())
+                            viewModel.changeChatRoomState(true)
+                            if (viewModel.isUserInBottom.value) {
+                                scrollToBottom()
+                            }
+                            if (viewModel.isKeyboardUp.value) {
+                                binding.etTextMessage.requestFocus()
+                            }
+                        }
+                        else {
+                            hideKeyboard()
+                            cancel()
+                            viewModel.changeChatRoomState(false)
+                        }
                     }
                 }
             }
@@ -753,6 +753,7 @@ class ChatFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        viewModelJob?.cancel()
         adapter.unregisterAdapterDataObserver(dataObserver)
         binding.rvChat.apply {
             layoutManager = null

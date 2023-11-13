@@ -7,5 +7,5 @@ fun infoLog(message: String, tag: String = "FeeltalkInfo") {
 }
 
 fun debugLog(message: String, tag: String = "FeeltalkDebug") {
-    Log.i(tag, message)
+    Log.d(tag, message)
 }

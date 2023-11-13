@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 interface SignalCacheDataSource {
     fun saveMySignal(signal: Signal)
     fun getMySignal(): Signal?
+    suspend fun getMySignalFlow(): Flow<Signal?>
 
     fun savePartnerSignal(signal: Signal)
     fun getPartnerSignal(): Signal?

@@ -33,6 +33,7 @@ import com.clonect.feeltalk.new_presentation.ui.util.showConfirmDialog
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -43,6 +44,7 @@ class AnswerFragment : Fragment() {
     private lateinit var binding: FragmentAnswerBinding
     private val viewModel: AnswerViewModel by viewModels()
     private val navViewModel: MainNavigationViewModel by activityViewModels()
+    private var viewModelJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,10 +62,7 @@ class AnswerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.cancelJob()
-        viewModel.setJob(
-            collectViewModel()
-        )
+        collectViewModel()
 
         binding.run {
             ivDismissDialog.setOnClickListener {
@@ -352,37 +351,43 @@ class AnswerFragment : Fragment() {
         ).show()
     }
 
-    private fun collectViewModel() = lifecycleScope.launch {
-        repeatOnLifecycle(Lifecycle.State.STARTED) {
-            launch { viewModel.message.collect(::showSnackBar) }
-            launch { viewModel.question.collectLatest(::changeQuestionView) }
+    private fun collectViewModel() {
+        viewModelJob = lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch { viewModel.message.collect(::showSnackBar) }
+                launch { viewModel.question.collectLatest(::changeQuestionView) }
 
-            launch {
-                navViewModel.answerTargetQuestion.collectLatest {
-                    if (it == null) {
-                        viewModel.clear()
-                        hideKeyboard()
-                        binding.etMyAnswer.clearFocus()
-                    } else {
-                        viewModel.setQuestion(it)
+                launch {
+                    navViewModel.answerTargetQuestion.collectLatest {
+                        if (it == null) {
+                            viewModel.clear()
+                            hideKeyboard()
+                            binding.etMyAnswer.clearFocus()
+                        } else {
+                            viewModel.setQuestion(it)
+                        }
                     }
                 }
-            }
 
-            launch { viewModel.isKeyboardUp.collectLatest(::expandDoneButton) }
+                launch { viewModel.isKeyboardUp.collectLatest(::expandDoneButton) }
 
-            launch {
-                viewModel.answer.collectLatest {
-                    val isButtonEnabled = if (viewModel.isReadMode.value) {
-                        viewModel.question.value?.partnerAnswer != null
-                                && viewModel.question.value?.myAnswer != null
-                    } else {
-                        it.isNotBlank()
+                launch {
+                    viewModel.answer.collectLatest {
+                        val isButtonEnabled = if (viewModel.isReadMode.value) {
+                            viewModel.question.value?.partnerAnswer != null
+                                    && viewModel.question.value?.myAnswer != null
+                        } else {
+                            it.isNotBlank()
+                        }
+                        enableDoneButton(isButtonEnabled)
                     }
-                    enableDoneButton(isButtonEnabled)
                 }
             }
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModelJob?.cancel()
+    }
 }

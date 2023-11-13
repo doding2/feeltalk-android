@@ -31,6 +31,7 @@ import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.*
 import com.clonect.feeltalk.new_domain.usecase.signal.ChangeMySignalUseCase
 import com.clonect.feeltalk.new_domain.usecase.signal.ChangePartnerSignalCacheUseCase
+import com.clonect.feeltalk.new_domain.usecase.signal.GetMySignalCacheFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.signal.GetMySignalUseCase
 import com.clonect.feeltalk.new_domain.usecase.signal.GetPartnerSignalFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.signal.GetPartnerSignalUseCase
@@ -523,6 +524,12 @@ class UseCaseModule {
     @Provides
     fun providesGetPartnerSignalFlowUseCase(signalRepository: SignalRepository): GetPartnerSignalFlowUseCase {
         return GetPartnerSignalFlowUseCase(signalRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetMySignalCacheFlowUseCase(signalRepository: SignalRepository): GetMySignalCacheFlowUseCase {
+        return GetMySignalCacheFlowUseCase(signalRepository)
     }
 
 

@@ -14,6 +14,7 @@ import com.clonect.feeltalk.new_domain.usecase.question.GetAnswerQuestionFlowUse
 import com.clonect.feeltalk.new_domain.usecase.question.GetTodayQuestionFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetTodayQuestionUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.PressForAnswerUseCase
+import com.clonect.feeltalk.new_domain.usecase.signal.GetMySignalCacheFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.signal.GetMySignalUseCase
 import com.clonect.feeltalk.new_domain.usecase.signal.GetPartnerSignalFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.signal.GetPartnerSignalUseCase
@@ -37,6 +38,7 @@ class HomeViewModel @Inject constructor(
     private val getMySignalUseCase: GetMySignalUseCase,
     private val getPartnerSignalUseCase: GetPartnerSignalUseCase,
     private val getPartnerSignalFlowUseCase: GetPartnerSignalFlowUseCase,
+    private val getMySignalCacheFlowUseCase: GetMySignalCacheFlowUseCase,
 ) : ViewModel() {
 
     private val _todayQuestion = MutableStateFlow<Question?>(null)
@@ -59,6 +61,7 @@ class HomeViewModel @Inject constructor(
             collectTodayQuestion()
             collectQuestionAnswer()
             collectPartnerSignal()
+            collectMySignal()
         }
     }
 
@@ -133,6 +136,13 @@ class HomeViewModel @Inject constructor(
         getPartnerSignalFlowUseCase().collect {
             if (it == null) return@collect
             _partnerSignal.value = it
+        }
+    }
+
+    private fun collectMySignal() = viewModelScope.launch {
+        getMySignalCacheFlowUseCase().collect {
+            if (it == null) return@collect
+            _mySignal.value = it
         }
     }
 }

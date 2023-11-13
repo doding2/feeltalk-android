@@ -3,29 +3,32 @@ package com.clonect.feeltalk.new_presentation.ui.mainNavigation.home.signal
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Point
-import com.clonect.feeltalk.databinding.FragmentSignalBottomSheetBinding
+import com.clonect.feeltalk.databinding.FragmentSignalBinding
 import com.clonect.feeltalk.new_domain.model.signal.Signal
+import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
 import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
+import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.makeLoadingDialog
 import com.clonect.feeltalk.new_presentation.ui.util.measure
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -34,16 +37,12 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 @AndroidEntryPoint
-class SignalBottomSheetFragment(
-    val onSendSignal: (Signal) -> Unit
-) : BottomSheetDialogFragment() {
+class SignalFragment : Fragment() {
 
-    companion object {
-        const val TAG = "SignalBottomSheetFragment"
-    }
-
-    private lateinit var binding: FragmentSignalBottomSheetBinding
+    private lateinit var binding: FragmentSignalBinding
     private val viewModel: SignalViewModel by viewModels()
+    private val navViewModel: MainNavigationViewModel by activityViewModels()
+    private var viewModelJob: Job? = null
     private lateinit var loadingDialog: Dialog
 
     override fun onCreateView(
@@ -51,11 +50,11 @@ class SignalBottomSheetFragment(
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentSignalBottomSheetBinding.inflate(inflater, container, false)
+        binding = FragmentSignalBinding.inflate(inflater, container, false)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            binding.root.setPadding(0, 0, 0, getNavigationBarHeight())
+        }
         measureSignalView()
-        val behavior = (dialog as? BottomSheetDialog)?.behavior
-        behavior?.state = BottomSheetBehavior.STATE_EXPANDED
-        behavior?.skipCollapsed = true
         loadingDialog = makeLoadingDialog()
         return binding.root
     }
@@ -72,23 +71,20 @@ class SignalBottomSheetFragment(
     }
 
     private fun initSignal() {
-        viewModel.setAngle(146.97f)
-        arguments?.getString("currentSignal")?.let {
-            val angle = when (Signal.valueOf(it)) {
-                Signal.Zero -> 204.77f
-                Signal.Quarter -> 147f
-                Signal.Half -> 90f
-                Signal.ThreeFourth -> 33f
-                Signal.One -> 335.22f
-            }
-            viewModel.setAngle(angle)
+        val angle = when (viewModel.signal.value) {
+            Signal.Zero -> 204.77f
+            Signal.Quarter -> 147f
+            Signal.Half -> 90f
+            Signal.ThreeFourth -> 33f
+            Signal.One -> 335.22f
+            else -> 147f
         }
+        viewModel.setAngle(angle)
     }
 
     private fun sendSignal() {
         viewModel.changeMySignal {
-            onSendSignal(it)
-            dismiss()
+            navViewModel.setShowSignalSheet(false)
         }
     }
 
@@ -283,13 +279,28 @@ class SignalBottomSheetFragment(
         ).show()
     }
 
-    private fun collectViewModel() = lifecycleScope.launch {
-        repeatOnLifecycle(Lifecycle.State.STARTED) {
-            launch { viewModel.isLoading.collectLatest(::showLoading) }
-            launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
-            launch { viewModel.angle.collectLatest(::applyAngleChange) }
-            launch { viewModel.signal.collectLatest(::applySignalChange) }
+    private fun applyShowSignalSheetChanges(isShow: Boolean) {
+        if (isShow) {
+            viewModel.getMySignal {
+                initSignal()
+            }
         }
     }
 
+    private fun collectViewModel() {
+        viewModelJob = lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch { viewModel.isLoading.collectLatest(::showLoading) }
+                launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
+                launch { viewModel.angle.collectLatest(::applyAngleChange) }
+                launch { viewModel.signal.collectLatest(::applySignalChange) }
+                launch { navViewModel.showSignalSheet.collectLatest(::applyShowSignalSheetChanges) }
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModelJob?.cancel()
+    }
 }

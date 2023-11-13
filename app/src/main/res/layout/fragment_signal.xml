@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context=".new_presentation.ui.mainNavigation.home.signal.SignalBottomSheetFragment">
+    android:background="@drawable/n_background_bottom_sheet_rounded"
+    tools:context=".new_presentation.ui.mainNavigation.home.signal.SignalFragment">
 
     <include layout="@layout/image_view_bottom_sheet_handle" />
 

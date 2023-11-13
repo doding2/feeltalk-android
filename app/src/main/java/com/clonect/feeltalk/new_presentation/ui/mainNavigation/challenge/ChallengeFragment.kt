@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.ViewCompat.animate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -32,6 +33,7 @@ import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -41,6 +43,7 @@ class ChallengeFragment : Fragment() {
     private lateinit var binding: FragmentChallengeBinding
     private val viewModel: ChallengeViewModel by viewModels()
     private val navViewModel: MainNavigationViewModel by activityViewModels()
+    private var viewModelJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -287,11 +290,18 @@ class ChallengeFragment : Fragment() {
     }
 
 
-    private fun collectViewModel() = lifecycleScope.launch {
-        repeatOnLifecycle(Lifecycle.State.STARTED) {
-            launch { viewModel.challengeCount.collectLatest(::changeChallengeCountViews) }
-            launch { viewModel.snackbarState.collectLatest(::changeSnackbarView) }
-            launch { navViewModel.showChallengeDetail.collectLatest(::showChallengeDetail) }
+    private fun collectViewModel() {
+        viewModelJob = lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch { viewModel.challengeCount.collectLatest(::changeChallengeCountViews) }
+                launch { viewModel.snackbarState.collectLatest(::changeSnackbarView) }
+                launch { navViewModel.showChallengeDetail.collectLatest(::showChallengeDetail) }
+            }
         }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        viewModelJob?.cancel()
     }
 }

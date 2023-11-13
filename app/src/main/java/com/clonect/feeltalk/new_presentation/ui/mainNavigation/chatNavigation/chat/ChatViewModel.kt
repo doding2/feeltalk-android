@@ -82,8 +82,6 @@ class ChatViewModel @Inject constructor(
     private val getPartnerSignalFlowUseCase: GetPartnerSignalFlowUseCase,
 ) : ViewModel() {
 
-    private val job = MutableStateFlow<Job?>(null)
-
     private val _partnerInfo = MutableStateFlow<PartnerInfo?>(null)
     val partnerInfo = _partnerInfo.asStateFlow()
 
@@ -127,14 +125,6 @@ class ChatViewModel @Inject constructor(
 
     fun setUserInBottom(isInBottom: Boolean) {
         _isUserInBottom.value = isInBottom
-    }
-
-    fun cancelJob() = viewModelScope.launch {
-        job.value?.cancel()
-    }
-
-    fun setJob(job: Job) {
-        this.job.value = job
     }
 
     fun setTextChat(message: String) {

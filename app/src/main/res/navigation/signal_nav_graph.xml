@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/signal_nav_graph"
+    app:startDestination="@id/signalFragment">
+
+    <fragment
+        android:id="@+id/signalFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.home.signal.SignalFragment"
+        android:label="fragment_signal"
+        tools:layout="@layout/fragment_signal" />
+</navigation>

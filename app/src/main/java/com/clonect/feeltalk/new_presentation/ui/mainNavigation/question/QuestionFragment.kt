@@ -24,6 +24,7 @@ import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
 import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -35,6 +36,7 @@ class QuestionFragment : Fragment() {
     private lateinit var binding: FragmentQuestionBinding
     private val viewModel: QuestionViewModel by viewModels()
     private val navViewModel: MainNavigationViewModel by activityViewModels()
+    private var viewModelJob: Job? = null
 
     @Inject
     lateinit var adapter: QuestionAdapter
@@ -140,20 +142,21 @@ class QuestionFragment : Fragment() {
         binding.rvQuestion.smoothScrollToPosition(0)
     }
 
-
-    private fun collectViewModel() = lifecycleScope.launch {
-        repeatOnLifecycle(Lifecycle.State.STARTED) {
-            launch {
-                viewModel.pagingQuestion.collectLatest {
-                    adapter.submitData(lifecycle, it)
+    private fun collectViewModel() {
+        viewModelJob = lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.pagingQuestion.collectLatest {
+                        adapter.submitData(lifecycle, it)
+                    }
                 }
-            }
-            launch {
-                viewModel.scrollToTop.collectLatest {
-                    if (it) {
-                        delay(50)
-                        scrollToTop()
-                        viewModel.setScrollToTop(false)
+                launch {
+                    viewModel.scrollToTop.collectLatest {
+                        if (it) {
+                            delay(50)
+                            scrollToTop()
+                            viewModel.setScrollToTop(false)
+                        }
                     }
                 }
             }
@@ -163,5 +166,10 @@ class QuestionFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         navViewModel.setShowQuestionPage(false)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModelJob?.cancel()
     }
 }

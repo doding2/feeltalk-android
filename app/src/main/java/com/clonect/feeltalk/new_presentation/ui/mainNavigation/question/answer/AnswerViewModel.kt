@@ -33,9 +33,6 @@ class AnswerViewModel @Inject constructor(
     private val getPartnerInfoFlowUseCase: GetPartnerInfoFlowUseCase,
 ) : ViewModel() {
 
-    private val job = MutableStateFlow<Job?>(null)
-
-
     private val _isReadMode = MutableStateFlow(false)
     val isReadMode = _isReadMode.asStateFlow()
 
@@ -108,14 +105,6 @@ class AnswerViewModel @Inject constructor(
         _message.emit(message)
     }
 
-
-    fun cancelJob() = viewModelScope.launch {
-        job.value?.job
-    }
-
-    fun setJob(job: Job) {
-        this.job.value = job
-    }
 
     fun clear() {
         _isReadMode.value = false

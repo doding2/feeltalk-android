@@ -27,6 +27,7 @@ import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.showConfirmDialog
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -36,6 +37,7 @@ class MainNavigationFragment : Fragment() {
     private lateinit var binding: FragmentMainNavigationBinding
     private val viewModel: MainNavigationViewModel by activityViewModels()
     private lateinit var onBackCallback: OnBackPressedCallback
+    private var viewModelJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -80,41 +82,23 @@ class MainNavigationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.job?.cancel()
-        viewModel.job = collectViewModel()
+        collectViewModel()
 
         binding.run {
-            mcvFloatingChat.setOnClickListener {
-                viewModel.toggleShowChatNavigation()
-            }
-            viewChatBehind.setOnClickListener {
-                viewModel.toggleShowChatNavigation()
-            }
+            mcvFloatingChat.setOnClickListener { viewModel.toggleShowChatNavigation() }
+            viewChatBehind.setOnClickListener { viewModel.toggleShowChatNavigation() }
 
-            viewAnswerBehind.setOnClickListener {
-                viewModel.setShowAnswerSheet(false)
-            }
+            viewSignalBehind.setOnClickListener { viewModel.setShowSignalSheet(false) }
+            viewAnswerBehind.setOnClickListener { viewModel.setShowAnswerSheet(false) }
 
-            sheetInquirySucceed.mcvConfirm.setOnClickListener {
-                viewModel.setShowInquirySucceedSheet(false)
-            }
-            viewInquirySucceedBehind.setOnClickListener {
-                viewModel.setShowInquirySucceedSheet(false)
-            }
+            sheetInquirySucceed.mcvConfirm.setOnClickListener { viewModel.setShowInquirySucceedSheet(false) }
+            viewInquirySucceedBehind.setOnClickListener { viewModel.setShowInquirySucceedSheet(false) }
 
-            sheetSuggestionSucceed.mcvConfirm.setOnClickListener {
-                viewModel.setShowSuggestionSucceedSheet(false)
-            }
-            viewSuggestionSucceedBehind.setOnClickListener {
-                viewModel.setShowSuggestionSucceedSheet(false)
-            }
+            sheetSuggestionSucceed.mcvConfirm.setOnClickListener { viewModel.setShowSuggestionSucceedSheet(false) }
+            viewSuggestionSucceedBehind.setOnClickListener { viewModel.setShowSuggestionSucceedSheet(false) }
 
-            sheetSignalComplete.mcvConfirm.setOnClickListener {
-                viewModel.setShowSignalCompleteSheet(false)
-            }
-            viewSignalCompleteBehind.setOnClickListener {
-                viewModel.setShowSignalCompleteSheet(false)
-            }
+            sheetSignalComplete.mcvConfirm.setOnClickListener { viewModel.setShowSignalCompleteSheet(false) }
+            viewSignalCompleteBehind.setOnClickListener { viewModel.setShowSignalCompleteSheet(false) }
         }
     }
 
@@ -168,6 +152,19 @@ class MainNavigationFragment : Fragment() {
     }
 
     private fun setUpBottomSheets() {
+        BottomSheetBehavior.from(binding.flSignalSheet).apply {
+            peekHeight = 0
+            skipCollapsed = true
+            addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                        viewModel.setShowSignalSheet(false)
+                    }
+                }
+            })
+        }
+
         BottomSheetBehavior.from(binding.flAnswerSheet).apply {
             peekHeight = 0
             skipCollapsed = true
@@ -228,13 +225,34 @@ class MainNavigationFragment : Fragment() {
             flChatContainer.visibility = View.VISIBLE
 
             viewAnswerBehind.visibility = View.GONE
+            viewSignalBehind.visibility = View.GONE
         } else {
             viewChatBehind.visibility = View.GONE
             flChatContainer.visibility = View.GONE
 
+            if (viewModel.showSignalSheet.value) {
+                viewSignalBehind.visibility = View.VISIBLE
+            }
             if (viewModel.showAnswerSheet.value) {
                 viewAnswerBehind.visibility = View.VISIBLE
             }
+        }
+    }
+
+    private fun showSignalSheet(isShow: Boolean) {
+        val behavior = BottomSheetBehavior.from(binding.flSignalSheet)
+
+        if (isShow) {
+            if (viewModel.showChatNavigation.value) {
+                binding.viewSignalBehind.visibility = View.GONE
+            } else {
+                binding.viewSignalBehind.visibility = View.VISIBLE
+            }
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+        else {
+            binding.viewSignalBehind.visibility = View.GONE
+            behavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
     }
 
@@ -327,11 +345,6 @@ class MainNavigationFragment : Fragment() {
         ivLatestChatTail.setColorFilter(color)
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun applyPartnerInfoChanges(partnerInfo: PartnerInfo?) = binding.run {
-        sheetSignalComplete.tvBody.text = partnerInfo?.nickname + requireContext().getString(R.string.signal_complete_body)
-    }
-
     private fun applyIsQuestionUpdatedChanges(isUpdated: Boolean) = binding.run {
         val questionMenu = mnvBottomNavigation.menu.getItem(1)
         if (isUpdated && questionMenu.isChecked) {
@@ -356,20 +369,23 @@ class MainNavigationFragment : Fragment() {
         )
     }
 
-    private fun collectViewModel() = lifecycleScope.launch {
-        repeatOnLifecycle(Lifecycle.State.STARTED) {
-            launch { viewModel.navigateTo.collectLatest(::navigateFragment) }
-            launch { viewModel.showChatNavigation.collectLatest(::showChatSheet) }
-            launch { viewModel.showPartnerLastChat.collectLatest(::showPartnerLastChatView) }
-            launch { viewModel.partnerLastChat.collectLatest(::changePartnerLastChatView) }
-            launch { viewModel.showAnswerSheet.collectLatest(::showAnswerSheet) }
-            launch { viewModel.showInquirySucceedSheet.collectLatest(::showSubmitSucceedSheet) }
-            launch { viewModel.showSuggestionSucceedSheet.collectLatest(::showSuggestionSucceedSheet) }
-            launch { viewModel.showSignalCompleteSheet.collectLatest(::showSignalCompleteSheet) }
-            launch { viewModel.lastChatColor.collectLatest(::applyLastChatColorChange) }
-            launch { viewModel.partnerInfo.collectLatest(::applyPartnerInfoChanges) }
-            launch { viewModel.isQuestionUpdated.collectLatest(::applyIsQuestionUpdatedChanges) }
-            launch { viewModel.isChallengeUpdated.collectLatest(::applyIsChallengeUpdatedChanges) }
+
+    private fun collectViewModel() {
+        viewModelJob = lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch { viewModel.navigateTo.collectLatest(::navigateFragment) }
+                launch { viewModel.showChatNavigation.collectLatest(::showChatSheet) }
+                launch { viewModel.showPartnerLastChat.collectLatest(::showPartnerLastChatView) }
+                launch { viewModel.partnerLastChat.collectLatest(::changePartnerLastChatView) }
+                launch { viewModel.showSignalSheet.collectLatest(::showSignalSheet) }
+                launch { viewModel.showAnswerSheet.collectLatest(::showAnswerSheet) }
+                launch { viewModel.showInquirySucceedSheet.collectLatest(::showSubmitSucceedSheet) }
+                launch { viewModel.showSuggestionSucceedSheet.collectLatest(::showSuggestionSucceedSheet) }
+                launch { viewModel.showSignalCompleteSheet.collectLatest(::showSignalCompleteSheet) }
+                launch { viewModel.lastChatColor.collectLatest(::applyLastChatColorChange) }
+                launch { viewModel.isQuestionUpdated.collectLatest(::applyIsQuestionUpdatedChanges) }
+                launch { viewModel.isChallengeUpdated.collectLatest(::applyIsChallengeUpdatedChanges) }
+            }
         }
     }
 
@@ -390,6 +406,10 @@ class MainNavigationFragment : Fragment() {
                     return
                 }
 
+                if (viewModel.showSignalSheet.value) {
+                    viewModel.setShowSignalSheet(false)
+                    return
+                }
                 if (viewModel.showAnswerSheet.value) {
                     viewModel.setShowAnswerSheet(false)
                     return
@@ -416,5 +436,10 @@ class MainNavigationFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         onBackCallback.remove()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModelJob?.cancel()
     }
 }

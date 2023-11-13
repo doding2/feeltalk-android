@@ -50,12 +50,13 @@ class SignalViewModel @Inject constructor(
     }
 
 
-    fun getMySignal() = viewModelScope.launch {
-        getMySignalUseCase().onSuccess {
-            _signal.value = it
-        }.onError {
-            infoLog("Fail to get my signal: ${it.localizedMessage}")
-        }
+    fun getMySignal(onComplete: (Signal) -> Unit = {}) = viewModelScope.launch {
+        getMySignalUseCase()
+            .onSuccess {
+                _signal.value = it
+                onComplete(it)
+            }
+            .onError { infoLog("Fail to get my signal: ${it.localizedMessage}") }
     }
 
 

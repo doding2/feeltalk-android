@@ -1,6 +1,5 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.home
 
-import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -22,11 +21,8 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentHomeBinding
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.model.signal.Signal
-import com.clonect.feeltalk.new_domain.usecase.challenge.SetChallengeUpdatedUseCase
-import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper
-import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
-import com.clonect.feeltalk.new_presentation.ui.mainNavigation.home.signal.SignalBottomSheetFragment
+import com.clonect.feeltalk.new_presentation.ui.mainNavigation.home.signal.SignalFragment
 import com.clonect.feeltalk.new_presentation.ui.util.CustomTypefaceSpan
 import com.clonect.feeltalk.new_presentation.ui.util.PokeSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
@@ -34,12 +30,11 @@ import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
 import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
-import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -48,7 +43,7 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private val viewModel: HomeViewModel by viewModels()
     private val navViewModel: MainNavigationViewModel by activityViewModels()
-    @Inject lateinit var notificationHelper: NotificationHelper
+    private var viewModelJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -120,21 +115,8 @@ class HomeFragment : Fragment() {
 
 
     private fun showSignalBottomSheet() {
-        val bottomSheet = SignalBottomSheetFragment(onSendSignal = ::changeMySignal)
-
-        val currentSignal = viewModel.mySignal.value
-        val bundle = Bundle()
-        bundle.putString("currentSignal", currentSignal.raw)
-        bottomSheet.arguments = bundle
-
-        bottomSheet.show(requireActivity().supportFragmentManager, SignalBottomSheetFragment.TAG)
+        navViewModel.setShowSignalSheet(true)
     }
-
-    private fun changeMySignal(signal: Signal) {
-        viewModel.setMySignal(signal)
-        navViewModel.setShowSignalCompleteSheet(true)
-    }
-
 
 
     private fun changeTodayQuestionView(todayQuestion: Question?) = binding.run {
@@ -202,18 +184,24 @@ class HomeFragment : Fragment() {
     }
 
 
-    private fun collectViewModel() = lifecycleScope.launch {
-        repeatOnLifecycle(Lifecycle.State.STARTED) {
-            launch { viewModel.todayQuestion.collectLatest(::changeTodayQuestionView) }
-            launch { viewModel.mySignal.collectLatest(::changeMySignalView) }
-            launch { viewModel.partnerSignal.collectLatest(::changePartnerSignalView) }
-            launch { viewModel.snackbarMessage.collectLatest(::showSnackBar) }
+    private fun collectViewModel() {
+        viewModelJob = lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch { viewModel.todayQuestion.collectLatest(::changeTodayQuestionView) }
+                launch { viewModel.mySignal.collectLatest(::changeMySignalView) }
+                launch { viewModel.partnerSignal.collectLatest(::changePartnerSignalView) }
+                launch { viewModel.snackbarMessage.collectLatest(::showSnackBar) }
+            }
         }
     }
-
 
     override fun onDetach() {
         super.onDetach()
         navViewModel.setLastChatColor(Color.WHITE)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModelJob?.cancel()
     }
 }

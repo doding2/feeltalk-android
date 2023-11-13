@@ -10,9 +10,10 @@ import kotlinx.coroutines.flow.Flow
  */
 interface SignalRepository {
     suspend fun getMySignal(accessToken: String): Resource<Signal>
-    suspend fun getPartnerSignal(accessToken: String): Resource<Signal>
+    suspend fun getMySignalCacheFlow(): Flow<Signal?>
     suspend fun changeMySignal(accessToken: String, signal: Signal): Resource<ChangeMySignalResponse>
 
+    suspend fun getPartnerSignal(accessToken: String): Resource<Signal>
+    suspend fun getPartnerSignalCacheFlow(): Flow<Signal?>
     suspend fun changePartnerSignalCache(signal: Signal)
-    suspend fun getPartnerSignalFlow(): Flow<Signal?>
 }

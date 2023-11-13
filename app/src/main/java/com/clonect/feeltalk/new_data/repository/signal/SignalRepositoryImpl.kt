@@ -36,6 +36,24 @@ class SignalRepositoryImpl(
         }
     }
 
+    override suspend fun getMySignalCacheFlow(): Flow<Signal?> {
+        return cacheDataSource.getMySignalFlow()
+    }
+
+    override suspend fun changeMySignal(accessToken: String, signal: Signal): Resource<ChangeMySignalResponse> {
+        return try {
+            val result = remoteDataSource.changeMySignal(accessToken, signal)
+            cacheDataSource.saveMySignal(signal)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+
+
     override suspend fun getPartnerSignal(accessToken: String): Resource<Signal> {
         try {
             val cache = cacheDataSource.getPartnerSignal()
@@ -52,25 +70,12 @@ class SignalRepositoryImpl(
         }
     }
 
-    override suspend fun changeMySignal(accessToken: String, signal: Signal): Resource<ChangeMySignalResponse> {
-        return try {
-            val result = remoteDataSource.changeMySignal(accessToken, signal)
-            infoLog("change my signal: $result")
-            cacheDataSource.saveMySignal(signal)
-            Resource.Success(result)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            Resource.Error(e)
-        }
+    override suspend fun getPartnerSignalCacheFlow(): Flow<Signal?> {
+        return cacheDataSource.getPartnerSignalFlow()
     }
 
     override suspend fun changePartnerSignalCache(signal: Signal) {
         cacheDataSource.savePartnerSignal(signal)
-    }
-
-    override suspend fun getPartnerSignalFlow(): Flow<Signal?> {
-        return cacheDataSource.getPartnerSignalFlow()
     }
 
 }

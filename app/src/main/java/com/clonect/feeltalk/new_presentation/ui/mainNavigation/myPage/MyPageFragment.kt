@@ -26,6 +26,7 @@ import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
 import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -35,6 +36,7 @@ class MyPageFragment : Fragment() {
     private lateinit var binding: FragmentMyPageBinding
     private val viewModel: MyPageViewModel by viewModels()
     private val navViewModel: MainNavigationViewModel by activityViewModels()
+    private var viewModelJob: Job? = null
     private lateinit var loadingDialog: Dialog
 
     override fun onCreateView(
@@ -138,12 +140,20 @@ class MyPageFragment : Fragment() {
         ).show()
     }
 
-    private fun collectViewModel() = lifecycleScope.launch {
-        repeatOnLifecycle(Lifecycle.State.STARTED) {
-            launch { viewModel.isLoading.collectLatest(::showLoading) }
-            launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
-            launch { viewModel.myInfo.collectLatest(::changeMyInfoView) }
-            launch { viewModel.partnerInfo.collectLatest(::changePartnerInfoView) }
+
+    private fun collectViewModel() {
+        viewModelJob = lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch { viewModel.isLoading.collectLatest(::showLoading) }
+                launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
+                launch { viewModel.myInfo.collectLatest(::changeMyInfoView) }
+                launch { viewModel.partnerInfo.collectLatest(::changePartnerInfoView) }
+            }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModelJob?.cancel()
     }
 }

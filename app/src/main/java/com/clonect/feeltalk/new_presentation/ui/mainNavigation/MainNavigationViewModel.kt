@@ -50,7 +50,6 @@ class MainNavigationViewModel @Inject constructor(
     private val getPartnerLastChatUseCase: GetPartnerLastChatUseCase,
     private val getQuestionUseCase: GetQuestionUseCase,
     private val getChallengeUseCase: GetChallengeUseCase,
-    private val getPartnerInfoFlowUseCase: GetPartnerInfoFlowUseCase,
     private val getNewChatFlowUseCase: GetNewChatFlowUseCase,
     private val getQuestionUpdatedFlowUseCase: GetQuestionUpdatedFlowUseCase,
     private val setQuestionUpdatedUseCase: SetQuestionUpdatedUseCase,
@@ -62,15 +61,9 @@ class MainNavigationViewModel @Inject constructor(
     @SuppressLint("StaticFieldLeak")
     var mainNavView: View? = null
 
-    // For reuse view, should clear connection between view and view model
-    var job: Job? = null
-
     private val _navigateTo = MutableSharedFlow<String>()
     val navigateTo = _navigateTo.asSharedFlow()
 
-
-    private val _partnerInfo = MutableStateFlow<PartnerInfo?>(null)
-    val partnerInfo = _partnerInfo.asStateFlow()
 
     private val _partnerLastChat = MutableStateFlow<PartnerLastChatDto?>(null)
     val partnerLastChat = _partnerLastChat.asStateFlow()
@@ -100,6 +93,10 @@ class MainNavigationViewModel @Inject constructor(
     val showAnswerSheet = _showAnswerSheet.asStateFlow()
 
 
+    private val _showSignalSheet = MutableStateFlow(false)
+    val showSignalSheet = _showSignalSheet.asStateFlow()
+
+
     private val _showChallengeDetail = MutableStateFlow<Challenge?>(null)
     val showChallengeDetail = _showChallengeDetail.asStateFlow()
 
@@ -123,7 +120,6 @@ class MainNavigationViewModel @Inject constructor(
 
 
     init {
-        getPartnerInfo()
         getPartnerLastChat()
         collectNewChat()
         collectQuestionUpdated()
@@ -165,16 +161,6 @@ class MainNavigationViewModel @Inject constructor(
         shortcutManager.pushDynamicShortcut(shortcut)
     }
 
-    fun getPartnerInfo() = viewModelScope.launch {
-        getPartnerInfoFlowUseCase().collect { result ->
-            result.onSuccess {
-                _partnerInfo.value = it
-            }.onError {
-                infoLog("Fail to get partner info: ${it.localizedMessage}")
-            }
-        }
-    }
-
     private fun getPartnerLastChat() = viewModelScope.launch(Dispatchers.IO) {
         when (val result = getPartnerLastChatUseCase()) {
             is Resource.Success -> {
@@ -209,6 +195,7 @@ class MainNavigationViewModel @Inject constructor(
     private fun calculateShowingPartnerLastChat() {
         _showPartnerLastChat.value = run {
             if (_showChatNavigation.value) return@run false
+            if (_showSignalSheet.value) return@run false
             if (_showAnswerSheet.value) return@run false
             if (_showInquirySucceedSheet.value) return@run false
             if (_showSuggestionSucceedSheet.value) return@run false
@@ -250,6 +237,12 @@ class MainNavigationViewModel @Inject constructor(
 
     fun setShowAnswerSheet(isShow: Boolean) {
         _showAnswerSheet.value = isShow
+        calculateShowingPartnerLastChat()
+    }
+
+
+    fun setShowSignalSheet(isShow: Boolean) {
+        _showSignalSheet.value = isShow
         calculateShowingPartnerLastChat()
     }
 

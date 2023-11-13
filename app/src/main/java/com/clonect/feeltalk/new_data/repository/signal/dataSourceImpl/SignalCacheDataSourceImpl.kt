@@ -11,13 +11,14 @@ import kotlinx.coroutines.flow.asStateFlow
  */
 class SignalCacheDataSourceImpl : SignalCacheDataSource {
 
-    private var mySignal: Signal? = null
+    private var mySignal = MutableStateFlow<Signal?>(null)
     private var partnerSignalFlow = MutableStateFlow<Signal?>(null)
 
     override fun saveMySignal(signal: Signal) {
-        mySignal = signal
+        mySignal.value = signal
     }
-    override fun getMySignal(): Signal? = mySignal
+    override fun getMySignal(): Signal? = mySignal.value
+    override suspend fun getMySignalFlow(): Flow<Signal?> = mySignal.asStateFlow()
 
     override fun savePartnerSignal(signal: Signal) {
         partnerSignalFlow.value = signal
