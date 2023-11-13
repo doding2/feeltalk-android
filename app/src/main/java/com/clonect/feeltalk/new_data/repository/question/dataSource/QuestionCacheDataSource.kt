@@ -11,4 +11,7 @@ interface QuestionCacheDataSource {
 
     suspend fun saveAnswerQuestion(question: Question)
     suspend fun getAnswerQuestionFlow(): Flow<Question>
+
+    fun setQuestionUpdated(isUpdated: Boolean)
+    fun getQuestionUpdatedFlow(): Flow<Boolean>
 }

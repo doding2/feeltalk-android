@@ -15,7 +15,6 @@ import com.clonect.feeltalk.new_domain.model.question.LastQuestionPageNoDto
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.model.question.QuestionListDto
 import com.clonect.feeltalk.new_domain.repository.question.QuestionRepository
-import com.clonect.feeltalk.presentation.utils.infoLog
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 
@@ -90,6 +89,8 @@ class QuestionRepositoryImpl(
 
     override fun changeTodayQuestionCache(question: Question) {
         cacheDataSource.saveTodayQuestion(question)
+        localDataSource.setQuestionUpdated(true)
+        cacheDataSource.setQuestionUpdated(true)
     }
 
     override suspend fun getTodayQuestionFlow(): Flow<Question?> {
@@ -136,9 +137,30 @@ class QuestionRepositoryImpl(
 
     override suspend fun answerPartnerQuestionCache(question: Question) {
         cacheDataSource.saveAnswerQuestion(question)
+        localDataSource.setQuestionUpdated(true)
+        cacheDataSource.setQuestionUpdated(true)
     }
 
     override suspend fun getAnswerQuestionFlow(): Flow<Question> {
         return cacheDataSource.getAnswerQuestionFlow()
+    }
+
+
+    override suspend fun setQuestionUpdated(isUpdated: Boolean): Resource<Unit> {
+        return try {
+            localDataSource.setQuestionUpdated(isUpdated)
+            cacheDataSource.setQuestionUpdated(isUpdated)
+            Resource.Success(Unit)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun getQuestionUpdatedFlow(): Flow<Boolean> {
+        val local = localDataSource.getQuestionUpdated()
+        cacheDataSource.setQuestionUpdated(local)
+        return cacheDataSource.getQuestionUpdatedFlow()
     }
 }

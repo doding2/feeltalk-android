@@ -8,13 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.FrameLayout
 import androidx.activity.OnBackPressedCallback
-import androidx.asynclayoutinflater.view.AsyncLayoutInflater
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.findFragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -22,22 +19,16 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.clonect.feeltalk.R
-import com.clonect.feeltalk.databinding.FragmentChatBinding
 import com.clonect.feeltalk.databinding.FragmentMainNavigationBinding
 import com.clonect.feeltalk.new_domain.model.chat.PartnerLastChatDto
 import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
-import com.clonect.feeltalk.new_presentation.ui.activity.MainViewModel
-import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.ChatFragment
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.showConfirmDialog
-import com.clonect.feeltalk.new_presentation.ui.util.stateFlow
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.jetbrains.annotations.Async
 
 
 class MainNavigationFragment : Fragment() {
@@ -160,6 +151,16 @@ class MainNavigationFragment : Fragment() {
             menu.forEach {
                 findViewById<View>(it.itemId).setOnLongClickListener { true }
             }
+            val questionItem = menu.getItem(1)
+            questionItem.setOnMenuItemClickListener {
+                viewModel.setQuestionUpdated(false)
+                false
+            }
+            val challengeItem = menu.getItem(2)
+            challengeItem.setOnMenuItemClickListener {
+                viewModel.setChallengeUpdated(false)
+                false
+            }
         }
         val navHostFragment = childFragmentManager.findFragmentById(R.id.fcv_fragment) as NavHostFragment
         val navController = navHostFragment.navController
@@ -238,7 +239,6 @@ class MainNavigationFragment : Fragment() {
     }
 
     private fun showAnswerSheet(isShow: Boolean) {
-        infoLog("showAnswerSheet: $isShow")
         val behavior = BottomSheetBehavior.from(binding.flAnswerSheet)
 
         if (isShow) {
@@ -332,6 +332,30 @@ class MainNavigationFragment : Fragment() {
         sheetSignalComplete.tvBody.text = partnerInfo?.nickname + requireContext().getString(R.string.signal_complete_body)
     }
 
+    private fun applyIsQuestionUpdatedChanges(isUpdated: Boolean) = binding.run {
+        val questionMenu = mnvBottomNavigation.menu.getItem(1)
+        if (isUpdated && questionMenu.isChecked) {
+            viewModel.setQuestionUpdated(false)
+            return@run
+        }
+        questionMenu.setIcon(
+            if (isUpdated) R.drawable.n_selector_question_new
+            else R.drawable.n_selector_question
+        )
+    }
+
+    private fun applyIsChallengeUpdatedChanges(isUpdated: Boolean) = binding.run {
+        val challengeMenu = mnvBottomNavigation.menu.getItem(2)
+        if (isUpdated && challengeMenu.isChecked) {
+            viewModel.setChallengeUpdated(false)
+            return@run
+        }
+        challengeMenu.setIcon(
+            if (isUpdated) R.drawable.n_selector_challenge_new
+            else R.drawable.n_selector_challenge
+        )
+    }
+
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.navigateTo.collectLatest(::navigateFragment) }
@@ -344,6 +368,8 @@ class MainNavigationFragment : Fragment() {
             launch { viewModel.showSignalCompleteSheet.collectLatest(::showSignalCompleteSheet) }
             launch { viewModel.lastChatColor.collectLatest(::applyLastChatColorChange) }
             launch { viewModel.partnerInfo.collectLatest(::applyPartnerInfoChanges) }
+            launch { viewModel.isQuestionUpdated.collectLatest(::applyIsQuestionUpdatedChanges) }
+            launch { viewModel.isChallengeUpdated.collectLatest(::applyIsChallengeUpdatedChanges) }
         }
     }
 

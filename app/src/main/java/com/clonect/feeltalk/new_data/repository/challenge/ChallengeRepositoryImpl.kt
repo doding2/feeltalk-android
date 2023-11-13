@@ -209,6 +209,8 @@ class ChallengeRepositoryImpl(
 
     override suspend fun addPartnerChallengeCache(challenge: Challenge) {
         cacheDataSource.addChallenge(challenge)
+        localDataSource.setChallengeUpdated(true)
+        cacheDataSource.setChallengeUpdated(true)
     }
     override suspend fun getAddChallengeFlow(): Flow<Challenge> {
         return cacheDataSource.getAddChallengeFlow()
@@ -216,6 +218,8 @@ class ChallengeRepositoryImpl(
 
     override suspend fun deletePartnerChallengeCache(challenge: Challenge) {
         cacheDataSource.deleteChallenge(challenge)
+        localDataSource.setChallengeUpdated(true)
+        cacheDataSource.setChallengeUpdated(true)
     }
     override suspend fun getDeleteChallengeFlow(): Flow<Challenge> {
         return cacheDataSource.getDeleteChallengeFlow()
@@ -223,8 +227,27 @@ class ChallengeRepositoryImpl(
 
     override suspend fun modifyPartnerChallengeCache(challenge: Challenge) {
         cacheDataSource.modifyChallenge(challenge)
+        localDataSource.setChallengeUpdated(true)
+        cacheDataSource.setChallengeUpdated(true)
     }
     override suspend fun getModifyChallengeFlow(): Flow<Challenge> {
         return cacheDataSource.getModifyChallengeFlow()
+    }
+
+    override suspend fun setChallengeUpdated(isUpdated: Boolean): Resource<Unit> {
+        return try {
+            localDataSource.setChallengeUpdated(isUpdated)
+            cacheDataSource.setChallengeUpdated(isUpdated)
+            Resource.Success(Unit)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+    override suspend fun getChallengeUpdatedFlow(): Flow<Boolean> {
+        val local = localDataSource.getChallengeUpdated()
+        cacheDataSource.setChallengeUpdated(local)
+        return cacheDataSource.getChallengeUpdatedFlow()
     }
 }

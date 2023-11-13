@@ -12,4 +12,7 @@ interface ChallengeCacheDataSource {
 
     suspend fun modifyChallenge(challenge: Challenge)
     suspend fun getModifyChallengeFlow(): Flow<Challenge>
+
+    suspend fun setChallengeUpdated(isUpdated: Boolean)
+    suspend fun getChallengeUpdatedFlow(): Flow<Boolean>
 }

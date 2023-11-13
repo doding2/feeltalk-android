@@ -63,14 +63,20 @@ class LocalDataSourceModule {
 
     @Singleton
     @Provides
-    fun providesQuestionLocalDataSource(): QuestionLocalDataSource {
-        return QuestionLocalDataSourceImpl()
+    fun providesQuestionLocalDataSource(
+        @ApplicationContext context: Context,
+        appLevelEncryptHelper: AppLevelEncryptHelper
+    ): QuestionLocalDataSource {
+        return QuestionLocalDataSourceImpl(context, appLevelEncryptHelper)
     }
 
     @Singleton
     @Provides
-    fun providesChallengeLocalDataSource(): ChallengeLocalDataSource {
-        return ChallengeLocalDataSourceImpl()
+    fun providesChallengeLocalDataSource(
+        @ApplicationContext context: Context,
+        appLevelEncryptHelper: AppLevelEncryptHelper
+    ): ChallengeLocalDataSource {
+        return ChallengeLocalDataSourceImpl(context, appLevelEncryptHelper)
     }
 
     @Singleton

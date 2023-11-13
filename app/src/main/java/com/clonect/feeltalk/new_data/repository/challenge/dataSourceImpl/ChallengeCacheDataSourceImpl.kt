@@ -4,10 +4,13 @@ import com.clonect.feeltalk.new_data.repository.challenge.dataSource.ChallengeCa
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class ChallengeCacheDataSourceImpl: ChallengeCacheDataSource {
 
+    private val isChallengeUpdated = MutableStateFlow(false)
     private val addedChallenge = MutableSharedFlow<Challenge>()
     private val deletedChallenge = MutableSharedFlow<Challenge>()
     private val editedChallenge = MutableSharedFlow<Challenge>()
@@ -31,5 +34,12 @@ class ChallengeCacheDataSourceImpl: ChallengeCacheDataSource {
     }
     override suspend fun getModifyChallengeFlow(): Flow<Challenge> {
         return editedChallenge.asSharedFlow()
+    }
+
+    override suspend fun setChallengeUpdated(isUpdated: Boolean) {
+        isChallengeUpdated.value = isUpdated
+    }
+    override suspend fun getChallengeUpdatedFlow(): Flow<Boolean> {
+        return isChallengeUpdated.asStateFlow()
     }
 }

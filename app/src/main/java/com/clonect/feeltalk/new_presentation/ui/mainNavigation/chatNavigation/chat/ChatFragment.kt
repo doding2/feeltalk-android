@@ -47,7 +47,7 @@ import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
 import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.model.signal.Signal
-import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
+import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.contentsShare.ContentsShareFragment

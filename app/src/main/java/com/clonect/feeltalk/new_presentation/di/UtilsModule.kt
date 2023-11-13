@@ -8,7 +8,7 @@ import com.clonect.feeltalk.domain.repository.EncryptionRepository
 import com.clonect.feeltalk.new_data.util.AppLevelEncryptHelper
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
-import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
+import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

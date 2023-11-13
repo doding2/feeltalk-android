@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.notification
+package com.clonect.feeltalk.new_presentation.service.notification
 
 import android.content.BroadcastReceiver
 import android.content.Context

@@ -30,4 +30,7 @@ interface ChallengeRepository {
 
     suspend fun modifyPartnerChallengeCache(challenge: Challenge)
     suspend fun getModifyChallengeFlow(): Flow<Challenge>
+
+    suspend fun setChallengeUpdated(isUpdated: Boolean): Resource<Unit>
+    suspend fun getChallengeUpdatedFlow(): Flow<Boolean>
 }

@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class QuestionCacheDataSourceImpl: QuestionCacheDataSource {
 
+    private var isQuestionUpdated = MutableStateFlow(false)
     private var todayQuestion = MutableStateFlow<Question?>(null)
     private val answerQuestion = MutableSharedFlow<Question>()
 
@@ -27,6 +28,13 @@ class QuestionCacheDataSourceImpl: QuestionCacheDataSource {
     }
     override suspend fun getAnswerQuestionFlow(): Flow<Question> {
         return answerQuestion.asSharedFlow()
+    }
+
+    override fun setQuestionUpdated(isUpdated: Boolean) {
+        this.isQuestionUpdated.value = isUpdated
+    }
+    override fun getQuestionUpdatedFlow(): Flow<Boolean> {
+        return isQuestionUpdated.asStateFlow()
     }
 
 }

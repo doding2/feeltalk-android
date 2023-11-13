@@ -22,7 +22,8 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentHomeBinding
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.model.signal.Signal
-import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
+import com.clonect.feeltalk.new_domain.usecase.challenge.SetChallengeUpdatedUseCase
+import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.home.signal.SignalBottomSheetFragment
@@ -47,8 +48,7 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private val viewModel: HomeViewModel by viewModels()
     private val navViewModel: MainNavigationViewModel by activityViewModels()
-    @Inject
-    lateinit var notificationHelper: NotificationHelper
+    @Inject lateinit var notificationHelper: NotificationHelper
 
     override fun onCreateView(
         inflater: LayoutInflater,

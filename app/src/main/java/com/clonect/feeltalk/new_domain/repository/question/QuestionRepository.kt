@@ -25,4 +25,7 @@ interface QuestionRepository {
 
     suspend fun answerPartnerQuestionCache(question: Question)
     suspend fun getAnswerQuestionFlow(): Flow<Question>
+
+    suspend fun setQuestionUpdated(isUpdated: Boolean): Resource<Unit>
+    suspend fun getQuestionUpdatedFlow(): Flow<Boolean>
 }

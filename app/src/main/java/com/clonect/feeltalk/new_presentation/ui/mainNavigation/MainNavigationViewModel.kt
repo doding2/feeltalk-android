@@ -21,13 +21,16 @@ import com.clonect.feeltalk.new_domain.model.chat.PartnerLastChatDto
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
 import com.clonect.feeltalk.new_domain.model.question.Question
+import com.clonect.feeltalk.new_domain.usecase.challenge.GetChallengeUpdatedFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.challenge.GetChallengeUseCase
-import com.clonect.feeltalk.new_domain.usecase.chat.AddNewChatCacheUseCase
+import com.clonect.feeltalk.new_domain.usecase.challenge.SetChallengeUpdatedUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetNewChatFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPartnerLastChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoFlowUseCase
+import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUpdatedFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUseCase
-import com.clonect.feeltalk.new_presentation.notification.NotificationHelper
+import com.clonect.feeltalk.new_domain.usecase.question.SetQuestionUpdatedUseCase
+import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,6 +40,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -48,6 +52,10 @@ class MainNavigationViewModel @Inject constructor(
     private val getChallengeUseCase: GetChallengeUseCase,
     private val getPartnerInfoFlowUseCase: GetPartnerInfoFlowUseCase,
     private val getNewChatFlowUseCase: GetNewChatFlowUseCase,
+    private val getQuestionUpdatedFlowUseCase: GetQuestionUpdatedFlowUseCase,
+    private val setQuestionUpdatedUseCase: SetQuestionUpdatedUseCase,
+    private val getChallengeUpdatedFlowUseCase: GetChallengeUpdatedFlowUseCase,
+    private val setChallengeUpdatedUseCase: SetChallengeUpdatedUseCase,
 ): ViewModel() {
 
     // For reducing inflating delay due to complex and too much view components
@@ -106,10 +114,20 @@ class MainNavigationViewModel @Inject constructor(
     val showSignalCompleteSheet = _showSignalCompleteSheet.asStateFlow()
 
 
+    private val _isQuestionUpdated = MutableStateFlow(false)
+    val isQuestionUpdated = _isQuestionUpdated.asStateFlow()
+
+    private val _isChallengeUpdated = MutableStateFlow(false)
+    val isChallengeUpdated = _isChallengeUpdated.asStateFlow()
+
+
+
     init {
         getPartnerInfo()
         getPartnerLastChat()
         collectNewChat()
+        collectQuestionUpdated()
+        collectChallengeUpdated()
         calculateShowingPartnerLastChat()
     }
 
@@ -284,7 +302,6 @@ class MainNavigationViewModel @Inject constructor(
     }
 
 
-
     private fun collectNewChat() = viewModelScope.launch {
         getNewChatFlowUseCase().collect {
             if (it.chatSender == "me") return@collect
@@ -306,5 +323,30 @@ class MainNavigationViewModel @Inject constructor(
             _partnerLastChat.value = PartnerLastChatDto(message, it.isRead)
             calculateShowingPartnerLastChat()
         }
+    }
+
+    private fun collectQuestionUpdated() = viewModelScope.launch {
+        getQuestionUpdatedFlowUseCase().collectLatest {
+            _isQuestionUpdated.value = it
+        }
+    }
+
+    fun setQuestionUpdated(isUpdated: Boolean) = viewModelScope.launch(Dispatchers.IO) {
+        setQuestionUpdatedUseCase(isUpdated)
+            .onSuccess { _isQuestionUpdated.value = isUpdated }
+            .onError { infoLog("Fail to set question updated") }
+    }
+
+
+    private fun collectChallengeUpdated() = viewModelScope.launch {
+        getChallengeUpdatedFlowUseCase().collectLatest {
+            _isChallengeUpdated.value = it
+        }
+    }
+
+    fun setChallengeUpdated(isUpdated: Boolean) = viewModelScope.launch {
+        setChallengeUpdatedUseCase(isUpdated)
+            .onSuccess { _isQuestionUpdated.value = isUpdated }
+            .onError { infoLog("Fail to set challenge updated") }
     }
 }

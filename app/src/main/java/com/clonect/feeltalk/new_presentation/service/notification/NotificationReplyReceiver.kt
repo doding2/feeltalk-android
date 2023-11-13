@@ -1,4 +1,4 @@
-package com.clonect.feeltalk.new_presentation.notification
+package com.clonect.feeltalk.new_presentation.service.notification
 
 import android.app.RemoteInput
 import android.content.BroadcastReceiver

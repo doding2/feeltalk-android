@@ -381,6 +381,18 @@ class UseCaseModule {
         return GetTodayQuestionFlowUseCase(questionRepository)
     }
 
+    @Singleton
+    @Provides
+    fun providesSetQuestionUpdatedUseCase(questionRepository: QuestionRepository): SetQuestionUpdatedUseCase {
+        return SetQuestionUpdatedUseCase(questionRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetQuestionUpdatedFlowUseCase(questionRepository: QuestionRepository): GetQuestionUpdatedFlowUseCase {
+        return GetQuestionUpdatedFlowUseCase(questionRepository)
+    }
+
 
     /** Challenge **/
 
@@ -466,6 +478,18 @@ class UseCaseModule {
     @Provides
     fun providesGetModifyChallengeFlowUseCase(challengeRepository: ChallengeRepository): GetModifyChallengeFlowUseCase {
         return GetModifyChallengeFlowUseCase(challengeRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesSetChallengeUpdatedUseCase(challengeRepository: ChallengeRepository): SetChallengeUpdatedUseCase {
+        return SetChallengeUpdatedUseCase(challengeRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGetChallengeUpdatedFlowUseCase(challengeRepository: ChallengeRepository): GetChallengeUpdatedFlowUseCase {
+        return GetChallengeUpdatedFlowUseCase(challengeRepository)
     }
 
 
