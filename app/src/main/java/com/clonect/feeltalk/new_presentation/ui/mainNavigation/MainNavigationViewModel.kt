@@ -1,11 +1,13 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
 import android.graphics.Color
 import android.os.Build
+import android.view.View
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -30,6 +32,7 @@ import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -46,6 +49,13 @@ class MainNavigationViewModel @Inject constructor(
     private val getPartnerInfoFlowUseCase: GetPartnerInfoFlowUseCase,
     private val getNewChatFlowUseCase: GetNewChatFlowUseCase,
 ): ViewModel() {
+
+    // For reducing inflating delay due to complex and too much view components
+    @SuppressLint("StaticFieldLeak")
+    var mainNavView: View? = null
+
+    // For reuse view, should clear connection between view and view model
+    var job: Job? = null
 
     private val _navigateTo = MutableSharedFlow<String>()
     val navigateTo = _navigateTo.asSharedFlow()

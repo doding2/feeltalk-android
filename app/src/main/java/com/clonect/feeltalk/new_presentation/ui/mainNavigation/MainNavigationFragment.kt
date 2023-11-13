@@ -8,10 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.FrameLayout
 import androidx.activity.OnBackPressedCallback
+import androidx.asynclayoutinflater.view.AsyncLayoutInflater
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.findFragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -23,6 +26,8 @@ import com.clonect.feeltalk.databinding.FragmentChatBinding
 import com.clonect.feeltalk.databinding.FragmentMainNavigationBinding
 import com.clonect.feeltalk.new_domain.model.chat.PartnerLastChatDto
 import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
+import com.clonect.feeltalk.new_presentation.ui.activity.MainViewModel
+import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.ChatFragment
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.showConfirmDialog
@@ -32,6 +37,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.jetbrains.annotations.Async
 
 
 class MainNavigationFragment : Fragment() {
@@ -44,7 +50,11 @@ class MainNavigationFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentMainNavigationBinding.inflate(inflater, container, false)
+        binding = viewModel.mainNavView
+            ?.let { FragmentMainNavigationBinding.bind(it) }
+            ?: FragmentMainNavigationBinding.inflate(inflater, container, false)
+
+        viewModel.mainNavView = binding.root
 
         setUpBottomNavigation()
         setUpBottomSheets()
@@ -79,7 +89,8 @@ class MainNavigationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        collectViewModel()
+        viewModel.job?.cancel()
+        viewModel.job = collectViewModel()
 
         binding.run {
             mcvFloatingChat.setOnClickListener {
@@ -227,6 +238,7 @@ class MainNavigationFragment : Fragment() {
     }
 
     private fun showAnswerSheet(isShow: Boolean) {
+        infoLog("showAnswerSheet: $isShow")
         val behavior = BottomSheetBehavior.from(binding.flAnswerSheet)
 
         if (isShow) {

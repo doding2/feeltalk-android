@@ -234,12 +234,13 @@
             app:behavior_peekHeight="0dp"
             app:behavior_hideable="true">
 
-            <fragment
-                android:id="@+id/fl_fragment_answer"
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fcv_fragment_answer"
+                android:name="androidx.navigation.fragment.NavHostFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.question.answer.AnswerFragment"
-                tools:layout="@layout/fragment_answer" />
+                app:defaultNavHost="true"
+                app:navGraph="@navigation/answer_nav_graph" />
         </FrameLayout>
 
         <FrameLayout

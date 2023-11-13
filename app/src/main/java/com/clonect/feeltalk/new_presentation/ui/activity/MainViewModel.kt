@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.new_presentation.ui.activity
 
+import android.annotation.SuppressLint
 import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

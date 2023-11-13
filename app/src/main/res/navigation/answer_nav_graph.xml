@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/answer_nav_graph"
+    app:startDestination="@id/answerFragment">
+
+    <fragment
+        android:id="@+id/answerFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.question.answer.AnswerFragment"
+        android:label="fragment_answer"
+        tools:layout="@layout/fragment_answer" />
+</navigation>
