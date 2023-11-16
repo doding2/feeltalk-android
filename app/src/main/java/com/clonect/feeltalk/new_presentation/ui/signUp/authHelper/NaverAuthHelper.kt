@@ -2,7 +2,10 @@ package com.clonect.feeltalk.new_presentation.ui.signUp.authHelper
 
 import android.content.Context
 import com.navercorp.nid.NaverIdLoginSDK
+import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
+import com.navercorp.nid.profile.NidProfileCallback
+import com.navercorp.nid.profile.data.NidProfileResponse
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -34,6 +37,18 @@ class NaverAuthHelper {
             }
 
             NaverIdLoginSDK.authenticate(context, callback)
+
+            NidOAuthLogin().callProfileApi(object: NidProfileCallback<NidProfileResponse> {
+                override fun onError(errorCode: Int, message: String) {
+                }
+
+                override fun onFailure(httpStatus: Int, message: String) {
+                }
+
+                override fun onSuccess(result: NidProfileResponse) {
+                    result.profile?.id
+                }
+            })
         }
 
         suspend fun logOut() {

@@ -2,6 +2,7 @@ package com.clonect.feeltalk.new_presentation.ui.signUp.authHelper
 
 import android.content.Context
 import com.clonect.feeltalk.common.Quadruple
+import com.clonect.feeltalk.presentation.utils.infoLog
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause

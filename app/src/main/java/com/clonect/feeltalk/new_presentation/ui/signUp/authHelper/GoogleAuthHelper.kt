@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import com.clonect.feeltalk.BuildConfig
 import com.clonect.feeltalk.common.Quadruple
+import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -37,6 +38,7 @@ class GoogleAuthHelper {
             val serverAuthCode = account.serverAuthCode.toString()
             val email = account.email
             val name = account.displayName
+            val uniqueId = account.id
             return Quadruple(idToken,  serverAuthCode, email, name)
         }
 

@@ -28,6 +28,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Constants
@@ -413,6 +414,12 @@ class ChatFragment : Fragment() {
             setOnRetry(::onRetryChat)
             setOnCancel(::onCancelChat)
             registerAdapterDataObserver(dataObserver)
+            // TODO
+            addLoadStateListener {
+                if (it.prepend is LoadState.Error) {
+                    retry()
+                }
+            }
         }
         rvChat.addOnScrollListener(object: RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
