@@ -16,7 +16,7 @@ class SignalRemoteDataSourceImpl(
     private val clonectService: ClonectService
 ) : SignalRemoteDataSource {
     override suspend fun getMySignal(accessToken: String): SignalResponse {
-        val response = clonectService.getMySignal("Bearer $accessToken")
+        val response = clonectService.getMySignal(accessToken)
         if (!response.isSuccessful) throw FeelTalkException.ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
@@ -24,7 +24,7 @@ class SignalRemoteDataSourceImpl(
     }
 
     override suspend fun getPartnerSignal(accessToken: String): SignalResponse {
-        val response = clonectService.getPartnerSignal("Bearer $accessToken")
+        val response = clonectService.getPartnerSignal(accessToken)
         if (!response.isSuccessful) throw FeelTalkException.ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
@@ -34,14 +34,14 @@ class SignalRemoteDataSourceImpl(
     override suspend fun changeMySignal(accessToken: String, signal: Signal): ChangeMySignalResponse {
         val body = JsonObject().apply {
             addProperty("mySignal", when (signal) {
-                Signal.Zero -> 1
-                Signal.Quarter -> 2
-                Signal.Half -> 3
-                Signal.ThreeFourth -> 4
-                Signal.One -> 5
+                Signal.Zero -> 0
+                Signal.Quarter -> 25
+                Signal.Half -> 50
+                Signal.ThreeFourth -> 75
+                Signal.One -> 100
             })
         }
-        val response = clonectService.changeMySignal("Bearer $accessToken", body)
+        val response = clonectService.changeMySignal(accessToken, body)
         if (!response.isSuccessful) throw FeelTalkException.ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)

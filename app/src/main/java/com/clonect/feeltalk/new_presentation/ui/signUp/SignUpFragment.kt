@@ -116,16 +116,17 @@ class SignUpFragment : Fragment() {
 
     private fun clickKakaoButton() = lifecycleScope.launch {
         try {
-            val (accessToken, refreshToken, email, name) = KakaoAuthHelper.signIn(requireContext())
+            val (accessToken, refreshToken, email, name, oauthId) = KakaoAuthHelper.signIn(requireContext())
             val socialToken = SocialToken(
                 type = SocialType.Kakao,
+                oauthId = oauthId?.toString(),
                 email = email,
                 name = name,
                 accessToken = accessToken,
-                refreshToken = refreshToken
+                refreshToken = refreshToken,
             )
 
-            viewModel.reLogIn(socialToken)
+            viewModel.logInNew(socialToken)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -138,14 +139,15 @@ class SignUpFragment : Fragment() {
 
     private fun clickNaverButton() = lifecycleScope.launch {
         try {
-            val (accessToken, refreshToken) = NaverAuthHelper.signIn(requireContext())
+            val (accessToken, refreshToken, oauthId) = NaverAuthHelper.signIn(requireContext())
             val socialToken = SocialToken(
                 type = SocialType.Naver,
+                oauthId = oauthId,
                 accessToken = accessToken,
-                refreshToken = refreshToken
+                refreshToken = refreshToken,
             )
 
-            viewModel.reLogIn(socialToken)
+            viewModel.logInNew(socialToken)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -183,25 +185,26 @@ class SignUpFragment : Fragment() {
         if (result.resultCode == Activity.RESULT_OK) {
             val data = result.data
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            val (idToken, serverAuthCode, email, name) = GoogleAuthHelper.handleSignInData(task)
-            proceedGoogleSignIn(idToken, serverAuthCode, email, name)
+            val (idToken, serverAuthCode, email, name, oauthId) = GoogleAuthHelper.handleSignInData(task)
+            proceedGoogleSignIn(idToken, serverAuthCode, email, name, oauthId)
         } else {
             viewModel.sendErrorMessage("구글 로그인에 실패했습니다.")
             infoLog("구글 로그인 실패")
         }
     }
 
-    private fun proceedGoogleSignIn(idToken: String, serverAuthCode: String, email: String?, name: String?) = lifecycleScope.launch {
+    private fun proceedGoogleSignIn(idToken: String, serverAuthCode: String, email: String?, name: String?, oauthId: String?) = lifecycleScope.launch {
         try {
             val socialToken = SocialToken(
                 type = SocialType.Google,
+                oauthId = oauthId,
                 email = email,
                 name = name,
                 idToken = idToken,
-                serverAuthCode = serverAuthCode
+                serverAuthCode = serverAuthCode,
             )
 
-            viewModel.reLogIn(socialToken)
+            viewModel.logInNew(socialToken)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {

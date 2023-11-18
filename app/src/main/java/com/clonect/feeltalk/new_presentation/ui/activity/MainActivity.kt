@@ -111,7 +111,8 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun tryAutoLogIn() = lifecycleScope.launch {
-        viewModel.autoLogIn()
+//        viewModel.autoLogIn()
+        viewModel.getUserStatus()
         viewModel.setReady()
     }
 

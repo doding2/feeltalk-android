@@ -4,6 +4,7 @@ import com.clonect.feeltalk.new_domain.model.account.SocialType
 
 data class SocialToken(
     val type: SocialType,
+    val oauthId: String? = null,
     val email: String? = null,
     val name: String? = null,
     val accessToken: String? = null,

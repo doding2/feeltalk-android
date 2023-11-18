@@ -8,6 +8,8 @@ import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenRemoteData
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
 import com.clonect.feeltalk.new_domain.model.token.TokenInfo
 import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
+import com.clonect.feeltalk.presentation.utils.infoLog
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -46,7 +48,6 @@ class TokenRepositoryImpl(
             val cache = cacheDataSource.getTokenInfo()
             if (cache != null) return Resource.Success(renewToken(cache))
 
-
             val local = localDataSource.getTokenInfo()
             if (local != null) return Resource.Success(renewToken(local))
 
@@ -76,11 +77,13 @@ class TokenRepositoryImpl(
     private suspend fun renewToken(tokenInfo: TokenInfo): TokenInfo {
         val now = Date()
         if (tokenInfo.expiresAt <= now) {
-            val renewResult = remoteDataSource.renewToken(tokenInfo)
+            val renewResult = remoteDataSource.reissueToken(tokenInfo)
+            val formatter = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
             val newTokenInfo = TokenInfo(
                 accessToken = renewResult.accessToken,
                 refreshToken = renewResult.refreshToken,
-                expiresAt = now.plusSecondsBy(renewResult.expiresIn),
+                expiresAt = formatter.parse(renewResult.expiredTime.substringBeforeLast('.'))
+                    ?: throw IllegalStateException("Token expired time is invalid"),
                 snsType = tokenInfo.snsType
             )
             cacheDataSource.saveTokenInfo(newTokenInfo)

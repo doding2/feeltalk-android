@@ -1,7 +1,5 @@
 package com.clonect.feeltalk.new_presentation.ui.activity
 
-import android.annotation.SuppressLint
-import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.FeelTalkException.ServerIsDownException
@@ -15,6 +13,7 @@ import com.clonect.feeltalk.new_domain.usecase.account.AutoLogInUseCase
 import com.clonect.feeltalk.new_domain.usecase.account.CheckAccountLockedUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
+import com.clonect.feeltalk.new_domain.usecase.newAccount.GetUserStatusNewUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetTodayQuestionUseCase
 import com.clonect.feeltalk.new_domain.usecase.signal.GetMySignalUseCase
 import com.clonect.feeltalk.new_domain.usecase.signal.GetPartnerSignalUseCase
@@ -42,6 +41,8 @@ class MainViewModel @Inject constructor(
     private val getAppSettingsUseCase: GetAppSettingsUseCase,
     private val saveAppSettingsUseCase: SaveAppSettingsUseCase,
     private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
+
+    private val getUserStatusNewUseCase: GetUserStatusNewUseCase,
 ) : ViewModel() {
 
     private val _isReady = MutableStateFlow(false)
@@ -71,9 +72,41 @@ class MainViewModel @Inject constructor(
     private val _toast = MutableSharedFlow<String>()
     val toast = _toast.asSharedFlow()
 
-    init {
 
+    suspend fun getUserStatus() = withContext(Dispatchers.IO) {
+        getUserStatusNewUseCase()
+            .onSuccess {
+                when (it.memberStatus.lowercase()) {
+                    "newbie" -> {
+                        _isUser.value = false
+                    }
+                    "solo" -> {
+                        _isUser.value = true
+                        _isUserCouple.value = false
+                    }
+                    "couple" -> {
+                        preloadCoupleData()
+                        _isUser.value = true
+                        _isUserCouple.value = true
+                    }
+                }
+                _isLoggedIn.value = true
+                infoLog("Success to get user status")
+            }
+            .onError {
+                if (it is ServerIsDownException) {
+                    _isServerDown.value = true
+                }
+                if (it is UnknownHostException) {
+                    _isNetworkErrorOccurred.value = true
+                }
+                _isLoggedIn.value = false
+                infoLog("Fail to get user status: ${it.localizedMessage}")
+                setReady()
+            }
     }
+
+
 
     suspend fun autoLogIn() = withContext(Dispatchers.IO) {
         when (val result = autoLogInUseCase()) {

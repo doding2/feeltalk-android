@@ -7,12 +7,20 @@ import com.clonect.feeltalk.new_domain.model.account.CoupleCodeDto
 import com.clonect.feeltalk.new_domain.model.account.LockQA
 import com.clonect.feeltalk.new_domain.model.account.MyInfo
 import com.clonect.feeltalk.new_domain.model.account.ServiceDataCountDto
+import com.clonect.feeltalk.new_domain.model.account.SocialType
 import com.clonect.feeltalk.new_domain.model.account.ValidateLockAnswerDto
+import com.clonect.feeltalk.new_domain.model.newAccount.GetUserStatusNewResponse
+import com.clonect.feeltalk.new_domain.model.newAccount.LogInNewResponse
+import com.clonect.feeltalk.new_domain.model.newAccount.SignUpNewResponse
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
 import com.clonect.feeltalk.new_domain.model.token.TokenInfo
 import kotlinx.coroutines.flow.Flow
 
 interface AccountRepository {
+
+    suspend fun logInNew(oauthId: String, snsType: SocialType): Resource<TokenInfo>
+    suspend fun getUserStatusNew(accessToken: String): Resource<GetUserStatusNewResponse>
+    suspend fun signUpNew(accessToken: String, nickname: String, marketingConsent: Boolean, fcmToken: String, appleState: String? = null): Resource<Unit>
 
     suspend fun autoLogIn(accessToken: String): Resource<AutoLogInDto>
     suspend fun reLogIn(socialToken: SocialToken): Resource<Pair<String, TokenInfo?>>

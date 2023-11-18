@@ -16,7 +16,7 @@ class ChatRemoteDataSourceImpl(
 ): ChatRemoteDataSource {
 
     override suspend fun getPartnerLastChat(accessToken: String): PartnerLastChatDto {
-        val response = clonectService.getPartnerLastChat("Bearer $accessToken")
+        val response = clonectService.getPartnerLastChat(accessToken)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
@@ -27,13 +27,13 @@ class ChatRemoteDataSourceImpl(
         val body = JsonObject().apply {
             addProperty("isInChat", isInChat)
         }
-        val response = clonectService.changeChatRoomState("Bearer $accessToken", body)
+        val response = clonectService.changeChatRoomState(accessToken, body)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
     }
 
     override suspend fun getLastChatPageNo(accessToken: String): LastChatPageNoDto {
-        val response = clonectService.getLastChatPageNo("Bearer $accessToken")
+        val response = clonectService.getLastChatPageNo(accessToken)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
@@ -44,7 +44,7 @@ class ChatRemoteDataSourceImpl(
         val body = JsonObject().apply {
             addProperty("pageNo", pageNo)
         }
-        val response = clonectService.getChatList("Bearer $accessToken", body)
+        val response = clonectService.getChatList(accessToken, body)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
@@ -55,7 +55,7 @@ class ChatRemoteDataSourceImpl(
         val body = JsonObject().apply {
             addProperty("message", message)
         }
-        val response = clonectService.sendTextChat("Bearer $accessToken", body)
+        val response = clonectService.sendTextChat(accessToken, body)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
@@ -71,7 +71,7 @@ class ChatRemoteDataSourceImpl(
             )
         )
 
-        val response = clonectService.sendVoiceChat("Bearer $accessToken", data)
+        val response = clonectService.sendVoiceChat(accessToken, data)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)

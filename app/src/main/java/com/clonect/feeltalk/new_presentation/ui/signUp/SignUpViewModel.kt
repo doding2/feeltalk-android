@@ -3,10 +3,14 @@ package com.clonect.feeltalk.new_presentation.ui.signUp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.common.onError
+import com.clonect.feeltalk.common.onSuccess
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
 import com.clonect.feeltalk.new_domain.usecase.account.CheckAccountLockedUseCase
 import com.clonect.feeltalk.new_domain.usecase.account.ReLogInUseCase
+import com.clonect.feeltalk.new_domain.usecase.newAccount.GetUserStatusNewUseCase
+import com.clonect.feeltalk.new_domain.usecase.newAccount.LogInNewUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetTodayQuestionUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.CacheSocialTokenUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.UpdateFcmTokenUseCase
@@ -31,6 +35,9 @@ class SignUpViewModel @Inject constructor(
     private val checkAccountLockedUseCase: CheckAccountLockedUseCase,
     private val getTodayQuestionUseCase: GetTodayQuestionUseCase,
     private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
+
+    private val logInNewUseCase: LogInNewUseCase,
+    private val getUserStatusNewUseCase: GetUserStatusNewUseCase,
 ): ViewModel() {
 
     private val _navigateToAgreement = MutableStateFlow(false)
@@ -51,6 +58,46 @@ class SignUpViewModel @Inject constructor(
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage = _errorMessage.asSharedFlow()
 
+
+    suspend fun logInNew(socialToken: SocialToken) = viewModelScope.launch {
+        val oauthId = socialToken.oauthId ?: return@launch
+        setLoading(true)
+
+        val logInResult = logInNewUseCase(oauthId, socialToken.type)
+        if (logInResult is Resource.Error) {
+            infoLog("Fail to log in new: ${logInResult.throwable.localizedMessage}")
+            setLoading(false)
+            return@launch
+        }
+
+        getUserStatusNewUseCase()
+            .onError { infoLog("Fail to get user status new: ${it.localizedMessage}") }
+            .onSuccess {
+                when (it.memberStatus.lowercase()) {
+                    "newbie" -> {
+                        FirebaseCloudMessagingService.clearFcmToken()
+                        cacheSocialToken(socialToken)
+                        _navigateToAgreement.value = true
+                    }
+                    "solo" -> {
+                        updateFcmToken()
+                        _navigateToCoupleCode.value = true
+                    }
+                    "couple" -> {
+                        updateFcmToken()
+                        val isLocked = preloadCoupleData()
+                        if (isLocked) {
+                            _navigateToPassword.value = true
+                        } else {
+                            _navigateToMain.value = true
+                        }
+                    }
+                }
+            }
+
+
+        setLoading(false)
+    }
 
     // login
     suspend fun reLogIn(socialToken: SocialToken) = viewModelScope.launch(Dispatchers.IO) {

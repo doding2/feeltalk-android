@@ -15,6 +15,9 @@ import com.clonect.feeltalk.domain.model.dto.user.*
 import com.clonect.feeltalk.new_domain.model.account.*
 import com.clonect.feeltalk.new_domain.model.challenge.*
 import com.clonect.feeltalk.new_domain.model.chat.*
+import com.clonect.feeltalk.new_domain.model.newAccount.GetUserStatusNewResponse
+import com.clonect.feeltalk.new_domain.model.newAccount.LogInNewResponse
+import com.clonect.feeltalk.new_domain.model.newAccount.SignUpNewResponse
 import com.clonect.feeltalk.new_domain.model.partner.PartnerInfoDto
 import com.clonect.feeltalk.new_domain.model.question.LastQuestionPageNoDto
 import com.clonect.feeltalk.new_domain.model.question.QuestionDto
@@ -29,11 +32,36 @@ import retrofit2.http.*
 
 interface ClonectService {
 
+    /** New Account **/
+
+    @POST("/api/v1/login")
+    suspend fun logInNew(
+        @Body body: JsonObject
+    ): Response<ApiResponse<LogInNewResponse>>
+
+    @GET("/api/v1/member/status")
+    suspend fun getUserStatusNew(
+        @Header("Authorization") accessToken: String
+    ): Response<ApiResponse<GetUserStatusNewResponse>>
+
+    @POST("/api/v1/signup")
+    suspend fun signUpNew(
+        @Header("Authorization") accessToken: String,
+        @Body body: JsonObject
+    ): Response<Unit>
+
+    @POST("/api/v1/reissue")
+    suspend fun reissueToken(
+        @Header("Authorization") accessToken: String,
+        @Header("Authorization-refresh") refreshToken: String
+    ): Response<ApiResponse<LogInNewResponse>>
+
+
     /** Account **/
 
     @GET("/api/v1/auto-login")
     suspend fun autoLogIn(
-        @Header("Authorization") token: String
+        @Header("Authorization") token: String,
     ): Response<ApiResponse<AutoLogInDto>>
 
     @POST("/api/v1/re-login")

@@ -13,7 +13,7 @@ class PartnerRemoteDataSourceImpl(
     private val clonectService: ClonectService
 ): PartnerRemoteDataSource {
     override suspend fun getPartnerInfo(accessToken: String): PartnerInfoDto {
-        val response = clonectService.getPartnerInfo("Bearer $accessToken")
+        val response = clonectService.getPartnerInfo(accessToken)
         if (!response.isSuccessful) throw FeelTalkException.ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)

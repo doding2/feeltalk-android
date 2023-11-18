@@ -3,6 +3,8 @@ package com.clonect.feeltalk.new_presentation.ui.signUpNavigation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.common.onError
+import com.clonect.feeltalk.common.onSuccess
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
 import com.clonect.feeltalk.new_domain.usecase.account.GetCoupleCodeUseCase
 import com.clonect.feeltalk.new_domain.usecase.account.GetCoupleCreatedFlowUseCase
@@ -10,6 +12,7 @@ import com.clonect.feeltalk.new_domain.usecase.account.MatchCoupleUseCase
 import com.clonect.feeltalk.new_domain.usecase.account.SetCoupleCreatedUseCase
 import com.clonect.feeltalk.new_domain.usecase.account.SignUpUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
+import com.clonect.feeltalk.new_domain.usecase.newAccount.SignUpNewUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.GetCachedSocialTokenUseCase
 import com.clonect.feeltalk.new_presentation.service.FirebaseCloudMessagingService
 import com.clonect.feeltalk.presentation.utils.infoLog
@@ -32,6 +35,8 @@ class SignUpNavigationViewModel @Inject constructor(
     private val matchCoupleUseCase: MatchCoupleUseCase,
     private val getCoupleCreatedFlowUseCase: GetCoupleCreatedFlowUseCase,
     private val setCoupleCreatedUseCase: SetCoupleCreatedUseCase,
+
+    private val signUpNewUseCase: SignUpNewUseCase,
 ) : ViewModel() {
 
     // note: Common
@@ -171,6 +176,26 @@ class SignUpNavigationViewModel @Inject constructor(
         if (processed) {
             _isAgreementProcessed.value = false
         }
+    }
+
+
+    fun signUpNew() = viewModelScope.launch {
+        FirebaseCloudMessagingService.clearFcmToken()
+        val fcmToken = FirebaseCloudMessagingService.getFcmToken() ?: return@launch
+        setLoading(true)
+
+        signUpNewUseCase(nickname.value, isMarketingAgreed.value, fcmToken, appleState = socialToken.value?.state)
+            .onSuccess {
+                getCoupleCode()
+                setNicknameProcessed(true)
+            }
+            .onError {
+                setNicknameProcessed(false)
+                infoLog("회원가입 실패: ${it.localizedMessage}")
+                it.localizedMessage?.let { it1 -> sendErrorMessage(it1) }
+            }
+
+        setLoading(false)
     }
 
     fun signUp() = viewModelScope.launch(Dispatchers.IO) {

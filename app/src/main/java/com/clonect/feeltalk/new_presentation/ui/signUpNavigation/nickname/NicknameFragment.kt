@@ -61,7 +61,8 @@ class NicknameFragment : Fragment() {
 
     private fun signUp() {
         hideKeyboard()
-        viewModel.signUp()
+        viewModel.signUpNew()
+//        viewModel.signUp()
     }
 
 

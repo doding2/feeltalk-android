@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.new_data.repository.account.dataSource
 
+import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.account.AutoLogInDto
 import com.clonect.feeltalk.new_domain.model.account.ConfigurationInfoDto
 import com.clonect.feeltalk.new_domain.model.account.CoupleCodeDto
@@ -10,11 +11,19 @@ import com.clonect.feeltalk.new_domain.model.account.MyInfoDto
 import com.clonect.feeltalk.new_domain.model.account.ReLogInDto
 import com.clonect.feeltalk.new_domain.model.account.ServiceDataCountDto
 import com.clonect.feeltalk.new_domain.model.account.SignUpDto
+import com.clonect.feeltalk.new_domain.model.account.SocialType
 import com.clonect.feeltalk.new_domain.model.account.ValidateLockAnswerDto
 import com.clonect.feeltalk.new_domain.model.account.ValidatePasswordDto
+import com.clonect.feeltalk.new_domain.model.newAccount.GetUserStatusNewResponse
+import com.clonect.feeltalk.new_domain.model.newAccount.LogInNewResponse
+import com.clonect.feeltalk.new_domain.model.newAccount.SignUpNewResponse
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
 
 interface AccountRemoteDataSource {
+
+    suspend fun logInNew(oauthId: String, snsType: SocialType): LogInNewResponse
+    suspend fun getUserStatusNew(accessToken: String): GetUserStatusNewResponse
+    suspend fun signUpNew(accessToken: String, nickname: String, marketingConsent: Boolean, fcmToken: String, appleState: String? = null)
 
     suspend fun autoLogIn(accessToken: String): AutoLogInDto
     suspend fun reLogIn(socialToken: SocialToken): ReLogInDto

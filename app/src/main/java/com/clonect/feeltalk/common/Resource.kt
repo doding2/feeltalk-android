@@ -6,14 +6,14 @@ sealed class Resource<out T> {
 }
 
 
-fun <T> Resource<T>.onSuccess(action: (data: T) -> Unit): Resource<T> {
+suspend fun <T> Resource<T>.onSuccess(action: suspend (data: T) -> Unit): Resource<T> {
     if (this is Resource.Success) {
         action(data)
     }
     return this
 }
 
-fun <T> Resource<T>.onError(action: (throwable: Throwable) -> Unit): Resource<T> {
+suspend fun <T> Resource<T>.onError(action: suspend (throwable: Throwable) -> Unit): Resource<T> {
     if (this is Resource.Error) {
         action(throwable)
     }

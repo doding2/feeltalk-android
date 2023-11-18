@@ -14,7 +14,7 @@ class QuestionRemoteDataSourceImpl(
     private val clonectService: ClonectService
 ): QuestionRemoteDataSource {
     override suspend fun getLastQuestionPageNo(accessToken: String): LastQuestionPageNoDto {
-        val response = clonectService.getLastQuestionPageNo("Bearer $accessToken")
+        val response = clonectService.getLastQuestionPageNo(accessToken)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
@@ -25,7 +25,7 @@ class QuestionRemoteDataSourceImpl(
         val body = JsonObject().apply {
             addProperty("pageNo", pageNo)
         }
-        val response = clonectService.getQuestionList("Bearer $accessToken", body)
+        val response = clonectService.getQuestionList(accessToken, body)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
@@ -33,7 +33,7 @@ class QuestionRemoteDataSourceImpl(
     }
 
     override suspend fun getQuestion(accessToken: String, index: Long): QuestionDto {
-        val response = clonectService.getQuestion("Bearer $accessToken", index)
+        val response = clonectService.getQuestion(accessToken, index)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
@@ -41,7 +41,7 @@ class QuestionRemoteDataSourceImpl(
     }
 
     override suspend fun getTodayQuestion(accessToken: String): QuestionDto {
-        val response = clonectService.getTodayQuestion("Bearer $accessToken")
+        val response = clonectService.getTodayQuestion(accessToken)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
@@ -53,7 +53,7 @@ class QuestionRemoteDataSourceImpl(
             addProperty("index", index)
             addProperty("myAnswer", myAnswer)
         }
-        val response = clonectService.answerQuestion("Bearer $accessToken", body)
+        val response = clonectService.answerQuestion(accessToken, body)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
     }
@@ -62,7 +62,7 @@ class QuestionRemoteDataSourceImpl(
         val body = JsonObject().apply {
             addProperty("index", index)
         }
-        val response = clonectService.pressForAnswer("Bearer $accessToken", body)
+        val response = clonectService.pressForAnswer(accessToken, body)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
     }
@@ -71,7 +71,7 @@ class QuestionRemoteDataSourceImpl(
         val body = JsonObject().apply {
             addProperty("index", index)
         }
-        val response = clonectService.shareQuestion("Bearer $accessToken", body)
+        val response = clonectService.shareQuestion(accessToken, body)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)

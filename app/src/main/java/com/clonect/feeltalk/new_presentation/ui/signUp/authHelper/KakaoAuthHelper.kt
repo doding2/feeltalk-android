@@ -2,6 +2,7 @@ package com.clonect.feeltalk.new_presentation.ui.signUp.authHelper
 
 import android.content.Context
 import com.clonect.feeltalk.common.Quadruple
+import com.clonect.feeltalk.common.Quintuple
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
@@ -23,11 +24,12 @@ class KakaoAuthHelper {
                     // 카카오톡 로그인 성공
                     UserApiClient.instance.me { user, error ->
                         continuation.resume(
-                            Quadruple(
+                            Quintuple(
                                 token.accessToken,
                                 token.refreshToken,
                                 user?.kakaoAccount?.email,
-                                user?.kakaoAccount?.name
+                                user?.kakaoAccount?.name,
+                                user?.id
                             )
                         )
                     }
@@ -55,11 +57,12 @@ class KakaoAuthHelper {
                             // 카카오톡 로그인 성공
                             UserApiClient.instance.me { user, error ->
                                 continuation.resume(
-                                    Quadruple(
+                                    Quintuple(
                                         token.accessToken,
                                         token.refreshToken,
                                         user?.kakaoAccount?.email,
-                                        user?.kakaoAccount?.name
+                                        user?.kakaoAccount?.name,
+                                        user?.id
                                     )
                                 )
                             }

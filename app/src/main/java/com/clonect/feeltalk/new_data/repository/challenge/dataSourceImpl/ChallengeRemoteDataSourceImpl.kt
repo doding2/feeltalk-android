@@ -15,7 +15,7 @@ class ChallengeRemoteDataSourceImpl(
     private val clonectService: ClonectService
 ): ChallengeRemoteDataSource {
     override suspend fun getLastOngoingChallengePageNo(accessToken: String): LastChallengePageNoDto {
-        val response = clonectService.getLastOngoingChallengePageNo("Bearer $accessToken")
+        val response = clonectService.getLastOngoingChallengePageNo(accessToken)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
@@ -29,7 +29,7 @@ class ChallengeRemoteDataSourceImpl(
         val body = JsonObject().apply {
             addProperty("pageNo", pageNo)
         }
-        val response = clonectService.getOngoingChallengeList("Bearer $accessToken", body)
+        val response = clonectService.getOngoingChallengeList(accessToken, body)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
@@ -37,7 +37,7 @@ class ChallengeRemoteDataSourceImpl(
     }
 
     override suspend fun getLastCompletedChallengePageNo(accessToken: String): LastChallengePageNoDto {
-        val response = clonectService.getLastCompletedChallengePageNo("Bearer $accessToken")
+        val response = clonectService.getLastCompletedChallengePageNo(accessToken)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
@@ -51,7 +51,7 @@ class ChallengeRemoteDataSourceImpl(
         val body = JsonObject().apply {
             addProperty("pageNo", pageNo)
         }
-        val response = clonectService.getCompletedChallengeList("Bearer $accessToken", body)
+        val response = clonectService.getCompletedChallengeList(accessToken, body)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
@@ -69,7 +69,7 @@ class ChallengeRemoteDataSourceImpl(
             addProperty("deadline", deadline)
             addProperty("content", content)
         }
-        val response = clonectService.addChallenge("Bearer $accessToken", body)
+        val response = clonectService.addChallenge(accessToken, body)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
@@ -89,7 +89,7 @@ class ChallengeRemoteDataSourceImpl(
             addProperty("deadline", deadline)
             addProperty("content", content)
         }
-        val response = clonectService.modifyChallenge("Bearer $accessToken", body)
+        val response = clonectService.modifyChallenge(accessToken, body)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
     }
@@ -98,7 +98,7 @@ class ChallengeRemoteDataSourceImpl(
         val body = JsonObject().apply {
             addProperty("index", index)
         }
-        val response = clonectService.deleteChallenge("Bearer $accessToken", body)
+        val response = clonectService.deleteChallenge(accessToken, body)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
     }
@@ -107,13 +107,13 @@ class ChallengeRemoteDataSourceImpl(
         val body = JsonObject().apply {
             addProperty("index", index)
         }
-        val response = clonectService.completeChallenge("Bearer $accessToken", body)
+        val response = clonectService.completeChallenge(accessToken, body)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
     }
 
     override suspend fun getChallenge(accessToken: String, index: Long): ChallengeDto {
-        val response = clonectService.getChallenge("Bearer $accessToken", index)
+        val response = clonectService.getChallenge(accessToken, index)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
@@ -121,7 +121,7 @@ class ChallengeRemoteDataSourceImpl(
     }
 
     override suspend fun getChallengeCount(accessToken: String): ChallengeCountDto {
-        val response = clonectService.getChallengeCount("Bearer $accessToken")
+        val response = clonectService.getChallengeCount(accessToken)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)

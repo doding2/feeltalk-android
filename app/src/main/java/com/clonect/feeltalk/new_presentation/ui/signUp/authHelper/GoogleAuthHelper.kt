@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import com.clonect.feeltalk.BuildConfig
 import com.clonect.feeltalk.common.Quadruple
+import com.clonect.feeltalk.common.Quintuple
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -32,14 +33,14 @@ class GoogleAuthHelper {
             launcher.launch(intent)
         }
 
-        fun handleSignInData(completedTask: Task<GoogleSignInAccount>): Quadruple<String, String, String?, String?> {
+        fun handleSignInData(completedTask: Task<GoogleSignInAccount>): Quintuple<String, String, String?, String?, String?> {
             val account = completedTask.getResult(ApiException::class.java) ?: throw NullPointerException()
             val idToken = account.idToken.toString()
             val serverAuthCode = account.serverAuthCode.toString()
             val email = account.email
             val name = account.displayName
             val uniqueId = account.id
-            return Quadruple(idToken,  serverAuthCode, email, name)
+            return Quintuple(idToken,  serverAuthCode, email, name, uniqueId)
         }
 
         suspend fun logOut(context: Context) = suspendCoroutine { continuation ->

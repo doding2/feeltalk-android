@@ -13,15 +13,22 @@ import com.clonect.feeltalk.new_domain.model.account.CoupleCodeDto
 import com.clonect.feeltalk.new_domain.model.account.LockQA
 import com.clonect.feeltalk.new_domain.model.account.MyInfo
 import com.clonect.feeltalk.new_domain.model.account.ServiceDataCountDto
+import com.clonect.feeltalk.new_domain.model.account.SocialType
 import com.clonect.feeltalk.new_domain.model.account.ValidateLockAnswerDto
+import com.clonect.feeltalk.new_domain.model.newAccount.GetUserStatusNewResponse
+import com.clonect.feeltalk.new_domain.model.newAccount.LogInNewResponse
+import com.clonect.feeltalk.new_domain.model.newAccount.SignUpNewResponse
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
 import com.clonect.feeltalk.new_domain.model.token.TokenInfo
 import com.clonect.feeltalk.new_domain.repository.account.AccountRepository
+import com.navercorp.nid.oauth.NidOAuthPreferencesManager.accessToken
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flattenMerge
 import kotlinx.coroutines.flow.flowOf
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 import kotlin.coroutines.cancellation.CancellationException
 
 
@@ -30,6 +37,54 @@ class AccountRepositoryImpl(
     private val localDataSource: AccountLocalDataSource,
     private val remoteDataSource: AccountRemoteDataSource
 ): AccountRepository {
+    override suspend fun logInNew(oauthId: String, snsType: SocialType): Resource<TokenInfo> {
+        return try {
+            val result = remoteDataSource.logInNew(oauthId, snsType)
+            localDataSource.clearInternalStorage()
+            val formatter = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
+            val tokenInfo = TokenInfo(
+                accessToken = result.accessToken,
+                refreshToken = result.refreshToken,
+                expiresAt = formatter.parse(result.expiredTime.substringBeforeLast('.'))
+                    ?: throw IllegalStateException("Token expired time is invalid"),
+                snsType = snsType
+            )
+            Resource.Success(tokenInfo)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun getUserStatusNew(accessToken: String): Resource<GetUserStatusNewResponse> {
+        return try {
+            val result = remoteDataSource.getUserStatusNew(accessToken)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun signUpNew(
+        accessToken: String,
+        nickname: String,
+        marketingConsent: Boolean,
+        fcmToken: String,
+        appleState: String?,
+    ): Resource<Unit> {
+        return try {
+            val result = remoteDataSource.signUpNew(accessToken, nickname, marketingConsent, fcmToken, appleState)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
 
     override suspend fun autoLogIn(accessToken: String): Resource<AutoLogInDto> {
         return try {
