@@ -66,6 +66,50 @@
     <string name="sign_up_apple">Apple로 계속하기</string>
     <string name="sign_up_inquire">문의사항이 있으신가요?</string>
 
+    <!--  AnimatedSignUp  -->
+    <string name="sign_up_title">회원가입</string>
+    <string name="sign_up_start_guide">필로우톡은 성인을 위한 공간으로\n성인인증 후 즐길 수 있어요</string>
+    <string name="sign_up_start_guide_2">필로우톡은 청소년 보호법에 의거하여\n만 19세 미만 청소년들은 이용할 수 없습니다.</string>
+    <string name="sign_up_start_button">성인인증 하기</string>
+    <string name="sign_up_default_guide">서비스 이용을 위해 인증 정보를 입력해 주세요.</string>
+    <string name="sign_up_name_hint">이름</string>
+    <string name="sign_up_birth_hint">생년월일 6자리</string>
+    <string name="sign_up_birth_hyphen">-</string>
+    <string name="sign_up_mobile_carrier_1">SKT</string>
+    <string name="sign_up_mobile_carrier_2">KT</string>
+    <string name="sign_up_mobile_carrier_3">LG U+</string>
+    <string name="sign_up_mobile_carrier_4">SKT 알뜰폰</string>
+    <string name="sign_up_mobile_carrier_5">KT 알뜰폰</string>
+    <string name="sign_up_mobile_carrier_6">LG 알뜰폰</string>
+    <string name="sign_up_phone_number_hint">01012345678</string>
+    <string name="sign_up_agreement">본인인증 이용약관에 동의합니다.</string>
+    <string name="sign_up_agreement_warning">본인인증 약관에 동의해주세요.</string>
+    <string name="sign_up_auth_code_request_hint">인증번호를 요청해주세요</string>
+    <string name="sign_up_auth_code_request_button">인증요청</string>
+    <string name="sign_up_auth_code_input_hint">인증번호를 입력해주세요</string>
+    <string name="sign_up_auth_code_retry_button">재요청</string>
+    <string name="sign_up_auth_code_warning">입력한 인증정보가 올바르지 않은 경우, 인증번호가 도착하지 않을 수 있어요.</string>
+    <string name="sign_up_auth_code_warning_error_1">인증번호 입력시간을 초과했어요. 다시 요청해주세요.</string>
+    <string name="sign_up_auth_code_warning_error_2">인증번호를 다시 확인해주세요.</string>
+    <string name="sign_up_auth_code_timer">mm:ss</string>
+    <string name="sign_up_person_info_invalid_dialog_title">개인정보가 올바르지 않아요</string>
+    <string name="sign_up_person_info_invalid_dialog_body">입력하신 정보를 다시 확인해주세요.</string>
+    <string name="sign_up_auth_done_button">인증완료</string>
+
+    <!--  MobileCarrier  -->
+    <string name="mobile_carrier_title">통신사를 선택해주세요.</string>
+
+    <!--  AuthAgreement  -->
+    <string name="auth_agreement_title">본인인증을 위한 약관에 동의해주세요.</string>
+    <string name="auth_agreement_agree_all">전체 동의하기</string>
+    <string name="auth_agreement_agree_prefix">[필수]</string>
+    <string name="auth_agreement_agree_1">개인정보이용동의</string>
+    <string name="auth_agreement_agree_2">고유식별정보처리동의</string>
+    <string name="auth_agreement_agree_3">서비스이용약관동의</string>
+    <string name="auth_agreement_agree_4">통신사이용약관동의</string>
+    <string name="auth_agreement_done">다음</string>
+
+
     <!--  SignUpNavigation  -->
     <string name="sign_up_title_sign_up">회원가입</string>
     <string name="sign_up_title_couple_code">연인코드 연결</string>

@@ -285,4 +285,9 @@
         android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageShare.ImageShareFragment"
         android:label="fragment_image_share"
         tools:layout="@layout/fragment_image_share" />
+    <fragment
+        android:id="@+id/animatedSignUpFragment"
+        android:name="com.clonect.feeltalk.new_presentation.ui.animatedSignUpNavigation.AnimatedSignUpFragment"
+        android:label="fragment_animated_sign_up"
+        tools:layout="@layout/fragment_animated_sign_up" />
 </navigation>

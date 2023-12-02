@@ -105,7 +105,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.mainNavigationFragment
         }
 
-        navGraph.setStartDestination(startDestination)
+        navGraph.setStartDestination(R.id.animatedSignUpFragment)
+//        navGraph.setStartDestination(startDestination)
         navController.graph = navGraph
     }
 

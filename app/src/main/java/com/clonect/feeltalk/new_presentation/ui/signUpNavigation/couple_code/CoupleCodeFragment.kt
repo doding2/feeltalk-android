@@ -62,7 +62,6 @@ class CoupleCodeFragment : Fragment() {
             onKeyboardDown = { binding.clCodeLayout.visibility = View.VISIBLE }
         )
         bottomSheet.show(requireActivity().supportFragmentManager, CoupleConnectBottomSheetFragment.TAG)
-
     }
 
     private fun copyCoupleCode() {

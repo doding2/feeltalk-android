@@ -9,6 +9,7 @@ import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.DialogConfirmBinding
+import com.clonect.feeltalk.databinding.DialogOneButtonBinding
 
 fun Fragment.makeLoadingDialog(onDismiss: () -> Unit = {}): Dialog {
     val dialog = Dialog(requireContext()).apply {
@@ -70,6 +71,39 @@ fun Fragment.showConfirmDialog(
 
         mcvCancel.setOnClickListener {
             onCancel()
+            dialog.dismiss()
+        }
+    }
+
+    dialog.show()
+}
+
+fun Fragment.showOneButtonDialog(
+    title: String,
+    body: String?,
+    confirmButton: String = requireContext().getString(R.string.dialog_confirm),
+    onConfirm: () -> Unit
+) {
+    val binding = DialogOneButtonBinding.inflate(layoutInflater)
+    val dialog = Dialog(requireContext()).apply {
+        setContentView(binding.root)
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    }
+
+    if (dialog.isShowing) return
+
+    binding.apply {
+        if (body == null) {
+            tvBody.visibility = View.GONE
+        } else {
+            tvBody.visibility = View.VISIBLE
+            tvBody.text = body
+        }
+        tvTitle.text = title
+        tvConfirm.text = confirmButton
+
+        mcvConfirm.setOnClickListener {
+            onConfirm()
             dialog.dismiss()
         }
     }

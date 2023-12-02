@@ -125,7 +125,7 @@ class DeleteAccountDetailFragment : Fragment() {
             val imeHeight = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
             } else {
-                insets.systemWindowInsetBottom
+                insets.stableInsetBottom
             }
 
             viewModel.setKeyboardUp(imeHeight != 0)
