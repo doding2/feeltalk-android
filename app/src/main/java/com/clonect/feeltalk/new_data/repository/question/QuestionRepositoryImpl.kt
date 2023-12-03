@@ -12,6 +12,7 @@ import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionRemo
 import com.clonect.feeltalk.new_data.repository.question.paging.QuestionPagingSource
 import com.clonect.feeltalk.new_domain.model.chat.ShareQuestionChatDto
 import com.clonect.feeltalk.new_domain.model.question.LastQuestionPageNoDto
+import com.clonect.feeltalk.new_domain.model.question.PressForAnswerChatResponse
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.model.question.QuestionListDto
 import com.clonect.feeltalk.new_domain.repository.question.QuestionRepository
@@ -113,7 +114,7 @@ class QuestionRepositoryImpl(
         }
     }
 
-    override suspend fun pressForAnswer(accessToken: String, index: Long): Resource<Unit> {
+    override suspend fun pressForAnswer(accessToken: String, index: Long): Resource<PressForAnswerChatResponse> {
         return try {
             val result = remoteDataSource.pressForAnswer(accessToken, index)
             Resource.Success(result)

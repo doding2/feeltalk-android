@@ -11,12 +11,14 @@ import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.model.signal.Signal
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 suspend fun ChatListDto.toChatList(
     loadQuestion: suspend (Long) -> Question,
-    loadChallenge: suspend (Long) -> Challenge
+    loadChallenge: suspend (Long) -> Challenge,
+    loadImage: suspend (Long, String) -> Triple<File?, Int, Int>
 ): List<Chat> {
     val newChatList = mutableListOf<Chat>()
     for (chatDto in chatting) {
@@ -49,6 +51,7 @@ suspend fun ChatListDto.toChatList(
                 if (chatDto.url == null) {
                     continue
                 } else {
+                    val imageBundle = loadImage(chatDto.index, chatDto.url)
                     chatDto.run {
                         ImageChat(
                             index = index,
@@ -57,8 +60,9 @@ suspend fun ChatListDto.toChatList(
                             isRead = isRead,
                             createAt = createAt,
                             url = url ?: "",
-                            width = 252,
-                            height = 300
+                            file = imageBundle.first,
+                            width = imageBundle.second,
+                            height = imageBundle.third
                         )
                     }
                 }

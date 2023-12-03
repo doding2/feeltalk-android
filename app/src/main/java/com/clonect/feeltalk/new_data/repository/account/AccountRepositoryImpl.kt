@@ -14,6 +14,7 @@ import com.clonect.feeltalk.new_domain.model.account.LockQA
 import com.clonect.feeltalk.new_domain.model.account.MyInfo
 import com.clonect.feeltalk.new_domain.model.account.ServiceDataCountDto
 import com.clonect.feeltalk.new_domain.model.account.SocialType
+import com.clonect.feeltalk.new_domain.model.account.UnlockPartnerPasswordResponse
 import com.clonect.feeltalk.new_domain.model.account.ValidateLockAnswerDto
 import com.clonect.feeltalk.new_domain.model.newAccount.GetUserStatusNewResponse
 import com.clonect.feeltalk.new_domain.model.newAccount.LogInNewResponse
@@ -45,7 +46,7 @@ class AccountRepositoryImpl(
             val tokenInfo = TokenInfo(
                 accessToken = result.accessToken,
                 refreshToken = result.refreshToken,
-                expiresAt = formatter.parse(result.expiredTime.substringBeforeLast('.'))
+                expiresAt = formatter.parse(result.expiredTime)
                     ?: throw IllegalStateException("Token expired time is invalid"),
                 snsType = snsType
             )
@@ -421,6 +422,20 @@ class AccountRepositoryImpl(
             throw e
         } catch (e: Exception) {
             return Resource.Error(e)
+        }
+    }
+
+    override suspend fun unlockPartnerPassword(
+        accessToken: String,
+        chatIndex: Long,
+    ): Resource<UnlockPartnerPasswordResponse> {
+        return try {
+            val remote = remoteDataSource.unlockPartnerPassword(accessToken, chatIndex)
+            Resource.Success(remote)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
         }
     }
 

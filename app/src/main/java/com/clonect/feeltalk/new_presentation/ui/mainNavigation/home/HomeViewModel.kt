@@ -7,8 +7,10 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.common.onError
 import com.clonect.feeltalk.common.onSuccess
+import com.clonect.feeltalk.new_domain.model.chat.PokeChat
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.model.signal.Signal
+import com.clonect.feeltalk.new_domain.usecase.chat.AddNewChatCacheUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.ChangeTodayQuestionCacheUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetAnswerQuestionFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetTodayQuestionFlowUseCase
@@ -39,6 +41,7 @@ class HomeViewModel @Inject constructor(
     private val getPartnerSignalUseCase: GetPartnerSignalUseCase,
     private val getPartnerSignalFlowUseCase: GetPartnerSignalFlowUseCase,
     private val getMySignalCacheFlowUseCase: GetMySignalCacheFlowUseCase,
+    private val addNewChatCacheUseCase: AddNewChatCacheUseCase,
 ) : ViewModel() {
 
     private val _todayQuestion = MutableStateFlow<Question?>(null)
@@ -93,8 +96,21 @@ class HomeViewModel @Inject constructor(
     }
 
     fun pressForAnswer(context: Context) = viewModelScope.launch(Dispatchers.IO) {
-        when (val result = pressForAnswerUseCase(_todayQuestion.value?.index ?: return@launch)) {
+        val questionIndex = _todayQuestion.value?.index ?: return@launch
+        when (val result = pressForAnswerUseCase(questionIndex)) {
             is Resource.Success -> {
+                addNewChatCacheUseCase(
+                    result.data.run {
+                        PokeChat(
+                            index = index,
+                            pageNo = pageIndex,
+                            chatSender = "me",
+                            isRead = isRead,
+                            createAt = createAt,
+                            questionIndex = questionIndex
+                        )
+                    }
+                )
                 _snackbarMessage.emit(context.getString(R.string.answer_poke_partner_snack_bar))
             }
             is Resource.Error -> {

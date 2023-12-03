@@ -400,7 +400,7 @@ class BubbleChatFragment : Fragment() {
             is AddChallengeChat -> navigateToChallengeDetail(chat.challenge)
             is PokeChat -> navigateToAnswer(chat.questionIndex)
             is AnswerChat -> navigateToAnswer(chat.question)
-            is ResetPartnerPasswordChat -> viewModel.resetPartnerPassword()
+            is ResetPartnerPasswordChat -> viewModel.resetPartnerPassword(chat.index)
         }
     }
 

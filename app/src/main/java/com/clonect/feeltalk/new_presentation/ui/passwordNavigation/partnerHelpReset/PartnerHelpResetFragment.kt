@@ -54,6 +54,13 @@ class PartnerHelpResetFragment : Fragment() {
 
         binding.run {
             ivExit.setOnClickListener { onBackCallback.handleOnBackPressed() }
+            mcvRequest.setOnClickListener { sendRequestChat() }
+        }
+    }
+
+    private fun sendRequestChat() {
+        viewModel.sendRequestChat {
+            onBackCallback.handleOnBackPressed()
         }
     }
 

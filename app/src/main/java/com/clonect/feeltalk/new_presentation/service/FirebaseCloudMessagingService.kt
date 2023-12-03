@@ -12,6 +12,13 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.domain.usecase.user.GetUserIsActiveUseCase
 import com.clonect.feeltalk.domain.usecase.user.SetUserIsActiveUseCase
+import com.clonect.feeltalk.new_domain.model.challenge.Challenge
+import com.clonect.feeltalk.new_domain.model.challenge.CoupleChallengeDto
+import com.clonect.feeltalk.new_domain.model.chat.AddChallengeChat
+import com.clonect.feeltalk.new_domain.model.chat.CompleteChallengeChat
+import com.clonect.feeltalk.new_domain.model.chat.ImageChat
+import com.clonect.feeltalk.new_domain.model.chat.QuestionChat
+import com.clonect.feeltalk.new_domain.model.chat.ResetPartnerPasswordChat
 import com.clonect.feeltalk.new_domain.model.chat.SignalChat
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
@@ -24,20 +31,24 @@ import com.clonect.feeltalk.new_domain.usecase.challenge.DeletePartnerChallengeC
 import com.clonect.feeltalk.new_domain.usecase.challenge.GetChallengeUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.AddNewChatCacheUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.ChangePartnerChatRoomStateCacheUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.PreloadImageUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.AnswerPartnerQuestionCacheUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.ChangeTodayQuestionCacheUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUseCase
 import com.clonect.feeltalk.new_domain.usecase.signal.ChangePartnerSignalCacheUseCase
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.CHANEL_ID_CREATE_COUPLE
-import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_ADD_CHALLENGE
+import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_ADD_CHALLENGE_CHATTING
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_ANSWER_QUESTION
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_CHAT_ROOM_STATE
-import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_COMPLETE_CHALLENGE
+import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_COMPLETE_CHALLENGE_CHATTING
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_CREATE_COUPLE
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_DELETE_CHALLENGE
+import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_IMAGE_CHATTING
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_MODIFY_CHALLENGE
-import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_PRESS_FOR_ANSWER
+import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_PRESS_FOR_ANSWER_CHATTING
+import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_QUESTION_CHATTING
+import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_RESET_PARTNER_PASSWORD_CHATTING
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_SIGNAL_CHATTING
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_TEXT_CHATTING
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_TODAY_QUESTION
@@ -49,10 +60,14 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -85,6 +100,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     // Chat
     @Inject lateinit var addNewChatCacheUseCase: AddNewChatCacheUseCase
     @Inject lateinit var changePartnerChatRoomStateCacheUseCase: ChangePartnerChatRoomStateCacheUseCase
+    @Inject lateinit var preloadImageUseCase: PreloadImageUseCase
 
     // App Settings
     @Inject lateinit var getAppSettingsUseCase: GetAppSettingsUseCase
@@ -162,14 +178,17 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 TYPE_CHAT_ROOM_STATE -> handleChatRoomStateData(data)
                 TYPE_TEXT_CHATTING -> handleTextChatData(data)
                 TYPE_VOICE_CHATTING -> handleVoiceChatData(data)
+                TYPE_IMAGE_CHATTING -> handleImageChatData(data)
                 TYPE_SIGNAL_CHATTING -> handleSignalChatData(data)
+                TYPE_QUESTION_CHATTING -> handleQuestionChatData(data)
+                TYPE_ADD_CHALLENGE_CHATTING -> handleAddChallengeChatData(data)
+                TYPE_COMPLETE_CHALLENGE_CHATTING -> handleCompleteChallengeData(data)
+                TYPE_RESET_PARTNER_PASSWORD_CHATTING -> handleResetPartnerPasswordChatData(data)
                 TYPE_TODAY_QUESTION -> handleTodayQuestionData(data)
-                TYPE_PRESS_FOR_ANSWER -> handlePressForAnswerData(data)
+                TYPE_PRESS_FOR_ANSWER_CHATTING -> handlePressForAnswerData(data)
                 TYPE_ANSWER_QUESTION -> handleAnswerQuestionData(data)
-                TYPE_ADD_CHALLENGE -> handleAddChallengeData(data)
                 TYPE_DELETE_CHALLENGE -> handleDeleteChallengeData(data)
                 TYPE_MODIFY_CHALLENGE -> handleModifyChallengeData(data)
-                TYPE_COMPLETE_CHALLENGE -> handleCompleteChallengeData(data)
             }
         }
     }
@@ -258,6 +277,37 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         )
     }
 
+    private fun handleImageChatData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+        val index = data["index"]?.toLong() ?: return@launch
+        val pageIndex = data["pageIndex"]?.toLong() ?: 0
+        val url = data["url"] ?: return@launch
+        val isRead = data["isRead"]?.toBoolean() ?: return@launch
+        val createAt = data["createAt"] ?: return@launch
+
+        val imageBundle = preloadImageUseCase(index, url)
+        addNewChatCacheUseCase(
+            ImageChat(
+                index = index,
+                pageNo = pageIndex,
+                chatSender = "partner",
+                isRead = isRead,
+                createAt = createAt,
+                url = url,
+                file = imageBundle.first,
+                width = imageBundle.second,
+                height = imageBundle.third
+            )
+        )
+
+        if (FeeltalkApp.getAppScreenActive() && FeeltalkApp.getUserInChat()) {
+            return@launch
+        }
+
+        notificationHelper.showChatNotification(
+            message = "(이미지 채팅)"
+        )
+    }
+
     private fun handleSignalChatData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
         val index = data["index"]?.toLong() ?: return@launch
         val signal = data["signal"]?.toInt() ?: return@launch
@@ -289,6 +339,37 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
         notificationHelper.showChatNotification(
             message = "(시그널 채팅)"
+        )
+    }
+
+    private fun handleQuestionChatData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+        val index = data["index"]?.toLong() ?: return@launch
+        val pageIndex = data["pageIndex"]?.toLong() ?: 0
+        val isRead = data["isRead"]?.toBoolean() ?: return@launch
+        val createAt = data["createAt"] ?: return@launch
+        val coupleQuestion = data["coupleQuestion"] ?: return@launch
+        val questionIndex = Gson().fromJson(coupleQuestion, JsonObject::class.java).get("index").asLong
+
+        val question = (getQuestionUseCase(questionIndex) as? Resource.Success)?.data
+        if (question != null) {
+            addNewChatCacheUseCase(
+                QuestionChat(
+                    index = index,
+                    pageNo = pageIndex,
+                    chatSender = "partner",
+                    isRead = isRead,
+                    createAt = createAt,
+                    question = question
+                )
+            )
+        }
+
+        if (FeeltalkApp.getAppScreenActive() && FeeltalkApp.getUserInChat()) {
+            return@launch
+        }
+
+        notificationHelper.showChatNotification(
+            message = "(질문 채팅)"
         )
     }
 
@@ -378,31 +459,45 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         )
     }
 
-    private fun handleAddChallengeData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+    private fun handleAddChallengeChatData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
         val index = data["index"]?.toLong() ?: return@launch
-        val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
-            .setGraph(R.navigation.feeltalk_nav_graph)
-            .setDestination(R.id.mainNavigationFragment)
-            .setArguments(
-                bundleOf(
-                    "challengeIndex" to index,
-                )
+        val pageIndex = data["pageIndex"]?.toLong() ?: 0
+        val isRead = data["isRead"]?.toBoolean() ?: return@launch
+        val createAt = data["createAt"] ?: return@launch
+        val coupleChallengeJson = data["coupleChallenge"] ?: return@launch
+        val coupleChallenge = Gson().fromJson(coupleChallengeJson, CoupleChallengeDto::class.java)
+
+        val challengeFormat = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
+        val challenge = Challenge(
+            index = coupleChallenge.index,
+            title = coupleChallenge.challengeTitle,
+            body = coupleChallenge.challengeBody,
+            deadline = challengeFormat.parse(coupleChallenge.deadline) ?: Date(),
+            owner = coupleChallenge.creator,
+            isCompleted = false,
+            isNew = true
+        )
+        addNewChatCacheUseCase(
+            AddChallengeChat(
+                index = index,
+                pageNo = pageIndex,
+                chatSender = "partner",
+                isRead = isRead,
+                createAt = createAt,
+                challenge = challenge
             )
-            .createPendingIntent()
+        )
 
         if (getAppRunning()) {
-            val challenge = (getChallengeUseCase(index) as? Resource.Success)?.data?.copy(isNew = true)
-            if (challenge != null) {
-                addPartnerChallengeCacheUseCase(challenge)
-            }
+            addPartnerChallengeCacheUseCase(challenge)
         }
 
-        notificationHelper.showNormalNotification(
-            title = "새 챌린지가 등록됐어요",
-            message = "야호~",
-            channelID = NotificationHelper.CHANNEL_ID_ADD_CHALLENGE,
-            notificationID = System.currentTimeMillis().toInt(),
-            pendingIntent = deepLinkPendingIntent
+        if (FeeltalkApp.getAppScreenActive() && FeeltalkApp.getUserInChat()) {
+            return@launch
+        }
+
+        notificationHelper.showChatNotification(
+            message = "(챌린지 추가 채팅)"
         )
     }
 
@@ -444,30 +539,68 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
     private fun handleCompleteChallengeData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
         val index = data["index"]?.toLong() ?: return@launch
-        val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
-            .setGraph(R.navigation.feeltalk_nav_graph)
-            .setDestination(R.id.mainNavigationFragment)
-            .setArguments(
-                bundleOf(
-                    "challengeIndex" to index,
-                )
+        val pageIndex = data["pageIndex"]?.toLong() ?: 0
+        val isRead = data["isRead"]?.toBoolean() ?: return@launch
+        val createAt = data["createAt"] ?: return@launch
+        val coupleChallengeJson = data["coupleChallenge"] ?: return@launch
+        val coupleChallenge = Gson().fromJson(coupleChallengeJson, CoupleChallengeDto::class.java)
+
+        val challengeFormat = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
+        val challenge = Challenge(
+            index = coupleChallenge.index,
+            title = coupleChallenge.challengeTitle,
+            body = coupleChallenge.challengeBody,
+            deadline = challengeFormat.parse(coupleChallenge.deadline) ?: Date(),
+            owner = coupleChallenge.creator,
+            isCompleted = true,
+        )
+        addNewChatCacheUseCase(
+            CompleteChallengeChat(
+                index = index,
+                pageNo = pageIndex,
+                chatSender = "partner",
+                isRead = isRead,
+                createAt = createAt,
+                challenge = challenge
             )
-            .createPendingIntent()
+        )
 
         if (getAppRunning()) {
-            val challenge = (getChallengeUseCase(index) as? Resource.Success)?.data
-            if (challenge != null) {
-                deletePartnerChallengeCacheUseCase(challenge.copy(isCompleted = false))
-                addPartnerChallengeCacheUseCase(challenge.copy(isCompleted = true))
-            }
+            deletePartnerChallengeCacheUseCase(challenge.copy(isCompleted = false))
+            addPartnerChallengeCacheUseCase(challenge.copy(isCompleted = true))
         }
 
-        notificationHelper.showNormalNotification(
-            title = "챌린지가 완료되었어요",
-            message = "야호~ 야호~",
-            channelID = NotificationHelper.CHANNEL_ID_ADD_CHALLENGE,
-            notificationID = System.currentTimeMillis().toInt(),
-            pendingIntent = deepLinkPendingIntent
+        if (FeeltalkApp.getAppScreenActive() && FeeltalkApp.getUserInChat()) {
+            return@launch
+        }
+
+        notificationHelper.showChatNotification(
+            message = "(챌린지 완료 채팅)"
+        )
+    }
+
+    private fun handleResetPartnerPasswordChatData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+        val index = data["index"]?.toLong() ?: return@launch
+        val pageIndex = data["pageIndex"]?.toLong() ?: 0
+        val isRead = data["isRead"]?.toBoolean() ?: return@launch
+        val createAt = data["createAt"] ?: return@launch
+
+        addNewChatCacheUseCase(
+            ResetPartnerPasswordChat(
+                index = index,
+                pageNo = pageIndex,
+                chatSender = "partner",
+                isRead = isRead,
+                createAt = createAt,
+            )
+        )
+
+        if (FeeltalkApp.getAppScreenActive() && FeeltalkApp.getUserInChat()) {
+            return@launch
+        }
+
+        notificationHelper.showChatNotification(
+            message = "(잠금 해제 요청 채팅)"
         )
     }
 

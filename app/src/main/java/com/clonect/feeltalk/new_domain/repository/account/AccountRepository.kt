@@ -8,6 +8,7 @@ import com.clonect.feeltalk.new_domain.model.account.LockQA
 import com.clonect.feeltalk.new_domain.model.account.MyInfo
 import com.clonect.feeltalk.new_domain.model.account.ServiceDataCountDto
 import com.clonect.feeltalk.new_domain.model.account.SocialType
+import com.clonect.feeltalk.new_domain.model.account.UnlockPartnerPasswordResponse
 import com.clonect.feeltalk.new_domain.model.account.ValidateLockAnswerDto
 import com.clonect.feeltalk.new_domain.model.newAccount.GetUserStatusNewResponse
 import com.clonect.feeltalk.new_domain.model.newAccount.LogInNewResponse
@@ -45,6 +46,7 @@ interface AccountRepository {
     suspend fun unlockAccount(accessToken: String): Resource<Unit>
     suspend fun getLockResetQuestion(accessToken: String): Resource<Int>
     suspend fun validateLockResetAnswer(accessToken: String, answer: String): Resource<ValidateLockAnswerDto>
+    suspend fun unlockPartnerPassword(accessToken: String, chatIndex: Long): Resource<UnlockPartnerPasswordResponse>
 
     suspend fun setCoupleCrated(isCreated: Boolean)
     suspend fun getCoupleCreatedFlow(): Flow<Boolean>

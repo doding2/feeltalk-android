@@ -108,6 +108,33 @@ class ChatRepositoryImpl(
         }
     }
 
+    override suspend fun sendImageChat(
+        accessToken: String,
+        imageFile: File,
+    ): Resource<SendImageChatResponse> {
+        return try {
+            val result = remoteDataSource.sendImageChat(accessToken, imageFile)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun sendResetPartnerPasswordChat(
+        accessToken: String
+    ): Resource<SendResetPartnerPasswordChatResponse> {
+        return try {
+            val result = remoteDataSource.sendResetPartnerPasswordChat(accessToken)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
 
     override suspend fun getChatList(accessToken: String, pageNo: Long): Resource<ChatListDto> {
         return try {
@@ -129,5 +156,9 @@ class ChatRepositoryImpl(
         ) {
             pagingSource
         }.flow
+    }
+
+    override suspend fun preloadImage(index: Long, url: String): Triple<File?, Int, Int> {
+        return remoteDataSource.preloadImage(index, url)
     }
 }

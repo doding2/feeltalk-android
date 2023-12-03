@@ -3,7 +3,6 @@ package com.clonect.feeltalk.new_data.repository.chat.paging
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.clonect.feeltalk.common.Resource
-import com.clonect.feeltalk.new_data.mapper.toChallenge
 import com.clonect.feeltalk.new_data.mapper.toChatList
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatRemoteDataSource
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
@@ -15,11 +14,11 @@ import com.clonect.feeltalk.new_domain.repository.challenge.ChallengeRepository
 import com.clonect.feeltalk.new_domain.repository.question.QuestionRepository
 import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 import com.clonect.feeltalk.presentation.utils.infoLog
-import com.navercorp.nid.NaverIdLoginSDK.getAccessToken
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import java.io.File
 
 class ChatPagingSource(
     private val tokenRepository: TokenRepository,
@@ -50,7 +49,8 @@ class ChatPagingSource(
 
             val result = getChatList(pageKey).toChatList(
                 loadQuestion = ::getQuestion,
-                loadChallenge = ::getChallenge
+                loadChallenge = ::getChallenge,
+                loadImage = ::preloadImage
             )
             LoadResult.Page(
                 data = result,
@@ -60,7 +60,7 @@ class ChatPagingSource(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            infoLog("chat paging error in load(): ${e.localizedMessage}\n${e.stackTrace.joinToString("\n")}")
+            infoLog("chat paging error in load(): ${e.localizedMessage}")
             LoadResult.Error(e)
         }
     }
@@ -96,5 +96,9 @@ class ChatPagingSource(
             throw result.throwable
         }
         (result as Resource.Success).data
+    }
+
+    private suspend fun preloadImage(index: Long, url: String): Triple<File?, Int, Int> {
+        return chatRemoteDataSource.preloadImage(index, url)
     }
 }

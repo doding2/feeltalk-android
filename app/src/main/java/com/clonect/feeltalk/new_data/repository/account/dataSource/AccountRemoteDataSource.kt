@@ -12,6 +12,7 @@ import com.clonect.feeltalk.new_domain.model.account.ReLogInDto
 import com.clonect.feeltalk.new_domain.model.account.ServiceDataCountDto
 import com.clonect.feeltalk.new_domain.model.account.SignUpDto
 import com.clonect.feeltalk.new_domain.model.account.SocialType
+import com.clonect.feeltalk.new_domain.model.account.UnlockPartnerPasswordResponse
 import com.clonect.feeltalk.new_domain.model.account.ValidateLockAnswerDto
 import com.clonect.feeltalk.new_domain.model.account.ValidatePasswordDto
 import com.clonect.feeltalk.new_domain.model.newAccount.GetUserStatusNewResponse
@@ -47,4 +48,5 @@ interface AccountRemoteDataSource {
     suspend fun unlockAccount(accessToken: String)
     suspend fun getLockQuestion(accessToken: String): LockResetQuestionDto
     suspend fun validateLockAnswer(accessToken: String, answer: String): ValidateLockAnswerDto
+    suspend fun unlockPartnerPassword(accessToken: String, chatIndex: Long): UnlockPartnerPasswordResponse
 }

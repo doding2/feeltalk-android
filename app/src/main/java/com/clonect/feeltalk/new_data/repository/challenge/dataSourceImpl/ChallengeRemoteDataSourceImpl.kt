@@ -4,11 +4,12 @@ import android.accounts.NetworkErrorException
 import com.clonect.feeltalk.common.FeelTalkException.ServerIsDownException
 import com.clonect.feeltalk.new_data.api.ClonectService
 import com.clonect.feeltalk.new_data.repository.challenge.dataSource.ChallengeRemoteDataSource
-import com.clonect.feeltalk.new_domain.model.challenge.AddChallengeDto
+import com.clonect.feeltalk.new_domain.model.challenge.ChallengeChatResponse
 import com.clonect.feeltalk.new_domain.model.challenge.ChallengeCountDto
 import com.clonect.feeltalk.new_domain.model.challenge.ChallengeDto
 import com.clonect.feeltalk.new_domain.model.challenge.ChallengeListDto
 import com.clonect.feeltalk.new_domain.model.challenge.LastChallengePageNoDto
+import com.clonect.feeltalk.new_domain.model.challenge.ShareChallengeChatResponse
 import com.google.gson.JsonObject
 
 class ChallengeRemoteDataSourceImpl(
@@ -63,7 +64,7 @@ class ChallengeRemoteDataSourceImpl(
         title: String,
         deadline: String,
         content: String,
-    ): AddChallengeDto {
+    ): ChallengeChatResponse {
         val body = JsonObject().apply {
             addProperty("title", title)
             addProperty("deadline", deadline)
@@ -103,13 +104,15 @@ class ChallengeRemoteDataSourceImpl(
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
     }
 
-    override suspend fun completeChallenge(accessToken: String, index: Long) {
+    override suspend fun completeChallenge(accessToken: String, index: Long): ChallengeChatResponse {
         val body = JsonObject().apply {
             addProperty("index", index)
         }
         val response = clonectService.completeChallenge(accessToken, body)
         if (!response.isSuccessful) throw ServerIsDownException(response)
+        if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
+        return response.body()!!.data!!
     }
 
     override suspend fun getChallenge(accessToken: String, index: Long): ChallengeDto {
@@ -122,6 +125,17 @@ class ChallengeRemoteDataSourceImpl(
 
     override suspend fun getChallengeCount(accessToken: String): ChallengeCountDto {
         val response = clonectService.getChallengeCount(accessToken)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
+        if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
+        return response.body()!!.data!!
+    }
+
+    override suspend fun shareChallenge(accessToken: String, index: Long): ShareChallengeChatResponse {
+        val body = JsonObject().apply {
+            addProperty("index", index)
+        }
+        val response = clonectService.shareChallenge(accessToken, body)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)

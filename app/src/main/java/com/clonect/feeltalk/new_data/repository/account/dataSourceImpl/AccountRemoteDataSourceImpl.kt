@@ -15,6 +15,7 @@ import com.clonect.feeltalk.new_domain.model.account.ReLogInDto
 import com.clonect.feeltalk.new_domain.model.account.ServiceDataCountDto
 import com.clonect.feeltalk.new_domain.model.account.SignUpDto
 import com.clonect.feeltalk.new_domain.model.account.SocialType
+import com.clonect.feeltalk.new_domain.model.account.UnlockPartnerPasswordResponse
 import com.clonect.feeltalk.new_domain.model.account.ValidateLockAnswerDto
 import com.clonect.feeltalk.new_domain.model.account.ValidatePasswordDto
 import com.clonect.feeltalk.new_domain.model.newAccount.GetUserStatusNewResponse
@@ -295,6 +296,20 @@ class AccountRemoteDataSourceImpl(
             addProperty("answer", answer)
         }
         val response = clonectService.validateLockResetAnswer(accessToken, body)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
+        if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
+        return response.body()!!.data!!
+    }
+
+    override suspend fun unlockPartnerPassword(
+        accessToken: String,
+        chatIndex: Long,
+    ): UnlockPartnerPasswordResponse {
+        val body = JsonObject().apply {
+            addProperty("chattingMessageIndex", chatIndex)
+        }
+        val response = clonectService.unlockPartnerPassword(accessToken, body)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)

@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.new_presentation.di
 
+import android.content.Context
 import com.clonect.feeltalk.data.repository.chat.datasource.ChatRemoteDataSource2
 import com.clonect.feeltalk.data.repository.chat.datasourceImpl.ChatRemoteDataSource2Impl
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionRemoteDataSource
@@ -26,6 +27,7 @@ import com.clonect.feeltalk.new_data.repository.token.dataSourceImpl.TokenRemote
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -48,9 +50,10 @@ class RemoteDataSourceModule {
     @Singleton
     @Provides
     fun providesChatRemoteDataSource(
+        @ApplicationContext context: Context,
         clonectService: ClonectService
     ): ChatRemoteDataSource {
-        return ChatRemoteDataSourceImpl(clonectService)
+        return ChatRemoteDataSourceImpl(context, clonectService)
     }
 
     @Singleton

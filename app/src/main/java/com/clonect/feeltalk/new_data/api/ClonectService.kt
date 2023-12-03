@@ -17,9 +17,9 @@ import com.clonect.feeltalk.new_domain.model.challenge.*
 import com.clonect.feeltalk.new_domain.model.chat.*
 import com.clonect.feeltalk.new_domain.model.newAccount.GetUserStatusNewResponse
 import com.clonect.feeltalk.new_domain.model.newAccount.LogInNewResponse
-import com.clonect.feeltalk.new_domain.model.newAccount.SignUpNewResponse
 import com.clonect.feeltalk.new_domain.model.partner.PartnerInfoDto
 import com.clonect.feeltalk.new_domain.model.question.LastQuestionPageNoDto
+import com.clonect.feeltalk.new_domain.model.question.PressForAnswerChatResponse
 import com.clonect.feeltalk.new_domain.model.question.QuestionDto
 import com.clonect.feeltalk.new_domain.model.question.QuestionListDto
 import com.clonect.feeltalk.new_domain.model.signal.ChangeMySignalResponse
@@ -57,6 +57,7 @@ interface ClonectService {
     ): Response<ApiResponse<LogInNewResponse>>
 
 
+
     /** Account **/
 
     @GET("/api/v1/auto-login")
@@ -83,7 +84,7 @@ interface ClonectService {
     suspend fun mathCouple(
         @Header("Authorization") token: String,
         @Body body: JsonObject
-    ): Response<ApiResponse<MatchCoupleDto>>
+    ): Response<ApiResponse<Unit>>
 
     @GET("/api/v1/member")
     suspend fun getMyInfo(
@@ -156,6 +157,12 @@ interface ClonectService {
         @Header("Authorization") token: String
     ): Response<ApiResponse<ServiceDataCountDto>>
 
+    @POST("api/v1/chatting-room/reset-password")
+    suspend fun unlockPartnerPassword(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<ApiResponse<UnlockPartnerPasswordResponse>>
+
 
     /** Token **/
 
@@ -207,6 +214,18 @@ interface ClonectService {
         @Part data: MultipartBody.Part
     ): Response<ApiResponse<SendVoiceChatDto>>
 
+    @Multipart
+    @POST("/api/v1/chatting-message/voice")
+    suspend fun sendImageChat(
+        @Header("Authorization") token: String,
+        @Part data: MultipartBody.Part
+    ): Response<ApiResponse<SendImageChatResponse>>
+
+    @POST("api/v1/chatting-message/reset-partner-password")
+    suspend fun sendResetPartnerPasswordChat(
+        @Header("Authorization") token: String,
+    ): Response<ApiResponse<SendResetPartnerPasswordChatResponse>>
+
 
     /** Question **/
 
@@ -242,7 +261,7 @@ interface ClonectService {
     suspend fun pressForAnswer(
         @Header("Authorization") token: String,
         @Body body: JsonObject
-    ): Response<ApiResponse<Unit>>
+    ): Response<ApiResponse<PressForAnswerChatResponse>>
 
     @POST("/api/v1/chatting-message/question")
     suspend fun shareQuestion(
@@ -279,7 +298,7 @@ interface ClonectService {
     suspend fun addChallenge(
         @Header("Authorization") token: String,
         @Body body: JsonObject
-    ): Response<ApiResponse<AddChallengeDto>>
+    ): Response<ApiResponse<ChallengeChatResponse>>
 
     @PUT("/api/v1/challenge")
     suspend fun modifyChallenge(
@@ -297,7 +316,7 @@ interface ClonectService {
     suspend fun completeChallenge(
         @Header("Authorization") token: String,
         @Body body: JsonObject
-    ): Response<ApiResponse<Unit>>
+    ): Response<ApiResponse<ChallengeChatResponse>>
 
     @GET("api/v1/challenge/{index}")
     suspend fun getChallenge(
@@ -315,7 +334,11 @@ interface ClonectService {
         @Header("Authorization") token: String,
     ): Response<ApiResponse<ConfigurationInfoDto>>
 
-
+    @POST("api/v1/chatting-message/challenge")
+    suspend fun shareChallenge(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<ApiResponse<ShareChallengeChatResponse>>
 
 
     /** Partner **/

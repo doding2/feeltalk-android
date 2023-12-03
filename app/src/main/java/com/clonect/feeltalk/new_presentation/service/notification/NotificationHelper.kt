@@ -35,14 +35,22 @@ class NotificationHelper(
         const val TYPE_CHAT_ROOM_STATE = "chatRoomStatusChange"
         const val TYPE_TEXT_CHATTING = "textChatting"
         const val TYPE_VOICE_CHATTING = "voiceChatting"
+        const val TYPE_IMAGE_CHATTING = "imageChatting"
         const val TYPE_TODAY_QUESTION = "todayQuestion"
-        const val TYPE_PRESS_FOR_ANSWER = "pressForAnswer"
-        const val TYPE_ANSWER_QUESTION = "answerQuestion"
-        const val TYPE_ADD_CHALLENGE = "addChallenge"
+        const val TYPE_SIGNAL_CHATTING = "signalChatting"
+        const val TYPE_QUESTION_CHATTING = "questionChatting"
+        const val TYPE_ANSWER_CHATTING = "answerChatting"
+        const val TYPE_ADD_CHALLENGE_CHATTING = "addChallengeChatting"
+        const val TYPE_COMPLETE_CHALLENGE_CHATTING = "completeChallengeChatting"
+        const val TYPE_PRESS_FOR_ANSWER_CHATTING = "pressForAnswerChatting"
+        const val TYPE_RESET_PARTNER_PASSWORD_CHATTING = "resetPartnerPasswordChatting"
+
         const val TYPE_DELETE_CHALLENGE = "deleteChallenge"
         const val TYPE_MODIFY_CHALLENGE = "modifyChallenge"
-        const val TYPE_COMPLETE_CHALLENGE = "completeChallenge"
-        const val TYPE_SIGNAL_CHATTING = "signalChatting"
+
+        // TODO 수정 요망
+        const val TYPE_ANSWER_QUESTION = "answerQuestion"
+
 
         const val KEY_TEXT_REPLY = "key_text_reply"
 
@@ -52,12 +60,17 @@ class NotificationHelper(
         const val CHANEL_ID_CREATE_COUPLE = "feeltalk_create_couple_notification"
         const val CHANNEL_ID_CHAT = "feeltalk_chat_notification"
         const val CHANNEL_ID_TODAY_QUESTION = "feeltalk_today_question_notification"
+
+        // TODO 수정 요망
+        const val CHANNEL_ID_ADD_CHALLENGE = "feeltalk_add_challenge_notification"
+        const val CHANNEL_ID_COMPLETE_CHALLENGE = "feeltalk_complete_challenge_notification"
         const val CHANNEL_ID_PRESS_FOR_ANSWER = "feeltalk_press_for_answer_notification"
         const val CHANNEL_ID_ANSWER_QUESTION = "feeltalk_answer_question_notification"
-        const val CHANNEL_ID_ADD_CHALLENGE = "feeltalk_add_challenge_notification"
+
+
         const val CHANNEL_ID_DELETE_CHALLENGE = "feeltalk_delete_challenge_notification"
         const val CHANNEL_ID_MODIFY_CHALLENGE = "feeltalk_modify_challenge_notification"
-        const val CHANNEL_ID_COMPLETE_CHALLENGE = "feeltalk_complete_challenge_notification"
+
 
         const val CHAT_SHORTCUT_ID = "chat_shortcut"
     }

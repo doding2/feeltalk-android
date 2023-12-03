@@ -4,6 +4,7 @@ import androidx.paging.PagingData
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.chat.ShareQuestionChatDto
 import com.clonect.feeltalk.new_domain.model.question.LastQuestionPageNoDto
+import com.clonect.feeltalk.new_domain.model.question.PressForAnswerChatResponse
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.model.question.QuestionListDto
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +20,7 @@ interface QuestionRepository {
     suspend fun getTodayQuestionFlow(): Flow<Question?>
 
     suspend fun answerQuestion(accessToken: String, question: Question, myAnswer: String): Resource<Unit>
-    suspend fun pressForAnswer(accessToken: String, index: Long): Resource<Unit>
+    suspend fun pressForAnswer(accessToken: String, index: Long): Resource<PressForAnswerChatResponse>
 
     suspend fun shareQuestion(accessToken: String, index: Long): Resource<ShareQuestionChatDto>
 

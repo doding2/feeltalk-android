@@ -3,8 +3,11 @@ package com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.addCha
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.challenge.ChallengeCategory
+import com.clonect.feeltalk.new_domain.model.chat.AddChallengeChat
 import com.clonect.feeltalk.new_domain.usecase.challenge.AddMyChallengeUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.AddNewChatCacheUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AddChallengeViewModel @Inject constructor(
     private val addMyChallengeUseCase: AddMyChallengeUseCase,
+    private val addNewChatCacheUseCase: AddNewChatCacheUseCase,
 ): ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
@@ -100,6 +104,27 @@ class AddChallengeViewModel @Inject constructor(
         val deadline = format.format(deadlineDate)
         when (val result = addMyChallengeUseCase(title, deadline, content)) {
             is Resource.Success -> {
+                val challengeFormat = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
+                addNewChatCacheUseCase(
+                    result.data.run {
+                        AddChallengeChat(
+                            index = index,
+                            pageNo = pageIndex,
+                            chatSender = "me",
+                            isRead = isRead,
+                            createAt = createAt,
+                            challenge = Challenge(
+                                index = coupleChallenge.index,
+                                title = coupleChallenge.challengeTitle,
+                                body = coupleChallenge.challengeBody,
+                                deadline = challengeFormat.parse(coupleChallenge.deadline) ?: deadlineDate,
+                                owner = coupleChallenge.creator,
+                                isCompleted = false,
+                                isNew = true
+                            )
+                        )
+                    }
+                )
                 onSuccess()
             }
             is Resource.Error -> {

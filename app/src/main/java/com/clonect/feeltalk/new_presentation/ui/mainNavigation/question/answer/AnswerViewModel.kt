@@ -7,7 +7,9 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.common.onError
 import com.clonect.feeltalk.common.onSuccess
+import com.clonect.feeltalk.new_domain.model.chat.PokeChat
 import com.clonect.feeltalk.new_domain.model.question.Question
+import com.clonect.feeltalk.new_domain.usecase.chat.AddNewChatCacheUseCase
 import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.AnswerQuestionUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetAnswerQuestionFlowUseCase
@@ -31,6 +33,7 @@ class AnswerViewModel @Inject constructor(
     private val pressForAnswerUseCase: PressForAnswerUseCase,
     private val getAnswerQuestionFlowUseCase: GetAnswerQuestionFlowUseCase,
     private val getPartnerInfoFlowUseCase: GetPartnerInfoFlowUseCase,
+    private val addNewChatCacheUseCase: AddNewChatCacheUseCase,
 ) : ViewModel() {
 
     private val _isReadMode = MutableStateFlow(false)
@@ -73,8 +76,21 @@ class AnswerViewModel @Inject constructor(
     }
 
     fun pressForAnswer(context: Context) = viewModelScope.launch(Dispatchers.IO) {
-        when (val result = pressForAnswerUseCase(_question.value?.index ?: return@launch)) {
+        val questionIndex = _question.value?.index ?: return@launch
+        when (val result = pressForAnswerUseCase(questionIndex)) {
             is Resource.Success -> {
+                addNewChatCacheUseCase(
+                    result.data.run {
+                        PokeChat(
+                            index = index,
+                            pageNo = pageIndex,
+                            chatSender = "me",
+                            isRead = isRead,
+                            createAt = createAt,
+                            questionIndex = questionIndex
+                        )
+                    }
+                )
                 sendSnackbar(context.getString(R.string.answer_poke_partner_snack_bar))
             }
             is Resource.Error -> {

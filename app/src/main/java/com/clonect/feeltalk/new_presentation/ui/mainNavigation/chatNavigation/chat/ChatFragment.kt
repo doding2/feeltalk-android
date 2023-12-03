@@ -1,6 +1,7 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -54,10 +55,12 @@ import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationVie
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.contentsShare.ContentsShareFragment
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageDetail.ImageDetailActivity
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageShare.ImageShareFragment
+import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.toBytesInt
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
+import com.google.android.material.snackbar.Snackbar
 import com.skydoves.transformationlayout.TransformationCompat
 import com.skydoves.transformationlayout.TransformationLayout
 import dagger.hilt.android.AndroidEntryPoint
@@ -65,6 +68,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.withLock
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -343,7 +347,12 @@ class ChatFragment : Fragment() {
     private val dataObserver = object: RecyclerView.AdapterDataObserver() {
         override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
             super.onItemRangeInserted(positionStart, itemCount)
+
             val snapshot = adapter.snapshot()
+            if (positionStart == 0 && viewModel.isUserInBottom.value) {
+                scrollToBottom()
+                return
+            }
             if (positionStart == 0) return
             if (positionStart >= snapshot.size) return
             val item = adapter.snapshot()[positionStart] ?: return
@@ -367,7 +376,8 @@ class ChatFragment : Fragment() {
                 return
             }
 
-            val shouldScroll = (item.chatSender == "me" && item.sendState == Chat.ChatSendState.Sending) || (viewModel.isUserInBottom.value && item.chatSender == "partner")
+            val shouldScroll = (item.chatSender == "me" && item.sendState == Chat.ChatSendState.Sending)
+                    || (viewModel.isUserInBottom.value && item.chatSender == "partner")
             if (shouldScroll) {
                 if (item is ImageChat) {
                     // delay for loading image
@@ -414,10 +424,14 @@ class ChatFragment : Fragment() {
             setOnRetry(::onRetryChat)
             setOnCancel(::onCancelChat)
             registerAdapterDataObserver(dataObserver)
-            // TODO
             addLoadStateListener {
-                if (it.prepend is LoadState.Error) {
-                    retry()
+                if (it.prepend is LoadState.Error && !viewModel.chatPagingRetryLock.isLocked) {
+                    lifecycleScope.launch {
+                        viewModel.chatPagingRetryLock.withLock {
+                            delay(10000)
+                            retry()
+                        }
+                    }
                 }
             }
         }
@@ -440,7 +454,7 @@ class ChatFragment : Fragment() {
             is AddChallengeChat -> navigateToChallengeDetail(chat.challenge)
             is PokeChat -> navigateToAnswer(chat.questionIndex)
             is AnswerChat -> navigateToAnswer(chat.question)
-            is ResetPartnerPasswordChat -> viewModel.resetPartnerPassword()
+            is ResetPartnerPasswordChat -> viewModel.resetPartnerPassword(chat.index)
         }
     }
 
@@ -634,6 +648,7 @@ class ChatFragment : Fragment() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun changeVoiceRecordingTimeView(recordingTime: Long) = binding.run {
         val totalSeconds = recordingTime / 1000
         val minutes = totalSeconds / 60
@@ -708,9 +723,22 @@ class ChatFragment : Fragment() {
     }
 
 
+    private fun showSnackBar(message: String) {
+        val decorView = activity?.window?.decorView ?: return
+        TextSnackbar.make(
+            view = decorView,
+            message = message,
+            duration = Snackbar.LENGTH_SHORT,
+            onClick = {
+                it.dismiss()
+            }
+        ).show()
+    }
+
     private fun collectViewModel() {
         viewModelJob = lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
                 launch { viewModel.textChat.collectLatest(::prepareTextChat) }
                 launch { viewModel.expandChat.collectLatest(::changeChatMediaView) }
                 launch { viewModel.isVoiceSetupMode.collectLatest(::changeVoiceSetupView) }

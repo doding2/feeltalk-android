@@ -11,5 +11,8 @@ interface ChatRemoteDataSource {
     suspend fun getChatList(accessToken: String, pageNo: Long): ChatListDto
     suspend fun sendTextChat(accessToken: String, message: String): SendTextChatDto
     suspend fun sendVoiceChat(accessToken: String, voiceFile: File): SendVoiceChatDto
+    suspend fun sendImageChat(accessToken: String, imageFile: File): SendImageChatResponse
+    suspend fun sendResetPartnerPasswordChat(accessToken: String): SendResetPartnerPasswordChatResponse
 
+    suspend fun preloadImage(index: Long, url: String): Triple<File?, Int, Int>
 }

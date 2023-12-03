@@ -28,12 +28,15 @@ import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
 import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.model.signal.Signal
+import com.clonect.feeltalk.new_domain.usecase.account.UnlockPartnerPasswordUseCase
 import com.clonect.feeltalk.new_domain.usecase.challenge.GetChallengeUseCase
+import com.clonect.feeltalk.new_domain.usecase.challenge.ShareChallengeUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.AddNewChatCacheUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.ChangeMyChatRoomStateUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetNewChatFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPagingChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPartnerChatRoomStateFlowUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.SendImageChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.SendTextChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.SendVoiceChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoFlowUseCase
@@ -48,14 +51,16 @@ import com.clonect.feeltalk.new_presentation.ui.util.toBitmap
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.text.SimpleDateFormat
@@ -72,7 +77,9 @@ class ChatViewModel @Inject constructor(
     private val changeMyChatRoomStateUseCase: ChangeMyChatRoomStateUseCase,
     private val sendTextChatUseCase: SendTextChatUseCase,
     private val sendVoiceChatUseCase: SendVoiceChatUseCase,
+    private val sendImageChatUseCase: SendImageChatUseCase,
     private val shareQuestionUseCase: ShareQuestionUseCase,
+    private val shareChallengeUseCase: ShareChallengeUseCase,
     private val getQuestionUseCase: GetQuestionUseCase,
     private val getChallengeUseCase: GetChallengeUseCase,
     private val getPartnerInfoFlowUseCase: GetPartnerInfoFlowUseCase,
@@ -80,7 +87,10 @@ class ChatViewModel @Inject constructor(
     private val addNewChatCacheUseCase: AddNewChatCacheUseCase,
     private val getNewChatFlowUseCase: GetNewChatFlowUseCase,
     private val getPartnerSignalFlowUseCase: GetPartnerSignalFlowUseCase,
+    private val unlockPartnerPasswordUseCase: UnlockPartnerPasswordUseCase,
 ) : ViewModel() {
+
+    val chatPagingRetryLock = Mutex()
 
     private val _partnerInfo = MutableStateFlow<PartnerInfo?>(null)
     val partnerInfo = _partnerInfo.asStateFlow()
@@ -103,12 +113,22 @@ class ChatViewModel @Inject constructor(
     private val _isKeyboardUp = MutableStateFlow(false)
     val isKeyboardUp = _isKeyboardUp.asStateFlow()
 
+
+    private val _errorMessage = MutableSharedFlow<String>()
+    val errorMessage = _errorMessage.asSharedFlow()
+
+
     init {
         getPartnerInfo()
         getPartnerSignal()
         collectNewChat()
         collectPartnerChatRoomState()
     }
+
+    fun sendErrorMessage(message: String) = viewModelScope.launch {
+        _errorMessage.emit(message)
+    }
+
 
     fun setKeyboardUp(isUp: Boolean) {
         _isKeyboardUp.value = isUp
@@ -132,8 +152,16 @@ class ChatViewModel @Inject constructor(
     }
 
 
-    fun resetPartnerPassword() = viewModelScope.launch {
-        TODO("Api is not implemented")
+    fun resetPartnerPassword(index: Long) = viewModelScope.launch {
+        unlockPartnerPasswordUseCase(index)
+            .onSuccess {
+                if (it.isExpired) {
+                    sendErrorMessage("이미 사용되었습니다.")
+                } else {
+                    sendErrorMessage("연인의 잠금이 해제되었습니다.")
+                }
+            }
+            .onError { infoLog("Fail to unlock partner password: ${it.localizedMessage}") }
     }
 
     fun getPartnerInfo() = viewModelScope.launch {
@@ -170,6 +198,7 @@ class ChatViewModel @Inject constructor(
             is Resource.Success -> {
                 result.data
             }
+
             is Resource.Error -> {
                 infoLog("Fail to get challenge: ${result.throwable.localizedMessage}")
                 null
@@ -199,22 +228,29 @@ class ChatViewModel @Inject constructor(
     // NOTE Pagination
     private val pageModificationEvents = MutableStateFlow<List<PageEvents<Chat>>>(emptyList())
 
-    private fun applyPageModification(paging: PagingData<Chat>, event: PageEvents<Chat>): PagingData<Chat> {
+    private fun applyPageModification(
+        paging: PagingData<Chat>,
+        event: PageEvents<Chat>,
+    ): PagingData<Chat> {
         return when (event) {
             is PageEvents.Edit -> {
                 paging.map {
-                    return@map if (it.index == event.item.index)
+                    return@map if (it.index == event.item.index) {
                         event.item
-                    else
+                    } else {
                         it
+                    }
                 }
             }
+
             is PageEvents.Remove -> {
                 paging.filter { it.index != event.item.index }
             }
+
             is PageEvents.InsertItemFooter -> {
                 paging.insertFooterItem(item = event.item)
             }
+
             is PageEvents.InsertItemHeader -> {
                 paging.insertHeaderItem(item = event.item)
             }
@@ -233,7 +269,8 @@ class ChatViewModel @Inject constructor(
         val event = PageEvents.InsertItemFooter(chat)
         if (event in pageModificationEvents.value) return
 
-        val firstSendingChatIndex = pageModificationEvents.value.indexOfFirst { it.item.sendState != Chat.ChatSendState.Completed }
+        val firstSendingChatIndex =
+            pageModificationEvents.value.indexOfFirst { it.item.sendState != Chat.ChatSendState.Completed }
         if (firstSendingChatIndex != -1) {
             pageModificationEvents.value = pageModificationEvents.value.toMutableList().apply {
                 add(firstSendingChatIndex, event)
@@ -290,58 +327,61 @@ class ChatViewModel @Inject constructor(
             is Resource.Success -> {
                 _isUserInChat.value = isInChat
             }
+
             is Resource.Error -> {
                 infoLog("채팅 입장 상태 변경 실패: ${result.throwable.stackTrace.joinToString("\n")}")
             }
         }
     }
 
-    fun sendTextChat(retryChat: TextChat? = null, onStart: () -> Unit = {}) = viewModelScope.launch {
-        var message = retryChat?.message
-        if (message == null) {
-            message = _textChat.value
-            _textChat.value = ""
-        }
-        if (message.isEmpty()) return@launch
-        onStart()
+    fun sendTextChat(retryChat: TextChat? = null, onStart: () -> Unit = {}) =
+        viewModelScope.launch {
+            var message = retryChat?.message
+            if (message == null) {
+                message = _textChat.value
+                _textChat.value = ""
+            }
+            if (message.isEmpty()) return@launch
+            onStart()
 
-        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-        val now = Date()
+            val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+            val now = Date()
 
-        val loadingTextChat = TextChat(
-            index = now.time,
-            pageNo = 0,
-            chatSender = "me",
-            isRead = true,
-            createAt = format.format(now),
-            sendState = Chat.ChatSendState.Sending,
-            message = message
-        )
-        insertLoadingChat(loadingTextChat)
+            val loadingTextChat = TextChat(
+                index = now.time,
+                pageNo = 0,
+                chatSender = "me",
+                isRead = true,
+                createAt = format.format(now),
+                sendState = Chat.ChatSendState.Sending,
+                message = message
+            )
+            insertLoadingChat(loadingTextChat)
 
-        when (val result = sendTextChatUseCase(message)) {
-            is Resource.Success -> {
-                val textChat = result.data.run {
-                    TextChat(
-                        index = index,
-                        pageNo = pageIndex,
-                        chatSender = "me",
-                        isRead = isRead,
-                        createAt = createAt,
-                        sendState = Chat.ChatSendState.Completed,
-                        message = message
-                    )
+            when (val result = sendTextChatUseCase(message)) {
+                is Resource.Success -> {
+                    val textChat = result.data.run {
+                        TextChat(
+                            index = index,
+                            pageNo = pageIndex,
+                            chatSender = "me",
+                            isRead = isRead,
+                            createAt = createAt,
+                            sendState = Chat.ChatSendState.Completed,
+                            message = message
+                        )
+                    }
+
+                    removeLoadingChat(loadingTextChat)
+                    addNewChatCacheUseCase(textChat)
                 }
 
-                removeLoadingChat(loadingTextChat)
-                addNewChatCacheUseCase(textChat)
-            }
-            is Resource.Error -> {
-                infoLog("텍스트 채팅 전송 실패: ${result.throwable.stackTrace.joinToString("\n")}")
-                editLoadingChat(loadingTextChat.copy(sendState = Chat.ChatSendState.Failed))
+                is Resource.Error -> {
+                    infoLog("텍스트 채팅 전송 실패: ${result.throwable.stackTrace.joinToString("\n")}")
+                    editLoadingChat(loadingTextChat.copy(sendState = Chat.ChatSendState.Failed))
+                }
             }
         }
-    }
 
     // NOTE Question Chat
 
@@ -382,6 +422,7 @@ class ChatViewModel @Inject constructor(
                 removeLoadingChat(loadingQuestionChat)
                 addNewChatCacheUseCase(questionChat)
             }
+
             is Resource.Error -> {
                 infoLog("Fail to send question chat: ${result.throwable.stackTrace.joinToString("\n")}")
                 editLoadingChat(loadingQuestionChat.copy(sendState = Chat.ChatSendState.Failed))
@@ -408,33 +449,43 @@ class ChatViewModel @Inject constructor(
         )
         insertLoadingChat(loadingChallengeChat)
 
-        // after send chat
+        shareChallengeUseCase(challenge.index)
+            .onSuccess {
+                val challengeChat = ChallengeChat(
+                    index = it.index,
+                    pageNo = 0,
+                    chatSender = "me",
+                    isRead = it.isRead,
+                    createAt = it.createAt,
+                    sendState = Chat.ChatSendState.Completed,
+                    challenge = challenge.copy(
+                        index = it.coupleChallenge.index,
+                        title = it.coupleChallenge.challengeTitle,
+                        body = it.coupleChallenge.challengeBody,
+                        deadline = format.parse(it.coupleChallenge.deadline) ?: challenge.deadline,
+                        owner = it.coupleChallenge.creator
+                    )
+                )
 
-        launch {
-            delay(1000)
-
-//            val next = Date()
-//
-//            val challengeChat = ChallengeChat(
-//                index = next.time,
-//                pageNo = 0,
-//                chatSender = "me",
-//                isRead = true,
-//                createAt = format.format(next),
-//                sendState = Chat.ChatSendState.Completed,
-//                challenge = challenge
-//            )
-//
-//            removeLoadingChat(loadingChallengeChat)
-
-            editLoadingChat(loadingChallengeChat.copy(sendState = Chat.ChatSendState.Failed))
-        }
+                removeLoadingChat(loadingChallengeChat)
+                addNewChatCacheUseCase(challengeChat)
+            }
+            .onError {
+                infoLog("Fail to send question chat: ${it.localizedMessage}")
+                editLoadingChat(loadingChallengeChat.copy(sendState = Chat.ChatSendState.Failed))
+            }
     }
 
 
     // NOTE Image Chat
 
-    fun sendImageChat(context: Context, uri: Uri? = null, width: Int = -1, height: Int = -1, retryChat: ImageChat? = null) = viewModelScope.launch {
+    fun sendImageChat(
+        context: Context,
+        uri: Uri? = null,
+        width: Int = -1,
+        height: Int = -1,
+        retryChat: ImageChat? = null,
+    ) = viewModelScope.launch {
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         val now = Date()
 
@@ -468,46 +519,46 @@ class ChatViewModel @Inject constructor(
         )
         insertLoadingChat(loadingImageChat)
 
-        // after send chat
+        val cacheImageFile = File(context.cacheDir, "cacheImageFile.png")
+        withContext(Dispatchers.IO) {
+            val bitmap = imageUri.toBitmap(context)
+            cacheImageFile.outputStream().use {
+                bitmap?.compress(Bitmap.CompressFormat.PNG, 100, it)
+                it.flush()
+            }
+        }
 
-        launch {
-
-            delay(1000)
-
-            // 성공했을 때
-            val next = Date()
-
-            val imageFile = File(context.cacheDir, "${next.time}.png")
-            val saveImageJob = async(Dispatchers.IO) {
-                val bitmap = imageUri.toBitmap(context)
-                imageFile.outputStream().use {
-                    bitmap?.compress(Bitmap.CompressFormat.PNG, 100, it)
-                    it.flush()
+        sendImageChatUseCase(cacheImageFile)
+            .onSuccess {
+                val imageFile = File(context.cacheDir, "${it.index}.png")
+                withContext(Dispatchers.IO) {
+                    cacheImageFile.copyTo(
+                        target = imageFile,
+                        overwrite = true
+                    )
+                    cacheImageFile.delete()
                 }
+
+                val imageChat = ImageChat(
+                    index = it.index,
+                    pageNo = it.pageIndex,
+                    chatSender = "me",
+                    isRead = it.isRead,
+                    createAt = it.createAt,
+                    file = imageFile,
+                    uri = imageUri,
+                    width = mWidth,
+                    height = mHeight
+                )
+
+                removeLoadingChat(loadingImageChat)
+                addNewChatCacheUseCase(imageChat)
+            }
+            .onError {
+                infoLog("Fail to send image chat: ${it.localizedMessage}")
+                editLoadingChat(loadingImageChat.copy(sendState = Chat.ChatSendState.Failed))
             }
 
-
-            saveImageJob.await()
-
-            val imageChat = ImageChat(
-                index = next.time,
-                pageNo = 0,
-                chatSender = "me",
-                isRead = true,
-                createAt = format.format(next),
-                sendState = Chat.ChatSendState.Completed,
-                url = "server file url",
-                file = imageFile,
-                width = mWidth,
-                height = mHeight,
-            )
-
-            removeLoadingChat(loadingImageChat)
-            addNewChatCacheUseCase(imageChat)
-
-            // 실패했을 때
-//            editLoadingChat(loadingImageChat.copy(sendState = Chat.ChatSendState.Failed))
-        }
     }
 
 
@@ -548,68 +599,69 @@ class ChatViewModel @Inject constructor(
     val isVoiceRecordingReplayCompleted = _isVoiceRecordingReplayCompleted.asStateFlow()
 
 
-    fun sendVoiceChat(context: Context, retryChat: VoiceChat? = null, onSend: () -> Unit = {}) = viewModelScope.launch {
-        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-        val now = Date()
+    fun sendVoiceChat(context: Context, retryChat: VoiceChat? = null, onSend: () -> Unit = {}) =
+        viewModelScope.launch {
+            val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+            val now = Date()
 
-        val voiceFile = if (retryChat == null) {
-            val voiceCacheFile = File(context.cacheDir, Constants.VOICE_CACHE_FILE_NAME)
-            if (!voiceCacheFile.exists() || !voiceCacheFile.canRead()) {
-                infoLog("보이스 캐시 파일을 읽을 수 없습니다.")
-                onSend()
-                return@launch
+            val voiceFile = if (retryChat == null) {
+                val voiceCacheFile = File(context.cacheDir, Constants.VOICE_CACHE_FILE_NAME)
+                if (!voiceCacheFile.exists() || !voiceCacheFile.canRead()) {
+                    infoLog("보이스 캐시 파일을 읽을 수 없습니다.")
+                    onSend()
+                    return@launch
+                }
+                voiceCacheFile.copyTo(
+                    target = File(context.cacheDir, "${now.time}.wav"),
+                    overwrite = true
+                )
+            } else {
+                File(context.cacheDir, "${retryChat.index}.wav")
             }
-            voiceCacheFile.copyTo(
-                target = File(context.cacheDir, "${now.time}.wav"),
-                overwrite = true
+
+            val loadingVoiceChat = VoiceChat(
+                index = retryChat?.index ?: now.time,
+                pageNo = 0,
+                chatSender = "me",
+                isRead = true,
+                createAt = format.format(Date()),
+                sendState = Chat.ChatSendState.Sending,
+                url = "index",
             )
-        } else {
-            File(context.cacheDir, "${retryChat.index}.wav")
-        }
+            insertLoadingChat(loadingVoiceChat)
+            onSend()
 
-        val loadingVoiceChat = VoiceChat(
-            index = retryChat?.index ?: now.time,
-            pageNo = 0,
-            chatSender = "me",
-            isRead = true,
-            createAt = format.format(Date()),
-            sendState = Chat.ChatSendState.Sending,
-            url = "index",
-        )
-        insertLoadingChat(loadingVoiceChat)
-        onSend()
+            when (val result = sendVoiceChatUseCase(voiceFile)) {
+                is Resource.Success -> {
+                    val voiceChat = result.data.run {
+                        withContext(Dispatchers.IO) {
+                            voiceFile.copyTo(
+                                target = File(context.cacheDir, "${index}.wav"),
+                                overwrite = true
+                            )
+                            voiceFile.delete()
+                        }
 
-        when (val result = sendVoiceChatUseCase(voiceFile)) {
-            is Resource.Success -> {
-                val voiceChat = result.data.run {
-                    withContext(Dispatchers.IO) {
-                        voiceFile.copyTo(
-                            target = File(context.cacheDir, "${index}.wav"),
-                            overwrite = true
+                        VoiceChat(
+                            index = index,
+                            pageNo = pageIndex,
+                            chatSender = "me",
+                            isRead = isRead,
+                            createAt = createAt,
+                            sendState = Chat.ChatSendState.Completed,
+                            url = "index"
                         )
-                        voiceFile.delete()
                     }
 
-                    VoiceChat(
-                        index = index,
-                        pageNo = pageIndex,
-                        chatSender = "me",
-                        isRead = isRead,
-                        createAt = createAt,
-                        sendState = Chat.ChatSendState.Completed,
-                        url = "index"
-                    )
+                    removeLoadingChat(loadingVoiceChat)
+                    addNewChatCacheUseCase(voiceChat)
                 }
-
-                removeLoadingChat(loadingVoiceChat)
-                addNewChatCacheUseCase(voiceChat)
-            }
-            is Resource.Error -> {
-                infoLog("보이스 채팅 전송 실패: ${result.throwable.stackTrace.joinToString("\n")}")
-                editLoadingChat(loadingVoiceChat.copy(sendState = Chat.ChatSendState.Failed))
+                is Resource.Error -> {
+                    infoLog("보이스 채팅 전송 실패: ${result.throwable.stackTrace.joinToString("\n")}")
+                    editLoadingChat(loadingVoiceChat.copy(sendState = Chat.ChatSendState.Failed))
+                }
             }
         }
-    }
 
 
     fun setVoiceSetupMode(isSetup: Boolean) {
@@ -626,7 +678,7 @@ class ChatViewModel @Inject constructor(
         // 녹음 시간 기록하기
         _voiceRecordTime.value = 0
         recordTimer = Timer()
-        recordTimer?.schedule(object: TimerTask() {
+        recordTimer?.schedule(object : TimerTask() {
             override fun run() {
                 _voiceRecordTime.value += 1000
             }
@@ -660,7 +712,7 @@ class ChatViewModel @Inject constructor(
 
         _voiceRecordTime.value = 0
         recordTimer = Timer()
-        recordTimer?.schedule(object: TimerTask() {
+        recordTimer?.schedule(object : TimerTask() {
             override fun run() {
                 if (voiceReplayer?.isReplaying == true) {
                     _voiceRecordTime.value += 100
@@ -694,9 +746,6 @@ class ChatViewModel @Inject constructor(
         _isVoiceRecordingReplayPaused.value = false
         voiceReplayer?.resume()
     }
-
-
-
 
 
 }

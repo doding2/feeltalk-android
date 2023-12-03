@@ -232,6 +232,12 @@ class UseCaseModule {
         return GetCoupleCreatedFlowUseCase(accountRepository)
     }
 
+    @Singleton
+    @Provides
+    fun providesUnlockPartnerPasswordUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): UnlockPartnerPasswordUseCase {
+        return UnlockPartnerPasswordUseCase(tokenRepository, accountRepository)
+    }
+
 
 
     /** Partner **/
@@ -323,6 +329,18 @@ class UseCaseModule {
 
     @Singleton
     @Provides
+    fun providesSendImageChatUseCase(tokenRepository: TokenRepository, chatRepository: ChatRepository): SendImageChatUseCase {
+        return SendImageChatUseCase(tokenRepository, chatRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesSendResetPartnerPasswordChatUseCase(tokenRepository: TokenRepository, chatRepository: ChatRepository): SendResetPartnerPasswordChatUseCase {
+        return SendResetPartnerPasswordChatUseCase(tokenRepository, chatRepository)
+    }
+
+    @Singleton
+    @Provides
     fun providesAddNewChatCacheUseCase(chatRepository: ChatRepository): AddNewChatCacheUseCase {
         return AddNewChatCacheUseCase(chatRepository)
     }
@@ -343,6 +361,12 @@ class UseCaseModule {
     @Provides
     fun providesGetPartnerChatRoomStateFlowUseCase(chatRepository: ChatRepository): GetPartnerChatRoomStateFlowUseCase {
         return GetPartnerChatRoomStateFlowUseCase(chatRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesPreloadImageUseCase(chatRepository: ChatRepository): PreloadImageUseCase {
+        return PreloadImageUseCase(chatRepository)
     }
 
 
@@ -517,6 +541,12 @@ class UseCaseModule {
     @Provides
     fun providesGetChallengeUpdatedFlowUseCase(challengeRepository: ChallengeRepository): GetChallengeUpdatedFlowUseCase {
         return GetChallengeUpdatedFlowUseCase(challengeRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesShareChallengeUseCase(tokenRepository: TokenRepository, challengeRepository: ChallengeRepository): ShareChallengeUseCase {
+        return ShareChallengeUseCase(tokenRepository, challengeRepository)
     }
 
 

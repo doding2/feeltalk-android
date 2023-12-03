@@ -82,8 +82,11 @@ class TokenRepositoryImpl(
             val newTokenInfo = TokenInfo(
                 accessToken = renewResult.accessToken,
                 refreshToken = renewResult.refreshToken,
-                expiresAt = formatter.parse(renewResult.expiredTime.substringBeforeLast('.'))
-                    ?: throw IllegalStateException("Token expired time is invalid"),
+                expiresAt = formatter.parse(renewResult.expiredTime)
+                    ?: run {
+                        infoLog("Fail to renew token: parsing date format error")
+                        throw IllegalStateException("Token expired time is invalid")
+                    },
                 snsType = tokenInfo.snsType
             )
             cacheDataSource.saveTokenInfo(newTokenInfo)

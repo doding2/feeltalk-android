@@ -89,7 +89,7 @@ class SignUpFragment : Fragment() {
         )
         requireParentFragment()
             .findNavController()
-            .navigate(R.id.action_signUpFragment_to_animatedSignUpFragment, bundle)
+            .navigate(R.id.action_signUpFragment_to_signUpNavigationFragment, bundle)
     }.onFailure {
         it.printStackTrace()
         infoLog("navigate couple code error: ${it.localizedMessage}")

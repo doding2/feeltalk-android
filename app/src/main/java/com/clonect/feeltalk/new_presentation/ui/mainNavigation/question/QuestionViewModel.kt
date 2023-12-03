@@ -10,7 +10,9 @@ import androidx.paging.insertHeaderItem
 import androidx.paging.map
 import com.clonect.feeltalk.common.PageEvents
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.new_domain.model.chat.PokeChat
 import com.clonect.feeltalk.new_domain.model.question.Question
+import com.clonect.feeltalk.new_domain.usecase.chat.AddNewChatCacheUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetAnswerQuestionFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetPagingQuestionUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetTodayQuestionFlowUseCase
@@ -31,6 +33,7 @@ class QuestionViewModel @Inject constructor(
     private val pressForAnswerUseCase: PressForAnswerUseCase,
     private val getAnswerQuestionFlowUseCase: GetAnswerQuestionFlowUseCase,
     private val getTodayQuestionFlowUseCase: GetTodayQuestionFlowUseCase,
+    private val addNewChatCacheUseCase: AddNewChatCacheUseCase,
 ) : ViewModel() {
 
     private val isInQuestionTop = MutableStateFlow(true)
@@ -46,6 +49,18 @@ class QuestionViewModel @Inject constructor(
     fun pressForAnswer(index: Long, onComplete: () -> Unit) = viewModelScope.launch(Dispatchers.IO) {
         when (val result = pressForAnswerUseCase(index)) {
             is Resource.Success -> {
+                addNewChatCacheUseCase(
+                    result.data.run {
+                        PokeChat(
+                            index = this.index,
+                            pageNo = pageIndex,
+                            chatSender = "me",
+                            isRead = isRead,
+                            createAt = createAt,
+                            questionIndex = index
+                        )
+                    }
+                )
                 onComplete()
             }
             is Resource.Error -> {

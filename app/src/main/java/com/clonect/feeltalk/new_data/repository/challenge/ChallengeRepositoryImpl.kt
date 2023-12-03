@@ -11,15 +11,15 @@ import com.clonect.feeltalk.new_data.repository.challenge.dataSource.ChallengeLo
 import com.clonect.feeltalk.new_data.repository.challenge.dataSource.ChallengeRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.challenge.paging.CompletedChallengePagingSource
 import com.clonect.feeltalk.new_data.repository.challenge.paging.OngoingChallengePagingSource
-import com.clonect.feeltalk.new_domain.model.challenge.AddChallengeDto
+import com.clonect.feeltalk.new_domain.model.challenge.ChallengeChatResponse
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.challenge.ChallengeCountDto
 import com.clonect.feeltalk.new_domain.model.challenge.ChallengeListDto
 import com.clonect.feeltalk.new_domain.model.challenge.LastChallengePageNoDto
+import com.clonect.feeltalk.new_domain.model.challenge.ShareChallengeChatResponse
 import com.clonect.feeltalk.new_domain.repository.challenge.ChallengeRepository
 import kotlinx.coroutines.flow.Flow
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -107,7 +107,7 @@ class ChallengeRepositoryImpl(
         title: String,
         deadline: String,
         content: String,
-    ): Resource<AddChallengeDto> {
+    ): Resource<ChallengeChatResponse> {
         return try {
             val result = remoteDataSource.addChallenge(accessToken, title, deadline, content)
             val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -171,7 +171,7 @@ class ChallengeRepositoryImpl(
         }
     }
 
-    override suspend fun completeChallenge(accessToken: String, challenge: Challenge): Resource<Unit> {
+    override suspend fun completeChallenge(accessToken: String, challenge: Challenge): Resource<ChallengeChatResponse> {
         return try {
             val result = remoteDataSource.completeChallenge(accessToken, challenge.index)
             cacheDataSource.deleteChallenge(challenge)
@@ -249,5 +249,19 @@ class ChallengeRepositoryImpl(
         val local = localDataSource.getChallengeUpdated()
         cacheDataSource.setChallengeUpdated(local)
         return cacheDataSource.getChallengeUpdatedFlow()
+    }
+
+    override suspend fun shareChallenge(
+        accessToken: String,
+        index: Long,
+    ): Resource<ShareChallengeChatResponse> {
+        return try {
+            val result = remoteDataSource.shareChallenge(accessToken, index)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
     }
 }
