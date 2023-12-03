@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -195,7 +196,11 @@ class SignUpNavigationFragment : Fragment() {
         onBackCallback = object: OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (navController.popBackStack()) return
-                findNavController().navigate(R.id.action_signUpFragment_pop_back)
+                val startPage = arguments?.getString("startPage", "coupleCode") ?: "coupleCode"
+                findNavController().navigate(
+                    R.id.action_signUpFragment_pop_back,
+                    bundleOf("startPage" to startPage)
+                )
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, onBackCallback)

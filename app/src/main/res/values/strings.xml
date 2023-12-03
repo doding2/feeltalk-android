@@ -95,6 +95,8 @@
     <string name="sign_up_person_info_invalid_dialog_title">개인정보가 올바르지 않아요</string>
     <string name="sign_up_person_info_invalid_dialog_body">입력하신 정보를 다시 확인해주세요.</string>
     <string name="sign_up_auth_done_button">인증완료</string>
+    <string name="sign_up_auth_pop_back_dialog_title">정말 뒤로 가시겠어요?</string>
+    <string name="sign_up_auth_pop_back_dialog_body">작성된 내용이 존재합니다.</string>
 
     <!--  MobileCarrier  -->
     <string name="mobile_carrier_title">통신사를 선택해주세요.</string>

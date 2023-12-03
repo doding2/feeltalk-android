@@ -98,15 +98,15 @@ class MainActivity : AppCompatActivity() {
             else if (!isUser.value)
                 R.id.signUpFragment
             else if (!isUserCouple.value)
-                R.id.signUpNavigationFragment
+                R.id.animatedSignUpFragment
             else if (isAccountLocked.value)
                 R.id.passwordFragment
             else
                 R.id.mainNavigationFragment
         }
 
-        navGraph.setStartDestination(R.id.animatedSignUpFragment)
-//        navGraph.setStartDestination(startDestination)
+//        navGraph.setStartDestination(R.id.animatedSignUpFragment)
+        navGraph.setStartDestination(startDestination)
         navController.graph = navGraph
     }
 

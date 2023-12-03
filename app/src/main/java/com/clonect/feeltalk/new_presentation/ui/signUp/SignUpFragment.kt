@@ -77,7 +77,7 @@ class SignUpFragment : Fragment() {
         )
         requireParentFragment()
             .findNavController()
-            .navigate(R.id.action_signUpFragment_to_signUpNavigationFragment, bundle)
+            .navigate(R.id.action_signUpFragment_to_animatedSignUpFragment, bundle)
     }.onFailure {
         it.printStackTrace()
         infoLog("navigate agreement error: ${it.localizedMessage}")
@@ -89,7 +89,7 @@ class SignUpFragment : Fragment() {
         )
         requireParentFragment()
             .findNavController()
-            .navigate(R.id.action_signUpFragment_to_signUpNavigationFragment, bundle)
+            .navigate(R.id.action_signUpFragment_to_animatedSignUpFragment, bundle)
     }.onFailure {
         it.printStackTrace()
         infoLog("navigate couple code error: ${it.localizedMessage}")

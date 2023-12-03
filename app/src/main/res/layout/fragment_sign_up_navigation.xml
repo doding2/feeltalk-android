@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?selectableItemBackgroundBorderless"
-            android:src="@drawable/n_ic_exit"
+            android:src="@drawable/n_ic_back"
             android:visibility="visible"
             android:padding="12dp"
             android:layout_marginHorizontal="8dp"

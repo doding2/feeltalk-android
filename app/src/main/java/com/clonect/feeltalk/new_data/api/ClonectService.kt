@@ -317,6 +317,7 @@ interface ClonectService {
 
 
 
+
     /** Partner **/
     @GET("/api/v1/member/partner")
     suspend fun getPartnerInfo(

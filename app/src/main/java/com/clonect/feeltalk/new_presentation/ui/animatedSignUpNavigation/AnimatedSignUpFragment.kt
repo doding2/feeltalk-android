@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.widget.ConstraintSet.Motion
+import androidx.core.os.bundleOf
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -32,6 +33,7 @@ import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.makeLoadingDialog
+import com.clonect.feeltalk.new_presentation.ui.util.showConfirmDialog
 import com.clonect.feeltalk.new_presentation.ui.util.showOneButtonDialog
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.material.snackbar.Snackbar
@@ -61,6 +63,8 @@ class AnimatedSignUpFragment : Fragment() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
         }
+        val startPage = arguments?.getString("startPage", "coupleCode") ?: "coupleCode"
+        viewModel.setStartPage(startPage)
         setFocusListener()
         setKeyboardInsets()
         loadingDialog = makeLoadingDialog()
@@ -73,6 +77,8 @@ class AnimatedSignUpFragment : Fragment() {
         collectViewModel()
 
         binding.run {
+            ivExit.setOnClickListener { onBackCallback.handleOnBackPressed() }
+
             mcvStartButton.setOnClickListener { navigateFocus() }
 
             etName.addTextChangedListener { viewModel.setName(it?.toString() ?: "") }
@@ -90,12 +96,25 @@ class AnimatedSignUpFragment : Fragment() {
             mcvAgreement.setOnClickListener { clickAgreementButton() }
             ivAgreementDetail.setOnClickListener { setStateWithProgressed(AnimatedSignUpState.Agreement) }
 
+            etAuthCode.addTextChangedListener { viewModel.setAuthCode(it?.toString() ?: "") }
             mcvAuthCodeButton.setOnClickListener { requestAuthCode() }
 
             tvNext.setOnClickListener { navigateFocus() }
 
-            mcvDoneButton.setOnClickListener { viewModel.matchAuthCode() }
+            mcvDoneButton.setOnClickListener {
+//                viewModel.matchAuthCode()
+                navigateToSignUpNavigation()
+            }
         }
+    }
+
+    private fun navigateToSignUpNavigation() {
+        requireParentFragment()
+            .findNavController()
+            .navigate(
+                R.id.action_animatedSignUpFragment_to_signUpNavigationFragment,
+                bundleOf("startPage" to viewModel.startPage.value)
+            )
     }
 
 
@@ -574,7 +593,17 @@ class AnimatedSignUpFragment : Fragment() {
         super.onAttach(context)
         onBackCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                findNavController().popBackStack()
+                if (viewModel.isEdited()) {
+                    showConfirmDialog(
+                        title = requireContext().getString(R.string.sign_up_auth_pop_back_dialog_title),
+                        body = requireContext().getString(R.string.sign_up_auth_pop_back_dialog_body),
+                        onConfirm = {
+                            findNavController().popBackStack()
+                        }
+                    )
+                    return
+                }
+                findNavController().navigate(R.id.action_animatedSignUpFragment_pop_back)
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, onBackCallback)

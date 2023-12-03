@@ -89,7 +89,7 @@ suspend fun ChatListDto.toChatList(
                     continue
                 } else {
                     val challenge = loadChallenge(chatDto.coupleChallenge.index)
-                    val format = SimpleDateFormat("", Locale.getDefault())
+                    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
                     ChallengeChat(
                         index = chatDto.index,
                         pageNo = page,

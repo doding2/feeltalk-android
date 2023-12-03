@@ -19,12 +19,16 @@ class AnimatedSignUpViewModel @Inject constructor(
 
 ) : ViewModel() {
 
+    private val _startPage: MutableStateFlow<String> = MutableStateFlow("coupleCode")
+    val startPage = _startPage.asStateFlow()
+
+
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage = _errorMessage.asSharedFlow()
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
-    
+
 
     private val _name: MutableStateFlow<String> = MutableStateFlow("")
     val name = _name.asStateFlow()
@@ -62,6 +66,7 @@ class AnimatedSignUpViewModel @Inject constructor(
         override fun onFinish() {
             setAuthCodeRemainingTime(0)
             setAuthCodeState(authCodeState.value.copy(isTimeOut = true))
+            setDoneEnabled(false)
         }
     }
     private val _authCodeRemainingTime: MutableStateFlow<Long> = MutableStateFlow(3000)  // 1000 * 60 * 3
@@ -79,6 +84,11 @@ class AnimatedSignUpViewModel @Inject constructor(
     init {
 
     }
+
+    fun setStartPage(startPage: String) {
+        _startPage.value = startPage
+    }
+
 
     fun sendErrorMessage(message: String) = viewModelScope.launch {
         _errorMessage.emit(message)
@@ -143,13 +153,21 @@ class AnimatedSignUpViewModel @Inject constructor(
     }
 
 
+    fun isEdited(): Boolean {
+        return name.value.isNotEmpty()
+                || birth.value.isNotEmpty()
+                || gender.value.isNotEmpty()
+                || phoneNumber.value.isNotEmpty()
+    }
+
+
     fun requestAuthCode() = viewModelScope.launch {
-//        if (!isAgreementAccepted.value) {
-//            setAuthCodeState(authCodeState.value.copy(isAgreementDisagreed = true))
-//            return@launch
-//        }
-//
-//        // TODO 일단 개인정보 검증은 api 안 쓰고 이렇게 간소화
+        if (!isAgreementAccepted.value) {
+            setAuthCodeState(authCodeState.value.copy(isAgreementDisagreed = true))
+            return@launch
+        }
+
+        // TODO 일단 개인정보 검증은 api 안 쓰고 이렇게 간소화
 //        val isPersonInfoInvalid = name.value.isBlank()
 //                || birth.value.isBlank() || birth.value.length < 6
 //                || gender.value.isBlank()

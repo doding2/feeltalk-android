@@ -11,8 +11,8 @@
         android:label="fragment_sign_up"
         tools:layout="@layout/fragment_sign_up" >
         <action
-            android:id="@+id/action_signUpFragment_to_signUpNavigationFragment"
-            app:destination="@id/signUpNavigationFragment" />
+            android:id="@+id/action_signUpFragment_to_animatedSignUpFragment"
+            app:destination="@id/animatedSignUpFragment" />
         <action
             android:id="@+id/action_signUpFragment_to_mainNavigationFragment"
             app:destination="@id/mainNavigationFragment"
@@ -31,8 +31,8 @@
         tools:layout="@layout/fragment_sign_up_navigation" >
         <action
             android:id="@+id/action_signUpFragment_pop_back"
-            app:destination="@id/signUpFragment"
-            app:popUpTo="@id/signUpFragment"
+            app:destination="@id/animatedSignUpFragment"
+            app:popUpTo="@id/animatedSignUpFragment"
             app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_signUpNavigationFragment_to_mainNavigationFragment"
@@ -289,5 +289,14 @@
         android:id="@+id/animatedSignUpFragment"
         android:name="com.clonect.feeltalk.new_presentation.ui.animatedSignUpNavigation.AnimatedSignUpFragment"
         android:label="fragment_animated_sign_up"
-        tools:layout="@layout/fragment_animated_sign_up" />
+        tools:layout="@layout/fragment_animated_sign_up" >
+        <action
+            android:id="@+id/action_animatedSignUpFragment_pop_back"
+            app:destination="@id/signUpFragment"
+            app:popUpTo="@id/signUpFragment"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_animatedSignUpFragment_to_signUpNavigationFragment"
+            app:destination="@id/signUpNavigationFragment" />
+    </fragment>
 </navigation>
