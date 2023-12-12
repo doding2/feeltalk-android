@@ -28,7 +28,7 @@
     <!--  Splash Screen for Under Android 12 Version  -->
     <style name="Theme.Feeltalk" parent="Theme.SplashScreen.Common">
         <item name="windowSplashScreenBackground">@color/white</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/logo_feeltalk_splash_padding</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/n_logo_feeltalk_splash_padding</item>
         <item name="windowSplashScreenAnimationDuration">150</item>
         <item name="postSplashScreenTheme">@style/Theme.FeeltalkContent</item>
 

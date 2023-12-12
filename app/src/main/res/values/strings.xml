@@ -55,11 +55,18 @@
     <string name="notification_partner">연인</string>
     <string name="notification_me">나</string>
     <string name="notification_bubble">ChatBubble</string>
+    
+    <!--  Onboarding  -->
+    <string name="onboarding_title_1">오늘 내 기분은 말이야</string>
+    <string name="onboarding_title_2">너의 취향이 궁금해!</string>
+    <string name="onboarding_title_3">우리 좀 더 가까워져 볼까?</string>
+    <string name="onboarding_body_1">귀여운 필롱이로 연인에게\n오늘의 시그널을 보낼 수 있어요!</string>
+    <string name="onboarding_body_2">하루에 하나, 질문에 답변해 보세요.\n서로의 취향에 더 가까워질 거예요.</string>
+    <string name="onboarding_body_3">더 진솔한 대화를 나눠보세요.\n연인의 가장 깊은 곳을 알게 될 거예요.</string>
+    <string name="onboarding_done">지금 바로 시작하기</string>
 
     <!--  SignUp  -->
-    <string name="sign_up_slogan_1">연인들의 건강하고</string>
-    <string name="sign_up_slogan_2">즐거운 대화,</string>
-    <string name="sign_up_slogan_3">필로우톡</string>
+    <string name="sign_up_slogan">연인들의 건강하고 즐거운 대화</string>
     <string name="sign_up_kakao">카카오로 계속하기</string>
     <string name="sign_up_naver">네이버로 계속하기</string>
     <string name="sign_up_google">Google로 계속하기</string>

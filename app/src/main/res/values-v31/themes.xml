@@ -21,7 +21,7 @@
 
         <!-- Splash Screen for SDK over 31-->
         <item name="android:windowSplashScreenBackground">@color/white</item>
-        <item name="android:windowSplashScreenAnimatedIcon">@drawable/logo_feeltalk_splash_padding</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/n_logo_feeltalk_splash_padding</item>
         <item name="android:windowSplashScreenAnimationDuration">150</item>
 
         <!-- Customize your theme here. -->

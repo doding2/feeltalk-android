@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/n_logo_feeltalk_splash"
+        android:start="40dp"
+        android:end="40dp"
+        android:top="40dp"
+        android:bottom="40dp"/>
+</layer-list>

@@ -22,8 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
             android:layout_gravity="center_vertical"
-            android:src="@drawable/n_logo_feeltalk"
-            app:tint="@color/main_500" />
+            android:src="@drawable/n_logo_feeltalk" />
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

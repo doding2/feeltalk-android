@@ -94,9 +94,9 @@ class MainActivity : AppCompatActivity() {
             else if (isServerDown.value)
                 R.id.serverDownFragment
             else if (!isLoggedIn.value)
-                R.id.signUpFragment
+                R.id.onboardingFragment
             else if (!isUser.value)
-                R.id.signUpFragment
+                R.id.onboardingFragment
             else if (!isUserCouple.value)
                 R.id.signUpNavigationFragment
             else if (isAccountLocked.value)

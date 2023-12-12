@@ -106,7 +106,8 @@ dependencies {
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0'
     // auto view translation animation
     implementation "com.github.skydoves:transformationlayout:1.1.3"
-
+    // scroll indicator
+    implementation("com.tbuonomo:dotsindicator:5.0")
 
     // 믹스패널 데이터 분석
     implementation "com.mixpanel.android:mixpanel-android:7.+"

@@ -23,6 +23,8 @@
     <color name="main_300">#FFEBF2</color>
     <color name="main_100">#FFF9FA</color>
 
+    <color name="main_onboarding">#FCFAFF</color>
+
     <color name="gray_800">#4C4A4F</color>
     <color name="gray_700">#88858C</color>
     <color name="gray_600">#9F9CA2</color>
