@@ -30,6 +30,8 @@ import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.makeLoadingDialog
+import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
+import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.material.snackbar.Snackbar
@@ -53,6 +55,7 @@ class SignUpFragment : Fragment() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
         }
+        setLightStatusBars(false, activity, binding.root)
         loadingDialog = makeLoadingDialog()
         return binding.root
     }
@@ -302,4 +305,8 @@ class SignUpFragment : Fragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        setLightStatusBars(true, activity, binding.root)
+    }
 }

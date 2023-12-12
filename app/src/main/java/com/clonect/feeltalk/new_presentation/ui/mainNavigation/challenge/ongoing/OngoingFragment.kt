@@ -58,6 +58,7 @@ class OngoingFragment : Fragment() {
 
     private fun onItemClick(item: Challenge) {
         navigateToDetail(item)
+        ongoingViewModel.modifyPage(PageEvents.Edit(item.copy(isNew = false)))
     }
 
     private fun navigateToDetail(item: Challenge) {

@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:scrollbars="none"
     android:fillViewport="true"
+    android:background="@color/main_500"
     tools:context=".new_presentation.ui.signUp.SignUpFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -14,53 +15,40 @@
 
         <ImageView
             android:id="@+id/iv_logo"
-            android:layout_width="114dp"
-            android:layout_height="114dp"
-            android:layout_marginHorizontal="48dp"
-            android:background="@color/gray_300"
+            android:layout_width="198dp"
+            android:layout_height="56dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/n_logo_feeltalk_filled"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/tv_slogan_1"
-            app:layout_constraintVertical_bias="0.6939"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tv_slogan"/>
 
         <TextView
-            android:id="@+id/tv_slogan_1"
+            android:id="@+id/tv_slogan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sign_up_slogan"
-            android:layout_marginHorizontal="48dp"
-            android:textSize="24sp"
-            android:textColor="@color/black"
-            android:fontFamily="@font/pretendard_regular"
-            app:layout_constraintBottom_toTopOf="@id/tv_slogan_2"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-        <TextView
-            android:id="@+id/tv_slogan_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="48dp"
-            android:textSize="24sp"
-            android:textColor="@color/black"
-            android:fontFamily="@font/pretendard_regular"
+            android:textSize="16sp"
+            android:textColor="@color/main_300"
+            android:fontFamily="@font/paybooc_medium"
+            app:layout_constraintVertical_bias="0.626"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/iv_sign_up_bubble"
+            app:layout_constraintBottom_toTopOf="@id/background_sign_up"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintVertical_bias="0.8265"/>
-
-        <TextView
-            android:id="@+id/tv_slogan_3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:textSize="24sp"
-            android:textColor="@color/black"
-            android:fontFamily="@font/pretendard_bold"
-            app:layout_constraintTop_toTopOf="@id/tv_slogan_2"
-            app:layout_constraintBottom_toBottomOf="@id/tv_slogan_2"
-            app:layout_constraintStart_toEndOf="@id/tv_slogan_2"/>
+            app:layout_constraintEnd_toEndOf="parent"/>
 
 
+
+        <View
+            android:id="@+id/background_sign_up"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="-77dp"
+            android:background="@drawable/background_dialog_round_top"
+            app:layout_constraintTop_toTopOf="@id/mcv_sign_up_kakao"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <!--  Kakao sign up button  -->
         <com.google.android.material.card.MaterialCardView
@@ -82,24 +70,24 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:background="@drawable/n_background_button_outline">
+                android:layout_height="match_parent"
+                android:background="@drawable/n_background_button_outline"
+                android:gravity="center">
 
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_marginVertical="17.5dp"
                     android:layout_marginHorizontal="10dp"
-                    android:src="@drawable/n_image_kakao"/>
+                    android:layout_marginVertical="17.5dp"
+                    android:src="@drawable/n_image_kakao" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/pretendard_medium"
                     android:text="@string/sign_up_kakao"
-                    android:textSize="18sp"
                     android:textColor="@color/black"
-                    android:fontFamily="@font/pretendard_medium"/>
+                    android:textSize="18sp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -250,7 +238,6 @@
             app:layout_constraintTop_toBottomOf="@id/tv_inquire"/>
 
 
-
         <ImageView
             android:id="@+id/iv_sign_up_bubble"
             android:layout_width="120dp"
@@ -260,5 +247,6 @@
             android:src="@drawable/n_image_sign_up_bubble"
             app:layout_constraintStart_toStartOf="@id/mcv_sign_up_kakao"
             app:layout_constraintBottom_toTopOf="@id/mcv_sign_up_kakao"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

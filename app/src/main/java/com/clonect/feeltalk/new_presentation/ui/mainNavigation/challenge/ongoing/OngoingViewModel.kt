@@ -50,7 +50,8 @@ class OngoingViewModel @Inject constructor(
                         it.copy(
                             title = event.item.title,
                             body = event.item.body,
-                            deadline = event.item.deadline
+                            deadline = event.item.deadline,
+                            isNew = event.item.isNew
                         )
                     else
                         it
