@@ -15,3 +15,10 @@ fun Date.plusSecondsBy(seconds: Int): Date {
     cal.add(Calendar.SECOND, seconds)
     return cal.time
 }
+
+fun Date.plusHoursBy(hours: Int): Date {
+    val cal = Calendar.getInstance()
+    cal.time = this
+    cal.add(Calendar.HOUR, hours)
+    return cal.time
+}

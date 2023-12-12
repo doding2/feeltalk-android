@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.suggestQuestion
 
+import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
@@ -75,7 +76,7 @@ class SuggestQuestionViewModel @Inject constructor(
 
     private fun computeSubmitEnabled() {
         _isSubmitEnabled.value = !idea.value.isNullOrBlank()
-                && !email.value.isNullOrBlank()
+                && validateEmail(email.value)
     }
 
 
@@ -84,6 +85,9 @@ class SuggestQuestionViewModel @Inject constructor(
                 || !email.value.isNullOrBlank()
     }
 
+    private fun validateEmail(email: String?): Boolean {
+        return !email.isNullOrBlank() && Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
 
     fun submitSuggestion(onComplete: () -> Unit) = viewModelScope.launch {
         val idea = idea.value ?: return@launch

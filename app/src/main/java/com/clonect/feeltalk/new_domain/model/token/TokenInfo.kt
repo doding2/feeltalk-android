@@ -7,6 +7,7 @@ import java.util.*
 data class TokenInfo(
     val accessToken: String,
     val refreshToken: String,
-    val expiresAt: Date,
+    val accessExpiresAt: Date,
+    val refreshExpiresAt: Date,
     val snsType: SocialType
 ): Serializable

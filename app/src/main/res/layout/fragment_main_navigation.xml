@@ -225,7 +225,7 @@
         <FrameLayout
             android:id="@+id/fl_signal_sheet"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
             app:behavior_peekHeight="0dp"
             app:behavior_hideable="true">
@@ -243,6 +243,7 @@
             android:id="@+id/fl_signal_complete_sheet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
             app:behavior_peekHeight="0dp"
             app:behavior_hideable="true"
@@ -260,6 +261,7 @@
             android:id="@+id/fl_answer_sheet"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_gravity="bottom"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
             app:behavior_peekHeight="0dp"
             app:behavior_hideable="true">
@@ -277,6 +279,7 @@
             android:id="@+id/fl_inquiry_succeed_sheet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
             app:behavior_peekHeight="0dp"
             app:behavior_hideable="true"
@@ -294,6 +297,7 @@
             android:id="@+id/fl_suggestion_succeed_sheet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
             app:behavior_peekHeight="0dp"
             app:behavior_hideable="true"

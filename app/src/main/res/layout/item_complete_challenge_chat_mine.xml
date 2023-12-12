@@ -119,14 +119,14 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="130dp"
-                    android:layout_height="130dp"
+                    android:layout_width="84dp"
+                    android:layout_height="84dp"
                     android:layout_marginBottom="12dp"
                     android:src="@drawable/n_image_complete" />
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="48dp"
+                    android:layout_height="24dp"
                     android:gravity="center"
                     android:fontFamily="@font/pretendard_medium"
                     android:includeFontPadding="false"
@@ -147,33 +147,34 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginHorizontal="10dp"
-                        android:layout_marginVertical="12dp">
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tv_challenge_title"
-                            android:layout_width="match_parent"
+                            android:layout_width="206dp"
                             android:layout_height="42dp"
-                            android:gravity="center"
-                            android:layout_marginBottom="8dp"
-                            android:paddingHorizontal="40dp"
-                            android:text="다섯글자임다섯글자임다섯글자임다섯글자임"
-                            android:textSize="14sp"
-                            android:textColor="@color/black"
+                            android:layout_marginHorizontal="10dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="4dp"
+                            android:ellipsize="end"
                             android:fontFamily="@font/pretendard_regular"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:letterSpacing="-0.01"
+                            android:lineSpacingExtra="4sp"
                             android:lines="2"
                             android:maxLength="20"
-                            android:ellipsize="end"
-                            android:lineSpacingExtra="4sp"
-                            android:includeFontPadding="false"
-                            android:letterSpacing="-0.01"/>
+                            android:paddingHorizontal="40dp"
+                            android:text="다섯글자임다섯글자임다섯글자임다섯글자임"
+                            android:textColor="@color/black"
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/tv_challenge_success_date"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
+                            android:layout_marginBottom="8dp"
                             android:text="@string/complete_challenge_chat_date_format"
                             android:textSize="12sp"
                             android:textColor="@color/gray_600"

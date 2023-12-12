@@ -27,8 +27,12 @@ import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCas
 import com.clonect.feeltalk.new_domain.usecase.challenge.*
 import com.clonect.feeltalk.new_domain.usecase.chat.*
 import com.clonect.feeltalk.new_domain.usecase.newAccount.GetUserStatusNewUseCase
+import com.clonect.feeltalk.new_domain.usecase.newAccount.LogInAppleUseCase
 import com.clonect.feeltalk.new_domain.usecase.newAccount.LogInNewUseCase
+import com.clonect.feeltalk.new_domain.usecase.newAccount.RequestAdultAuthCodeUseCase
+import com.clonect.feeltalk.new_domain.usecase.newAccount.RetryRequestAdultAuthCodeUseCase
 import com.clonect.feeltalk.new_domain.usecase.newAccount.SignUpNewUseCase
+import com.clonect.feeltalk.new_domain.usecase.newAccount.VerifyAdultAuthCodeUseCase
 import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.*
@@ -63,6 +67,12 @@ class UseCaseModule {
 
     @Singleton
     @Provides
+    fun providesLogInAppleUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): LogInAppleUseCase {
+        return LogInAppleUseCase(tokenRepository, accountRepository)
+    }
+
+    @Singleton
+    @Provides
     fun providesGetUserStatusNewUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): GetUserStatusNewUseCase {
         return GetUserStatusNewUseCase(tokenRepository, accountRepository)
     }
@@ -71,6 +81,24 @@ class UseCaseModule {
     @Provides
     fun providesSignUpNewUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): SignUpNewUseCase {
         return SignUpNewUseCase(tokenRepository, accountRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesRequestAdultAuthCodeUseCase(accountRepository: AccountRepository): RequestAdultAuthCodeUseCase {
+        return RequestAdultAuthCodeUseCase(accountRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesRetryRequestAdultAuthCodeUseCase(accountRepository: AccountRepository): RetryRequestAdultAuthCodeUseCase {
+        return RetryRequestAdultAuthCodeUseCase(accountRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesVerifyAdultAuthCodeUseCase(accountRepository: AccountRepository): VerifyAdultAuthCodeUseCase {
+        return VerifyAdultAuthCodeUseCase(accountRepository)
     }
 
 

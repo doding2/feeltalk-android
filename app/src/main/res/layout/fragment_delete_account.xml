@@ -96,7 +96,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:src="@drawable/n_ic_warning"/>
+            android:src="@drawable/n_ic_warning_filled"/>
 
         <TextView
             android:layout_width="wrap_content"

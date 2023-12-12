@@ -77,6 +77,7 @@ import java.util.Timer
 import java.util.TimerTask
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlin.math.absoluteValue
 import kotlin.math.ceil
 
 
@@ -1558,52 +1559,26 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 when (chat.signal) {
                     Signal.Zero -> {
-                        ivSignal.setImageResource(R.drawable.n_image_signal_0)
-                        tvSignalPercent.setText(R.string.signal_chat_percent_0)
+                        ivSignal.setImageResource(R.drawable.n_image_home_signal_0)
                         tvSignalSubtitle.setText(R.string.signal_subtitle_0)
-                        root.context.getColor(R.color.signal_0).also {
-                            tvSignalPercent.setTextColor(it)
-                            mcvSignalPercent.strokeColor = it
-                        }
                     }
                     Signal.Quarter -> {
-                        ivSignal.setImageResource(R.drawable.n_image_signal_25)
-                        tvSignalPercent.setText(R.string.signal_chat_percent_25)
+                        ivSignal.setImageResource(R.drawable.n_image_home_signal_25)
                         tvSignalSubtitle.setText(R.string.signal_subtitle_25)
-                        root.context.getColor(R.color.signal_25).also {
-                            tvSignalPercent.setTextColor(it)
-                            mcvSignalPercent.strokeColor = it
-                        }
                     }
                     Signal.Half -> {
-                        ivSignal.setImageResource(R.drawable.n_image_signal_50)
-                        tvSignalPercent.setText(R.string.signal_chat_percent_50)
+                        ivSignal.setImageResource(R.drawable.n_image_home_signal_50)
                         tvSignalSubtitle.setText(R.string.signal_subtitle_50)
-                        root.context.getColor(R.color.signal_50).also {
-                            tvSignalPercent.setTextColor(it)
-                            mcvSignalPercent.strokeColor = it
-                        }
                     }
                     Signal.ThreeFourth -> {
-                        ivSignal.setImageResource(R.drawable.n_image_signal_75)
-                        tvSignalPercent.setText(R.string.signal_chat_percent_75)
+                        ivSignal.setImageResource(R.drawable.n_image_home_signal_75)
                         tvSignalSubtitle.setText(R.string.signal_subtitle_75)
-                        root.context.getColor(R.color.signal_75).also {
-                            tvSignalPercent.setTextColor(it)
-                            mcvSignalPercent.strokeColor = it
-                        }
                     }
                     Signal.One -> {
-                        ivSignal.setImageResource(R.drawable.n_image_signal_100)
-                        tvSignalPercent.setText(R.string.signal_chat_percent_100)
+                        ivSignal.setImageResource(R.drawable.n_image_home_signal_100)
                         tvSignalSubtitle.setText(R.string.signal_subtitle_100)
-                        root.context.getColor(R.color.signal_100).also {
-                            tvSignalPercent.setTextColor(it)
-                            mcvSignalPercent.strokeColor = it
-                        }
                     }
                 }
-
 
                 makeContinuous(prevItem, item, nextItem)
             }
@@ -1712,49 +1687,24 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 when (chat.signal) {
                     Signal.Zero -> {
-                        ivSignal.setImageResource(R.drawable.n_image_signal_0)
-                        tvSignalPercent.setText(R.string.signal_chat_percent_0)
+                        ivSignal.setImageResource(R.drawable.n_image_home_signal_0)
                         tvSignalSubtitle.setText(R.string.signal_subtitle_0)
-                        root.context.getColor(R.color.signal_0).also {
-                            tvSignalPercent.setTextColor(it)
-                            mcvSignalPercent.strokeColor = it
-                        }
                     }
                     Signal.Quarter -> {
-                        ivSignal.setImageResource(R.drawable.n_image_signal_25)
-                        tvSignalPercent.setText(R.string.signal_chat_percent_25)
+                        ivSignal.setImageResource(R.drawable.n_image_home_signal_25)
                         tvSignalSubtitle.setText(R.string.signal_subtitle_25)
-                        root.context.getColor(R.color.signal_25).also {
-                            tvSignalPercent.setTextColor(it)
-                            mcvSignalPercent.strokeColor = it
-                        }
                     }
                     Signal.Half -> {
-                        ivSignal.setImageResource(R.drawable.n_image_signal_50)
-                        tvSignalPercent.setText(R.string.signal_chat_percent_50)
+                        ivSignal.setImageResource(R.drawable.n_image_home_signal_50)
                         tvSignalSubtitle.setText(R.string.signal_subtitle_50)
-                        root.context.getColor(R.color.signal_50).also {
-                            tvSignalPercent.setTextColor(it)
-                            mcvSignalPercent.strokeColor = it
-                        }
                     }
                     Signal.ThreeFourth -> {
-                        ivSignal.setImageResource(R.drawable.n_image_signal_75)
-                        tvSignalPercent.setText(R.string.signal_chat_percent_75)
+                        ivSignal.setImageResource(R.drawable.n_image_home_signal_75)
                         tvSignalSubtitle.setText(R.string.signal_subtitle_75)
-                        root.context.getColor(R.color.signal_75).also {
-                            tvSignalPercent.setTextColor(it)
-                            mcvSignalPercent.strokeColor = it
-                        }
                     }
                     Signal.One -> {
-                        ivSignal.setImageResource(R.drawable.n_image_signal_100)
-                        tvSignalPercent.setText(R.string.signal_chat_percent_100)
+                        ivSignal.setImageResource(R.drawable.n_image_home_signal_100)
                         tvSignalSubtitle.setText(R.string.signal_subtitle_100)
-                        root.context.getColor(R.color.signal_100).also {
-                            tvSignalPercent.setTextColor(it)
-                            mcvSignalPercent.strokeColor = it
-                        }
                     }
                 }
 
@@ -1853,14 +1803,13 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 tvChallengeTitle.text = chat.challenge.title
                 val dDay = ceil((chat.challenge.deadline.time - Date().time).toDouble() / Constants.ONE_DAY).toInt()
-                val formatter = SimpleDateFormat(root.context.getString(R.string.challenge_chat_date_format), Locale.getDefault())
-                val str = formatter.format(chat.challenge.deadline)
-                tvChallengeDeadline.text = str
                 tvDDay.text = if (dDay >= 999) {
                     root.context.getString(R.string.add_challenge_d_day_over)
                 } else if (dDay == 0) {
                     root.context.getString(R.string.add_challenge_d_day_today)
-                } else {
+                } else if (dDay < 0) {
+                    root.context.getString(R.string.add_challenge_d_day_past) + dDay.absoluteValue
+                }  else {
                     root.context.getString(R.string.add_challenge_d_day_normal) + dDay
                 }
 
@@ -1973,14 +1922,13 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 tvChallengeTitle.text = chat.challenge.title
                 val dDay = ceil((chat.challenge.deadline.time - Date().time).toDouble() / Constants.ONE_DAY).toInt()
-                val formatter = SimpleDateFormat(root.context.getString(R.string.challenge_chat_date_format), Locale.getDefault())
-                val str = formatter.format(chat.challenge.deadline)
-                tvChallengeDeadline.text = str
                 tvDDay.text = if (dDay >= 999) {
                     root.context.getString(R.string.add_challenge_d_day_over)
                 } else if (dDay == 0) {
                     root.context.getString(R.string.add_challenge_d_day_today)
-                } else {
+                } else if (dDay < 0) {
+                    root.context.getString(R.string.add_challenge_d_day_past) + dDay.absoluteValue
+                }  else {
                     root.context.getString(R.string.add_challenge_d_day_normal) + dDay
                 }
 
@@ -2081,13 +2029,12 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 tvChallengeTitle.text = chat.challenge.title
                 val dDay = ceil((chat.challenge.deadline.time - Date().time).toDouble() / Constants.ONE_DAY).toInt()
-                val formatter = SimpleDateFormat(root.context.getString(R.string.add_challenge_chat_date_format), Locale.getDefault())
-                val str = formatter.format(chat.challenge.deadline)
-                tvChallengeDeadline.text = str
                 tvDDay.text = if (dDay >= 999) {
                     root.context.getString(R.string.add_challenge_d_day_over)
                 } else if (dDay == 0) {
                     root.context.getString(R.string.add_challenge_d_day_today)
+                } else if (dDay < 0) {
+                    root.context.getString(R.string.add_challenge_d_day_past) + dDay.absoluteValue
                 } else {
                     root.context.getString(R.string.add_challenge_d_day_normal) + dDay
                 }
@@ -2201,13 +2148,12 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 tvChallengeTitle.text = chat.challenge.title
                 val dDay = ceil((chat.challenge.deadline.time - Date().time).toDouble() / Constants.ONE_DAY).toInt()
-                val formatter = SimpleDateFormat(root.context.getString(R.string.add_challenge_chat_date_format), Locale.getDefault())
-                val str = formatter.format(chat.challenge.deadline)
-                tvChallengeDeadline.text = str
                 tvDDay.text = if (dDay >= 999) {
                     root.context.getString(R.string.add_challenge_d_day_over)
                 } else if (dDay == 0) {
                     root.context.getString(R.string.add_challenge_d_day_today)
+                } else if (dDay < 0) {
+                    root.context.getString(R.string.add_challenge_d_day_past) + dDay.absoluteValue
                 } else {
                     root.context.getString(R.string.add_challenge_d_day_normal) + dDay
                 }
@@ -2772,11 +2718,6 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 tvQuestionHeader.text = root.context.getString(R.string.question_chat_header_deco) + chat.question.header
                 tvQuestionBody.text = chat.question.body
 
-                val serverFormat = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
-                val date = serverFormat.parse(chat.question.createAt)
-                val questionFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
-                tvQuestionDate.text = date?.let { questionFormat.format(it) }
-
                 applyChatSendState(chat.sendState)
                 ivRetry.setOnClickListener { onRetry(chat) }
                 ivCancel.setOnClickListener { onCancel(chat) }
@@ -2897,11 +2838,6 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 tvQuestionHeader.text = root.context.getString(R.string.question_chat_header_deco) + chat.question.header
                 tvQuestionBody.text = chat.question.body
-
-                val serverFormat = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
-                val date = serverFormat.parse(chat.question.createAt)
-                val questionFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
-                tvQuestionDate.text = date?.let { questionFormat.format(it) }
 
                 mcvAnswer.setOnClickListener { onClick(root, chat) }
 

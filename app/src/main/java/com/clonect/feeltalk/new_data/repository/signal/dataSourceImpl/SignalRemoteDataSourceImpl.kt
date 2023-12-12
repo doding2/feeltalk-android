@@ -6,7 +6,8 @@ import com.clonect.feeltalk.new_data.api.ClonectService
 import com.clonect.feeltalk.new_data.repository.signal.dataSource.SignalRemoteDataSource
 import com.clonect.feeltalk.new_domain.model.signal.ChangeMySignalResponse
 import com.clonect.feeltalk.new_domain.model.signal.Signal
-import com.clonect.feeltalk.new_domain.model.signal.SignalResponse
+import com.clonect.feeltalk.new_domain.model.signal.MySignalResponse
+import com.clonect.feeltalk.new_domain.model.signal.PartnerSignalResponse
 import com.google.gson.JsonObject
 
 /**
@@ -15,7 +16,7 @@ import com.google.gson.JsonObject
 class SignalRemoteDataSourceImpl(
     private val clonectService: ClonectService
 ) : SignalRemoteDataSource {
-    override suspend fun getMySignal(accessToken: String): SignalResponse {
+    override suspend fun getMySignal(accessToken: String): MySignalResponse {
         val response = clonectService.getMySignal(accessToken)
         if (!response.isSuccessful) throw FeelTalkException.ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
@@ -23,7 +24,7 @@ class SignalRemoteDataSourceImpl(
         return response.body()!!.data!!
     }
 
-    override suspend fun getPartnerSignal(accessToken: String): SignalResponse {
+    override suspend fun getPartnerSignal(accessToken: String): PartnerSignalResponse {
         val response = clonectService.getPartnerSignal(accessToken)
         if (!response.isSuccessful) throw FeelTalkException.ServerIsDownException(response)
         if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")

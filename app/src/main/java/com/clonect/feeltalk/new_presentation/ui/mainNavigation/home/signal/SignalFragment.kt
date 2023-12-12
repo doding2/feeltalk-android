@@ -29,6 +29,7 @@ import com.clonect.feeltalk.new_presentation.ui.util.measure
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -104,6 +105,7 @@ class SignalFragment : Fragment() {
             val diameter = ivTrack.measure { width } / 2
             viewModel.setDiameter(diameter)
 
+            delay(100)
             initSignal()
         }
     }

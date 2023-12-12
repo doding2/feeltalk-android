@@ -1,11 +1,16 @@
 package com.clonect.feeltalk.new_data.mapper
 
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
+import com.clonect.feeltalk.new_domain.model.chat.AddChallengeChat
+import com.clonect.feeltalk.new_domain.model.chat.AnswerChat
 import com.clonect.feeltalk.new_domain.model.chat.ChallengeChat
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.ChatListDto
+import com.clonect.feeltalk.new_domain.model.chat.CompleteChallengeChat
 import com.clonect.feeltalk.new_domain.model.chat.ImageChat
+import com.clonect.feeltalk.new_domain.model.chat.PokeChat
 import com.clonect.feeltalk.new_domain.model.chat.QuestionChat
+import com.clonect.feeltalk.new_domain.model.chat.ResetPartnerPasswordChat
 import com.clonect.feeltalk.new_domain.model.chat.SignalChat
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
@@ -78,11 +83,11 @@ suspend fun ChatListDto.toChatList(
                         isRead = chatDto.isRead,
                         createAt = chatDto.createAt,
                         signal = when (chatDto.signal.toInt()) {
-                            1 -> Signal.Zero
-                            2 -> Signal.Quarter
-                            3 -> Signal.Half
-                            4 -> Signal.ThreeFourth
-                            5 -> Signal.One
+                            0 -> Signal.Zero
+                            25 -> Signal.Quarter
+                            50 -> Signal.Half
+                            75 -> Signal.ThreeFourth
+                            100 -> Signal.One
                             else -> continue
                         }
                     )
@@ -95,6 +100,54 @@ suspend fun ChatListDto.toChatList(
                     val challenge = loadChallenge(chatDto.coupleChallenge.index)
                     val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
                     ChallengeChat(
+                        index = chatDto.index,
+                        pageNo = page,
+                        chatSender = if (chatDto.mine) "me" else "partner",
+                        isRead = chatDto.isRead,
+                        createAt = chatDto.createAt,
+                        challenge = Challenge(
+                            index = chatDto.coupleChallenge.index,
+                            title = chatDto.coupleChallenge.challengeTitle,
+                            body = chatDto.coupleChallenge.challengeBody ?: "",
+                            deadline = format.parse(chatDto.coupleChallenge.deadline) ?: continue,
+                            owner = chatDto.coupleChallenge.creator,
+                            isCompleted = challenge.isCompleted,
+                            isNew = false
+                        )
+                    )
+                }
+            }
+            "addChallenge", "addChallengeChatting" -> {
+                if (chatDto.coupleChallenge == null) {
+                    continue
+                } else {
+                    val challenge = loadChallenge(chatDto.coupleChallenge.index)
+                    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+                    AddChallengeChat(
+                        index = chatDto.index,
+                        pageNo = page,
+                        chatSender = if (chatDto.mine) "me" else "partner",
+                        isRead = chatDto.isRead,
+                        createAt = chatDto.createAt,
+                        challenge = Challenge(
+                            index = chatDto.coupleChallenge.index,
+                            title = chatDto.coupleChallenge.challengeTitle,
+                            body = chatDto.coupleChallenge.challengeBody ?: "",
+                            deadline = format.parse(chatDto.coupleChallenge.deadline) ?: continue,
+                            owner = chatDto.coupleChallenge.creator,
+                            isCompleted = challenge.isCompleted,
+                            isNew = false
+                        )
+                    )
+                }
+            }
+            "completeChallenge", "completeChallengeChatting" -> {
+                if (chatDto.coupleChallenge == null) {
+                    continue
+                } else {
+                    val challenge = loadChallenge(chatDto.coupleChallenge.index)
+                    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+                    CompleteChallengeChat(
                         index = chatDto.index,
                         pageNo = page,
                         chatSender = if (chatDto.mine) "me" else "partner",
@@ -126,6 +179,49 @@ suspend fun ChatListDto.toChatList(
                             question = loadQuestion(coupleQuestion!!)
                         )
                     }
+                }
+            }
+            "answer", "answerChatting" -> {
+                if (chatDto.coupleQuestion == null) {
+                    continue
+                } else {
+                    chatDto.run {
+                        AnswerChat(
+                            index = index,
+                            pageNo = page,
+                            chatSender = if (mine) "me" else "partner",
+                            isRead = isRead,
+                            createAt = createAt,
+                            question = loadQuestion(coupleQuestion!!)
+                        )
+                    }
+                }
+            }
+            "pressForAnswer", "pressForAnswerChatting" -> {
+                if (chatDto.coupleQuestion == null) {
+                    continue
+                } else {
+                    chatDto.run {
+                        PokeChat(
+                            index = index,
+                            pageNo = page,
+                            chatSender = if (mine) "me" else "partner",
+                            isRead = isRead,
+                            createAt = createAt,
+                            questionIndex = coupleQuestion!!
+                        )
+                    }
+                }
+            }
+            "resetPartnerPassword", "resetPartnerPasswordChatting" -> {
+                chatDto.run {
+                    ResetPartnerPasswordChat(
+                        index = index,
+                        pageNo = page,
+                        chatSender = if (mine) "me" else "partner",
+                        isRead = isRead,
+                        createAt = createAt,
+                    )
                 }
             }
             else -> {

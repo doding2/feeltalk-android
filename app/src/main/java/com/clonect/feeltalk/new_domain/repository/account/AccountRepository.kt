@@ -11,8 +11,6 @@ import com.clonect.feeltalk.new_domain.model.account.SocialType
 import com.clonect.feeltalk.new_domain.model.account.UnlockPartnerPasswordResponse
 import com.clonect.feeltalk.new_domain.model.account.ValidateLockAnswerDto
 import com.clonect.feeltalk.new_domain.model.newAccount.GetUserStatusNewResponse
-import com.clonect.feeltalk.new_domain.model.newAccount.LogInNewResponse
-import com.clonect.feeltalk.new_domain.model.newAccount.SignUpNewResponse
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
 import com.clonect.feeltalk.new_domain.model.token.TokenInfo
 import kotlinx.coroutines.flow.Flow
@@ -20,8 +18,14 @@ import kotlinx.coroutines.flow.Flow
 interface AccountRepository {
 
     suspend fun logInNew(oauthId: String, snsType: SocialType): Resource<TokenInfo>
+    suspend fun logInApple(state: String): Resource<TokenInfo>
     suspend fun getUserStatusNew(accessToken: String): Resource<GetUserStatusNewResponse>
     suspend fun signUpNew(accessToken: String, nickname: String, marketingConsent: Boolean, fcmToken: String, appleState: String? = null): Resource<Unit>
+
+    suspend fun requestAdultAuthCode(providerId: String, userName: String, userPhone: String, userBirthday: String, userGender: String, userNation: String): Resource<Unit>
+    suspend fun retryRequestAdultAuthCode(providerId: String, userName: String, userPhone: String, userBirthday: String, userGender: String, userNation: String): Resource<Unit>
+    suspend fun verifyAdultAuthCode(authNumber: String): Resource<Unit>
+
 
     suspend fun autoLogIn(accessToken: String): Resource<AutoLogInDto>
     suspend fun reLogIn(socialToken: SocialToken): Resource<Pair<String, TokenInfo?>>
@@ -48,6 +52,6 @@ interface AccountRepository {
     suspend fun validateLockResetAnswer(accessToken: String, answer: String): Resource<ValidateLockAnswerDto>
     suspend fun unlockPartnerPassword(accessToken: String, chatIndex: Long): Resource<UnlockPartnerPasswordResponse>
 
-    suspend fun setCoupleCrated(isCreated: Boolean)
+    suspend fun setCoupleCreated(isCreated: Boolean)
     suspend fun getCoupleCreatedFlow(): Flow<Boolean>
 }

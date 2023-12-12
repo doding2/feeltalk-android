@@ -23,7 +23,8 @@ import com.clonect.feeltalk.new_domain.model.question.PressForAnswerChatResponse
 import com.clonect.feeltalk.new_domain.model.question.QuestionDto
 import com.clonect.feeltalk.new_domain.model.question.QuestionListDto
 import com.clonect.feeltalk.new_domain.model.signal.ChangeMySignalResponse
-import com.clonect.feeltalk.new_domain.model.signal.SignalResponse
+import com.clonect.feeltalk.new_domain.model.signal.MySignalResponse
+import com.clonect.feeltalk.new_domain.model.signal.PartnerSignalResponse
 import com.clonect.feeltalk.new_domain.model.token.RenewTokenDto
 import com.google.gson.JsonObject
 import okhttp3.MultipartBody
@@ -39,9 +40,14 @@ interface ClonectService {
         @Body body: JsonObject
     ): Response<ApiResponse<LogInNewResponse>>
 
+    @POST("/api/v1/login/apple")
+    suspend fun logInApple(
+        @Body body: JsonObject
+    ): Response<ApiResponse<LogInNewResponse>>
+
     @GET("/api/v1/member/status")
     suspend fun getUserStatusNew(
-        @Header("Authorization") accessToken: String
+        @Header("Authorization") accessToken: String,
     ): Response<ApiResponse<GetUserStatusNewResponse>>
 
     @POST("/api/v1/signup")
@@ -56,6 +62,20 @@ interface ClonectService {
         @Header("Authorization-refresh") refreshToken: String
     ): Response<ApiResponse<LogInNewResponse>>
 
+    @POST("/api/v1/adult/authentication")
+    suspend fun requestAdultAuthCode(
+        @Body body: JsonObject
+    ): Response<ApiResponse<Unit>>
+
+    @POST("/api/v1/adult/re-authentication")
+    suspend fun retryRequestAdultAuthCode(
+        @Body body: JsonObject
+    ): Response<ApiResponse<Unit>>
+
+    @POST("/api/v1/adult/authentication/verification")
+    suspend fun verifyAdultAuthCode(
+        @Body body: JsonObject
+    ): Response<ApiResponse<Unit>>
 
 
     /** Account **/
@@ -125,7 +145,7 @@ interface ClonectService {
         @Header("Authorization") token: String
     ): Response<ApiResponse<GetPasswordDto>>
 
-    @PUT("/api/v1/member/config/lock")
+    @PUT("/api/v1/member/config/unlock")
     suspend fun unlockPassword(
         @Header("Authorization") token: String
     ): Response<ApiResponse<Unit>>
@@ -215,7 +235,7 @@ interface ClonectService {
     ): Response<ApiResponse<SendVoiceChatDto>>
 
     @Multipart
-    @POST("/api/v1/chatting-message/voice")
+    @POST("/api/v1/chatting-message/image")
     suspend fun sendImageChat(
         @Header("Authorization") token: String,
         @Part data: MultipartBody.Part
@@ -353,12 +373,12 @@ interface ClonectService {
     @GET("/api/v1/member/signal")
     suspend fun getMySignal(
         @Header("Authorization") token: String,
-    ): Response<ApiResponse<SignalResponse>>
+    ): Response<ApiResponse<MySignalResponse>>
 
     @GET("/api/v1/member/partner/signal")
     suspend fun getPartnerSignal(
         @Header("Authorization") token: String,
-    ): Response<ApiResponse<SignalResponse>>
+    ): Response<ApiResponse<PartnerSignalResponse>>
 
     @POST("/api/v1/chatting-message/signal")
     suspend fun changeMySignal(

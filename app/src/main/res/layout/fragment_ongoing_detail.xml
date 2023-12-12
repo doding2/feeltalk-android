@@ -572,6 +572,7 @@
             android:id="@+id/fl_complete_sheet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
             app:behavior_peekHeight="0dp"
             app:behavior_hideable="true">

@@ -6,10 +6,12 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.common.onError
 import com.clonect.feeltalk.common.onSuccess
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
+import com.clonect.feeltalk.new_domain.model.account.SocialType
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
 import com.clonect.feeltalk.new_domain.usecase.account.CheckAccountLockedUseCase
 import com.clonect.feeltalk.new_domain.usecase.account.ReLogInUseCase
 import com.clonect.feeltalk.new_domain.usecase.newAccount.GetUserStatusNewUseCase
+import com.clonect.feeltalk.new_domain.usecase.newAccount.LogInAppleUseCase
 import com.clonect.feeltalk.new_domain.usecase.newAccount.LogInNewUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetTodayQuestionUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.CacheSocialTokenUseCase
@@ -37,6 +39,7 @@ class SignUpViewModel @Inject constructor(
     private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
 
     private val logInNewUseCase: LogInNewUseCase,
+    private val logInAppleUseCase: LogInAppleUseCase,
     private val getUserStatusNewUseCase: GetUserStatusNewUseCase,
 ): ViewModel() {
 
@@ -60,12 +63,22 @@ class SignUpViewModel @Inject constructor(
 
 
     suspend fun logInNew(socialToken: SocialToken) = viewModelScope.launch {
-        val oauthId = socialToken.oauthId ?: return@launch
         setLoading(true)
 
-        val logInResult = logInNewUseCase(oauthId, socialToken.type)
+        val isAppleAuth = socialToken.type == SocialType.AppleAndroid && socialToken.state != null
+        val logInResult = if (isAppleAuth) {
+            logInAppleUseCase(
+                state = socialToken.state!!
+            )
+        } else {
+            logInNewUseCase(
+                oauthId = socialToken.oauthId ?: return@launch,
+                snsType = socialToken.type
+            )
+        }
         if (logInResult is Resource.Error) {
             infoLog("Fail to log in new: ${logInResult.throwable.localizedMessage}")
+            logInResult.throwable.localizedMessage?.let { _errorMessage.emit(it) }
             setLoading(false)
             return@launch
         }

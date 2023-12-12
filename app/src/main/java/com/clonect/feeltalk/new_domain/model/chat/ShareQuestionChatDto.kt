@@ -7,7 +7,6 @@ data class ShareQuestionChatDto(
     val index: Long,
     val pageNo: Long,
     val isRead: Boolean,
-    @SerializedName("createdAt")
     val createAt: String,
     val chatSender: String,
     val coupleQuestion: ChatQuestionDto,

@@ -58,9 +58,9 @@ class MainNavigationFragment : Fragment() {
             val statusHeight = getStatusBarHeight()
             val navHeight = getNavigationBarHeight()
             binding.clFloatingChatContainer.setPadding(0, statusHeight, 0, 0)
-            binding.flInquirySucceedSheet.setPadding(0, 0, 0, navHeight)
-            binding.flSuggestionSucceedSheet.setPadding(0, 0, 0, navHeight)
-            binding.flSignalCompleteSheet.setPadding(0, 0, 0, navHeight)
+            binding.sheetInquirySucceed.root.setPadding(0, 0, 0, navHeight)
+            binding.sheetSuggestionSucceed.root.setPadding(0, 0, 0, navHeight)
+            binding.sheetSignalComplete.root.setPadding(0, 0, 0, navHeight)
         } else {
             activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         }

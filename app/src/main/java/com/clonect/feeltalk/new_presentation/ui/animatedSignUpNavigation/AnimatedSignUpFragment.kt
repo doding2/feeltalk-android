@@ -102,9 +102,14 @@ class AnimatedSignUpFragment : Fragment() {
             tvNext.setOnClickListener { navigateFocus() }
 
             mcvDoneButton.setOnClickListener {
-//                viewModel.matchAuthCode()
-                navigateToSignUpNavigation()
+                verifyAuthCode()
             }
+        }
+    }
+
+    private fun verifyAuthCode() {
+        viewModel.verifyAuthCode {
+            navigateToSignUpNavigation()
         }
     }
 

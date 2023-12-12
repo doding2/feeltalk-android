@@ -165,7 +165,7 @@ class SignUpFragment : Fragment() {
                 state = state
             )
 
-            viewModel.reLogIn(socialToken)
+            viewModel.logInNew(socialToken)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {

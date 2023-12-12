@@ -15,8 +15,10 @@ import com.clonect.feeltalk.domain.usecase.user.SetUserIsActiveUseCase
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.challenge.CoupleChallengeDto
 import com.clonect.feeltalk.new_domain.model.chat.AddChallengeChat
+import com.clonect.feeltalk.new_domain.model.chat.AnswerChat
 import com.clonect.feeltalk.new_domain.model.chat.CompleteChallengeChat
 import com.clonect.feeltalk.new_domain.model.chat.ImageChat
+import com.clonect.feeltalk.new_domain.model.chat.PokeChat
 import com.clonect.feeltalk.new_domain.model.chat.QuestionChat
 import com.clonect.feeltalk.new_domain.model.chat.ResetPartnerPasswordChat
 import com.clonect.feeltalk.new_domain.model.chat.SignalChat
@@ -39,6 +41,7 @@ import com.clonect.feeltalk.new_domain.usecase.signal.ChangePartnerSignalCacheUs
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.CHANEL_ID_CREATE_COUPLE
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_ADD_CHALLENGE_CHATTING
+import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_ANSWER_CHATTING
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_ANSWER_QUESTION
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_CHAT_ROOM_STATE
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_COMPLETE_CHALLENGE_CHATTING
@@ -181,11 +184,12 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 TYPE_IMAGE_CHATTING -> handleImageChatData(data)
                 TYPE_SIGNAL_CHATTING -> handleSignalChatData(data)
                 TYPE_QUESTION_CHATTING -> handleQuestionChatData(data)
+                TYPE_ANSWER_CHATTING -> handleAnswerChatData(data)
                 TYPE_ADD_CHALLENGE_CHATTING -> handleAddChallengeChatData(data)
                 TYPE_COMPLETE_CHALLENGE_CHATTING -> handleCompleteChallengeData(data)
                 TYPE_RESET_PARTNER_PASSWORD_CHATTING -> handleResetPartnerPasswordChatData(data)
                 TYPE_TODAY_QUESTION -> handleTodayQuestionData(data)
-                TYPE_PRESS_FOR_ANSWER_CHATTING -> handlePressForAnswerData(data)
+                TYPE_PRESS_FOR_ANSWER_CHATTING -> handlePressForAnswerChatData(data)
                 TYPE_ANSWER_QUESTION -> handleAnswerQuestionData(data)
                 TYPE_DELETE_CHALLENGE -> handleDeleteChallengeData(data)
                 TYPE_MODIFY_CHALLENGE -> handleModifyChallengeData(data)
@@ -323,11 +327,11 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 isRead = isRead,
                 createAt = createAt,
                 signal = when (signal) {
-                    1 -> Signal.Zero
-                    2 -> Signal.Quarter
-                    3 -> Signal.Half
-                    4 -> Signal.ThreeFourth
-                    5 -> Signal.One
+                    0 -> Signal.Zero
+                    25 -> Signal.Quarter
+                    50 -> Signal.Half
+                    75 -> Signal.ThreeFourth
+                    100 -> Signal.One
                     else -> return@launch
                 }
             )
@@ -373,26 +377,67 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         )
     }
 
-    private fun handlePressForAnswerData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+    private fun handleAnswerChatData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
         val index = data["index"]?.toLong() ?: return@launch
+        val pageIndex = data["pageIndex"]?.toLong() ?: 0
+        val isRead = data["isRead"]?.toBoolean() ?: return@launch
+        val createAt = data["createAt"] ?: return@launch
+        val coupleQuestion = data["coupleQuestion"] ?: return@launch
+        val questionIndex = Gson().fromJson(coupleQuestion, JsonObject::class.java).get("index").asLong
 
-        val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
-            .setGraph(R.navigation.feeltalk_nav_graph)
-            .setDestination(R.id.mainNavigationFragment)
-            .setArguments(
-                bundleOf(
-                    "questionIndex" to index,
-                    "isTodayQuestion" to false
+        val question = (getQuestionUseCase(questionIndex) as? Resource.Success)?.data
+        if (question != null) {
+            addNewChatCacheUseCase(
+                AnswerChat(
+                    index = index,
+                    pageNo = pageIndex,
+                    chatSender = "partner",
+                    isRead = isRead,
+                    createAt = createAt,
+                    question = question
                 )
             )
-            .createPendingIntent()
+        }
 
-        notificationHelper.showNormalNotification(
-            title = "답변 요청",
-            message = "연인이 콕 찔렀음",
-            channelID = NotificationHelper.CHANNEL_ID_PRESS_FOR_ANSWER,
-            notificationID = System.currentTimeMillis().toInt(),
-            pendingIntent = deepLinkPendingIntent
+        if (getAppRunning()) {
+            if (question != null) {
+                answerPartnerQuestionCacheUseCase(question)
+            }
+        }
+
+        if (FeeltalkApp.getAppScreenActive() && FeeltalkApp.getUserInChat()) {
+            return@launch
+        }
+
+        notificationHelper.showChatNotification(
+            message = "(답변 채팅)"
+        )
+    }
+
+    private fun handlePressForAnswerChatData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+        val index = data["index"]?.toLong() ?: return@launch
+        val pageIndex = data["pageIndex"]?.toLong() ?: 0
+        val isRead = data["isRead"]?.toBoolean() ?: return@launch
+        val createAt = data["createAt"] ?: return@launch
+        val coupleQuestion = data["coupleQuestion"]?.toLong() ?: return@launch
+
+        addNewChatCacheUseCase(
+            PokeChat(
+                index = index,
+                pageNo = pageIndex,
+                chatSender = "partner",
+                isRead = isRead,
+                createAt = createAt,
+                questionIndex = coupleQuestion
+            )
+        )
+
+        if (FeeltalkApp.getAppScreenActive() && FeeltalkApp.getUserInChat()) {
+            return@launch
+        }
+
+        notificationHelper.showChatNotification(
+            message = "(콕찌르기 채팅)"
         )
     }
 

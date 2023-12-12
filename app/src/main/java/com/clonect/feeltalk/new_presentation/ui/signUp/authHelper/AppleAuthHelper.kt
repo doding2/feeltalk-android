@@ -2,6 +2,7 @@ package com.clonect.feeltalk.new_presentation.ui.signUp.authHelper
 
 import android.content.Context
 import androidx.lifecycle.Lifecycle
+import com.clonect.feeltalk.presentation.utils.infoLog
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine

@@ -1,6 +1,8 @@
 package com.clonect.feeltalk.new_data.repository.token
 
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.common.plusDayBy
+import com.clonect.feeltalk.common.plusHoursBy
 import com.clonect.feeltalk.common.plusSecondsBy
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenCacheDataSource
 import com.clonect.feeltalk.new_data.repository.token.dataSource.TokenLocalDataSource
@@ -76,15 +78,16 @@ class TokenRepositoryImpl(
 
     private suspend fun renewToken(tokenInfo: TokenInfo): TokenInfo {
         val now = Date()
-        if (tokenInfo.expiresAt <= now) {
+        if (tokenInfo.refreshExpiresAt.time <= now.time || tokenInfo.accessExpiresAt.time <= now.time) {
             val renewResult = remoteDataSource.reissueToken(tokenInfo)
             val formatter = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
             val newTokenInfo = TokenInfo(
                 accessToken = renewResult.accessToken,
                 refreshToken = renewResult.refreshToken,
-                expiresAt = formatter.parse(renewResult.expiredTime)
+                accessExpiresAt = now.plusHoursBy(1),
+                refreshExpiresAt = formatter.parse(renewResult.expiredTime)
                     ?: run {
-                        infoLog("Fail to renew token: parsing date format error")
+                        infoLog("Token expired time is invalid")
                         throw IllegalStateException("Token expired time is invalid")
                     },
                 snsType = tokenInfo.snsType

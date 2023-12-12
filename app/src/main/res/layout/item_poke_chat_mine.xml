@@ -119,8 +119,8 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
+                    android:layout_width="84dp"
+                    android:layout_height="84dp"
                     android:layout_marginBottom="12dp"
                     android:src="@drawable/n_image_poke_chat_deco" />
 

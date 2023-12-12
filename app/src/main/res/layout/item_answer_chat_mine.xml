@@ -150,19 +150,9 @@
                     android:textSize="14sp" />
 
                 <TextView
-                    android:id="@+id/tv_question_date"
-                    android:layout_width="wrap_content"
+                    android:layout_width="226dp"
                     android:layout_height="wrap_content"
-                    android:letterSpacing="-0.01"
-                    android:lineSpacingExtra="4dp"
-                    android:text="2023.06.01"
-                    android:textColor="@color/gray_500"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="18dp"
+                    android:layout_marginVertical="12dp"
                     android:fontFamily="@font/pretendard_regular"
                     android:gravity="center_horizontal"
                     android:includeFontPadding="false"

@@ -3,6 +3,12 @@ package com.clonect.feeltalk.new_presentation.ui.animatedSignUpNavigation
 import android.os.CountDownTimer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.common.onError
+import com.clonect.feeltalk.common.onSuccess
+import com.clonect.feeltalk.new_domain.usecase.newAccount.RequestAdultAuthCodeUseCase
+import com.clonect.feeltalk.new_domain.usecase.newAccount.RetryRequestAdultAuthCodeUseCase
+import com.clonect.feeltalk.new_domain.usecase.newAccount.VerifyAdultAuthCodeUseCase
+import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +22,9 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class AnimatedSignUpViewModel @Inject constructor(
-
+    private val requestAdultAuthCodeUseCase: RequestAdultAuthCodeUseCase,
+    private val retryRequestAdultAuthCodeUseCase: RetryRequestAdultAuthCodeUseCase,
+    private val verifyAdultAuthCodeUseCase: VerifyAdultAuthCodeUseCase,
 ) : ViewModel() {
 
     private val _startPage: MutableStateFlow<String> = MutableStateFlow("coupleCode")
@@ -167,25 +175,89 @@ class AnimatedSignUpViewModel @Inject constructor(
             return@launch
         }
 
-        // TODO 일단 개인정보 검증은 api 안 쓰고 이렇게 간소화
-//        val isPersonInfoInvalid = name.value.isBlank()
-//                || birth.value.isBlank() || birth.value.length < 6
-//                || gender.value.isBlank()
-//                || phoneNumber.value.isBlank() || phoneNumber.value.length < 11
-//        if (isPersonInfoInvalid) {
-//            setPersonInfoInvalid(true)
-//            return@launch
-//        }
+        val isPersonInfoInvalid = name.value.isBlank()
+                || birth.value.isBlank() || birth.value.length < 6
+                || gender.value.isBlank()
+                || phoneNumber.value.isBlank() || phoneNumber.value.length < 11
+        if (isPersonInfoInvalid) {
+            setPersonInfoInvalid(true)
+            return@launch
+        }
+
+        val providerId = when (mobileCarrier.value) {
+            1 -> "SKT"
+            2 -> "KT"
+            3 -> "LGU"
+            4 -> "SKTMVNO"
+            5 -> "KTMVNO"
+            6 -> "LGUMVNO"
+            else -> return@launch
+        }
+        val isMillennium = when (gender.value) {
+            "1", "2", "5", "6" -> false
+            "3", "4", "7", "8" -> true
+            else -> return@launch
+        }
+        val nation = when (gender.value) {
+            "1", "2", "3", "4" -> "0"
+            "5", "6", "7", "8" -> "1"
+            else -> return@launch
+        }
+        val gender = when (gender.value) {
+            "1", "3", "5", "7" -> "1"
+            "2", "4", "6", "8" -> "2"
+            else -> return@launch
+        }
+        val birthday = if (isMillennium) "20${birth.value}" else "19${birth.value}"
+
 
         authCodeCountDownTimer.cancel()
 
-        // TODO 인증 코드 요청 성공시
-        setAuthCodeState(authCodeState.value.copy(isTimeOut = false, isRequested = true, isAuthCodeInvalid = false))
-        setDoneEnabled(true)
-        authCodeCountDownTimer.start()
+        val onSuccess = {
+            setAuthCodeState(authCodeState.value.copy(isTimeOut = false, isRequested = true, isAuthCodeInvalid = false))
+            setDoneEnabled(true)
+            authCodeCountDownTimer.start()
+        }
+        val isRetry = authCodeState.value.isRequested
+        if (isRetry) {
+            retryRequestAdultAuthCodeUseCase(
+                providerId = providerId,
+                userName = name.value.trim(),
+                userPhone = phoneNumber.value,
+                userBirthday = birthday,
+                userGender = gender,
+                userNation = nation
+            ).onError {
+                    val message = "Fail to retry request adult auth code: ${it.localizedMessage}"
+                    sendErrorMessage(message)
+                    infoLog(message)
+                }
+                .onSuccess { onSuccess() }
+        } else {
+            requestAdultAuthCodeUseCase(
+                providerId = providerId,
+                userName = name.value.trim(),
+                userPhone = phoneNumber.value,
+                userBirthday = birthday,
+                userGender = gender,
+                userNation = nation
+            ).onError {
+                    val message = "Fail to request adult auth code: ${it.localizedMessage}"
+                    sendErrorMessage(message)
+                    infoLog(message)
+                }
+                .onSuccess { onSuccess() }
+        }
     }
 
-    fun matchAuthCode() = viewModelScope.launch {
-        setAuthCodeState(authCodeState.value.copy(isAuthCodeInvalid = true))
+    fun verifyAuthCode(onSuccess: () -> Unit) = viewModelScope.launch {
+        verifyAdultAuthCodeUseCase(authCode.value)
+            .onError {
+                val message = "Fail to verify adult auth code: ${it.localizedMessage}"
+                sendErrorMessage(message)
+                infoLog(message)
+            }.onSuccess {
+                onSuccess()
+            }
     }
 }

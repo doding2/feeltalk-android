@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.inquire
 
+import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
@@ -85,7 +86,7 @@ class InquireViewModel @Inject constructor(
     private fun computeSubmitEnabled() {
         _isSubmitEnabled.value = !title.value.isNullOrBlank()
                 && !body.value.isNullOrBlank()
-                && !email.value.isNullOrBlank()
+                && validateEmail(email.value)
     }
 
 
@@ -95,6 +96,9 @@ class InquireViewModel @Inject constructor(
                 || !email.value.isNullOrBlank()
     }
 
+    private fun validateEmail(email: String?): Boolean {
+        return !email.isNullOrBlank() && Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
 
     fun submitInquiry(onComplete: () -> Unit) = viewModelScope.launch {
         val title = title.value ?: return@launch

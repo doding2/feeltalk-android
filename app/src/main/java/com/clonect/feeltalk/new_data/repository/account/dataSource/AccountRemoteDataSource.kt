@@ -23,8 +23,14 @@ import com.clonect.feeltalk.new_domain.model.token.SocialToken
 interface AccountRemoteDataSource {
 
     suspend fun logInNew(oauthId: String, snsType: SocialType): LogInNewResponse
+    suspend fun logInApple(state: String): LogInNewResponse
     suspend fun getUserStatusNew(accessToken: String): GetUserStatusNewResponse
     suspend fun signUpNew(accessToken: String, nickname: String, marketingConsent: Boolean, fcmToken: String, appleState: String? = null)
+
+    suspend fun requestAdultAuthCode(providerId: String, userName: String, userPhone: String, userBirthday: String, userGender: String, userNation: String)
+    suspend fun retryRequestAdultAuthCode(providerId: String, userName: String, userPhone: String, userBirthday: String, userGender: String, userNation: String)
+    suspend fun verifyAdultAuthCode(authNumber: String)
+
 
     suspend fun autoLogIn(accessToken: String): AutoLogInDto
     suspend fun reLogIn(socialToken: SocialToken): ReLogInDto

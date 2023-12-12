@@ -1,6 +1,7 @@
 package com.clonect.feeltalk.new_data.repository.account
 
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.common.plusHoursBy
 import com.clonect.feeltalk.common.plusSecondsBy
 import com.clonect.feeltalk.new_data.mapper.toConfigurationInfo
 import com.clonect.feeltalk.new_data.mapper.toMyInfo
@@ -17,12 +18,9 @@ import com.clonect.feeltalk.new_domain.model.account.SocialType
 import com.clonect.feeltalk.new_domain.model.account.UnlockPartnerPasswordResponse
 import com.clonect.feeltalk.new_domain.model.account.ValidateLockAnswerDto
 import com.clonect.feeltalk.new_domain.model.newAccount.GetUserStatusNewResponse
-import com.clonect.feeltalk.new_domain.model.newAccount.LogInNewResponse
-import com.clonect.feeltalk.new_domain.model.newAccount.SignUpNewResponse
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
 import com.clonect.feeltalk.new_domain.model.token.TokenInfo
 import com.clonect.feeltalk.new_domain.repository.account.AccountRepository
-import com.navercorp.nid.oauth.NidOAuthPreferencesManager.accessToken
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flattenMerge
@@ -40,15 +38,39 @@ class AccountRepositoryImpl(
 ): AccountRepository {
     override suspend fun logInNew(oauthId: String, snsType: SocialType): Resource<TokenInfo> {
         return try {
+            val now = Date()
             val result = remoteDataSource.logInNew(oauthId, snsType)
             localDataSource.clearInternalStorage()
             val formatter = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
             val tokenInfo = TokenInfo(
                 accessToken = result.accessToken,
                 refreshToken = result.refreshToken,
-                expiresAt = formatter.parse(result.expiredTime)
+                accessExpiresAt = now.plusHoursBy(1),
+                refreshExpiresAt = formatter.parse(result.expiredTime)
                     ?: throw IllegalStateException("Token expired time is invalid"),
                 snsType = snsType
+            )
+            Resource.Success(tokenInfo)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun logInApple(state: String): Resource<TokenInfo> {
+        return try {
+            val result = remoteDataSource.logInApple(state)
+            localDataSource.clearInternalStorage()
+            val now = Date()
+            val formatter = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
+            val tokenInfo = TokenInfo(
+                accessToken = result.accessToken,
+                refreshToken = result.refreshToken,
+                accessExpiresAt = now.plusHoursBy(1),
+                refreshExpiresAt = formatter.parse(result.expiredTime)
+                    ?: throw IllegalStateException("Token expired time is invalid"),
+                snsType = SocialType.AppleAndroid
             )
             Resource.Success(tokenInfo)
         } catch (e: CancellationException) {
@@ -86,6 +108,53 @@ class AccountRepositoryImpl(
         }
     }
 
+    override suspend fun requestAdultAuthCode(
+        providerId: String,
+        userName: String,
+        userPhone: String,
+        userBirthday: String,
+        userGender: String,
+        userNation: String,
+    ): Resource<Unit> {
+        return try {
+            val result = remoteDataSource.requestAdultAuthCode(providerId, userName, userPhone, userBirthday, userGender, userNation)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun retryRequestAdultAuthCode(
+        providerId: String,
+        userName: String,
+        userPhone: String,
+        userBirthday: String,
+        userGender: String,
+        userNation: String,
+    ): Resource<Unit> {
+        return try {
+            val result = remoteDataSource.retryRequestAdultAuthCode(providerId, userName, userPhone, userBirthday, userGender, userNation)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun verifyAdultAuthCode(authNumber: String): Resource<Unit> {
+        return try {
+            val result = remoteDataSource.verifyAdultAuthCode(authNumber)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
 
     override suspend fun autoLogIn(accessToken: String): Resource<AutoLogInDto> {
         return try {
@@ -99,8 +168,8 @@ class AccountRepositoryImpl(
     }
 
     override suspend fun reLogIn(socialToken: SocialToken): Resource<Pair<String, TokenInfo?>> {
+        val now = Date()
         return try {
-            val now = Date()
             val result = remoteDataSource.reLogIn(socialToken)
             localDataSource.clearInternalStorage()
             val tokenInfo = if (result.signUpState == "newbie") {
@@ -109,7 +178,8 @@ class AccountRepositoryImpl(
                 TokenInfo(
                     accessToken = result.accessToken ?: "",
                     refreshToken = result.refreshToken ?: "",
-                    expiresAt = now.plusSecondsBy(result.expiresIn ?: 0),
+                    accessExpiresAt = now.plusHoursBy(1),
+                    refreshExpiresAt = now.plusSecondsBy(result.expiresIn ?: 0),
                     snsType = socialToken.type
                 )
             }
@@ -129,7 +199,8 @@ class AccountRepositoryImpl(
             val tokenInfo = TokenInfo(
                 accessToken = result.accessToken,
                 refreshToken = result.refreshToken,
-                expiresAt = now.plusSecondsBy(result.expiresIn),
+                accessExpiresAt = now.plusHoursBy(1),
+                refreshExpiresAt = now.plusSecondsBy(result.expiresIn),
                 snsType = socialToken.type
             )
             Resource.Success(tokenInfo)
@@ -452,7 +523,7 @@ class AccountRepositoryImpl(
     }
 
 
-    override suspend fun setCoupleCrated(isCreated: Boolean) {
+    override suspend fun setCoupleCreated(isCreated: Boolean) {
         cacheDataSource.setCoupleCreated(isCreated)
     }
 

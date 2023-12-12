@@ -40,6 +40,17 @@ class AccountRemoteDataSourceImpl(
         return response.body()!!.data!!
     }
 
+    override suspend fun logInApple(state: String): LogInNewResponse {
+        val body = JsonObject().apply {
+            addProperty("state", state)
+        }
+        val response = clonectService.logInApple(body)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
+        if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
+        return response.body()!!.data!!
+    }
+
     override suspend fun getUserStatusNew(accessToken: String): GetUserStatusNewResponse {
         val response = clonectService.getUserStatusNew(accessToken)
         if (!response.isSuccessful) throw ServerIsDownException(response)
@@ -63,6 +74,63 @@ class AccountRemoteDataSourceImpl(
         }
         val response = clonectService.signUpNew(accessToken, body)
         if (!response.isSuccessful) throw ServerIsDownException(response)
+    }
+
+    override suspend fun requestAdultAuthCode(
+        providerId: String,
+        userName: String,
+        userPhone: String,
+        userBirthday: String,
+        userGender: String,
+        userNation: String,
+    ) {
+        val body = JsonObject().apply {
+            addProperty("providerId", providerId)
+            addProperty("reqAuthType", "SMS")
+            addProperty("userName", userName)
+            addProperty("userPhone", userPhone)
+            addProperty("userBirthday", userBirthday)
+            addProperty("userGender", userGender)
+            addProperty("userNation", userNation)
+        }
+        val response = clonectService.requestAdultAuthCode(body)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
+    }
+
+    override suspend fun retryRequestAdultAuthCode(
+        providerId: String,
+        userName: String,
+        userPhone: String,
+        userBirthday: String,
+        userGender: String,
+        userNation: String,
+    ) {
+        val body = JsonObject().apply {
+            addProperty("serviceType", "telcoAuth")
+            addProperty("providerId", providerId)
+            addProperty("reqAuthType", "SMS")
+            addProperty("userName", userName)
+            addProperty("userPhone", userPhone)
+            addProperty("userBirthday", userBirthday)
+            addProperty("userGender", userGender)
+            addProperty("userNation", userNation)
+        }
+        val response = clonectService.retryRequestAdultAuthCode(body)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
+    }
+
+    override suspend fun verifyAdultAuthCode(authNumber: String) {
+        val body = JsonObject().apply {
+            addProperty("authNumber", authNumber)
+        }
+        val response = clonectService.verifyAdultAuthCode(body)
+        if (!response.isSuccessful) throw ServerIsDownException(response)
+        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
     }
 
     override suspend fun autoLogIn(accessToken: String): AutoLogInDto {
