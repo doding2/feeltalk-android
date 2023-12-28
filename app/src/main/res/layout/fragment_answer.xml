@@ -82,24 +82,109 @@
                     android:lineSpacingExtra="4dp"
                     android:letterSpacing="-0.01"/>
 
-                <EditText
-                    android:id="@+id/et_my_answer"
-                    android:background="@drawable/n_background_edit_text_answer"
+
+<!--                <EditText-->
+<!--                    android:id="@+id/et_my_answer"-->
+<!--                    android:background="@drawable/n_background_edit_text_answer"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginHorizontal="20dp"-->
+<!--                    android:gravity="top"-->
+<!--                    android:hint="@string/answer_my_answer_hint"-->
+<!--                    android:inputType="textMultiLine"-->
+<!--                    android:lines="4"-->
+<!--                    android:scrollbars="vertical"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    android:textColorHint="@color/gray_400"-->
+<!--                    android:textSize="16sp"-->
+<!--                    android:fontFamily="@font/pretendard_regular"-->
+<!--                    android:includeFontPadding="false"-->
+<!--                    android:lineSpacingExtra="5dp"-->
+<!--                    android:letterSpacing="-0.01"/>-->
+
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/mcv_answer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
-                    android:gravity="top"
-                    android:hint="@string/answer_my_answer_hint"
-                    android:inputType="textMultiLine"
-                    android:lines="4"
-                    android:scrollbars="vertical"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/gray_400"
-                    android:textSize="16sp"
-                    android:fontFamily="@font/pretendard_regular"
-                    android:includeFontPadding="false"
-                    android:lineSpacingExtra="5dp"
-                    android:letterSpacing="-0.01"/>
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@color/gray_200"
+                    app:strokeColor="@color/main_500"
+                    app:strokeWidth="0dp">
+
+                    <FrameLayout
+                        android:id="@+id/fl_num_answer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <EditText
+                            android:id="@+id/et_answer"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="top"
+                            android:paddingHorizontal="12dp"
+                            android:paddingTop="16dp"
+                            android:paddingBottom="46dp"
+                            android:textCursorDrawable="@drawable/edit_text_cursor"
+                            android:background="@null"
+                            android:hint="@string/answer_my_answer_hint"
+                            android:textColorHint="@color/gray_400"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/pretendard_regular"
+                            android:lines="4"
+                            android:inputType="textMultiLine"
+                            android:maxLength="100"
+                            android:scrollbars="vertical"
+                            android:overScrollMode="always"
+                            android:scrollbarStyle="insideInset"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="5dp"
+                            android:letterSpacing="-0.01" />
+
+                        <LinearLayout
+                            android:id="@+id/ll_num_answer_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_gravity="bottom"
+                            android:gravity="bottom|end"
+                            android:layout_marginHorizontal="12dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="16dp">
+
+                            <TextView
+                                android:id="@+id/tv_num_answer"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/add_challenge_default_num_body"
+                                android:textColor="@color/gray_600"
+                                android:textSize="13sp"
+                                android:fontFamily="@font/pretendard_regular"
+                                android:includeFontPadding="false"
+                                android:lineSpacingExtra="4dp"
+                                android:letterSpacing="-0.01"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/add_challenge_max_num_body"
+                                android:textColor="@color/gray_400"
+                                android:textSize="13sp"
+                                android:fontFamily="@font/pretendard_regular"
+                                android:includeFontPadding="false"
+                                android:lineSpacingExtra="4dp"
+                                android:letterSpacing="-0.01"/>
+                        </LinearLayout>
+                    </FrameLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+
+
+
 
                 <TextView
                     android:layout_width="wrap_content"

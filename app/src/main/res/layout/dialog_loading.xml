@@ -9,11 +9,13 @@
     android:focusable="false"
     android:background="@android:color/transparent">
 
-    <com.google.android.material.progressindicator.CircularProgressIndicator
+    <ProgressBar
+        style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:indeterminate="true"
-        app:indicatorSize="60dp"/>
+        android:indeterminateDrawable="@drawable/n_background_loading"
+        app:indicatorSize="60dp" />
 
 </FrameLayout>

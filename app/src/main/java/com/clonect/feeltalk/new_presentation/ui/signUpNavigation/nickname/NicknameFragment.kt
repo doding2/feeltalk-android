@@ -1,6 +1,7 @@
 package com.clonect.feeltalk.new_presentation.ui.signUpNavigation.nickname
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -21,6 +22,7 @@ import com.clonect.feeltalk.databinding.FragmentNicknameBinding
 import com.clonect.feeltalk.new_presentation.ui.signUpNavigation.SignUpNavigationViewModel
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
+import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -51,8 +53,16 @@ class NicknameFragment : Fragment() {
         binding.run {
             etNickname.setText(viewModel.nickname.value)
             etNickname.addTextChangedListener {
-                viewModel.setNickname(it?.toString() ?: "")
+                val nickname = it?.toString() ?: ""
+                tvNumNickname.text = nickname.length.toString()
+                viewModel.setNickname(nickname)
             }
+//            etNickname.setOnFocusChangeListener { view, isFocused ->
+//                if (isFocused) {
+//                    viewModel.setNicknameFocused(true)
+//                }
+//            }
+            ivNicknameClear.setOnClickListener { etNickname.setText("") }
 
             mcvNext.setOnClickListener { signUp() }
         }
@@ -69,6 +79,7 @@ class NicknameFragment : Fragment() {
     private fun setKeyboardInsets() = binding.run {
         etNickname.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
+                viewModel.setNicknameFocused(false)
                 etNickname.clearFocus()
             }
             false
@@ -96,11 +107,11 @@ class NicknameFragment : Fragment() {
             }
 
             val isKeyboardUp = imeHeight != 0
+            viewModel.setNicknameFocused(isKeyboardUp)
             if (isKeyboardUp) {
                 setNextButtonMargin(0)
                 mcvNext.radius = 0f
             } else {
-                etNickname.clearFocus()
                 setNextButtonMargin((activity.dpToPx(20f).toInt()))
                 mcvNext.radius = activity.dpToPx(30f)
             }
@@ -141,28 +152,104 @@ class NicknameFragment : Fragment() {
     }
 
 
-    private fun validateNickname(nickname: String): Boolean {
-        if (nickname.isBlank()) return false
-        if (nickname.length >= 10) return false
+//    private fun validateNickname(nickname: String): Boolean {
+//        if (nickname.isBlank()) return false
+//        if (nickname.length >= 10) return false
+//
+//        val nicknamePattern = Pattern.compile("^[ㄱ-ㅣ가-힣a-zA-Z0-9\\s]*$")
+//        val isNoSpecialCharacter = nicknamePattern.matcher(nickname).matches()
+//        if (!isNoSpecialCharacter) return false
+//
+//        return true
+//    }
 
-        val nicknamePattern = Pattern.compile("^[ㄱ-ㅣ가-힣a-zA-Z0-9\\s]*$")
-        val isNoSpecialCharacter = nicknamePattern.matcher(nickname).matches()
-        if (!isNoSpecialCharacter) return false
 
-        return true
+    private fun applyNicknameFocusedChanges(isFocused: Boolean) = binding.run {
+        if (isFocused) {
+            mcvNickname.strokeColor = requireContext().getColor(R.color.main_500)
+            mcvNickname.strokeWidth = requireContext().dpToPx(2f)
+            mcvNickname.setCardBackgroundColor(Color.WHITE)
+            ivNicknameClear.visibility = View.VISIBLE
+        } else {
+            mcvNickname.strokeWidth = 0
+            mcvNickname.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
+            ivNicknameClear.visibility = View.GONE
+            etNickname.clearFocus()
+        }
+
+        tvNicknameWarning.setTextColor(Color.WHITE)
+        tvNumNickname.setTextColor(requireContext().getColor(R.color.gray_600))
+        val state = viewModel.nicknameState.value
+        if (state.containSpecialChar) {
+            tvNicknameWarning.setText(R.string.nickname_warning_1)
+
+            tvNicknameWarning.setTextColor(requireContext().getColor(R.color.system_error))
+            mcvNickname.setCardBackgroundColor(Color.WHITE)
+            mcvNickname.strokeWidth = requireContext().dpToPx(1f)
+            mcvNickname.strokeColor = requireContext().getColor(R.color.system_error)
+        }
+        if (state.isOverMaxLength) {
+            tvNumNickname.setTextColor(requireContext().getColor(R.color.system_error))
+            tvNicknameWarning.setText(R.string.nickname_warning_2)
+
+            tvNicknameWarning.setTextColor(requireContext().getColor(R.color.system_error))
+            mcvNickname.setCardBackgroundColor(Color.WHITE)
+            mcvNickname.strokeWidth = requireContext().dpToPx(1f)
+            mcvNickname.strokeColor = requireContext().getColor(R.color.system_error)
+        }
     }
+
+    private fun applyNicknameStateChanges(state: NicknameState) = binding.run {
+        tvNicknameWarning.setTextColor(Color.WHITE)
+        tvNumNickname.setTextColor(requireContext().getColor(R.color.gray_600))
+
+        val isFocused = viewModel.isNicknameFocused.value
+        if (isFocused) {
+            mcvNickname.strokeColor = requireContext().getColor(R.color.main_500)
+            mcvNickname.strokeWidth = requireContext().dpToPx(2f)
+            mcvNickname.setCardBackgroundColor(Color.WHITE)
+            ivNicknameClear.visibility = View.VISIBLE
+        } else {
+            mcvNickname.strokeWidth = 0
+            mcvNickname.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
+            ivNicknameClear.visibility = View.GONE
+            etNickname.clearFocus()
+        }
+
+        if (state.containSpecialChar) {
+            tvNicknameWarning.setText(R.string.nickname_warning_1)
+
+            tvNicknameWarning.setTextColor(requireContext().getColor(R.color.system_error))
+            mcvNickname.setCardBackgroundColor(Color.WHITE)
+            mcvNickname.strokeWidth = requireContext().dpToPx(1f)
+            mcvNickname.strokeColor = requireContext().getColor(R.color.system_error)
+        }
+        if (state.isOverMaxLength) {
+            tvNumNickname.setTextColor(requireContext().getColor(R.color.system_error))
+            tvNicknameWarning.setText(R.string.nickname_warning_2)
+
+            tvNicknameWarning.setTextColor(requireContext().getColor(R.color.system_error))
+            mcvNickname.setCardBackgroundColor(Color.WHITE)
+            mcvNickname.strokeWidth = requireContext().dpToPx(1f)
+            mcvNickname.strokeColor = requireContext().getColor(R.color.system_error)
+        }
+    }
+
 
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-            launch {
-                viewModel.nickname.collectLatest {
-                    if (validateNickname(it)) {
-                        enableNextButton(true)
-                    } else {
-                        enableNextButton(false)
-                    }
-                }
-            }
+            launch { viewModel.isNicknameFocused.collectLatest(::applyNicknameFocusedChanges) }
+            launch { viewModel.nicknameState.collectLatest(::applyNicknameStateChanges) }
+            launch { viewModel.isAddEnabled.collectLatest(::enableNextButton) }
+//            launch {
+//                viewModel.nickname.collectLatest {
+//                    if (validateNickname(it)) {
+//                        enableNextButton(true)
+//                    } else {
+//                        enableNextButton(false)
+//                    }
+//                }
+//            }
         }
     }
 }

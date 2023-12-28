@@ -15,6 +15,7 @@ import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.newAccount.SignUpNewUseCase
 import com.clonect.feeltalk.new_domain.usecase.token.GetCachedSocialTokenUseCase
 import com.clonect.feeltalk.new_presentation.service.FirebaseCloudMessagingService
+import com.clonect.feeltalk.new_presentation.ui.signUpNavigation.nickname.NicknameState
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +25,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
@@ -82,6 +84,9 @@ class SignUpNavigationViewModel @Inject constructor(
         _isMarketingAgreed.value = false
 
         _nickname.value = ""
+        _nicknameState.value = NicknameState()
+        _isAddEnabled.value = false
+        _isNicknameFocused.value = false
 
         _partnerCoupleCode.value = null
 
@@ -167,8 +172,40 @@ class SignUpNavigationViewModel @Inject constructor(
     private val _isNicknameProcessed = MutableStateFlow(false)
     val isNicknameProcessed = _isNicknameProcessed.asStateFlow()
 
+    private val _isNicknameFocused: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isNicknameFocused = _isNicknameFocused.asStateFlow()
+
+    private val _nicknameState = MutableStateFlow(NicknameState())
+    val nicknameState = _nicknameState.asStateFlow()
+
+    private val _isAddEnabled: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isAddEnabled = _isAddEnabled.asStateFlow()
+
     fun setNickname(nickname: String) {
         _nickname.value = nickname
+        computeNicknameState()
+        computeAddButtonEnabled()
+    }
+
+    fun setNicknameFocused(isNicknameFocused: Boolean) {
+        _isNicknameFocused.value = isNicknameFocused
+    }
+
+    private fun computeNicknameState() {
+        val nickname = _nickname.value
+        val pattern = Pattern.compile("^[ㄱ-ㅣ가-힣a-zA-Z0-9]*$")
+        val isNoSpecialCharacter = pattern.matcher(nickname).matches()
+        val isOverMaxLength = nickname.length > 10
+        _nicknameState.value = NicknameState(
+            isOverMaxLength = isOverMaxLength,
+            containSpecialChar = !isNoSpecialCharacter
+        )
+    }
+
+    private fun computeAddButtonEnabled() {
+        _isAddEnabled.value = nickname.value.isNotBlank()
+                && !nicknameState.value.containSpecialChar
+                && !nicknameState.value.isOverMaxLength
     }
 
     fun setNicknameProcessed(processed: Boolean) = viewModelScope.launch {

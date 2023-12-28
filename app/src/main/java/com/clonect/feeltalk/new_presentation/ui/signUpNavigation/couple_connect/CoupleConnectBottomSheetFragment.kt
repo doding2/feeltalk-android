@@ -60,6 +60,7 @@ class CoupleConnectBottomSheetFragment(
             etPartnerCoupleCode.addTextChangedListener {
                 viewModel.setPartnerCoupleCode(it?.toString() ?: "")
             }
+            ivClear.setOnClickListener { etPartnerCoupleCode.setText("") }
 
             mcvConnect.setOnClickListener { matchCoupleCode() }
         }
@@ -103,11 +104,13 @@ class CoupleConnectBottomSheetFragment(
             if (isKeyboardUp) {
                 setConnectButtonMargin(0)
                 mcvConnect.radius = 0f
+                ivClear.visibility = View.VISIBLE
                 onKeyboardUp()
             } else {
                 etPartnerCoupleCode.clearFocus()
                 setConnectButtonMargin(activity.dpToPx(20f).toInt())
                 mcvConnect.radius = activity.dpToPx(30f)
+                ivClear.visibility = View.GONE
                 onKeyboardDown()
             }
 

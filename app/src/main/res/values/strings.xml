@@ -14,6 +14,10 @@
     <string name="dialog_cancel">취소</string>
     <string name="dialog_confirm">확인</string>
 
+    <!--  AnimatedSignUp Error Dialog  -->
+    <string name="animated_sign_up_error_title">에러</string>
+    <string name="animated_sign_up_error_confirm">확인</string>
+
     <!--  AnswerConfirm  -->
     <string name="answer_confirm_title">답변을 보내시겠어요?</string>
     <string name="answer_confirm_body">작성한 답변을 상대방에게 보낼게요.\n보낸 후에는 답변을 수정할 수 없어요.</string>
@@ -146,6 +150,10 @@
     <string name="nickname_edit_text_label">닉네임</string>
     <string name="nickname_edit_text_hint">닉네임을 입력해주세요</string>
     <string name="nickname_alert">여러분의 소중한 성생활이 노출되지 않도록 본명이 유추되지 않는 닉네임으로 설정해주세요.</string>
+    <string name="nickname_max_num">/10</string>
+    <string name="nickname_default_num">0</string>
+    <string name="nickname_warning_1">닉네임에 특수문자/공백은 사용할 수 없어요.</string>
+    <string name="nickname_warning_2">닉네임은 최대 10자까지 만들 수 있어요</string>
 
     <!--  CoupleCode  -->
     <string name="couple_code_title">연인에게 보낼 초대장을 준비했어요</string>

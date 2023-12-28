@@ -578,6 +578,15 @@ class AnimatedSignUpFragment : Fragment() {
         ).show()
     }
 
+    private fun showAlertDialog(message: String) {
+        showOneButtonDialog(
+            title = requireContext().getString(R.string.animated_sign_up_error_title),
+            body = message,
+            confirmButton = requireContext().getString(R.string.animated_sign_up_error_confirm),
+            onConfirm = {}
+        )
+    }
+
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.gender.collectLatest(::applyGenderChanges) }
@@ -590,7 +599,7 @@ class AnimatedSignUpFragment : Fragment() {
             launch { viewModel.isPersonInfoInvalid.collectLatest(::applyIsPersonInfoInvalidChanges) }
             launch { viewModel.isDoneEnabled.collectLatest(::applyIsDoneEnabledChanges) }
             launch { viewModel.isLoading.collectLatest(::showLoading) }
-            launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
+            launch { viewModel.errorMessage.collectLatest(::showAlertDialog) }
         }
     }
 

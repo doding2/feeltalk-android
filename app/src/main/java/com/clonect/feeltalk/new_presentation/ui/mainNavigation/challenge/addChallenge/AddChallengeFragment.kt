@@ -393,7 +393,7 @@ class AddChallengeFragment : Fragment() {
 
                 enableDeadlinePicker(false)
 
-                mcvBody.strokeWidth = requireContext().dpToPx(2f).toInt()
+                mcvBody.strokeWidth = requireContext().dpToPx(2f)
                 mcvBody.setCardBackgroundColor(Color.WHITE)
 
                 tvNext.setText(R.string.add_challenge_done)

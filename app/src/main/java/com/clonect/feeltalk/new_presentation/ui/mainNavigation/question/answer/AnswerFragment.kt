@@ -2,6 +2,7 @@ package com.clonect.feeltalk.new_presentation.ui.mainNavigation.question.answer
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
@@ -28,6 +29,7 @@ import com.clonect.feeltalk.databinding.FragmentAnswerBinding
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationViewModel
 import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
+import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.showConfirmDialog
 import com.clonect.feeltalk.presentation.utils.infoLog
@@ -79,8 +81,9 @@ class AnswerFragment : Fragment() {
                 }
             }
 
-            etMyAnswer.addTextChangedListener {
+            etAnswer.addTextChangedListener {
                 val answer = it?.toString() ?: ""
+                tvNumAnswer.text = answer.length.toString()
                 viewModel.setAnswer(answer)
                 navViewModel.setUserAnswering(!viewModel.isReadMode.value && answer.isNotEmpty())
             }
@@ -149,16 +152,16 @@ class AnswerFragment : Fragment() {
                 viewModel.setReadMode(isUserAnswered)
 
                 if (viewModel.isReadMode.value) {
-                    etMyAnswer.setText(it.myAnswer)
-                    etMyAnswer.isEnabled = false
+                    etAnswer.setText(it.myAnswer)
+                    etAnswer.isEnabled = false
                     tvDoneRound.setText(R.string.answer_button_chat)
                     tvDoneSquare.setText(R.string.answer_button_chat)
                 } else {
                     // 앱 백그라운드 갔다가 돌아오면 작성된 내용 날아가는거 방지
                     if (!navViewModel.isUserAnswering.value) {
-                        etMyAnswer.text = null
+                        etAnswer.text = null
                     }
-                    etMyAnswer.isEnabled = true
+                    etAnswer.isEnabled = true
                     tvDoneRound.setText(R.string.answer_button_done)
                     tvDoneSquare.setText(R.string.answer_button_done)
                 }
@@ -175,6 +178,8 @@ class AnswerFragment : Fragment() {
 
                         mcvDoneRound.visibility = View.VISIBLE
                         mcvDoneSquare.visibility = View.GONE
+
+                        llNumAnswerContainer.visibility = View.GONE
                     } else {
                         mcvPartnerNotDone.visibility = View.GONE
                         mcvPartnerDone.visibility = View.VISIBLE
@@ -182,6 +187,8 @@ class AnswerFragment : Fragment() {
 
                         mcvDoneRound.visibility = View.VISIBLE
                         mcvDoneSquare.visibility = View.GONE
+
+                        llNumAnswerContainer.visibility = View.VISIBLE
                     }
                 }
                 else {
@@ -192,6 +199,8 @@ class AnswerFragment : Fragment() {
 
                         mcvDoneRound.visibility = View.GONE
                         mcvDoneSquare.visibility = View.GONE
+
+                        llNumAnswerContainer.visibility = View.GONE
                     } else {
                         mcvPartnerNotDone.visibility = View.VISIBLE
                         mcvPartnerDone.visibility = View.GONE
@@ -199,6 +208,8 @@ class AnswerFragment : Fragment() {
 
                         mcvDoneRound.visibility = View.VISIBLE
                         mcvDoneSquare.visibility = View.GONE
+
+                        llNumAnswerContainer.visibility = View.VISIBLE
                     }
                 }
 
@@ -219,8 +230,8 @@ class AnswerFragment : Fragment() {
 //            isMyEtInBottom = !etMyAnswer.canScrollVertically(10)
 //        }
 
-        etMyAnswer.setOnTouchListener { v, event ->
-            if (etMyAnswer.lineCount <= 4) return@setOnTouchListener false
+        etAnswer.setOnTouchListener { v, event ->
+            if (etAnswer.lineCount <= 4) return@setOnTouchListener false
 
             v.parent.requestDisallowInterceptTouchEvent(true)
             if (event.action and MotionEvent.ACTION_MASK == MotionEvent.ACTION_UP) {
@@ -279,11 +290,11 @@ class AnswerFragment : Fragment() {
 
     private fun hideKeyboard() {
         val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(binding.etMyAnswer.windowToken, 0)
+        imm.hideSoftInputFromWindow(binding.etAnswer.windowToken, 0)
     }
 
 
-    private fun expandDoneButton(enabled: Boolean) = binding.run {
+    private fun applyKeyboardUpChanges(isKeyboardUp: Boolean) = binding.run {
         val isPartnerAnswered = viewModel.question.value?.partnerAnswer != null
         val isUserAnswered = viewModel.isReadMode.value
         if (isUserAnswered && !isPartnerAnswered) {
@@ -299,18 +310,23 @@ class AnswerFragment : Fragment() {
             mcvDoneRound.radius = 0f
         }
 
-        if (enabled) {
+        if (isKeyboardUp) {
+            mcvAnswer.strokeWidth = requireContext().dpToPx(2f)
+            mcvAnswer.setCardBackgroundColor(Color.WHITE)
+
             mcvDoneSquare.visibility = View.VISIBLE
             mcvDoneRound.visibility = View.GONE
         } else {
-            etMyAnswer.clearFocus()
+            mcvAnswer.strokeWidth = 0
+            mcvAnswer.setCardBackgroundColor(requireContext().getColor(R.color.gray_200))
+
+            etAnswer.clearFocus()
             mcvDoneSquare.visibility = View.GONE
             mcvDoneRound.visibility = View.VISIBLE
         }
     }
 
     private fun enableDoneButton(enabled: Boolean) = binding.run {
-
         tvDoneRound.apply {
             if (enabled) {
                 setBackgroundResource(R.drawable.n_background_button_main)
@@ -362,14 +378,14 @@ class AnswerFragment : Fragment() {
                         if (it == null) {
                             viewModel.clear()
                             hideKeyboard()
-                            binding.etMyAnswer.clearFocus()
+                            binding.etAnswer.clearFocus()
                         } else {
                             viewModel.setQuestion(it)
                         }
                     }
                 }
 
-                launch { viewModel.isKeyboardUp.collectLatest(::expandDoneButton) }
+                launch { viewModel.isKeyboardUp.collectLatest(::applyKeyboardUpChanges) }
 
                 launch {
                     viewModel.answer.collectLatest {
