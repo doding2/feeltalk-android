@@ -66,7 +66,7 @@ class AnimatedSignUpViewModel @Inject constructor(
     private val _isAgreementAccepted: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isAgreementAccepted = _isAgreementAccepted.asStateFlow()
 
-    private var authCodeCountDownTimer: CountDownTimer = object: CountDownTimer(3000, 1000) {
+    private var authCodeCountDownTimer: CountDownTimer = object: CountDownTimer(180000, 1000) {
         override fun onTick(millisUntilFinished: Long) {
             setAuthCodeRemainingTime(millisUntilFinished)
             setAuthCodeState(authCodeState.value.copy(isTimeOut = false))
@@ -77,7 +77,7 @@ class AnimatedSignUpViewModel @Inject constructor(
             setDoneEnabled(false)
         }
     }
-    private val _authCodeRemainingTime: MutableStateFlow<Long> = MutableStateFlow(3000)  // 1000 * 60 * 3
+    private val _authCodeRemainingTime: MutableStateFlow<Long> = MutableStateFlow(180000)  // 1000 * 60 * 3
     val authCodeRemainingTime = _authCodeRemainingTime.asStateFlow()
 
     private val _authCodeState: MutableStateFlow<AuthCodeState> = MutableStateFlow(AuthCodeState())
