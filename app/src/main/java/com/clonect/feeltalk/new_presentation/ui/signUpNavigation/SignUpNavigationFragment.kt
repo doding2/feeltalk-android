@@ -199,7 +199,6 @@ class SignUpNavigationFragment : Fragment() {
                 val startPage = arguments?.getString("startPage", "coupleCode") ?: "coupleCode"
                 findNavController().navigate(
                     R.id.action_signUpFragment_pop_back,
-                    bundleOf("startPage" to startPage)
                 )
             }
         }
