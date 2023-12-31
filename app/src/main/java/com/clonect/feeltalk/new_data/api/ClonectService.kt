@@ -122,7 +122,7 @@ interface ClonectService {
         @Body body: JsonObject
     ): Response<ApiResponse<Unit>>
 
-    @POST("/api/v1/member/config/password")
+    @POST("/api/v1/member/config/lock")
     suspend fun setupPassword(
         @Header("Authorization") token: String,
         @Body body: JsonObject

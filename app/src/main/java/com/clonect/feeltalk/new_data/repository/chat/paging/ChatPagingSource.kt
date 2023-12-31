@@ -1,5 +1,7 @@
 package com.clonect.feeltalk.new_data.repository.chat.paging
 
+import android.content.Context
+import android.graphics.BitmapFactory
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.clonect.feeltalk.common.Resource
@@ -13,6 +15,7 @@ import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.repository.challenge.ChallengeRepository
 import com.clonect.feeltalk.new_domain.repository.question.QuestionRepository
 import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
+import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.presentation.utils.infoLog
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +24,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 class ChatPagingSource(
+    private val context: Context,
     private val tokenRepository: TokenRepository,
     private val questionRepository: QuestionRepository,
     private val challengeRepository: ChallengeRepository,
@@ -99,6 +103,28 @@ class ChatPagingSource(
     }
 
     private suspend fun preloadImage(index: Long, url: String): Triple<File?, Int, Int> {
+        val local = File(context.cacheDir, "${index}.png")
+        if (local.exists() && local.canRead()) {
+            val bitmap = BitmapFactory.decodeFile(local.path)
+
+            val width = bitmap.width
+            val height = bitmap.height
+
+            val maxWidth = context.dpToPx(252f).toFloat()
+            val maxHeight = context.dpToPx(300f).toFloat()
+            var mWidth = width.takeIf { it > 0 } ?: maxWidth.toInt()
+            var mHeight = height.takeIf { it > 0 } ?: maxHeight.toInt()
+
+            val heightScale = if (mHeight > maxHeight) maxHeight / mHeight else mHeight / maxHeight
+            mWidth = (mWidth * heightScale).toInt()
+            mHeight = (mHeight * heightScale).toInt()
+
+            val widthScale = if (mWidth > maxWidth) maxWidth / mWidth else mWidth / maxWidth
+            mWidth = (mWidth * widthScale).toInt()
+            mHeight = (mHeight * widthScale).toInt()
+
+            return Triple(local, mWidth, mHeight)
+        }
         return chatRemoteDataSource.preloadImage(index, url)
     }
 }

@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.new_presentation.di
 
+import android.content.Context
 import com.clonect.feeltalk.new_data.repository.challenge.dataSource.ChallengeRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.challenge.paging.CompletedChallengePagingSource
 import com.clonect.feeltalk.new_data.repository.challenge.paging.OngoingChallengePagingSource
@@ -13,6 +14,7 @@ import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 
 @Module
@@ -21,12 +23,13 @@ class PagingSourceModule {
 
     @Provides
     fun providesChatPagingSource(
+        @ApplicationContext context: Context,
         tokenRepository: TokenRepository,
         questionRepository: QuestionRepository,
         challengeRepository: ChallengeRepository,
         chatRemoteDataSource: ChatRemoteDataSource
     ): ChatPagingSource {
-        return ChatPagingSource(tokenRepository, questionRepository, challengeRepository, chatRemoteDataSource)
+        return ChatPagingSource(context, tokenRepository, questionRepository, challengeRepository, chatRemoteDataSource)
     }
 
     @Provides

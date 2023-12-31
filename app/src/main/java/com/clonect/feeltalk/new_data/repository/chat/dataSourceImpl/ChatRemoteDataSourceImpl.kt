@@ -142,12 +142,12 @@ class ChatRemoteDataSourceImpl(
                 mWidth = (mWidth * widthScale).toInt()
                 mHeight = (mHeight * widthScale).toInt()
 
-                Triple(imageFile, mWidth, mHeight)
+                return@withContext Triple(imageFile, mWidth, mHeight)
             } catch (e: Exception) {
                 infoLog("Fail to preload image: ${e.localizedMessage}")
             }
 
-            Triple(null, 252, 300)
+            return@withContext Triple(null, 252, 300)
         }
     }
 
