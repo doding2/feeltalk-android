@@ -609,6 +609,7 @@
 
     <!--  ImageDetail  -->
     <string name="image_detail_date_format">yyyy년 M월 d일 h:m</string>
+    <string name="image_detail_download_succeed">이미지를 다운했습니다.</string>
 
 
 

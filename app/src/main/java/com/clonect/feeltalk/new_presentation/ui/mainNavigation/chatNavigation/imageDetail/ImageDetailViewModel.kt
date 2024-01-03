@@ -1,7 +1,19 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageDetail
 
+import android.content.ContentValues
+import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
+import android.media.MediaScannerConnection
+import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bumptech.glide.Glide
+import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.onError
 import com.clonect.feeltalk.common.onSuccess
 import com.clonect.feeltalk.new_domain.model.account.MyInfo
@@ -9,17 +21,22 @@ import com.clonect.feeltalk.new_domain.model.chat.ImageChat
 import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
 import com.clonect.feeltalk.new_domain.model.signal.Signal
 import com.clonect.feeltalk.new_domain.usecase.account.GetMyInfoUseCase
+import com.clonect.feeltalk.new_domain.usecase.chat.PreloadImageUseCase
 import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.signal.GetMySignalUseCase
 import com.clonect.feeltalk.new_domain.usecase.signal.GetPartnerSignalFlowUseCase
-import com.clonect.feeltalk.new_presentation.ui.util.mutableStateFlow
+import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
 
 /**
@@ -31,6 +48,7 @@ class ImageDetailViewModel @Inject constructor(
     private val getPartnerInfoFlowUseCase: GetPartnerInfoFlowUseCase,
     private val getMySignalUseCase: GetMySignalUseCase,
     private val getPartnerSignalFlowUseCase: GetPartnerSignalFlowUseCase,
+    private val preloadImageUseCase: PreloadImageUseCase,
 ) : ViewModel() {
 
     private val _errorMessage = MutableSharedFlow<String>()
@@ -106,10 +124,79 @@ class ImageDetailViewModel @Inject constructor(
     }
 
 
-    fun downloadImage(onComplete: () -> Unit) {
+    fun downloadImage(context: Context, onComplete: () -> Unit) = viewModelScope.launch {
+        val chat = imageChat.value ?: return@launch
         setLoading(true)
-        onComplete()
-        setLoading(false)
+
+        try {
+            val cacheFile = File(context.cacheDir, "${chat.index}.png")
+            val bitmap = withContext(Dispatchers.IO) {
+                Glide.with(context)
+                    .asBitmap()
+                    .run {
+                        if (cacheFile.exists() && cacheFile.canRead()) {
+                            load(cacheFile)
+                        } else if (chat.url != null) {
+                            load(chat.url)
+                        } else {
+                            load(chat.uri)
+                        }
+                    }.submit()
+                    .get()
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                saveFileUsingMediaStore(context, "pillowtalk_${chat.index}.png", bitmap)
+            } else {
+                saveFileUsingLegacy(context, "pillowtalk_${chat.index}.png", bitmap)
+            }
+
+            sendErrorMessage(context.getString(R.string.image_detail_download_succeed))
+            onComplete()
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            infoLog("Fail to download image: ${e.localizedMessage}")
+            e.localizedMessage?.let { sendErrorMessage(it) }
+        } finally {
+            setLoading(false)
+        }
     }
 
+    private fun saveFileUsingLegacy(context: Context, fileName: String, bitmap: Bitmap) {
+        val downloadDirFile = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+        val imageFile = File(downloadDirFile, fileName)
+
+        imageFile.outputStream().use {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
+            it.flush()
+        }
+        notifyImageDownloaded(context, imageFile)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun saveFileUsingMediaStore(context: Context, fileName: String, bitmap: Bitmap) {
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
+            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+        }
+        val resolver = context.contentResolver
+        val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
+        if (uri != null) {
+            resolver.openOutputStream(uri)?.use { output ->
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, output)
+                output.flush()
+            }
+            notifyImageDownloaded(context, uri)
+        }
+    }
+
+    private fun notifyImageDownloaded(context: Context, file: File) {
+        MediaScannerConnection.scanFile(context, arrayOf(file.absolutePath), arrayOf("image/png"), null)
+    }
+
+    private fun notifyImageDownloaded(context: Context, uri: Uri) {
+        MediaScannerConnection.scanFile(context, arrayOf(uri.path), arrayOf("image/png"), null)
+    }
 }

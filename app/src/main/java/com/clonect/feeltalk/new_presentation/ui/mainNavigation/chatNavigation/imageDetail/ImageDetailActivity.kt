@@ -16,6 +16,7 @@ import com.clonect.feeltalk.new_domain.model.chat.ImageChat
 import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
 import com.clonect.feeltalk.new_domain.model.signal.Signal
 import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
+import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.extendRootViewLayout
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.makeLoadingDialog
@@ -69,8 +70,8 @@ class ImageDetailActivity : TransformationAppCompatActivity() {
 
 
     private fun downloadImage() {
-        viewModel.downloadImage {
-            onBackPressedDispatcher.onBackPressed()
+        viewModel.downloadImage(this) {
+//            onBackPressedDispatcher.onBackPressed()
         }
     }
 
@@ -160,6 +161,7 @@ class ImageDetailActivity : TransformationAppCompatActivity() {
             view = decorView,
             message = message,
             duration = Snackbar.LENGTH_SHORT,
+            bottomMargin = applicationContext.dpToPx(56f),
             onClick = {
                 it.dismiss()
             }
