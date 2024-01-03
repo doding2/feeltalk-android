@@ -1,8 +1,6 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageDetail
 
 import android.app.Dialog
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -11,18 +9,17 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.BitmapImageViewTarget
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.ActivityImageDetailBinding
+import com.clonect.feeltalk.new_domain.model.account.MyInfo
 import com.clonect.feeltalk.new_domain.model.chat.ImageChat
+import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
+import com.clonect.feeltalk.new_domain.model.signal.Signal
 import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.extendRootViewLayout
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.makeLoadingDialog
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
-import com.clonect.feeltalk.presentation.utils.infoLog
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.google.android.material.snackbar.Snackbar
 import com.skydoves.transformationlayout.TransformationAppCompatActivity
@@ -31,6 +28,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @AndroidEntryPoint
 class ImageDetailActivity : TransformationAppCompatActivity() {
@@ -78,8 +77,21 @@ class ImageDetailActivity : TransformationAppCompatActivity() {
 
     private fun applyImageChatChanges(imageChat: ImageChat?) = lifecycleScope.launch {
         binding.run {
-            tvNickname.text = imageChat?.chatSender
-            tvDate.text = imageChat?.createAt
+            if (imageChat?.chatSender == "me") {
+                tvNickname.text = viewModel.myInfo.value?.nickname
+                applyMySignalChanges(viewModel.mySignal.value)
+            }
+            if (imageChat?.chatSender == "partner") {
+                tvNickname.text = viewModel.partnerInfo.value?.nickname
+                applyPartnerSignalChanges(viewModel.partnerSignal.value)
+            }
+
+            if (imageChat?.createAt != null) {
+                val serverFormat = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
+                val date = serverFormat.parse(imageChat.createAt)
+                val clientFormat = SimpleDateFormat(getString(R.string.image_detail_date_format), Locale.getDefault())
+                tvDate.text = clientFormat.format(date)
+            }
 
             if (imageChat == null) return@launch
 
@@ -97,6 +109,40 @@ class ImageDetailActivity : TransformationAppCompatActivity() {
 
             ssivImage.setImage(ImageSource.cachedBitmap(result))
         }
+    }
+
+    private fun applyMyInfoChanges(myInfo: MyInfo?) = binding.run {
+        if (myInfo == null || viewModel.imageChat.value?.chatSender != "me") return
+        tvNickname.text = myInfo.nickname
+    }
+
+    private fun applyPartnerInfoChanges(partnerInfo: PartnerInfo?) = binding.run {
+        if (partnerInfo == null || viewModel.imageChat.value?.chatSender != "partner") return
+        tvNickname.text = partnerInfo.nickname
+    }
+
+    private fun applyMySignalChanges(signal: Signal) = binding.run {
+        if (viewModel.imageChat.value?.chatSender != "me") return
+        val signalRes = when (signal) {
+            Signal.One -> R.drawable.n_image_signal_100
+            Signal.ThreeFourth -> R.drawable.n_image_signal_75
+            Signal.Half -> R.drawable.n_image_signal_50
+            Signal.Quarter -> R.drawable.n_image_signal_25
+            Signal.Zero -> R.drawable.n_image_signal_0
+        }
+        ivSignal.setImageResource(signalRes)
+    }
+
+    private fun applyPartnerSignalChanges(signal: Signal) = binding.run {
+        if (viewModel.imageChat.value?.chatSender != "partner") return
+        val signalRes = when (signal) {
+            Signal.One -> R.drawable.n_image_signal_100
+            Signal.ThreeFourth -> R.drawable.n_image_signal_75
+            Signal.Half -> R.drawable.n_image_signal_50
+            Signal.Quarter -> R.drawable.n_image_signal_25
+            Signal.Zero -> R.drawable.n_image_signal_0
+        }
+        ivSignal.setImageResource(signalRes)
     }
 
 
@@ -125,6 +171,10 @@ class ImageDetailActivity : TransformationAppCompatActivity() {
             launch { viewModel.isLoading.collectLatest(::showLoading) }
             launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
             launch { viewModel.imageChat.collectLatest(::applyImageChatChanges) }
+            launch { viewModel.myInfo.collectLatest(::applyMyInfoChanges) }
+            launch { viewModel.partnerInfo.collectLatest(::applyPartnerInfoChanges) }
+            launch { viewModel.mySignal.collectLatest(::applyMySignalChanges) }
+            launch { viewModel.partnerSignal.collectLatest(::applyPartnerSignalChanges) }
         }
     }
 

@@ -607,6 +607,11 @@
     <!--  ImageShare  -->
     <string name="image_share_send">전송</string>
 
+    <!--  ImageDetail  -->
+    <string name="image_detail_date_format">yyyy년 M월 d일 h:m</string>
+
+
+
 
     <!--  old ui  -->
 

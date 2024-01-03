@@ -111,7 +111,7 @@ interface ClonectService {
         @Header("Authorization") token: String,
     ): Response<ApiResponse<MyInfoDto>>
 
-    @GET("/api/v1/logout")
+    @POST("/api/v1/logout")
     suspend fun logOut(
         @Header("Authorization") token: String,
     ): Response<ApiResponse<Unit>>
@@ -161,7 +161,7 @@ interface ClonectService {
         @Body body: JsonObject
     ): Response<ApiResponse<ValidateLockAnswerDto>>
 
-    @DELETE("")
+    @POST("/api/v1/couple/breakup")
     suspend fun breakUpCouple(
         @Header("Authorization") token: String
     ): Response<ApiResponse<Unit>>
