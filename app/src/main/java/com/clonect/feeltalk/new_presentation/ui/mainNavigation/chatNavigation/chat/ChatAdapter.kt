@@ -3142,7 +3142,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 ivRetry.setOnClickListener { onRetry(chat) }
                 ivCancel.setOnClickListener { onCancel(chat) }
 
-                mcvHelp.setOnClickListener { onClick(root, chat) }
+                mcvHelp.isEnabled = false
+                mcvHelp.setOnClickListener(null)
 
                 makeContinuous(prevItem, item, nextItem)
             }

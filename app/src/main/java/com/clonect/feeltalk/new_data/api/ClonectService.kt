@@ -128,7 +128,7 @@ interface ClonectService {
         @Body body: JsonObject
     ): Response<ApiResponse<Unit>>
 
-    @PUT("/api/v1/member/config/password")
+    @POST("/api/v1/member/config/password")
     suspend fun updatePassword(
         @Header("Authorization") token: String,
         @Body body: JsonObject
