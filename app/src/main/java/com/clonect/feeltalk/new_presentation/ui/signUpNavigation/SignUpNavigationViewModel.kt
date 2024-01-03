@@ -37,7 +37,6 @@ class SignUpNavigationViewModel @Inject constructor(
     private val matchCoupleUseCase: MatchCoupleUseCase,
     private val getCoupleCreatedFlowUseCase: GetCoupleCreatedFlowUseCase,
     private val setCoupleCreatedUseCase: SetCoupleCreatedUseCase,
-
     private val signUpNewUseCase: SignUpNewUseCase,
 ) : ViewModel() {
 

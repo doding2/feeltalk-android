@@ -1,6 +1,7 @@
 package com.clonect.feeltalk.new_presentation.ui.signUpNavigation.couple_connect
 
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -158,5 +159,15 @@ class CoupleConnectBottomSheetFragment(
                 }
             }
         }
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        onKeyboardDown()
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        onKeyboardDown()
     }
 }

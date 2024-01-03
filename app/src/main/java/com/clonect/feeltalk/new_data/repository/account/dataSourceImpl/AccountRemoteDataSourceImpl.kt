@@ -235,7 +235,7 @@ class AccountRemoteDataSourceImpl(
         val body = JsonObject().apply {
             addProperty("inviteCode", coupleCode)
         }
-        val response = clonectService.mathCouple(accessToken, body)
+        val response = clonectService.matchCouple(accessToken, body)
         if (!response.isSuccessful) throw ServerIsDownException(response)
         if (response.body() == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)

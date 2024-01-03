@@ -101,7 +101,7 @@ interface ClonectService {
     ): Response<ApiResponse<CoupleCodeDto>>
 
     @POST("/api/v1/couple")
-    suspend fun mathCouple(
+    suspend fun matchCouple(
         @Header("Authorization") token: String,
         @Body body: JsonObject
     ): Response<ApiResponse<Unit>>
@@ -116,7 +116,7 @@ interface ClonectService {
         @Header("Authorization") token: String,
     ): Response<ApiResponse<Unit>>
 
-    @HTTP(method = "DELETE", path = "api/v1/member", hasBody = true)
+    @HTTP(method = "DELETE", path = "api/v1/withdraw", hasBody = true)
     suspend fun deleteMyAccount(
         @Header("Authorization") token: String,
         @Body body: JsonObject
