@@ -80,11 +80,12 @@ class HomeFragment : Fragment() {
 
     private fun clickAnswerButton() {
         viewModel.todayQuestion.value?.let {
-            if (it.myAnswer != null && it.partnerAnswer == null) {
-                showPokeSnackBar()
-            } else {
-                showAnswerBottomSheet()
-            }
+//            if (it.myAnswer != null && it.partnerAnswer == null) {
+//                showPokeSnackBar()
+//            } else {
+//                showAnswerBottomSheet()
+//            }
+            showAnswerBottomSheet()
         }
     }
 

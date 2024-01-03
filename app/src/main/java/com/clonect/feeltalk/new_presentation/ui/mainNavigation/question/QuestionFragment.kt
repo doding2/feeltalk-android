@@ -79,12 +79,12 @@ class QuestionFragment : Fragment() {
 
 
     private fun onQuestionClick(question: Question, itemViewType: Int) {
-        if (itemViewType == QuestionAdapter.TYPE_TODAY_QUESTION
-            && question.myAnswer != null && question.partnerAnswer == null
-            ) {
-            showPokeSnackBar(question.index)
-            return
-        }
+//        if (itemViewType == QuestionAdapter.TYPE_TODAY_QUESTION
+//            && question.myAnswer != null && question.partnerAnswer == null
+//            ) {
+//            showPokeSnackBar(question.index)
+//            return
+//        }
 
         showAnswerBottomSheet(question)
         navViewModel.setShowChatNavigation(false)
