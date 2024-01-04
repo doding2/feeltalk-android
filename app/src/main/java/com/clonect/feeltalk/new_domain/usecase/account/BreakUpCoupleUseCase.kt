@@ -13,7 +13,10 @@ class BreakUpCoupleUseCase(
         if (tokenInfo is Resource.Error) {
             return Resource.Error(tokenInfo.throwable)
         }
-        val accessToken = (tokenInfo as Resource.Success).data.accessToken
-        return accountRepository.breakUpCouple(accessToken)
+        val tokenInfoData = (tokenInfo as Resource.Success).data
+        val accessToken = tokenInfoData.accessToken
+        val breakUpResult = accountRepository.breakUpCouple(accessToken)
+        tokenRepository.saveTokenInfo(tokenInfoData)
+        return breakUpResult
     }
 }
