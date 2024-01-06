@@ -18,6 +18,7 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.common.onError
 import com.clonect.feeltalk.common.onSuccess
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
+import com.clonect.feeltalk.new_domain.model.chat.AnswerChat
 import com.clonect.feeltalk.new_domain.model.chat.ChallengeChat
 import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.DividerChat
@@ -404,23 +405,43 @@ class ChatViewModel @Inject constructor(
 
         when (val result = shareQuestionUseCase(question.index)) {
             is Resource.Success -> {
-                val questionChat = result.data.run {
-                    QuestionChat(
-                        index = index,
-                        pageNo = pageNo,
-                        chatSender = "me",
-                        isRead = isRead,
-                        createAt = createAt,
-                        sendState = Chat.ChatSendState.Completed,
-                        question = question.copy(
-                            myAnswer = coupleQuestion.selfAnswer,
-                            partnerAnswer = coupleQuestion.partnerAnswer
+                removeLoadingChat(loadingQuestionChat)
+
+                val isQuestionChat = result.data.coupleQuestion.run { partnerAnswer != null && selfAnswer != null }
+                if (isQuestionChat) {
+                    val questionChat = result.data.run {
+                        QuestionChat(
+                            index = index,
+                            pageNo = pageNo,
+                            chatSender = "me",
+                            isRead = isRead,
+                            createAt = createAt,
+                            sendState = Chat.ChatSendState.Completed,
+                            question = question.copy(
+                                myAnswer = coupleQuestion.selfAnswer,
+                                partnerAnswer = coupleQuestion.partnerAnswer
+                            )
                         )
-                    )
+                    }
+                    addNewChatCacheUseCase(questionChat)
+                } else {
+                    val answerChat = result.data.run {
+                        AnswerChat(
+                            index = index,
+                            pageNo = pageNo,
+                            chatSender = "me",
+                            isRead = isRead,
+                            createAt = createAt,
+                            sendState = Chat.ChatSendState.Completed,
+                            question = question.copy(
+                                myAnswer = coupleQuestion.selfAnswer,
+                                partnerAnswer = coupleQuestion.partnerAnswer
+                            )
+                        )
+                    }
+                    addNewChatCacheUseCase(answerChat)
                 }
 
-                removeLoadingChat(loadingQuestionChat)
-                addNewChatCacheUseCase(questionChat)
             }
 
             is Resource.Error -> {
