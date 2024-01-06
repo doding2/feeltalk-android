@@ -9,6 +9,7 @@ import com.clonect.feeltalk.new_domain.model.account.LockQA
 import com.clonect.feeltalk.new_domain.model.account.LockResetQuestionDto
 import com.clonect.feeltalk.new_domain.model.account.MyInfoDto
 import com.clonect.feeltalk.new_domain.model.account.ReLogInDto
+import com.clonect.feeltalk.new_domain.model.account.RequestAdultAuthCodeDto
 import com.clonect.feeltalk.new_domain.model.account.ServiceDataCountDto
 import com.clonect.feeltalk.new_domain.model.account.SignUpDto
 import com.clonect.feeltalk.new_domain.model.account.SocialType
@@ -27,9 +28,9 @@ interface AccountRemoteDataSource {
     suspend fun getUserStatusNew(accessToken: String): GetUserStatusNewResponse
     suspend fun signUpNew(accessToken: String, nickname: String, marketingConsent: Boolean, fcmToken: String, appleState: String? = null)
 
-    suspend fun requestAdultAuthCode(providerId: String, userName: String, userPhone: String, userBirthday: String, userGender: String, userNation: String)
-    suspend fun retryRequestAdultAuthCode(providerId: String, userName: String, userPhone: String, userBirthday: String, userGender: String, userNation: String)
-    suspend fun verifyAdultAuthCode(authNumber: String)
+    suspend fun requestAdultAuthCode(providerId: String, userName: String, userPhone: String, userBirthday: String, userGender: String, userNation: String): RequestAdultAuthCodeDto
+    suspend fun retryRequestAdultAuthCode(sessionUuid: String)
+    suspend fun verifyAdultAuthCode(authNumber: String, sessionUuid: String)
 
 
     suspend fun autoLogIn(accessToken: String): AutoLogInDto

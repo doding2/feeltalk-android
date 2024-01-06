@@ -65,9 +65,9 @@ interface ClonectService {
     @POST("/api/v1/adult/authentication")
     suspend fun requestAdultAuthCode(
         @Body body: JsonObject
-    ): Response<ApiResponse<Unit>>
+    ): Response<ApiResponse<RequestAdultAuthCodeDto>>
 
-    @POST("/api/v1/adult/re-authentication")
+    @POST("/api/v1/adult/authentication/resend")
     suspend fun retryRequestAdultAuthCode(
         @Body body: JsonObject
     ): Response<ApiResponse<Unit>>

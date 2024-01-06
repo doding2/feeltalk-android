@@ -12,6 +12,7 @@ import com.clonect.feeltalk.new_domain.model.account.LockQA
 import com.clonect.feeltalk.new_domain.model.account.LockResetQuestionDto
 import com.clonect.feeltalk.new_domain.model.account.MyInfoDto
 import com.clonect.feeltalk.new_domain.model.account.ReLogInDto
+import com.clonect.feeltalk.new_domain.model.account.RequestAdultAuthCodeDto
 import com.clonect.feeltalk.new_domain.model.account.ServiceDataCountDto
 import com.clonect.feeltalk.new_domain.model.account.SignUpDto
 import com.clonect.feeltalk.new_domain.model.account.SocialType
@@ -83,7 +84,7 @@ class AccountRemoteDataSourceImpl(
         userBirthday: String,
         userGender: String,
         userNation: String,
-    ) {
+    ): RequestAdultAuthCodeDto {
         val body = JsonObject().apply {
             addProperty("providerId", providerId)
             addProperty("reqAuthType", "SMS")
@@ -95,27 +96,16 @@ class AccountRemoteDataSourceImpl(
         }
         val response = clonectService.requestAdultAuthCode(body)
         if (!response.isSuccessful) throw ServerIsDownException(response)
-        if (response.body() == null) throw NullPointerException("Response body from server is null.")
+        if (response.body()?.data == null) throw NullPointerException("Response body from server is null.")
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
+        return response.body()!!.data!!
     }
 
     override suspend fun retryRequestAdultAuthCode(
-        providerId: String,
-        userName: String,
-        userPhone: String,
-        userBirthday: String,
-        userGender: String,
-        userNation: String,
+        sessionUuid: String
     ) {
         val body = JsonObject().apply {
-            addProperty("serviceType", "telcoAuth")
-            addProperty("providerId", providerId)
-            addProperty("reqAuthType", "SMS")
-            addProperty("userName", userName)
-            addProperty("userPhone", userPhone)
-            addProperty("userBirthday", userBirthday)
-            addProperty("userGender", userGender)
-            addProperty("userNation", userNation)
+            addProperty("sessionUuid", sessionUuid)
         }
         val response = clonectService.retryRequestAdultAuthCode(body)
         if (!response.isSuccessful) throw ServerIsDownException(response)
@@ -123,9 +113,10 @@ class AccountRemoteDataSourceImpl(
         if (response.body()?.status?.lowercase() == "fail") throw NetworkErrorException(response.body()?.message)
     }
 
-    override suspend fun verifyAdultAuthCode(authNumber: String) {
+    override suspend fun verifyAdultAuthCode(authNumber: String, sessionUuid: String) {
         val body = JsonObject().apply {
             addProperty("authNumber", authNumber)
+            addProperty("sessionUuid", sessionUuid)
         }
         val response = clonectService.verifyAdultAuthCode(body)
         if (!response.isSuccessful) throw ServerIsDownException(response)

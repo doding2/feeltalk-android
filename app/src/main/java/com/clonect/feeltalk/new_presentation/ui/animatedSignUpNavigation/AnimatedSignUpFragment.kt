@@ -108,10 +108,9 @@ class AnimatedSignUpFragment : Fragment() {
     }
 
     private fun verifyAuthCode() {
-        navigateToSignUpNavigation()
-//        viewModel.verifyAuthCode {
-//            navigateToSignUpNavigation()
-//        }
+        viewModel.verifyAuthCode {
+            navigateToSignUpNavigation()
+        }
     }
 
     private fun navigateToSignUpNavigation() {

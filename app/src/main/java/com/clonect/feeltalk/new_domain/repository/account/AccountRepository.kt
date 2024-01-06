@@ -6,6 +6,7 @@ import com.clonect.feeltalk.new_domain.model.account.ConfigurationInfo
 import com.clonect.feeltalk.new_domain.model.account.CoupleCodeDto
 import com.clonect.feeltalk.new_domain.model.account.LockQA
 import com.clonect.feeltalk.new_domain.model.account.MyInfo
+import com.clonect.feeltalk.new_domain.model.account.RequestAdultAuthCodeDto
 import com.clonect.feeltalk.new_domain.model.account.ServiceDataCountDto
 import com.clonect.feeltalk.new_domain.model.account.SocialType
 import com.clonect.feeltalk.new_domain.model.account.UnlockPartnerPasswordResponse
@@ -22,9 +23,9 @@ interface AccountRepository {
     suspend fun getUserStatusNew(accessToken: String): Resource<GetUserStatusNewResponse>
     suspend fun signUpNew(accessToken: String, nickname: String, marketingConsent: Boolean, fcmToken: String, appleState: String? = null): Resource<Unit>
 
-    suspend fun requestAdultAuthCode(providerId: String, userName: String, userPhone: String, userBirthday: String, userGender: String, userNation: String): Resource<Unit>
-    suspend fun retryRequestAdultAuthCode(providerId: String, userName: String, userPhone: String, userBirthday: String, userGender: String, userNation: String): Resource<Unit>
-    suspend fun verifyAdultAuthCode(authNumber: String): Resource<Unit>
+    suspend fun requestAdultAuthCode(providerId: String, userName: String, userPhone: String, userBirthday: String, userGender: String, userNation: String): Resource<RequestAdultAuthCodeDto>
+    suspend fun retryRequestAdultAuthCode(sessionUuid: String): Resource<Unit>
+    suspend fun verifyAdultAuthCode(authNumber: String, sessionUuid: String): Resource<Unit>
 
 
     suspend fun autoLogIn(accessToken: String): Resource<AutoLogInDto>

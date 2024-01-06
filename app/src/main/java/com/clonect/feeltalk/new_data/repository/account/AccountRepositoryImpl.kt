@@ -13,6 +13,7 @@ import com.clonect.feeltalk.new_domain.model.account.ConfigurationInfo
 import com.clonect.feeltalk.new_domain.model.account.CoupleCodeDto
 import com.clonect.feeltalk.new_domain.model.account.LockQA
 import com.clonect.feeltalk.new_domain.model.account.MyInfo
+import com.clonect.feeltalk.new_domain.model.account.RequestAdultAuthCodeDto
 import com.clonect.feeltalk.new_domain.model.account.ServiceDataCountDto
 import com.clonect.feeltalk.new_domain.model.account.SocialType
 import com.clonect.feeltalk.new_domain.model.account.UnlockPartnerPasswordResponse
@@ -115,7 +116,7 @@ class AccountRepositoryImpl(
         userBirthday: String,
         userGender: String,
         userNation: String,
-    ): Resource<Unit> {
+    ): Resource<RequestAdultAuthCodeDto> {
         return try {
             val result = remoteDataSource.requestAdultAuthCode(providerId, userName, userPhone, userBirthday, userGender, userNation)
             Resource.Success(result)
@@ -127,15 +128,10 @@ class AccountRepositoryImpl(
     }
 
     override suspend fun retryRequestAdultAuthCode(
-        providerId: String,
-        userName: String,
-        userPhone: String,
-        userBirthday: String,
-        userGender: String,
-        userNation: String,
+        sessionUuid: String
     ): Resource<Unit> {
         return try {
-            val result = remoteDataSource.retryRequestAdultAuthCode(providerId, userName, userPhone, userBirthday, userGender, userNation)
+            val result = remoteDataSource.retryRequestAdultAuthCode(sessionUuid)
             Resource.Success(result)
         } catch (e: CancellationException) {
             throw e
@@ -144,9 +140,9 @@ class AccountRepositoryImpl(
         }
     }
 
-    override suspend fun verifyAdultAuthCode(authNumber: String): Resource<Unit> {
+    override suspend fun verifyAdultAuthCode(authNumber: String, sessionUuid: String): Resource<Unit> {
         return try {
-            val result = remoteDataSource.verifyAdultAuthCode(authNumber)
+            val result = remoteDataSource.verifyAdultAuthCode(authNumber, sessionUuid)
             Resource.Success(result)
         } catch (e: CancellationException) {
             throw e

@@ -56,6 +56,9 @@ class AnimatedSignUpViewModel @Inject constructor(
     private val _authCode: MutableStateFlow<String> = MutableStateFlow("")
     val authCode = _authCode.asStateFlow()
 
+    private val _sessionUuid: MutableStateFlow<String?> = MutableStateFlow(null)
+    val sessionUuid = _sessionUuid.asStateFlow()
+
 
     private val _state = MutableStateFlow<AnimatedSignUpState>(AnimatedSignUpState.Start)
     val state = _state.asStateFlow()
@@ -108,27 +111,36 @@ class AnimatedSignUpViewModel @Inject constructor(
 
 
     fun setName(name: String) {
+        cancelAuthCode()
         _name.value = name
     }
 
     fun setBirth(birth: String) {
+        cancelAuthCode()
         _birth.value = birth
     }
 
     fun setGender(gender: String) {
+        cancelAuthCode()
         _gender.value = gender
     }
 
     fun setMobileCarrier(mobileCarrier: Int) {
+        cancelAuthCode()
         _mobileCarrier.value = mobileCarrier
     }
 
     fun setPhoneNumber(phoneNumber: String) {
+        cancelAuthCode()
         _phoneNumber.value = phoneNumber
     }
 
     fun setAuthCode(authCode: String) {
         _authCode.value = authCode
+    }
+
+    fun setSessionUuid(sessionUuid: String?) {
+        _sessionUuid.value = sessionUuid
     }
 
 
@@ -141,6 +153,9 @@ class AnimatedSignUpViewModel @Inject constructor(
     }
 
     fun setAgreementAccepted(isAccepted: Boolean) {
+        if (!isAccepted) {
+            setDoneEnabled(false)
+        }
         _isAgreementAccepted.value = isAccepted
     }
 
@@ -218,15 +233,11 @@ class AnimatedSignUpViewModel @Inject constructor(
             setDoneEnabled(true)
             authCodeCountDownTimer.start()
         }
-        val isRetry = authCodeState.value.isRequested
+        val uuid = sessionUuid.value
+        val isRetry = authCodeState.value.isRequested && uuid != null
         if (isRetry) {
             retryRequestAdultAuthCodeUseCase(
-                providerId = providerId,
-                userName = name.value.trim(),
-                userPhone = phoneNumber.value,
-                userBirthday = birthday,
-                userGender = gender,
-                userNation = nation
+                sessionUuid = uuid!!
             ).onError {
                     val message = "Fail to retry request adult auth code: ${it.localizedMessage}"
                     sendErrorMessage(message)
@@ -246,12 +257,23 @@ class AnimatedSignUpViewModel @Inject constructor(
                     sendErrorMessage(message)
                     infoLog(message)
                 }
-                .onSuccess { onSuccess() }
+                .onSuccess {
+                    setSessionUuid(it.sessionUuid)
+                    onSuccess()
+                }
         }
     }
 
     fun verifyAuthCode(onSuccess: () -> Unit) = viewModelScope.launch {
-        verifyAdultAuthCodeUseCase(authCode.value)
+        val uuid = sessionUuid.value
+        if (uuid == null) {
+            setAuthCodeState(authCodeState.value.copy(isTimeOut = false, isRequested = false, isAuthCodeInvalid = false))
+            val message = "Fail to verify adult auth code: session uuid doesn't exist"
+            sendErrorMessage(message)
+            infoLog(message)
+            return@launch
+        }
+        verifyAdultAuthCodeUseCase(authCode.value, uuid)
             .onError {
                 val message = "Fail to verify adult auth code: ${it.localizedMessage}"
                 sendErrorMessage(message)
@@ -259,5 +281,12 @@ class AnimatedSignUpViewModel @Inject constructor(
             }.onSuccess {
                 onSuccess()
             }
+    }
+
+    fun cancelAuthCode() = viewModelScope.launch {
+        setAuthCodeState(authCodeState.value.copy(isTimeOut = false, isRequested = false, isAuthCodeInvalid = false))
+        setDoneEnabled(false)
+        setSessionUuid(null)
+        authCodeCountDownTimer.cancel()
     }
 }

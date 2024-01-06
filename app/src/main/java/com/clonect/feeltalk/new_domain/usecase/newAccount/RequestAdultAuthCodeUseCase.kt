@@ -1,6 +1,7 @@
 package com.clonect.feeltalk.new_domain.usecase.newAccount
 
 import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.new_domain.model.account.RequestAdultAuthCodeDto
 import com.clonect.feeltalk.new_domain.model.account.SocialType
 import com.clonect.feeltalk.new_domain.model.newAccount.GetUserStatusNewResponse
 import com.clonect.feeltalk.new_domain.model.newAccount.LogInNewResponse
@@ -19,7 +20,7 @@ class RequestAdultAuthCodeUseCase(
         userBirthday: String,
         userGender: String,
         userNation: String,
-    ): Resource<Unit> {
+    ): Resource<RequestAdultAuthCodeDto> {
         return accountRepository.requestAdultAuthCode(providerId, userName, userPhone, userBirthday, userGender, userNation)
     }
 }

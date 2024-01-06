@@ -13,13 +13,8 @@ class RetryRequestAdultAuthCodeUseCase(
     private val accountRepository: AccountRepository,
 ) {
     suspend operator fun invoke(
-        providerId: String,
-        userName: String,
-        userPhone: String,
-        userBirthday: String,
-        userGender: String,
-        userNation: String,
+        sessionUuid: String
     ): Resource<Unit> {
-        return accountRepository.retryRequestAdultAuthCode(providerId, userName, userPhone, userBirthday, userGender, userNation)
+        return accountRepository.retryRequestAdultAuthCode(sessionUuid)
     }
 }

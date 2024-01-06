@@ -13,8 +13,9 @@ class VerifyAdultAuthCodeUseCase(
     private val accountRepository: AccountRepository,
 ) {
     suspend operator fun invoke(
-        authNumber: String
+        authNumber: String,
+        sessionUuid: String
     ): Resource<Unit> {
-        return accountRepository.verifyAdultAuthCode(authNumber)
+        return accountRepository.verifyAdultAuthCode(authNumber, sessionUuid)
     }
 }
