@@ -208,9 +208,14 @@ class ChatViewModel @Inject constructor(
     }
 
     private fun collectNewChat() = viewModelScope.launch {
-        getNewChatFlowUseCase().collect {
-            insertCompleteChat(it)
-            infoLog("new chat: $it")
+        getNewChatFlowUseCase().collect {chat ->
+            insertCompleteChat(
+                chat
+                    .takeIf { chat.chatSender == "me" }
+                    ?.apply { isRead = isPartnerInChat.value == true }
+                    ?: chat
+            )
+            infoLog("new chat: $chat")
         }
     }
 

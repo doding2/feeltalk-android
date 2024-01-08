@@ -7,7 +7,10 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.common.onError
 import com.clonect.feeltalk.common.onSuccess
+import com.clonect.feeltalk.new_domain.model.chat.AnswerChat
+import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.PokeChat
+import com.clonect.feeltalk.new_domain.model.chat.QuestionChat
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.usecase.chat.AddNewChatCacheUseCase
 import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoFlowUseCase
@@ -25,6 +28,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -66,6 +72,31 @@ class AnswerViewModel @Inject constructor(
                 }.onError {
                     infoLog("Fail to get partner info when answering question completed: ${it.localizedMessage}")
                 }
+
+                val now = Date()
+                val format = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
+
+                addNewChatCacheUseCase(
+                    if (question.partnerAnswer == null) {
+                        AnswerChat(
+                            index = 0,
+                            pageNo = 0,
+                            chatSender = "me",
+                            isRead = false,
+                            createAt = format.format(now),
+                            question = question.copy(myAnswer = answer)
+                        )
+                    } else {
+                        QuestionChat(
+                            index = 0,
+                            pageNo = 0,
+                            chatSender = "me",
+                            isRead = false,
+                            createAt = format.format(now),
+                            question = question.copy(myAnswer = answer)
+                        )
+                    }
+                )
                 onComplete()
             }
             is Resource.Error -> {
