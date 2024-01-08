@@ -15,12 +15,15 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.common.onError
 import com.clonect.feeltalk.common.onSuccess
+import com.clonect.feeltalk.new_domain.model.appSettings.AppSettings
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.chat.ChatType
 import com.clonect.feeltalk.new_domain.model.chat.PartnerLastChatDto
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
 import com.clonect.feeltalk.new_domain.model.question.Question
+import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
+import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.challenge.GetChallengeUpdatedFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.challenge.GetChallengeUseCase
 import com.clonect.feeltalk.new_domain.usecase.challenge.SetChallengeUpdatedUseCase
@@ -33,6 +36,7 @@ import com.clonect.feeltalk.new_domain.usecase.question.SetQuestionUpdatedUseCas
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
 import com.clonect.feeltalk.presentation.utils.infoLog
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -47,6 +51,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MainNavigationViewModel @Inject constructor(
     private val notificationHelper: NotificationHelper,
+    private val getAppSettingsUseCase: GetAppSettingsUseCase,
+    private val saveAppSettingsUseCase: SaveAppSettingsUseCase,
     private val getPartnerLastChatUseCase: GetPartnerLastChatUseCase,
     private val getQuestionUseCase: GetQuestionUseCase,
     private val getChallengeUseCase: GetChallengeUseCase,
@@ -131,6 +137,21 @@ class MainNavigationViewModel @Inject constructor(
         if (target == "home" || target == "question" || target == "challenge" || target == "mypage") {
             _navigateTo.emit(target)
         }
+    }
+
+    fun enablePushNotificationEnabled(enabled: Boolean) {
+        FirebaseMessaging.getInstance().apply {
+            token.addOnSuccessListener {
+                val appSettings = getAppSettingsUseCase()
+                appSettings.fcmToken = it
+                appSettings.isPushNotificationEnabled = enabled
+                saveAppSettings(appSettings)
+            }
+        }
+    }
+
+    private fun saveAppSettings(appSettings: AppSettings) = viewModelScope.launch(Dispatchers.IO) {
+        saveAppSettingsUseCase(appSettings)
     }
 
 

@@ -1,7 +1,9 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -27,6 +31,7 @@ import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.showConfirmDialog
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.navercorp.nid.NaverIdLoginSDK.applicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -76,6 +81,11 @@ class MainNavigationFragment : Fragment() {
 
         viewModel.setShortcut(requireContext())
 
+
+        checkPostNotificationsPermission {
+            viewModel.enablePushNotificationEnabled(it)
+        }
+
         return binding.root
     }
 
@@ -100,6 +110,33 @@ class MainNavigationFragment : Fragment() {
             sheetSignalComplete.mcvConfirm.setOnClickListener { viewModel.setShowSignalCompleteSheet(false) }
             viewSignalCompleteBehind.setOnClickListener { viewModel.setShowSignalCompleteSheet(false) }
         }
+    }
+
+    private val permissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        viewModel.enablePushNotificationEnabled(isGranted)
+    }
+
+    private fun checkPostNotificationsPermission(onCompleted: (Boolean) -> Unit) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            onCompleted(true)
+            return
+        }
+
+        val permission = Manifest.permission.POST_NOTIFICATIONS
+
+        val isAlreadyGranted = ContextCompat.checkSelfPermission(
+            applicationContext,
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (isAlreadyGranted) {
+            onCompleted(true)
+            return
+        }
+
+        permissionLauncher.launch(permission)
     }
 
     private fun parseArguments() {

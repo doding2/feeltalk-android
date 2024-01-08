@@ -58,12 +58,12 @@ class MainActivity : AppCompatActivity() {
             intent?.extras?.clear()
         }
 
-        waitForSplash()
-        tryAutoLogIn()
-
-        checkPostNotificationsPermission {
-            viewModel.enablePushNotificationEnabled(it)
-        }
+//        waitForSplash()
+//        tryAutoLogIn()
+//
+//        checkPostNotificationsPermission {
+//            viewModel.enablePushNotificationEnabled(it)
+//        }
     }
 
 

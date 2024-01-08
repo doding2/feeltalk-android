@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
 <item>
     <rotate
-        android:drawable="@drawable/n_image_loading"
+        android:drawable="@drawable/n_image_splash_loading"
         android:fillAfter="true"
         android:fromDegrees="0"
         android:pivotX="50%"

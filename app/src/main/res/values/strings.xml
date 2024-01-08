@@ -60,6 +60,9 @@
     <string name="notification_me">나</string>
     <string name="notification_bubble">ChatBubble</string>
     
+    <!--  Splash  -->
+    <string name="splash_slogan">오늘도 연인에 대해 더 알아가봐요!</string>
+    
     <!--  Onboarding  -->
     <string name="onboarding_title_1">오늘 내 기분은 말이야</string>
     <string name="onboarding_title_2">너의 취향이 궁금해!</string>
