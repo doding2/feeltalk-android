@@ -8,6 +8,8 @@ import com.clonect.feeltalk.domain.repository.EncryptionRepository
 import com.clonect.feeltalk.new_data.util.AppLevelEncryptHelper
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
+import com.clonect.feeltalk.new_domain.usecase.signal.GetMySignalUseCase
+import com.clonect.feeltalk.new_domain.usecase.signal.GetPartnerSignalUseCase
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper
 import dagger.Module
 import dagger.Provides
@@ -29,10 +31,12 @@ class UtilsModule {
     @Provides
     @Singleton
     fun providesNotificationHelper(
+        getMySignalUseCase: GetMySignalUseCase,
+        getPartnerSignalUseCase: GetPartnerSignalUseCase,
         getAppSettingsUseCase: GetAppSettingsUseCase,
         saveAppSettingsUseCase: SaveAppSettingsUseCase
     ): NotificationHelper {
-        return NotificationHelper(getAppSettingsUseCase, saveAppSettingsUseCase)
+        return NotificationHelper(getMySignalUseCase, getPartnerSignalUseCase, getAppSettingsUseCase, saveAppSettingsUseCase)
     }
 
 

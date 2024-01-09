@@ -42,7 +42,7 @@ class AccountRepositoryImpl(
             val now = Date()
             val result = remoteDataSource.logInNew(oauthId, snsType)
             localDataSource.clearInternalStorage()
-            val formatter = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
+            val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
             val tokenInfo = TokenInfo(
                 accessToken = result.accessToken,
                 refreshToken = result.refreshToken,
@@ -64,7 +64,7 @@ class AccountRepositoryImpl(
             val result = remoteDataSource.logInApple(state)
             localDataSource.clearInternalStorage()
             val now = Date()
-            val formatter = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
+            val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
             val tokenInfo = TokenInfo(
                 accessToken = result.accessToken,
                 refreshToken = result.refreshToken,

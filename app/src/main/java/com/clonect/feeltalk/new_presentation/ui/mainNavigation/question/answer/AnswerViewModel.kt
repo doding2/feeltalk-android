@@ -74,7 +74,7 @@ class AnswerViewModel @Inject constructor(
                 }
 
                 val now = Date()
-                val format = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
+                val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
 
                 addNewChatCacheUseCase(
                     if (question.partnerAnswer == null) {

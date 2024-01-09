@@ -2466,7 +2466,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 tvMyAnswer.text = chat.question.myAnswer
                 tvPartnerAnswer.text = chat.question.partnerAnswer
 
-                val serverFormat = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
+                val serverFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
                 val date = serverFormat.parse(chat.question.createAt)
                 val questionFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
                 tvQuestionDate.text = date?.let { questionFormat.format(it) }
@@ -2604,7 +2604,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 tvMyAnswer.text = chat.question.myAnswer
                 tvPartnerAnswer.text = chat.question.partnerAnswer
 
-                val serverFormat = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
+                val serverFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
                 val date = serverFormat.parse(chat.question.createAt)
                 val questionFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
                 tvQuestionDate.text = date?.let { questionFormat.format(it) }

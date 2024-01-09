@@ -512,7 +512,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         val coupleChallengeJson = data["coupleChallenge"] ?: return@launch
         val coupleChallenge = Gson().fromJson(coupleChallengeJson, CoupleChallengeDto::class.java)
 
-        val challengeFormat = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
+        val challengeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         val challenge = Challenge(
             index = coupleChallenge.index,
             title = coupleChallenge.challengeTitle,
@@ -590,7 +590,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         val coupleChallengeJson = data["coupleChallenge"] ?: return@launch
         val coupleChallenge = Gson().fromJson(coupleChallengeJson, CoupleChallengeDto::class.java)
 
-        val challengeFormat = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
+        val challengeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         val challenge = Challenge(
             index = coupleChallenge.index,
             title = coupleChallenge.challengeTitle,

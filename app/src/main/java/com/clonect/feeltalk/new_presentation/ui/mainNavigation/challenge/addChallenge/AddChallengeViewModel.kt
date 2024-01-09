@@ -104,7 +104,7 @@ class AddChallengeViewModel @Inject constructor(
         val deadline = format.format(deadlineDate)
         when (val result = addMyChallengeUseCase(title, deadline, content)) {
             is Resource.Success -> {
-                val challengeFormat = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
+                val challengeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
                 addNewChatCacheUseCase(
                     result.data.run {
                         AddChallengeChat(

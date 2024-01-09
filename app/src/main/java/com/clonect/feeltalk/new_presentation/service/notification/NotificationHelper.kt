@@ -19,13 +19,26 @@ import androidx.core.graphics.drawable.IconCompat
 import androidx.core.os.bundleOf
 import androidx.navigation.NavDeepLinkBuilder
 import com.clonect.feeltalk.R
+import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.new_domain.model.signal.Signal
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
+import com.clonect.feeltalk.new_domain.usecase.signal.GetMySignalCacheFlowUseCase
+import com.clonect.feeltalk.new_domain.usecase.signal.GetMySignalUseCase
+import com.clonect.feeltalk.new_domain.usecase.signal.GetPartnerSignalFlowUseCase
+import com.clonect.feeltalk.new_domain.usecase.signal.GetPartnerSignalUseCase
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.bubble.BubbleActivity
+import com.clonect.feeltalk.new_presentation.ui.util.toBytesInt
 import com.navercorp.nid.NaverIdLoginSDK.applicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.internal.notify
 import java.util.Date
 
 class NotificationHelper(
+    private val getMySignalUseCase: GetMySignalUseCase,
+    private val getPartnerSignalUseCase: GetPartnerSignalUseCase,
     private val getAppSettingsUseCase: GetAppSettingsUseCase,
     private val saveAppSettingsUseCase: SaveAppSettingsUseCase
 ) {
@@ -111,13 +124,13 @@ class NotificationHelper(
 
     fun showChatNotification(
         message: String
-    ) {
+    ) = CoroutineScope(Dispatchers.Default).launch {
         if (ActivityCompat.checkSelfPermission(
                 applicationContext,
                 Manifest.permission.POST_NOTIFICATIONS
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            return
+            return@launch
         }
 
         val notificationID = CHANNEL_ID_CHAT.toBytesInt()
@@ -186,19 +199,37 @@ class NotificationHelper(
             null
         }
 
+        val partnerSignal = (getPartnerSignalUseCase() as? Resource.Success)?.data ?: Signal.Half
+        val partnerSignalRes = when (partnerSignal) {
+            Signal.Zero -> R.drawable.n_image_signal_0
+            Signal.Quarter -> R.drawable.n_image_signal_25
+            Signal.Half -> R.drawable.n_image_signal_50
+            Signal.ThreeFourth -> R.drawable.n_image_signal_75
+            Signal.One -> R.drawable.n_image_signal_100
+        }
+
+        val mySignal = (getMySignalUseCase() as? Resource.Success)?.data ?: Signal.Half
+//        val mySignalRes = when (mySignal) {
+//            Signal.Zero -> R.drawable.n_image_signal_0
+//            Signal.Quarter -> R.drawable.n_image_signal_25
+//            Signal.Half -> R.drawable.n_image_signal_50
+//            Signal.ThreeFourth -> R.drawable.n_image_signal_75
+//            Signal.One -> R.drawable.n_image_signal_100
+//        }
+
         val partner = Person.Builder()
             .setName(applicationContext.getString(R.string.notification_partner))
-            .setIcon(IconCompat.createWithResource(applicationContext, R.drawable.image_my_default_profile))
+            .setIcon(IconCompat.createWithResource(applicationContext, partnerSignalRes))
             .build()
 
-        val me = Person.Builder()
-            .setName(applicationContext.getString(R.string.notification_me))
-            .setIcon(IconCompat.createWithResource(applicationContext, R.drawable.image_partner_default_profile))
-            .build()
+//        val me = Person.Builder()
+//            .setName(applicationContext.getString(R.string.notification_me))
+//            .setIcon(IconCompat.createWithResource(applicationContext, mySignalRes))
+//            .build()
 
         val messageStyle = restoreMessagingStyle(notificationID)
-            ?: NotificationCompat.MessagingStyle(me)
-                .setGroupConversation(true)
+            ?: NotificationCompat.MessagingStyle(partner)
+                .setGroupConversation(false)
         messageStyle.addMessage(message, Date().time, partner)
 
         val notification = NotificationCompat.Builder(applicationContext, CHANNEL_ID_CHAT)
@@ -240,37 +271,55 @@ class NotificationHelper(
             }?.notification
     }
 
-    fun addChatReply(message: CharSequence, notificationID: Int, isReplySuccess: Boolean = false) {
+    fun addChatReply(message: CharSequence, notificationID: Int, isReplySuccess: Boolean = false) = CoroutineScope(Dispatchers.Main).launch {
         if (ActivityCompat.checkSelfPermission(
                 applicationContext,
                 Manifest.permission.POST_NOTIFICATIONS
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            return
+            return@launch
         }
 
-        val activeNotification = findActiveNotification(notificationID) ?: return
+        val activeNotification = findActiveNotification(notificationID) ?: return@launch
         val activeStyle = NotificationCompat.MessagingStyle.extractMessagingStyleFromNotification(activeNotification)
 
         val recoveredBuilder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             Notification.Builder.recoverBuilder(applicationContext, activeNotification)
         } else {
             cancelNotification(notificationID)
-            return
+            return@launch
+        }
+
+        val partnerSignal = (getPartnerSignalUseCase() as? Resource.Success)?.data ?: Signal.Half
+        val partnerSignalRes = when (partnerSignal) {
+            Signal.Zero -> R.drawable.n_image_signal_0
+            Signal.Quarter -> R.drawable.n_image_signal_25
+            Signal.Half -> R.drawable.n_image_signal_50
+            Signal.ThreeFourth -> R.drawable.n_image_signal_75
+            Signal.One -> R.drawable.n_image_signal_100
+        }
+
+        val mySignal = (getMySignalUseCase() as? Resource.Success)?.data ?: Signal.Half
+        val mySignalRes = when (mySignal) {
+            Signal.Zero -> R.drawable.n_image_signal_0
+            Signal.Quarter -> R.drawable.n_image_signal_25
+            Signal.Half -> R.drawable.n_image_signal_50
+            Signal.ThreeFourth -> R.drawable.n_image_signal_75
+            Signal.One -> R.drawable.n_image_signal_100
         }
 
         val partner = android.app.Person.Builder()
             .setName(applicationContext.getString(R.string.notification_partner))
-            .setIcon(Icon.createWithResource(applicationContext, R.drawable.image_my_default_profile))
+            .setIcon(Icon.createWithResource(applicationContext, partnerSignalRes))
             .build()
 
         val me = android.app.Person.Builder()
             .setName(applicationContext.getString(R.string.notification_me))
-            .setIcon(Icon.createWithResource(applicationContext, R.drawable.image_partner_default_profile))
+            .setIcon(Icon.createWithResource(applicationContext, mySignalRes))
             .build()
 
-        val newStyle = Notification.MessagingStyle(me)
-            .setGroupConversation(true)
+        val newStyle = Notification.MessagingStyle(partner)
+            .setGroupConversation(false)
 
         activeStyle?.messages?.forEach {
             newStyle.addMessage(

@@ -88,7 +88,7 @@ class ImageDetailActivity : TransformationAppCompatActivity() {
             }
 
             if (imageChat?.createAt != null) {
-                val serverFormat = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
+                val serverFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
                 val date = serverFormat.parse(imageChat.createAt)
                 val clientFormat = SimpleDateFormat(getString(R.string.image_detail_date_format), Locale.getDefault())
                 tvDate.text = clientFormat.format(date)

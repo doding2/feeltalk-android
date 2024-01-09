@@ -80,7 +80,7 @@ class TokenRepositoryImpl(
         val now = Date()
         if (tokenInfo.refreshExpiresAt.time <= now.time || tokenInfo.accessExpiresAt.time <= now.time) {
             val renewResult = remoteDataSource.reissueToken(tokenInfo)
-            val formatter = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
+            val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
             val newTokenInfo = TokenInfo(
                 accessToken = renewResult.accessToken,
                 refreshToken = renewResult.refreshToken,

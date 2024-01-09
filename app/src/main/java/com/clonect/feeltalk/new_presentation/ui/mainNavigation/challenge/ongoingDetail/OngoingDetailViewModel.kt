@@ -137,7 +137,7 @@ class OngoingDetailViewModel @Inject constructor(
         _isLoading.value = true
         when (val result = completeChallengeUseCase(challenge)) {
             is Resource.Success -> {
-                val challengeFormat = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.getDefault())
+                val challengeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
                 addNewChatCacheUseCase(
                     result.data.run {
                         CompleteChallengeChat(
