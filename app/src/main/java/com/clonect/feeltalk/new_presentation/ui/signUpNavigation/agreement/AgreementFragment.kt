@@ -45,10 +45,10 @@ class AgreementFragment : Fragment() {
         viewModel.setCurrentPage("agreement")
 
         binding.run {
-            root.layoutTransition.apply {
-                setDuration(600)
-            }
-            mcvCertifyAdult.setOnClickListener { certifyAdult() }
+//            root.layoutTransition.apply {
+//                setDuration(600)
+//            }
+//            mcvCertifyAdult.setOnClickListener { certifyAdult() }
             clAgreeAll.setOnClickListener { toggleAgreeAll() }
             llAgreement1.setOnClickListener { toggleAgreeService() }
             llAgreement2.setOnClickListener { toggleAgreePrivacy() }
@@ -58,9 +58,9 @@ class AgreementFragment : Fragment() {
         }
     }
 
-    private fun certifyAdult() {
-        viewModel.certifyAdult()
-    }
+//    private fun certifyAdult() {
+//        viewModel.certifyAdult()
+//    }
 
     private fun navigateToNickname() {
         viewModel.setAgreementProcessed(true)
@@ -141,8 +141,8 @@ class AgreementFragment : Fragment() {
                 weight = 1.644f
             }
             ivProfileDeco.updateLayoutParams<LinearLayout.LayoutParams> {
-                width = requireContext().dpToPx(214f).toInt()
-                height = requireContext().dpToPx(132f).toInt()
+                width = requireContext().dpToPx(214f)
+                height = requireContext().dpToPx(132f)
             }
             tvAdultAnnounce.visibility = View.GONE
             mcvCertifyAdult.visibility = View.GONE
@@ -159,8 +159,8 @@ class AgreementFragment : Fragment() {
                 weight = 0.615f
             }
             ivProfileDeco.updateLayoutParams<LinearLayout.LayoutParams> {
-                width = requireContext().dpToPx(291f).toInt()
-                height = requireContext().dpToPx(180f).toInt()
+                width = requireContext().dpToPx(291f)
+                height = requireContext().dpToPx(180f)
             }
             tvAdultAnnounce.visibility = View.VISIBLE
             mcvCertifyAdult.visibility = View.VISIBLE
@@ -194,7 +194,7 @@ class AgreementFragment : Fragment() {
 
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-            launch { viewModel.isAdult.collectLatest(::changeAdultView) }
+//            launch { viewModel.isAdult.collectLatest(::changeAdultView) }
             launch { viewModel.isAgreeAll.collectLatest(::changeAgreeAllView) }
             launch {
                 viewModel.isServiceAgreed.collectLatest {

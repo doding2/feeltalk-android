@@ -75,7 +75,7 @@ class SignUpNavigationViewModel @Inject constructor(
         _isLoading.value = false
 
         _socialToken.value = null
-        _isAdult.value = false
+//        _isAdult.value = false
         _isAgreeAll.value = false
         _isServiceAgreed.value = false
         _isPrivacyAgreed.value = false
@@ -103,8 +103,8 @@ class SignUpNavigationViewModel @Inject constructor(
     private val _socialToken = MutableStateFlow<SocialToken?>(null)
     val socialToken = _socialToken.asStateFlow()
 
-    private val _isAdult = MutableStateFlow(false)
-    val isAdult = _isAdult.asStateFlow()
+//    private val _isAdult = MutableStateFlow(false)
+//    val isAdult = _isAdult.asStateFlow()
 
     private val _isAgreeAll = MutableStateFlow(false)
     val isAgreeAll = _isAgreeAll.asStateFlow()
@@ -135,9 +135,9 @@ class SignUpNavigationViewModel @Inject constructor(
         }
     }
 
-    fun certifyAdult() {
-        _isAdult.value = true
-    }
+//    fun certifyAdult() {
+//        _isAdult.value = true
+//    }
 
     fun setAgreeAll(agreeAll: Boolean) {
         _isAgreeAll.value = agreeAll
