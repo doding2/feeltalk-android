@@ -22,6 +22,7 @@ import com.clonect.feeltalk.new_domain.model.chat.PartnerLastChatDto
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
 import com.clonect.feeltalk.new_domain.model.question.Question
+import com.clonect.feeltalk.new_domain.model.signal.Signal
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.challenge.GetChallengeUpdatedFlowUseCase
@@ -33,6 +34,7 @@ import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUpdatedFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.SetQuestionUpdatedUseCase
+import com.clonect.feeltalk.new_domain.usecase.signal.GetPartnerSignalUseCase
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper
 import com.clonect.feeltalk.new_presentation.ui.activity.MainActivity
 import com.clonect.feeltalk.presentation.utils.infoLog
@@ -61,6 +63,7 @@ class MainNavigationViewModel @Inject constructor(
     private val setQuestionUpdatedUseCase: SetQuestionUpdatedUseCase,
     private val getChallengeUpdatedFlowUseCase: GetChallengeUpdatedFlowUseCase,
     private val setChallengeUpdatedUseCase: SetChallengeUpdatedUseCase,
+    private val getPartnerSignalUseCase: GetPartnerSignalUseCase,
 ): ViewModel() {
 
     // For reducing inflating delay due to complex and too much view components
@@ -163,16 +166,25 @@ class MainNavigationViewModel @Inject constructor(
             putExtra("showChat", true)
         }
 
+//        val partnerSignal = (getPartnerSignalUseCase() as? Resource.Success)?.data ?: Signal.Half
+//        val partnerSignalRes = when (partnerSignal) {
+//            Signal.Zero -> R.drawable.n_image_signal_0
+//            Signal.Quarter -> R.drawable.n_image_signal_25
+//            Signal.Half -> R.drawable.n_image_signal_50
+//            Signal.ThreeFourth -> R.drawable.n_image_signal_75
+//            Signal.One -> R.drawable.n_image_signal_100
+//        }
+
         val partner = android.app.Person.Builder()
             .setName(context.getString(R.string.notification_partner))
-            .setIcon(IconCompat.createWithResource(context, R.drawable.image_my_default_profile).toIcon(context))
+//            .setIcon(IconCompat.createWithResource(context, partnerSignalRes).toIcon(context))
             .build()
 
         val shortcut = ShortcutInfo.Builder(context, NotificationHelper.CHAT_SHORTCUT_ID).run {
             setLongLived(true)
-            setShortLabel(context.getString(R.string.app_name))
+            setShortLabel(partner.name!!)
             setPerson(partner)
-            setIcon(IconCompat.createWithResource(context, R.drawable.n_image_bubble).toIcon(context))
+            setIcon(IconCompat.createWithResource(context, R.mipmap.ic_launcher_round).toIcon(context))
             setCategories(setOf(ShortcutInfo.SHORTCUT_CATEGORY_CONVERSATION))
             setIntent(intent)
             build()

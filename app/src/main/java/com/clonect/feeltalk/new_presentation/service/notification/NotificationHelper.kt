@@ -8,6 +8,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.graphics.drawable.Icon
 import android.os.Build
 import androidx.core.app.ActivityCompat
@@ -199,16 +200,16 @@ class NotificationHelper(
             null
         }
 
-        val partnerSignal = (getPartnerSignalUseCase() as? Resource.Success)?.data ?: Signal.Half
-        val partnerSignalRes = when (partnerSignal) {
-            Signal.Zero -> R.drawable.n_image_signal_0
-            Signal.Quarter -> R.drawable.n_image_signal_25
-            Signal.Half -> R.drawable.n_image_signal_50
-            Signal.ThreeFourth -> R.drawable.n_image_signal_75
-            Signal.One -> R.drawable.n_image_signal_100
-        }
+//        val partnerSignal = (getPartnerSignalUseCase() as? Resource.Success)?.data ?: Signal.Half
+//        val partnerSignalRes = when (partnerSignal) {
+//            Signal.Zero -> R.drawable.n_image_signal_0
+//            Signal.Quarter -> R.drawable.n_image_signal_25
+//            Signal.Half -> R.drawable.n_image_signal_50
+//            Signal.ThreeFourth -> R.drawable.n_image_signal_75
+//            Signal.One -> R.drawable.n_image_signal_100
+//        }
 
-        val mySignal = (getMySignalUseCase() as? Resource.Success)?.data ?: Signal.Half
+//        val mySignal = (getMySignalUseCase() as? Resource.Success)?.data ?: Signal.Half
 //        val mySignalRes = when (mySignal) {
 //            Signal.Zero -> R.drawable.n_image_signal_0
 //            Signal.Quarter -> R.drawable.n_image_signal_25
@@ -219,7 +220,7 @@ class NotificationHelper(
 
         val partner = Person.Builder()
             .setName(applicationContext.getString(R.string.notification_partner))
-            .setIcon(IconCompat.createWithResource(applicationContext, partnerSignalRes))
+//            .setIcon(IconCompat.createWithResource(applicationContext, partnerSignalRes))
             .build()
 
 //        val me = Person.Builder()
@@ -290,32 +291,32 @@ class NotificationHelper(
             return@launch
         }
 
-        val partnerSignal = (getPartnerSignalUseCase() as? Resource.Success)?.data ?: Signal.Half
-        val partnerSignalRes = when (partnerSignal) {
-            Signal.Zero -> R.drawable.n_image_signal_0
-            Signal.Quarter -> R.drawable.n_image_signal_25
-            Signal.Half -> R.drawable.n_image_signal_50
-            Signal.ThreeFourth -> R.drawable.n_image_signal_75
-            Signal.One -> R.drawable.n_image_signal_100
-        }
-
-        val mySignal = (getMySignalUseCase() as? Resource.Success)?.data ?: Signal.Half
-        val mySignalRes = when (mySignal) {
-            Signal.Zero -> R.drawable.n_image_signal_0
-            Signal.Quarter -> R.drawable.n_image_signal_25
-            Signal.Half -> R.drawable.n_image_signal_50
-            Signal.ThreeFourth -> R.drawable.n_image_signal_75
-            Signal.One -> R.drawable.n_image_signal_100
-        }
+//        val partnerSignal = (getPartnerSignalUseCase() as? Resource.Success)?.data ?: Signal.Half
+//        val partnerSignalRes = when (partnerSignal) {
+//            Signal.Zero -> R.drawable.n_image_signal_0
+//            Signal.Quarter -> R.drawable.n_image_signal_25
+//            Signal.Half -> R.drawable.n_image_signal_50
+//            Signal.ThreeFourth -> R.drawable.n_image_signal_75
+//            Signal.One -> R.drawable.n_image_signal_100
+//        }
+//
+//        val mySignal = (getMySignalUseCase() as? Resource.Success)?.data ?: Signal.Half
+//        val mySignalRes = when (mySignal) {
+//            Signal.Zero -> R.drawable.n_image_signal_0
+//            Signal.Quarter -> R.drawable.n_image_signal_25
+//            Signal.Half -> R.drawable.n_image_signal_50
+//            Signal.ThreeFourth -> R.drawable.n_image_signal_75
+//            Signal.One -> R.drawable.n_image_signal_100
+//        }
 
         val partner = android.app.Person.Builder()
             .setName(applicationContext.getString(R.string.notification_partner))
-            .setIcon(Icon.createWithResource(applicationContext, partnerSignalRes))
+//            .setIcon(Icon.createWithResource(applicationContext, partnerSignalRes))
             .build()
 
         val me = android.app.Person.Builder()
             .setName(applicationContext.getString(R.string.notification_me))
-            .setIcon(Icon.createWithResource(applicationContext, mySignalRes))
+//            .setIcon(Icon.createWithResource(applicationContext, mySignalRes))
             .build()
 
         val newStyle = Notification.MessagingStyle(partner)
