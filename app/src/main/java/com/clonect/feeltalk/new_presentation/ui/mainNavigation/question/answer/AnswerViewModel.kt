@@ -164,8 +164,8 @@ class AnswerViewModel @Inject constructor(
     private fun collectQuestionAnswer() = viewModelScope.launch {
         getAnswerQuestionFlowUseCase().collect { new ->
             val old = _question.value ?: return@collect
-            if (new.index == old.index && old.partnerAnswer == null && new.partnerAnswer != null) {
-                _question.value = old.copy(partnerAnswer = new.partnerAnswer)
+            if (old.index == new.index) {
+                _question.value = old.copy(myAnswer = new.myAnswer, partnerAnswer = new.partnerAnswer)
             }
         }
     }

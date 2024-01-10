@@ -387,6 +387,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
         val question = (getQuestionUseCase(questionIndex) as? Resource.Success)?.data
         if (question != null) {
+            answerPartnerQuestionCacheUseCase(question)
             addNewChatCacheUseCase(
                 AnswerChat(
                     index = index,
@@ -399,10 +400,8 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             )
         }
 
-        if (getAppRunning()) {
-            if (question != null) {
-                answerPartnerQuestionCacheUseCase(question)
-            }
+        if (getAppRunning() && question != null) {
+            answerPartnerQuestionCacheUseCase(question)
         }
 
         if (FeeltalkApp.getAppScreenActive() && FeeltalkApp.getUserInChat()) {
