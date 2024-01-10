@@ -103,6 +103,7 @@
             app:cardCornerRadius="16dp"
             app:cardBackgroundColor="@color/main_500"
             app:cardElevation="0dp"
+            app:layout_constraintWidth_max="260dp"
             app:layout_constrainedWidth="true"
             app:layout_constraintHorizontal_bias="1"
             app:layout_constraintStart_toEndOf="@id/tv_time"
