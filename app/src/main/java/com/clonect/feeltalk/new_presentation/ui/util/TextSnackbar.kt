@@ -41,6 +41,7 @@ class TextSnackbar(
         snackbar.view.setOnClickListener {
             onClick(snackbar)
         }
+        snackbar.animationMode = Snackbar.ANIMATION_MODE_SLIDE
     }
 
     private fun initData() {
