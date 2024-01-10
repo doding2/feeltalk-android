@@ -165,7 +165,7 @@ class AnswerViewModel @Inject constructor(
         getAnswerQuestionFlowUseCase().collect { new ->
             val old = _question.value ?: return@collect
             if (old.index == new.index) {
-                _question.value = old.copy(myAnswer = new.myAnswer, partnerAnswer = new.partnerAnswer)
+                _question.value = old.copy(myAnswer = new.myAnswer ?: old.myAnswer, partnerAnswer = new.partnerAnswer ?: old.partnerAnswer)
             }
         }
     }
