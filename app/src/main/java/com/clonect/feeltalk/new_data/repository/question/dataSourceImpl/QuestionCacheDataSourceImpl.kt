@@ -14,7 +14,7 @@ class QuestionCacheDataSourceImpl: QuestionCacheDataSource {
     private var todayQuestion = MutableStateFlow<Question?>(null)
     private val answerQuestion = MutableSharedFlow<Question>()
 
-    override fun saveTodayQuestion(todayQuestion: Question) {
+    override fun saveTodayQuestion(todayQuestion: Question?) {
         this.todayQuestion.value = todayQuestion
     }
     override fun getTodayQuestion(): Question? = todayQuestion.value

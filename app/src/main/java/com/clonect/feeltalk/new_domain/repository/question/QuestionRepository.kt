@@ -16,7 +16,7 @@ interface QuestionRepository {
 
     suspend fun getQuestion(accessToken: String, index: Long): Resource<Question>
     suspend fun getTodayQuestion(accessToken: String): Resource<Question>
-    fun changeTodayQuestionCache(question: Question)
+    fun changeTodayQuestionCache(question: Question?)
     suspend fun getTodayQuestionFlow(): Flow<Question?>
 
     suspend fun answerQuestion(accessToken: String, question: Question, myAnswer: String): Resource<Unit>

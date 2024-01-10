@@ -286,7 +286,7 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    fun removeLoadingChat(chat: Chat) {
+    private fun removeLoadingChat(chat: Chat) {
         pageModificationEvents.value -= PageEvents.InsertItemFooter(chat)
     }
 

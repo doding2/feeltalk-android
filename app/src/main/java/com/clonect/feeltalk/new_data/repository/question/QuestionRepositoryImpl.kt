@@ -88,7 +88,7 @@ class QuestionRepositoryImpl(
         }
     }
 
-    override fun changeTodayQuestionCache(question: Question) {
+    override fun changeTodayQuestionCache(question: Question?) {
         cacheDataSource.saveTodayQuestion(question)
         localDataSource.setQuestionUpdated(true)
         cacheDataSource.setQuestionUpdated(true)

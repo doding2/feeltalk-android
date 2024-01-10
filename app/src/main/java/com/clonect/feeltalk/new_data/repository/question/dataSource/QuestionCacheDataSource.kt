@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface QuestionCacheDataSource {
 
-    fun saveTodayQuestion(todayQuestion: Question)
+    fun saveTodayQuestion(todayQuestion: Question?)
     fun getTodayQuestion(): Question?
     suspend fun getTodayQuestionFlow(): Flow<Question?>
 

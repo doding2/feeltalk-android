@@ -387,7 +387,6 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
         val question = (getQuestionUseCase(questionIndex) as? Resource.Success)?.data
         if (question != null) {
-            answerPartnerQuestionCacheUseCase(question)
             addNewChatCacheUseCase(
                 AnswerChat(
                     index = index,

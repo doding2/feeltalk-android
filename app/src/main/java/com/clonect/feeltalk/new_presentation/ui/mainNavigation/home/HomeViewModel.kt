@@ -135,13 +135,17 @@ class HomeViewModel @Inject constructor(
 
     private fun collectQuestionAnswer() = viewModelScope.launch {
         answerQuestionFlowUseCase().collect { new ->
-            if (new.index == _todayQuestion.value?.index) {
-                _todayQuestion.value = _todayQuestion.value?.let { old ->
+            val todayQuestion = _todayQuestion.value
+            if (new.index == todayQuestion?.index) {
+                _todayQuestion.value = todayQuestion.let { old ->
                     old.copy(
                         myAnswer = old.myAnswer ?: new.myAnswer,
                         partnerAnswer = old.partnerAnswer ?: new.partnerAnswer
                     ).also {
-                        changeTodayQuestionCacheUseCase(it)
+                        // init today question cache to null
+                        // if you change today question to non-null question in here,
+                        // unnecessary additional today question object is inserted at question, question share pages
+                        changeTodayQuestionCacheUseCase(null)
                     }
                 }
             }
