@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.PageEvents
@@ -25,6 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -95,6 +97,16 @@ class OngoingFragment : Fragment() {
             addOnPagesUpdatedListener {
                 val isEmpty = itemCount == 0
                 ongoingViewModel.setEmpty(isEmpty)
+            }
+            addLoadStateListener {
+                if (it.prepend is LoadState.Error && !ongoingViewModel.ongoingChallengePagingRetryLock.isLocked) {
+                    lifecycleScope.launch {
+                        ongoingViewModel.ongoingChallengePagingRetryLock.withLock {
+                            delay(10000)
+                            retry()
+                        }
+                    }
+                }
             }
         }
 

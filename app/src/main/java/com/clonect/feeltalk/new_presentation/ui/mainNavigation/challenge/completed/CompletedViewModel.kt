@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,6 +23,8 @@ class CompletedViewModel @Inject constructor(
     private val getAddChallengeFlowUseCase: GetAddChallengeFlowUseCase,
     private val getDeleteChallengeFlowUseCase: GetDeleteChallengeFlowUseCase,
 ): ViewModel() {
+
+    val completedChallengePagingRetryLock = Mutex()
 
     private val _isEmpty = MutableStateFlow(true)
     val isEmpty = _isEmpty.asStateFlow()

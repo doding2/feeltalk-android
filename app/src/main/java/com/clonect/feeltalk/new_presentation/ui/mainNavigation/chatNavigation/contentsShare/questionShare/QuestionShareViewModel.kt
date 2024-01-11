@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,6 +23,8 @@ class QuestionShareViewModel @Inject constructor(
     private val getAnswerQuestionFlowUseCase: GetAnswerQuestionFlowUseCase,
     private val getTodayQuestionFlowUseCase: GetTodayQuestionFlowUseCase,
 ) : ViewModel() {
+
+    val questionSharePagingRetryLock = Mutex()
 
     private val isInTop = MutableStateFlow(true)
 

@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.databinding.FragmentQuestionShareBinding
 import com.clonect.feeltalk.new_domain.model.question.Question
@@ -17,6 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.withLock
 
 
 @AndroidEntryPoint
@@ -45,6 +47,16 @@ class QuestionShareFragment : Fragment() {
     private fun initRecyclerView() = binding.run {
         adapter = QuestionShareAdapter().apply {
             setOnItemSelectListener(::onQuestionSelect)
+            addLoadStateListener {
+                if (it.prepend is LoadState.Error && !viewModel.questionSharePagingRetryLock.isLocked) {
+                    lifecycleScope.launch {
+                        viewModel.questionSharePagingRetryLock.withLock {
+                            delay(10000)
+                            retry()
+                        }
+                    }
+                }
+            }
         }
         rvQuestionShare.adapter = adapter
         rvQuestionShare.addOnScrollListener(object: RecyclerView.OnScrollListener() {

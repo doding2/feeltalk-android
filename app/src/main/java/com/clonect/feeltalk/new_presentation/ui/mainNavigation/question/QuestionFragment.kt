@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentQuestionBinding
@@ -27,7 +28,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -125,7 +128,18 @@ class QuestionFragment : Fragment() {
     }
 
     private fun initRecyclerView() = binding.run {
-        rvQuestion.adapter = adapter
+        rvQuestion.adapter = adapter.apply {
+            addLoadStateListener {
+                if (it.prepend is LoadState.Error && !viewModel.questionPagingRetryLock.isLocked) {
+                    lifecycleScope.launch {
+                        viewModel.questionPagingRetryLock.withLock {
+                            delay(10000)
+                            retry()
+                        }
+                    }
+                }
+            }
+        }
         adapter.setOnItemClickListener(::onQuestionClick)
 
         rvQuestion.addOnScrollListener(object: RecyclerView.OnScrollListener() {

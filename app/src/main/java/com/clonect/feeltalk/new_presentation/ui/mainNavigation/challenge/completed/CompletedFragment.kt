@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentCompletedBinding
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
@@ -18,8 +19,10 @@ import com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.Challen
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -69,6 +72,16 @@ class CompletedFragment : Fragment() {
             addOnPagesUpdatedListener {
                 val isEmpty = itemCount == 0
                 completedViewModel.setEmpty(isEmpty)
+            }
+            addLoadStateListener {
+                if (it.prepend is LoadState.Error && !completedViewModel.completedChallengePagingRetryLock.isLocked) {
+                    lifecycleScope.launch {
+                        completedViewModel.completedChallengePagingRetryLock.withLock {
+                            delay(10000)
+                            retry()
+                        }
+                    }
+                }
             }
         }
     }

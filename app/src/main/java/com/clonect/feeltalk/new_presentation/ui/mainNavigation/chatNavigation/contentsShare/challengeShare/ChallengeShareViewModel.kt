@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
 import javax.inject.Inject
 
 /**
@@ -33,6 +34,8 @@ class ChallengeShareViewModel @Inject constructor(
     private val getDeleteChallengeFlowUseCase: GetDeleteChallengeFlowUseCase,
     private val getModifyChallengeFlowUseCase: GetModifyChallengeFlowUseCase
 ) : ViewModel() {
+
+    val challengeSharePagingRetryLock = Mutex()
 
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage = _errorMessage.asSharedFlow()

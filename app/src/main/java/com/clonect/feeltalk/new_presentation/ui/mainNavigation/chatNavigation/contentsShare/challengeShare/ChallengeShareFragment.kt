@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.databinding.FragmentChallengeShareBinding
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
@@ -19,6 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.withLock
 
 @AndroidEntryPoint
 class ChallengeShareFragment : Fragment() {
@@ -46,6 +48,16 @@ class ChallengeShareFragment : Fragment() {
     private fun initRecyclerView() = binding.run {
         adapter = ChallengeShareAdapter().apply {
             setOnItemSelectListener(::onChallengeSelect)
+            addLoadStateListener {
+                if (it.prepend is LoadState.Error && !viewModel.challengeSharePagingRetryLock.isLocked) {
+                    lifecycleScope.launch {
+                        viewModel.challengeSharePagingRetryLock.withLock {
+                            delay(10000)
+                            retry()
+                        }
+                    }
+                }
+            }
         }
         rvChallengeShare.adapter = adapter
         rvChallengeShare.addOnScrollListener(object: RecyclerView.OnScrollListener() {
