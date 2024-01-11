@@ -473,7 +473,6 @@ class ChatFragment : Fragment() {
         viewModel.cancelFailedChat(chat)
     }
 
-
     private fun setKeyboardInsets() {
         binding.root.setOnApplyWindowInsetsListener { v, insets ->
             val imeHeight = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {

@@ -27,6 +27,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.paging.insertSeparators
 import androidx.recyclerview.widget.RecyclerView
 import com.clonect.feeltalk.R
@@ -44,22 +45,31 @@ import com.clonect.feeltalk.new_domain.model.chat.QuestionChat
 import com.clonect.feeltalk.new_domain.model.chat.ResetPartnerPasswordChat
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
 import com.clonect.feeltalk.new_domain.model.chat.VoiceChat
+import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
 import com.clonect.feeltalk.new_domain.model.question.Question
+import com.clonect.feeltalk.new_domain.model.signal.Signal
 import com.clonect.feeltalk.new_presentation.ui.FeeltalkApp
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.ChatAdapter
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.ChatViewModel
+import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.contentsShare.ContentsShareFragment
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageDetail.ImageDetailActivity
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageShare.ImageShareFragment
+import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
+import com.google.android.material.snackbar.Snackbar
 import com.skydoves.transformationlayout.TransformationCompat
 import com.skydoves.transformationlayout.TransformationLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.withLock
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @AndroidEntryPoint
 class BubbleChatFragment : Fragment() {
@@ -78,13 +88,27 @@ class BubbleChatFragment : Fragment() {
         binding = FragmentChatBinding.inflate(inflater, container, false)
         setKeyboardInsets()
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, onBackCallback)
-        requireParentFragment()
-            .setFragmentResultListener(ImageShareFragment.REQUEST_KEY) { _, bundle ->
-                val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) bundle.getParcelable(
-                    ImageShareFragment.RESULT_KEY_URI, Uri::class.java)
-                else bundle.getParcelable(ImageShareFragment.RESULT_KEY_URI) as? Uri
-                viewModel.sendImageChat(requireContext(), uri)
+        requireParentFragment().requireParentFragment().apply {
+            setFragmentResultListener(ContentsShareFragment.REQUEST_KEY_QUESTION) { _, bundle ->
+                val question = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) bundle.getParcelable(
+                    ContentsShareFragment.RESULT_KEY_QUESTION, Question::class.java)
+                else bundle.getParcelable(ContentsShareFragment.RESULT_KEY_QUESTION) as? Question
+                viewModel.sendQuestionChat(question)
             }
+            setFragmentResultListener(ContentsShareFragment.REQUEST_KEY_CHALLENGE) { _, bundle ->
+                val challenge = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) bundle.getParcelable(
+                    ContentsShareFragment.RESULT_KEY_CHALLENGE, Challenge::class.java)
+                else bundle.getParcelable(ContentsShareFragment.RESULT_KEY_CHALLENGE) as? Challenge
+                viewModel.sendChallengeChat(challenge)
+            }
+            setFragmentResultListener(ImageShareFragment.REQUEST_KEY) { _, bundle ->
+                val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) bundle.getParcelable(ImageShareFragment.RESULT_KEY_URI, Uri::class.java)
+                else bundle.getParcelable(ImageShareFragment.RESULT_KEY_URI) as? Uri
+                val width = bundle.getInt(ImageShareFragment.RESULT_KEY_WIDTH, -1)
+                val height = bundle.getInt(ImageShareFragment.RESULT_KEY_HEIGHT, -1)
+                viewModel.sendImageChat(requireContext(), uri, width, height)
+            }
+        }
         setRecyclerView()
         return binding.root
     }
@@ -247,7 +271,7 @@ class BubbleChatFragment : Fragment() {
         requireParentFragment()
             .requireParentFragment()
             .findNavController()
-            .navigate(R.id.action_mainNavigationFragment_to_ongoingChallengeDetailFragment, bundle)
+            .navigate(R.id.action_bubbleChatFragment_to_ongoingDetailFragment2, bundle)
     }
 
     private fun navigateToCompletedChallengeDetail(challenge: Challenge) {
@@ -255,7 +279,7 @@ class BubbleChatFragment : Fragment() {
         requireParentFragment()
             .requireParentFragment()
             .findNavController()
-            .navigate(R.id.action_mainNavigationFragment_to_completedChallengeDetailFragment, bundle)
+            .navigate(R.id.action_bubbleChatFragment_to_completedDetailFragment2, bundle)
     }
 
 
@@ -336,6 +360,54 @@ class BubbleChatFragment : Fragment() {
         viewModel.toggleExpandChatMedia()
     }
 
+    // For scrolling auto when new chat arrived
+    private val dataObserver = object: RecyclerView.AdapterDataObserver() {
+        override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+            super.onItemRangeInserted(positionStart, itemCount)
+
+            val snapshot = adapter.snapshot()
+            if (positionStart == 0 && viewModel.isUserInBottom.value) {
+                scrollToBottom()
+                return
+            }
+            if (positionStart == 0) return
+            if (positionStart >= snapshot.size) return
+            val item = adapter.snapshot()[positionStart] ?: return
+
+            val isNextDayItemInserted = snapshot.size - 1 < positionStart + 2 || snapshot[positionStart + 2] == null
+            if (item is DividerChat && isNextDayItemInserted) {
+                val dividerFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                val now = dividerFormat.format(Date())
+                if (item.createAt != now) return
+
+                val nextItem = snapshot[positionStart + 1]
+                if (nextItem is ImageChat) {
+                    // delay for loading image
+                    lifecycleScope.launch {
+                        delay(200)
+                        scrollToBottom()
+                    }
+                } else {
+                    scrollToBottom()
+                }
+                return
+            }
+
+            val shouldScroll = (item.chatSender == "me" && item.sendState == Chat.ChatSendState.Sending)
+                    || (viewModel.isUserInBottom.value && item.chatSender == "partner")
+            if (shouldScroll) {
+                if (item is ImageChat) {
+                    // delay for loading image
+                    lifecycleScope.launch {
+                        delay(200)
+                        scrollToBottom()
+                    }
+                    return
+                }
+                scrollToBottom()
+            }
+        }
+    }
 
     private fun setRecyclerView() = binding.run {
         rvChat.setRecycledViewPool(RecyclerView.RecycledViewPool().apply {
@@ -369,17 +441,17 @@ class BubbleChatFragment : Fragment() {
             setOnClickItem(::onClickChat)
             setOnRetry(::onRetryChat)
             setOnCancel(::onCancelChat)
-            registerAdapterDataObserver(object: RecyclerView.AdapterDataObserver() {
-                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                    super.onItemRangeInserted(positionStart, itemCount)
-                    if (positionStart == 0) return
-                    if (positionStart >= adapter.itemCount) return
-                    val item = adapter.snapshot()[positionStart] ?: return
-                    if (item.chatSender == "me" || (viewModel.isUserInBottom.value && item.chatSender == "partner")) {
-                        scrollToBottom()
+            registerAdapterDataObserver(dataObserver)
+            addLoadStateListener {
+                if (it.prepend is LoadState.Error && !viewModel.chatPagingRetryLock.isLocked) {
+                    lifecycleScope.launch {
+                        viewModel.chatPagingRetryLock.withLock {
+                            delay(10000)
+                            retry()
+                        }
                     }
                 }
-            })
+            }
         }
         rvChat.addOnScrollListener(object: RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -470,6 +542,9 @@ class BubbleChatFragment : Fragment() {
         scrollRemainHeight -= computeRemainScrollHeight()
         val position = adapter.itemCount - 1
         binding.rvChat.scrollToPosition(position)
+        if (viewModel.isUserInChat.value == true) {
+            viewModel.setUserInBottom(true)
+        }
     }
 
     private fun hideKeyboard() {
@@ -510,7 +585,6 @@ class BubbleChatFragment : Fragment() {
 
     private fun applyKeyboardUp(isUp: Boolean) {
         if (isUp) {
-            binding.etTextMessage.requestFocus()
             cancel(includeVoiceChats = false)
         } else {
             binding.etTextMessage.clearFocus()
@@ -629,8 +703,31 @@ class BubbleChatFragment : Fragment() {
         }
     }
 
+    private fun applyPartnerInfoChanges(partnerInfo: PartnerInfo?) {
+        binding.tvNickname.text = partnerInfo?.nickname
+        adapter.setPartnerNickname(partnerInfo?.nickname)
+    }
+
+    private fun applyPartnerSignalChanges(signal: Signal?) {
+        if (signal == null) return
+        adapter.setPartnerSignal(signal)
+    }
+
+    private fun showSnackBar(message: String) {
+        val decorView = activity?.window?.decorView ?: return
+        TextSnackbar.make(
+            view = decorView,
+            message = message,
+            duration = Snackbar.LENGTH_SHORT,
+            onClick = {
+                it.dismiss()
+            }
+        ).show()
+    }
+
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch { viewModel.errorMessage.collectLatest(::showSnackBar) }
             launch { viewModel.textChat.collectLatest(::prepareTextChat) }
             launch { viewModel.expandChat.collectLatest(::changeChatMediaView) }
             launch { viewModel.isVoiceSetupMode.collectLatest(::changeVoiceSetupView) }
@@ -639,6 +736,8 @@ class BubbleChatFragment : Fragment() {
             launch { viewModel.isVoiceRecordingReplayPaused.collectLatest(::changePauseVoiceRecordingReplayingView) }
             launch { viewModel.voiceRecordTime.collectLatest(::changeVoiceRecordingTimeView) }
             launch { viewModel.isKeyboardUp.collectLatest(::applyKeyboardUp) }
+            launch { viewModel.partnerInfo.collectLatest(::applyPartnerInfoChanges) }
+            launch { viewModel.partnerSignal.collectLatest(::applyPartnerSignalChanges) }
             launch {
                 viewModel.pagingChat.collectLatest {
                     adapter.submitData(requireParentFragment().lifecycle, it)

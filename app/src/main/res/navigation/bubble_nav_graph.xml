@@ -16,6 +16,12 @@
         <action
             android:id="@+id/action_bubbleChatFragment_to_imageShareFragment2"
             app:destination="@id/imageShareFragment2" />
+        <action
+            android:id="@+id/action_bubbleChatFragment_to_ongoingDetailFragment2"
+            app:destination="@id/ongoingDetailFragment2" />
+        <action
+            android:id="@+id/action_bubbleChatFragment_to_completedDetailFragment2"
+            app:destination="@id/completedDetailFragment2" />
     </fragment>
     <fragment
         android:id="@+id/contentsShareFragment2"
@@ -27,4 +33,12 @@
         android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageShare.ImageShareFragment"
         android:label="fragment_image_share"
         tools:layout="@layout/fragment_image_share" />
+    <fragment
+        android:id="@+id/ongoingDetailFragment2"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.ongoingDetail.OngoingDetailFragment"
+        android:label="OngoingDetailFragment" />
+    <fragment
+        android:id="@+id/completedDetailFragment2"
+        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.completedDetail.CompletedDetailFragment"
+        android:label="CompletedDetailFragment" />
 </navigation>
