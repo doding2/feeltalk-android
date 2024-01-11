@@ -1,7 +1,9 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.home.signal
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Point
 import com.clonect.feeltalk.common.onError
 import com.clonect.feeltalk.common.onSuccess
@@ -13,6 +15,7 @@ import com.clonect.feeltalk.new_domain.usecase.signal.ChangeMySignalUseCase
 import com.clonect.feeltalk.new_domain.usecase.signal.GetMySignalUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -22,10 +25,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignalViewModel @Inject constructor(
+    @ApplicationContext context: Context,
     private val getMySignalUseCase: GetMySignalUseCase,
     private val changeMySignalUseCase: ChangeMySignalUseCase,
     private val addNewChatCacheUseCase: AddNewChatCacheUseCase,
 ) : ViewModel() {
+
+    private val defaultErrorMessage = context.getString(R.string.pillowtalk_default_error_message)
 
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage = _errorMessage.asSharedFlow()
@@ -86,7 +92,7 @@ class SignalViewModel @Inject constructor(
                 }
             }.onError {
                 infoLog("Fail to change my signal: ${it.localizedMessage}")
-                it.localizedMessage?.let { errorMessage -> sendErrorMessage(errorMessage) }
+                sendErrorMessage(defaultErrorMessage)
             }
         setLoading(false)
     }

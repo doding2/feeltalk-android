@@ -1,12 +1,15 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.lockSetting.lockQuestionSetting
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.account.LockQA
 import com.clonect.feeltalk.new_domain.usecase.account.LockAccountUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -20,8 +23,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LockQuestionSettingViewModel @Inject constructor(
+    @ApplicationContext context: Context,
     private val lockAccountUseCase: LockAccountUseCase,
 ): ViewModel() {
+
+    private val defaultErrorMessage = context.getString(R.string.pillowtalk_default_error_message)
 
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage = _errorMessage.asSharedFlow()
@@ -141,7 +147,7 @@ class LockQuestionSettingViewModel @Inject constructor(
             }
             is Resource.Error -> {
                 infoLog("Fail to lock account: ${result.throwable.localizedMessage}")
-                sendErrorMessage(result.throwable.localizedMessage ?: "Fail to lock account")
+                sendErrorMessage(defaultErrorMessage)
             }
         }
         setLoading(false)

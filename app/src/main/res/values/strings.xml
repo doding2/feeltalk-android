@@ -2,6 +2,7 @@
     <string name="app_name">필로우톡</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="white_space">&#160;</string>
+    <string name="pillowtalk_default_error_message">잠시 후 다시 시도해 주세요.</string>
 
 
     <!--  Pillowtalk Feedback Email  -->

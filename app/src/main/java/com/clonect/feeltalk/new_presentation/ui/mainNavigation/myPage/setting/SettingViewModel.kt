@@ -49,7 +49,6 @@ class SettingViewModel @Inject constructor(
                 }
                 is Resource.Error -> {
                     infoLog("Fail to check account locked: ${result.throwable.localizedMessage}")
-                    sendErrorMessage(result.throwable.localizedMessage ?: "Fail to check account locked")
                 }
             }
         }

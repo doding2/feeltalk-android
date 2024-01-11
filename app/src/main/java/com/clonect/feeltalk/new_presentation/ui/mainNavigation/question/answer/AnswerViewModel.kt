@@ -8,7 +8,6 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.common.onError
 import com.clonect.feeltalk.common.onSuccess
 import com.clonect.feeltalk.new_domain.model.chat.AnswerChat
-import com.clonect.feeltalk.new_domain.model.chat.Chat
 import com.clonect.feeltalk.new_domain.model.chat.PokeChat
 import com.clonect.feeltalk.new_domain.model.chat.QuestionChat
 import com.clonect.feeltalk.new_domain.model.question.Question
@@ -19,14 +18,13 @@ import com.clonect.feeltalk.new_domain.usecase.question.GetAnswerQuestionFlowUse
 import com.clonect.feeltalk.new_domain.usecase.question.PressForAnswerUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -35,6 +33,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AnswerViewModel @Inject constructor(
+    @ApplicationContext context: Context,
     private val answerQuestionUseCase: AnswerQuestionUseCase,
     private val pressForAnswerUseCase: PressForAnswerUseCase,
     private val getAnswerQuestionFlowUseCase: GetAnswerQuestionFlowUseCase,
@@ -53,6 +52,8 @@ class AnswerViewModel @Inject constructor(
 
     private val _isKeyboardUp = MutableStateFlow(false)
     val isKeyboardUp = _isKeyboardUp.asStateFlow()
+
+    private val defaultErrorMessage = context.getString(R.string.pillowtalk_default_error_message)
 
     private val _message = MutableSharedFlow<String>()
     val message = _message.asSharedFlow()
@@ -100,7 +101,7 @@ class AnswerViewModel @Inject constructor(
                 onComplete()
             }
             is Resource.Error -> {
-                _message.emit(result.throwable.localizedMessage ?: "질문 답변에 실패했습니다.")
+                _message.emit(defaultErrorMessage)
                 infoLog("Fail to answer question: ${result.throwable.localizedMessage}\n${result.throwable.stackTrace.joinToString("\n")}")
             }
         }
@@ -125,7 +126,7 @@ class AnswerViewModel @Inject constructor(
                 sendSnackbar(context.getString(R.string.answer_poke_partner_snack_bar))
             }
             is Resource.Error -> {
-                sendSnackbar(result.throwable.localizedMessage ?: "질문 답변에 실패했습니다.")
+                sendSnackbar(defaultErrorMessage)
                 infoLog("Fail to answer question: ${result.throwable.localizedMessage}\n${result.throwable.stackTrace.joinToString("\n")}")
             }
         }
@@ -148,7 +149,7 @@ class AnswerViewModel @Inject constructor(
         _isKeyboardUp.value = isUp
     }
 
-    fun sendSnackbar(message: String) = viewModelScope.launch {
+    private fun sendSnackbar(message: String) = viewModelScope.launch {
         _message.emit(message)
     }
 

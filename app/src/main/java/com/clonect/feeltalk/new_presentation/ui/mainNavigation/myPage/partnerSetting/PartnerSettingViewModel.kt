@@ -57,7 +57,6 @@ class PartnerSettingViewModel @Inject constructor(
                 }
                 is Resource.Error -> {
                     infoLog("Fail to get partner info: ${result.throwable.localizedMessage}")
-                    result.throwable.localizedMessage?.let { sendErrorMessage(it) }
                 }
             }
         }

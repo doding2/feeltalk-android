@@ -115,7 +115,7 @@ class HomeViewModel @Inject constructor(
             }
             is Resource.Error -> {
                 infoLog("Fail to answer question: ${result.throwable.localizedMessage}\n${result.throwable.stackTrace.joinToString("\n")}")
-                result.throwable.localizedMessage?.let { _snackbarMessage.emit(it) }
+                _snackbarMessage.emit(context.getString(R.string.pillowtalk_default_error_message))
             }
         }
     }

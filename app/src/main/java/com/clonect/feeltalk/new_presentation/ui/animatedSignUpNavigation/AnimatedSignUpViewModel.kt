@@ -1,8 +1,10 @@
 package com.clonect.feeltalk.new_presentation.ui.animatedSignUpNavigation
 
+import android.content.Context
 import android.os.CountDownTimer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.onError
 import com.clonect.feeltalk.common.onSuccess
 import com.clonect.feeltalk.new_domain.usecase.newAccount.RequestAdultAuthCodeUseCase
@@ -10,6 +12,7 @@ import com.clonect.feeltalk.new_domain.usecase.newAccount.RetryRequestAdultAuthC
 import com.clonect.feeltalk.new_domain.usecase.newAccount.VerifyAdultAuthCodeUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -22,6 +25,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class AnimatedSignUpViewModel @Inject constructor(
+    @ApplicationContext context: Context,
     private val requestAdultAuthCodeUseCase: RequestAdultAuthCodeUseCase,
     private val retryRequestAdultAuthCodeUseCase: RetryRequestAdultAuthCodeUseCase,
     private val verifyAdultAuthCodeUseCase: VerifyAdultAuthCodeUseCase,
@@ -30,6 +34,8 @@ class AnimatedSignUpViewModel @Inject constructor(
     private val _startPage: MutableStateFlow<String> = MutableStateFlow("coupleCode")
     val startPage = _startPage.asStateFlow()
 
+
+    private val defaultErrorMessage = context.getString(R.string.pillowtalk_default_error_message)
 
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage = _errorMessage.asSharedFlow()
@@ -240,7 +246,7 @@ class AnimatedSignUpViewModel @Inject constructor(
                 sessionUuid = uuid!!
             ).onError {
                     val message = "Fail to retry request adult auth code: ${it.localizedMessage}"
-                    sendErrorMessage(message)
+                    sendErrorMessage(defaultErrorMessage)
                     infoLog(message)
                 }
                 .onSuccess { onSuccess() }
@@ -254,7 +260,7 @@ class AnimatedSignUpViewModel @Inject constructor(
                 userNation = nation
             ).onError {
                     val message = "Fail to request adult auth code: ${it.localizedMessage}"
-                    sendErrorMessage(message)
+                    sendErrorMessage("개인 정보가 올바른지 확인해 주세요.")
                     infoLog(message)
                 }
                 .onSuccess {
@@ -269,14 +275,14 @@ class AnimatedSignUpViewModel @Inject constructor(
         if (uuid == null) {
             setAuthCodeState(authCodeState.value.copy(isTimeOut = false, isRequested = false, isAuthCodeInvalid = false))
             val message = "Fail to verify adult auth code: session uuid doesn't exist"
-            sendErrorMessage(message)
+            sendErrorMessage(defaultErrorMessage)
             infoLog(message)
             return@launch
         }
         verifyAdultAuthCodeUseCase(authCode.value, uuid)
             .onError {
                 val message = "Fail to verify adult auth code: ${it.localizedMessage}"
-                sendErrorMessage(message)
+                sendErrorMessage("인증코드가 일치하지 않습니다.")
                 infoLog(message)
             }.onSuccess {
                 onSuccess()

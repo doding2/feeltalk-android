@@ -2,7 +2,6 @@ package com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.i
 
 import android.content.ContentValues
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
 import android.media.MediaScannerConnection
 import android.net.Uri
@@ -96,7 +95,7 @@ class ImageDetailViewModel @Inject constructor(
     fun getMyInfo() = viewModelScope.launch {
         getMyInfoUseCase()
             .onSuccess { _myInfo.value = it }
-            .onError { it.localizedMessage?.let { it1 -> sendErrorMessage(it1) } }
+            .onError { it.localizedMessage?.let { it1 -> infoLog(it1) } }
     }
 
     fun getPartnerInfoFlow() = viewModelScope.launch {
@@ -105,7 +104,7 @@ class ImageDetailViewModel @Inject constructor(
                 result.onSuccess {
                     _partnerInfo.value = it
                 }.onError {
-                    it.localizedMessage?.let { it1 -> sendErrorMessage(it1) }
+                    it.localizedMessage?.let { it1 -> infoLog(it1) }
                 }
             }
     }
@@ -113,7 +112,7 @@ class ImageDetailViewModel @Inject constructor(
     fun getMySignal() = viewModelScope.launch {
         getMySignalUseCase()
             .onSuccess { _mySignal.value = it }
-            .onError { it.localizedMessage?.let { it1 -> sendErrorMessage(it1) } }
+            .onError { it.localizedMessage?.let { it1 -> infoLog(it1) } }
     }
 
     fun getPartnerSignalFlow() = viewModelScope.launch {
@@ -157,7 +156,7 @@ class ImageDetailViewModel @Inject constructor(
             throw e
         } catch (e: Exception) {
             infoLog("Fail to download image: ${e.localizedMessage}")
-            e.localizedMessage?.let { sendErrorMessage(it) }
+            sendErrorMessage(context.getString(R.string.pillowtalk_default_error_message))
         } finally {
             setLoading(false)
         }

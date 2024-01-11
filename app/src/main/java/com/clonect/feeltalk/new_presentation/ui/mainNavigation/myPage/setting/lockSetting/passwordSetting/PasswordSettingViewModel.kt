@@ -1,11 +1,14 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.lockSetting.passwordSetting
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.usecase.account.UpdateAccountLockPasswordUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -15,8 +18,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PasswordSettingViewModel @Inject constructor(
+    @ApplicationContext context: Context,
     private val updateAccountLockPasswordUseCase: UpdateAccountLockPasswordUseCase
 ): ViewModel() {
+
+    private val defaultErrorMessage = context.getString(R.string.pillowtalk_default_error_message)
 
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage = _errorMessage.asSharedFlow()
@@ -117,7 +123,7 @@ class PasswordSettingViewModel @Inject constructor(
             }
             is Resource.Error -> {
                 infoLog("Fail to update password: ${result.throwable.localizedMessage}")
-                sendErrorMessage(result.throwable.localizedMessage ?: "Fail to update password")
+                sendErrorMessage(defaultErrorMessage)
             }
         }
         setLoading(false)

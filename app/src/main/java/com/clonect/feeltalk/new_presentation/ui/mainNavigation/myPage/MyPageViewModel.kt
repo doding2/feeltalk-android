@@ -48,7 +48,6 @@ class MyPageViewModel @Inject constructor(
             }
             is Resource.Error -> {
                 infoLog("Fail to get my info: ${result.throwable.localizedMessage}")
-                result.throwable.localizedMessage?.let { sendErrorMessage(it) }
             }
         }
     }
@@ -61,7 +60,6 @@ class MyPageViewModel @Inject constructor(
                 }
                 is Resource.Error -> {
                     infoLog("Fail to get partner info: ${result.throwable.localizedMessage}")
-                    result.throwable.localizedMessage?.let { sendErrorMessage(it) }
                 }
             }
         }

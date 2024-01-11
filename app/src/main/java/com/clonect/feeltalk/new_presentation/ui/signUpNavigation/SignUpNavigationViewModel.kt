@@ -1,7 +1,9 @@
 package com.clonect.feeltalk.new_presentation.ui.signUpNavigation
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.common.onError
 import com.clonect.feeltalk.common.onSuccess
@@ -18,6 +20,7 @@ import com.clonect.feeltalk.new_presentation.service.FirebaseCloudMessagingServi
 import com.clonect.feeltalk.new_presentation.ui.signUpNavigation.nickname.NicknameState
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,6 +33,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpNavigationViewModel @Inject constructor(
+    @ApplicationContext context: Context,
     private val getAppSettingsUseCase: GetAppSettingsUseCase,
     private val getCachedSocialTokenUseCase: GetCachedSocialTokenUseCase,
     private val signUpUseCase: SignUpUseCase,
@@ -49,6 +53,8 @@ class SignUpNavigationViewModel @Inject constructor(
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
+
+    private val defaultErrorMessage = context.getString(R.string.pillowtalk_default_error_message)
 
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage = _errorMessage.asSharedFlow()
@@ -228,7 +234,7 @@ class SignUpNavigationViewModel @Inject constructor(
             .onError {
                 setNicknameProcessed(false)
                 infoLog("회원가입 실패: ${it.localizedMessage}")
-                it.localizedMessage?.let { it1 -> sendErrorMessage(it1) }
+                sendErrorMessage(defaultErrorMessage)
             }
 
         setLoading(false)
@@ -239,7 +245,7 @@ class SignUpNavigationViewModel @Inject constructor(
         FirebaseCloudMessagingService.clearFcmToken()
         val fcmToken = FirebaseCloudMessagingService.getFcmToken() ?: run {
             infoLog("fcmToken is null.")
-            _errorMessage.emit("잠시 후 다시 시도해주세요.")
+            sendErrorMessage(defaultErrorMessage)
             setLoading(false)
             return@launch
         }
@@ -252,7 +258,7 @@ class SignUpNavigationViewModel @Inject constructor(
             is Resource.Error -> {
                 setNicknameProcessed(false)
                 infoLog("회원가입 실패:${result.throwable.stackTrace.joinToString("\n")}")
-                result.throwable.localizedMessage?.let { sendErrorMessage(it) }
+                sendErrorMessage(defaultErrorMessage)
             }
         }
         setLoading(false)
@@ -271,7 +277,6 @@ class SignUpNavigationViewModel @Inject constructor(
             is Resource.Error -> {
                 _coupleCode.value = null
                 infoLog("커플코드 로딩 실패: ${result.throwable.stackTrace.joinToString("\n")}")
-                result.throwable.localizedMessage?.let { sendErrorMessage(it) }
             }
         }
     }
@@ -304,7 +309,7 @@ class SignUpNavigationViewModel @Inject constructor(
             }
             is Resource.Error -> {
                 infoLog("커플매칭 실패: ${result.throwable.stackTrace.joinToString("\n")}")
-                result.throwable.localizedMessage?.let { sendErrorMessage(it) }
+                sendErrorMessage(defaultErrorMessage)
             }
         }
 

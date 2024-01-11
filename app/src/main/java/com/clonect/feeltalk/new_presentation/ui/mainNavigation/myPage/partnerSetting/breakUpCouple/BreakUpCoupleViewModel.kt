@@ -1,7 +1,9 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.partnerSetting.breakUpCouple
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.account.ServiceDataCountDto
 import com.clonect.feeltalk.new_domain.usecase.account.BreakUpCoupleUseCase
@@ -9,6 +11,7 @@ import com.clonect.feeltalk.new_domain.usecase.account.GetServiceDataCountUseCas
 import com.clonect.feeltalk.new_presentation.service.FirebaseCloudMessagingService
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -21,9 +24,12 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class BreakUpCoupleViewModel @Inject constructor(
+    @ApplicationContext context: Context,
     private val getServiceDataCountUseCase: GetServiceDataCountUseCase,
     private val breakUpCoupleUseCase: BreakUpCoupleUseCase,
 ) : ViewModel() {
+
+    private val defaultErrorMessage = context.getString(R.string.pillowtalk_default_error_message)
 
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage = _errorMessage.asSharedFlow()
@@ -50,7 +56,6 @@ class BreakUpCoupleViewModel @Inject constructor(
             }
             is Resource.Error -> {
                 infoLog("Fail to get service data count: ${result.throwable.localizedMessage}")
-                result.throwable.localizedMessage?.let { sendErrorMessage(it) }
             }
         }
     }
@@ -79,7 +84,7 @@ class BreakUpCoupleViewModel @Inject constructor(
             }
             is Resource.Error -> {
                 infoLog("Fail to break up couple: ${result.throwable.localizedMessage}")
-                result.throwable.localizedMessage?.let { sendErrorMessage(it) }
+                sendErrorMessage(defaultErrorMessage)
             }
         }
         setLoading(false)

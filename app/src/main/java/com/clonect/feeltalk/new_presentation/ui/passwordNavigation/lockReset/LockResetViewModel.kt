@@ -71,7 +71,6 @@ class LockResetViewModel @Inject constructor(
             }
             is Resource.Error -> {
                 infoLog("Fail to get lock QA: ${result.throwable.localizedMessage}")
-                sendErrorMessage(result.throwable.localizedMessage ?: "Fail to get lock QA")
             }
         }
         setLoading(false)

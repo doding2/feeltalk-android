@@ -1,11 +1,14 @@
 package com.clonect.feeltalk.new_presentation.ui.passwordNavigation.password
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.usecase.account.MatchPasswordUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,8 +23,11 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class PasswordViewModel @Inject constructor(
+    @ApplicationContext context: Context,
     private val matchPasswordUseCase: MatchPasswordUseCase
 ) : ViewModel() {
+
+    private val defaultErrorMessage = context.getString(R.string.pillowtalk_default_error_message)
 
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage = _errorMessage.asSharedFlow()
@@ -79,7 +85,7 @@ class PasswordViewModel @Inject constructor(
             }
             is Resource.Error -> {
                 infoLog("Fail to match password: ${result.throwable.localizedMessage}")
-                sendErrorMessage(result.throwable.localizedMessage ?: "Fail to match password")
+                sendErrorMessage(defaultErrorMessage)
                 false
             }
         }
