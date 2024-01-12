@@ -7,6 +7,7 @@ import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.common.plusSecondsBy
 import com.clonect.feeltalk.data.mapper.toStringLowercase
 import com.clonect.feeltalk.new_data.repository.mixpanel.dataSource.MixpanelCacheDataSource
+import com.clonect.feeltalk.presentation.utils.infoLog
 import com.mixpanel.android.mpmetrics.MixpanelAPI
 import org.json.JSONObject
 import java.text.SimpleDateFormat
@@ -37,7 +38,7 @@ class MixpanelCacheDataSourceImpl(
     override fun getMixpanelInstance() = mixpanel
 
     override fun startChatTimer() {
-        chatTimer?.cancel()
+        cancelChatTimer()
         chatTimer = Timer()
         chatTimer?.schedule(300000) {
             val now = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(Date())
@@ -49,11 +50,16 @@ class MixpanelCacheDataSourceImpl(
     }
 
     override fun cancelChatTimer() {
-        chatTimer?.cancel()
+        try {
+            chatTimer?.cancel()
+        } catch (e: Exception) {
+            infoLog("Fail to cancel chat timer: ${e.localizedMessage}")
+        }
+        chatTimer = null
     }
 
     override fun startQuestionTimer() {
-        questionTimer?.cancel()
+        cancelQuestionTimer()
         questionTimer = Timer()
         questionTimer?.schedule(300000) {
             val now = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(Date())
@@ -65,7 +71,12 @@ class MixpanelCacheDataSourceImpl(
     }
 
     override fun cancelQuestionTimer() {
-        questionTimer?.cancel()
+        try {
+            questionTimer?.cancel()
+        } catch (e: Exception) {
+            infoLog("Fail to cancel question timer: ${e.localizedMessage}")
+        }
+        questionTimer = null
     }
 
     override suspend fun savePageNavigationCount(date: String, count: Long) {
