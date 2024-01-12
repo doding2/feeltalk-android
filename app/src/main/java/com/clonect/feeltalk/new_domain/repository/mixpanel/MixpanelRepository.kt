@@ -8,5 +8,6 @@ interface MixpanelRepository {
     suspend fun navigatePage()
     suspend fun setInChatSheet(isInChat: Boolean)
     suspend fun setInQuestionPage(isInQuestion: Boolean)
+    suspend fun setInAnswerSheet(isInAnswer: Boolean)
     suspend fun answerQuestion()
 }

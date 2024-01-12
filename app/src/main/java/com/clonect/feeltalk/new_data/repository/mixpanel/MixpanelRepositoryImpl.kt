@@ -64,6 +64,14 @@ class MixpanelRepositoryImpl(
         }
     }
 
+    override suspend fun setInAnswerSheet(isInAnswer: Boolean) {
+        if (isInAnswer) {
+            cacheDataSource.startAnswerTimer()
+        } else {
+            cacheDataSource.cancelAnswerTimer()
+        }
+    }
+
     override suspend fun answerQuestion() {
         val now = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
         localDataSource.saveUserActiveDate(now)

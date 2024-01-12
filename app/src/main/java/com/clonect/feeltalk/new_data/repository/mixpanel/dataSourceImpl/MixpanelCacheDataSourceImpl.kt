@@ -31,6 +31,7 @@ class MixpanelCacheDataSourceImpl(
 
     private var chatTimer: Timer? = null
     private var questionTimer: Timer? = null
+    private var answerTimer: Timer? = null
 
     private var pageCountPair: Pair<String, Long>? = null
 
@@ -77,6 +78,27 @@ class MixpanelCacheDataSourceImpl(
             infoLog("Fail to cancel question timer: ${e.localizedMessage}")
         }
         questionTimer = null
+    }
+
+    override fun startAnswerTimer() {
+        cancelAnswerTimer()
+        answerTimer = Timer()
+        answerTimer?.schedule(300000) {
+            val now = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(Date())
+            mixpanel.track("Session Question", JSONObject().apply {
+                put("QuestionDetailDate", now)
+            })
+            answerTimer = null
+        }
+    }
+
+    override fun cancelAnswerTimer() {
+        try {
+            answerTimer?.cancel()
+        } catch (e: Exception) {
+            infoLog("Fail to cancel answer timer: ${e.localizedMessage}")
+        }
+        answerTimer = null
     }
 
     override suspend fun savePageNavigationCount(date: String, count: Long) {

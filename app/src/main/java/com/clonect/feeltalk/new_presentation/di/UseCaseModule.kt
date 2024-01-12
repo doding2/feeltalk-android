@@ -28,6 +28,7 @@ import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCas
 import com.clonect.feeltalk.new_domain.usecase.challenge.*
 import com.clonect.feeltalk.new_domain.usecase.chat.*
 import com.clonect.feeltalk.new_domain.usecase.mixpanel.NavigatePageMixpanelUseCase
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.SetInAnswerSheetMixpanelUseCase
 import com.clonect.feeltalk.new_domain.usecase.mixpanel.SetInQuestionPageMixpanelUseCase
 import com.clonect.feeltalk.new_domain.usecase.newAccount.GetUserStatusNewUseCase
 import com.clonect.feeltalk.new_domain.usecase.newAccount.LogInAppleUseCase
@@ -632,6 +633,12 @@ class UseCaseModule {
     @Provides
     fun providesSetInQuestionPageMixpanelUseCase(mixpanelRepository: MixpanelRepository): SetInQuestionPageMixpanelUseCase {
         return SetInQuestionPageMixpanelUseCase(mixpanelRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesSetInAnswerSheetMixpanelUseCase(mixpanelRepository: MixpanelRepository): SetInAnswerSheetMixpanelUseCase {
+        return SetInAnswerSheetMixpanelUseCase(mixpanelRepository)
     }
 
 

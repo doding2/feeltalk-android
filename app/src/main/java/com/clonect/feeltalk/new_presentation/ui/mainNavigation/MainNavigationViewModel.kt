@@ -20,9 +20,7 @@ import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.chat.ChatType
 import com.clonect.feeltalk.new_domain.model.chat.PartnerLastChatDto
 import com.clonect.feeltalk.new_domain.model.chat.TextChat
-import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
 import com.clonect.feeltalk.new_domain.model.question.Question
-import com.clonect.feeltalk.new_domain.model.signal.Signal
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.challenge.GetChallengeUpdatedFlowUseCase
@@ -31,8 +29,8 @@ import com.clonect.feeltalk.new_domain.usecase.challenge.SetChallengeUpdatedUseC
 import com.clonect.feeltalk.new_domain.usecase.chat.GetNewChatFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPartnerLastChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.mixpanel.NavigatePageMixpanelUseCase
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.SetInAnswerSheetMixpanelUseCase
 import com.clonect.feeltalk.new_domain.usecase.mixpanel.SetInQuestionPageMixpanelUseCase
-import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUpdatedFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.SetQuestionUpdatedUseCase
@@ -43,7 +41,6 @@ import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -68,6 +65,7 @@ class MainNavigationViewModel @Inject constructor(
     private val getPartnerSignalUseCase: GetPartnerSignalUseCase,
     private val navigatePageMixpanelUseCase: NavigatePageMixpanelUseCase,
     private val setInQuestionPageMixpanelUseCase: SetInQuestionPageMixpanelUseCase,
+    private val setInAnswerSheetMixpanelUseCase: SetInAnswerSheetMixpanelUseCase,
 ): ViewModel() {
 
     // For reducing inflating delay due to complex and too much view components
@@ -389,5 +387,9 @@ class MainNavigationViewModel @Inject constructor(
 
     fun setInQuestionPage(isInQuestion: Boolean) = viewModelScope.launch {
         setInQuestionPageMixpanelUseCase(isInQuestion)
+    }
+
+    fun setInAnswerSheet(isInAnswer: Boolean) = viewModelScope.launch {
+        setInAnswerSheetMixpanelUseCase(isInAnswer)
     }
 }

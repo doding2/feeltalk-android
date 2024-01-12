@@ -317,8 +317,9 @@ class MainNavigationFragment : Fragment() {
             behavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
 
-        val isInQuestion = !viewModel.getShowQuestionPage() && isShow
+        val isInQuestion = viewModel.getShowQuestionPage() && !isShow
         viewModel.setInQuestionPage(isInQuestion)
+        viewModel.setInAnswerSheet(isShow)
 
         viewModel.navigatePage()
     }
