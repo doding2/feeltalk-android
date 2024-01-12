@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.new_presentation.di
 
+import android.content.Context
 import com.clonect.feeltalk.data.repository.chat.datasource.ChatCacheDataSource2
 import com.clonect.feeltalk.data.repository.chat.datasourceImpl.ChatCacheDataSource2Impl
 import com.clonect.feeltalk.data.repository.encryption.datasource.EncryptionCacheDataSource
@@ -14,6 +15,8 @@ import com.clonect.feeltalk.new_data.repository.challenge.dataSource.ChallengeCa
 import com.clonect.feeltalk.new_data.repository.challenge.dataSourceImpl.ChallengeCacheDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatCacheDataSource
 import com.clonect.feeltalk.new_data.repository.chat.dataSourceImpl.ChatCacheDataSourceImpl
+import com.clonect.feeltalk.new_data.repository.mixpanel.dataSource.MixpanelCacheDataSource
+import com.clonect.feeltalk.new_data.repository.mixpanel.dataSourceImpl.MixpanelCacheDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.partner.dataSource.PartnerCacheDataSource
 import com.clonect.feeltalk.new_data.repository.partner.dataSourceImpl.PartnerCacheDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionCacheDataSource
@@ -25,6 +28,7 @@ import com.clonect.feeltalk.new_data.repository.token.dataSourceImpl.TokenCacheD
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -72,6 +76,14 @@ class CacheDataSourceModule {
     @Provides
     fun providesSignalCacheDataSource(): SignalCacheDataSource {
         return SignalCacheDataSourceImpl()
+    }
+
+    @Singleton
+    @Provides
+    fun providesMixpanelCacheDataSource(
+        @ApplicationContext context: Context
+    ): MixpanelCacheDataSource {
+        return MixpanelCacheDataSourceImpl(context)
     }
 
 

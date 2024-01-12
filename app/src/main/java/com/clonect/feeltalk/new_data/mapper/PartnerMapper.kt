@@ -12,7 +12,7 @@ fun PartnerInfoDto.toPartnerInfo(): PartnerInfo {
             "naver" -> SocialType.Naver
             "google" -> SocialType.Google
             "appleandroid" -> SocialType.AppleAndroid
-            "appleiOS" -> SocialType.AppleIOS
+            "appleios" -> SocialType.AppleIOS
             else -> SocialType.valueOf(snsType)
         }
     )

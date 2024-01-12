@@ -11,6 +11,7 @@ import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.new_domain.model.account.SocialType
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
 import com.clonect.feeltalk.new_domain.usecase.account.CheckAccountLockedUseCase
+import com.clonect.feeltalk.new_domain.usecase.account.GetMyInfoUseCase
 import com.clonect.feeltalk.new_domain.usecase.account.ReLogInUseCase
 import com.clonect.feeltalk.new_domain.usecase.newAccount.GetUserStatusNewUseCase
 import com.clonect.feeltalk.new_domain.usecase.newAccount.LogInAppleUseCase
@@ -40,7 +41,6 @@ class SignUpViewModel @Inject constructor(
     private val updateFcmTokenUseCase: UpdateFcmTokenUseCase,
     private val checkAccountLockedUseCase: CheckAccountLockedUseCase,
     private val getTodayQuestionUseCase: GetTodayQuestionUseCase,
-    private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
 
     private val logInNewUseCase: LogInNewUseCase,
     private val logInAppleUseCase: LogInAppleUseCase,
@@ -215,15 +215,6 @@ class SignUpViewModel @Inject constructor(
     fun sendErrorMessage(message: String) = viewModelScope.launch {
         _errorMessage.emit(message)
     }
-
-
-//    private fun logInMixpanel(userInfo: UserInfo) {
-//        val mixpanel = getMixpanelAPIUseCase()
-//        mixpanel.identify(userInfo.email, true)
-//        mixpanel.registerSuperProperties(JSONObject().apply {
-//            put("gender", userInfo.gender)
-//        })
-//    }
 
 
 }

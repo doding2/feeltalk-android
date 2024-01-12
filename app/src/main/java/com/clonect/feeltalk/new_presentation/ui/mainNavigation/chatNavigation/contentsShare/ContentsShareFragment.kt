@@ -52,7 +52,6 @@ class ContentsShareFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentContentsShareBinding.inflate(inflater, container, false)
-        loadingDialog = makeLoadingDialog()
 
         val fromBubble = arguments?.getBoolean("fromBubble", false) ?: false
         if (fromBubble) {
@@ -66,6 +65,9 @@ class ContentsShareFragment : Fragment() {
         } else {
             activity.setStatusBarColor(binding.root, Color.WHITE, true)
         }
+        loadingDialog = makeLoadingDialog()
+
+        viewModel.navigatePage()
 
         return binding.root
     }

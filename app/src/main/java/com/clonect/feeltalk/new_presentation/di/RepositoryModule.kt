@@ -1,5 +1,6 @@
 package com.clonect.feeltalk.new_presentation.di
 
+import android.content.Context
 import com.clonect.feeltalk.data.repository.chat.ChatRepository2Impl
 import com.clonect.feeltalk.data.repository.chat.datasource.ChatCacheDataSource2
 import com.clonect.feeltalk.data.repository.chat.datasource.ChatLocalDataSource2
@@ -41,6 +42,10 @@ import com.clonect.feeltalk.new_data.repository.account.AccountRepositoryImpl
 import com.clonect.feeltalk.new_data.repository.account.dataSource.AccountCacheDataSource
 import com.clonect.feeltalk.new_data.repository.account.dataSource.AccountLocalDataSource
 import com.clonect.feeltalk.new_data.repository.account.dataSource.AccountRemoteDataSource
+import com.clonect.feeltalk.new_data.repository.mixpanel.MixpanelRepositoryImpl
+import com.clonect.feeltalk.new_data.repository.mixpanel.dataSource.MixpanelCacheDataSource
+import com.clonect.feeltalk.new_data.repository.mixpanel.dataSource.MixpanelLocalDataSource
+import com.clonect.feeltalk.new_data.repository.mixpanel.dataSource.MixpanelRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.partner.PartnerRepositoryImpl
 import com.clonect.feeltalk.new_data.repository.partner.dataSource.PartnerCacheDataSource
 import com.clonect.feeltalk.new_data.repository.partner.dataSource.PartnerLocalDataSource
@@ -57,12 +62,14 @@ import com.clonect.feeltalk.new_domain.repository.challenge.ChallengeRepository
 import com.clonect.feeltalk.new_domain.repository.chat.ChatRepository
 import com.clonect.feeltalk.new_domain.repository.question.QuestionRepository
 import com.clonect.feeltalk.new_domain.repository.account.AccountRepository
+import com.clonect.feeltalk.new_domain.repository.mixpanel.MixpanelRepository
 import com.clonect.feeltalk.new_domain.repository.partner.PartnerRepository
 import com.clonect.feeltalk.new_domain.repository.signal.SignalRepository
 import com.clonect.feeltalk.new_domain.repository.token.TokenRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -142,6 +149,16 @@ class RepositoryModule {
         cacheDataSource: SignalCacheDataSource,
     ): SignalRepository {
         return SignalRepositoryImpl(cacheDataSource, localDataSource, remoteDataSource)
+    }
+
+    @Singleton
+    @Provides
+    fun providesMixpanelRepository(
+        remoteDataSource: MixpanelRemoteDataSource,
+        localDataSource: MixpanelLocalDataSource,
+        cacheDataSource: MixpanelCacheDataSource,
+    ): MixpanelRepository {
+        return MixpanelRepositoryImpl(cacheDataSource, localDataSource, remoteDataSource)
     }
 
 

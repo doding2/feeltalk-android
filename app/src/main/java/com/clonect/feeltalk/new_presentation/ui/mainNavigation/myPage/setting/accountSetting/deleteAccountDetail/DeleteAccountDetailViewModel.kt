@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.usecase.account.DeleteMyAccountUseCase
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.NavigatePageMixpanelUseCase
 import com.clonect.feeltalk.new_presentation.service.FirebaseCloudMessagingService
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,6 +25,7 @@ import javax.inject.Inject
 class DeleteAccountDetailViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val deleteMyAccountUseCase: DeleteMyAccountUseCase,
+    private val navigatePageMixpanelUseCase: NavigatePageMixpanelUseCase,
 ) : ViewModel() {
 
     private val defaultErrorMessage = context.getString(R.string.pillowtalk_default_error_message)
@@ -123,6 +125,11 @@ class DeleteAccountDetailViewModel @Inject constructor(
             }
         }
         setLoading(false)
+    }
+
+
+    fun navigatePage() = viewModelScope.launch {
+        navigatePageMixpanelUseCase()
     }
 
 }

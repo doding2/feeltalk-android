@@ -60,6 +60,7 @@ class HomeFragment : Fragment() {
             activity.setStatusBarColor(binding.root, requireContext().getColor(R.color.white), false)
         }
         navViewModel.setLastChatColor(requireContext().getColor(R.color.gray_200))
+        navViewModel.navigatePage()
         return binding.root
     }
 

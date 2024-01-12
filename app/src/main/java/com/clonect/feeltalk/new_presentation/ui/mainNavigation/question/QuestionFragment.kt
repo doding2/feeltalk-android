@@ -55,6 +55,8 @@ class QuestionFragment : Fragment() {
         } else {
             activity.setStatusBarColor(binding.root, requireContext().getColor(R.color.gray_100), true)
         }
+        viewModel.navigatePage()
+        viewModel.setInQuestionPage(true)
         return binding.root
     }
 
@@ -179,6 +181,7 @@ class QuestionFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
+        viewModel.setInQuestionPage(false)
         navViewModel.setShowQuestionPage(false)
     }
 

@@ -13,6 +13,8 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.chat.PokeChat
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.usecase.chat.AddNewChatCacheUseCase
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.NavigatePageMixpanelUseCase
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.SetInQuestionPageMixpanelUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetAnswerQuestionFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetPagingQuestionUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetTodayQuestionFlowUseCase
@@ -35,7 +37,9 @@ class QuestionViewModel @Inject constructor(
     private val getAnswerQuestionFlowUseCase: GetAnswerQuestionFlowUseCase,
     private val getTodayQuestionFlowUseCase: GetTodayQuestionFlowUseCase,
     private val addNewChatCacheUseCase: AddNewChatCacheUseCase,
-) : ViewModel() {
+    private val navigatePageMixpanelUseCase: NavigatePageMixpanelUseCase,
+    private val setInQuestionPageMixpanelUseCase: SetInQuestionPageMixpanelUseCase,
+    ) : ViewModel() {
 
     val questionPagingRetryLock = Mutex()
 
@@ -142,4 +146,12 @@ class QuestionViewModel @Inject constructor(
         }
     }
 
+
+    fun navigatePage() = viewModelScope.launch {
+        navigatePageMixpanelUseCase()
+    }
+
+    fun setInQuestionPage(isInQuestion: Boolean) = viewModelScope.launch {
+        setInQuestionPageMixpanelUseCase(isInQuestion)
+    }
 }

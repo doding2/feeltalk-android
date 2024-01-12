@@ -6,6 +6,7 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.appSettings.Language
 import com.clonect.feeltalk.new_domain.usecase.account.CheckAccountLockedFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.account.LogOutUseCase
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.NavigatePageMixpanelUseCase
 import com.clonect.feeltalk.new_presentation.service.FirebaseCloudMessagingService
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +22,7 @@ import javax.inject.Inject
 class SettingViewModel @Inject constructor(
     private val checkAccountLockedFlowUseCase: CheckAccountLockedFlowUseCase,
     private val logOutUseCase: LogOutUseCase,
+    private val navigatePageMixpanelUseCase: NavigatePageMixpanelUseCase,
 ): ViewModel() {
 
     private val _errorMessage = MutableSharedFlow<String>()
@@ -86,4 +88,8 @@ class SettingViewModel @Inject constructor(
         setLoading(false)
     }
 
+
+    fun navigatePage() = viewModelScope.launch {
+        navigatePageMixpanelUseCase()
+    }
 }

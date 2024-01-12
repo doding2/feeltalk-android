@@ -30,6 +30,8 @@ import com.clonect.feeltalk.new_domain.usecase.challenge.GetChallengeUseCase
 import com.clonect.feeltalk.new_domain.usecase.challenge.SetChallengeUpdatedUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetNewChatFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPartnerLastChatUseCase
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.NavigatePageMixpanelUseCase
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.SetInQuestionPageMixpanelUseCase
 import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUpdatedFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUseCase
@@ -64,6 +66,8 @@ class MainNavigationViewModel @Inject constructor(
     private val getChallengeUpdatedFlowUseCase: GetChallengeUpdatedFlowUseCase,
     private val setChallengeUpdatedUseCase: SetChallengeUpdatedUseCase,
     private val getPartnerSignalUseCase: GetPartnerSignalUseCase,
+    private val navigatePageMixpanelUseCase: NavigatePageMixpanelUseCase,
+    private val setInQuestionPageMixpanelUseCase: SetInQuestionPageMixpanelUseCase,
 ): ViewModel() {
 
     // For reducing inflating delay due to complex and too much view components
@@ -215,6 +219,8 @@ class MainNavigationViewModel @Inject constructor(
         calculateShowingPartnerLastChat()
     }
 
+    fun getShowQuestionPage() = isShowQuestionPage.value
+
     fun setShowQuestionPage(isShow: Boolean) {
         isShowQuestionPage.value = isShow
         calculateShowingPartnerLastChat()
@@ -286,15 +292,15 @@ class MainNavigationViewModel @Inject constructor(
 
 
     fun setShowInquirySucceedSheet(isShow: Boolean) {
-        _showInquirySucceedSheet.value =isShow
+        _showInquirySucceedSheet.value = isShow
     }
 
     fun setShowSuggestionSucceedSheet(isShow: Boolean) {
-        _showSuggestionSucceedSheet.value =isShow
+        _showSuggestionSucceedSheet.value = isShow
     }
 
     fun setShowSignalCompleteSheet(isShow: Boolean) {
-        _showSignalCompleteSheet.value =isShow
+        _showSignalCompleteSheet.value = isShow
     }
 
 
@@ -374,5 +380,14 @@ class MainNavigationViewModel @Inject constructor(
         setChallengeUpdatedUseCase(isUpdated)
             .onSuccess { _isQuestionUpdated.value = isUpdated }
             .onError { infoLog("Fail to set challenge updated") }
+    }
+
+
+    fun navigatePage() = viewModelScope.launch {
+        navigatePageMixpanelUseCase()
+    }
+
+    fun setInQuestionPage(isInQuestion: Boolean) = viewModelScope.launch {
+        setInQuestionPageMixpanelUseCase(isInQuestion)
     }
 }

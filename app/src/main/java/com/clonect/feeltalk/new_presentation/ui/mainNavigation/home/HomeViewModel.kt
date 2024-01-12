@@ -11,6 +11,7 @@ import com.clonect.feeltalk.new_domain.model.chat.PokeChat
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.model.signal.Signal
 import com.clonect.feeltalk.new_domain.usecase.chat.AddNewChatCacheUseCase
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.NavigatePageMixpanelUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.ChangeTodayQuestionCacheUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetAnswerQuestionFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetTodayQuestionFlowUseCase
@@ -165,4 +166,5 @@ class HomeViewModel @Inject constructor(
             _mySignal.value = it
         }
     }
+
 }

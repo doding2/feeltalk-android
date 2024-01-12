@@ -45,11 +45,12 @@ class CompletedDetailFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentCompletedDetailBinding.inflate(inflater, container, false)
+        loadingDialog = makeLoadingDialog()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
         }
         initChallenge()
-        loadingDialog = makeLoadingDialog()
+        viewModel.navigatePage()
         return binding.root
     }
 

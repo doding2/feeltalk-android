@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.usecase.account.SubmitSuggestionUseCase
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.NavigatePageMixpanelUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -24,6 +25,7 @@ import javax.inject.Inject
 class InquireViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val submitSuggestionUseCase: SubmitSuggestionUseCase,
+    private val navigatePageMixpanelUseCase: NavigatePageMixpanelUseCase,
 ) : ViewModel() {
 
     private val defaultErrorMessage = context.getString(R.string.pillowtalk_default_error_message)
@@ -121,5 +123,10 @@ class InquireViewModel @Inject constructor(
             }
         }
         setLoading(false)
+    }
+
+
+    fun navigatePage() = viewModelScope.launch {
+        navigatePageMixpanelUseCase()
     }
 }

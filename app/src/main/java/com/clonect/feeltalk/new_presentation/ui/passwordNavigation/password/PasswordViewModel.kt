@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.usecase.account.MatchPasswordUseCase
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.NavigatePageMixpanelUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -24,7 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PasswordViewModel @Inject constructor(
     @ApplicationContext context: Context,
-    private val matchPasswordUseCase: MatchPasswordUseCase
+    private val matchPasswordUseCase: MatchPasswordUseCase,
 ) : ViewModel() {
 
     private val defaultErrorMessage = context.getString(R.string.pillowtalk_default_error_message)
@@ -90,4 +91,5 @@ class PasswordViewModel @Inject constructor(
             }
         }
     }
+
 }

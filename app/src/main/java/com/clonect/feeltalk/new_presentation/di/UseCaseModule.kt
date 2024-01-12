@@ -17,6 +17,7 @@ import com.clonect.feeltalk.new_data.util.AppLevelEncryptHelper
 import com.clonect.feeltalk.new_domain.repository.account.AccountRepository
 import com.clonect.feeltalk.new_domain.repository.challenge.ChallengeRepository
 import com.clonect.feeltalk.new_domain.repository.chat.ChatRepository
+import com.clonect.feeltalk.new_domain.repository.mixpanel.MixpanelRepository
 import com.clonect.feeltalk.new_domain.repository.partner.PartnerRepository
 import com.clonect.feeltalk.new_domain.repository.question.QuestionRepository
 import com.clonect.feeltalk.new_domain.repository.signal.SignalRepository
@@ -26,6 +27,8 @@ import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.challenge.*
 import com.clonect.feeltalk.new_domain.usecase.chat.*
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.NavigatePageMixpanelUseCase
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.SetInQuestionPageMixpanelUseCase
 import com.clonect.feeltalk.new_domain.usecase.newAccount.GetUserStatusNewUseCase
 import com.clonect.feeltalk.new_domain.usecase.newAccount.LogInAppleUseCase
 import com.clonect.feeltalk.new_domain.usecase.newAccount.LogInNewUseCase
@@ -73,8 +76,8 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesGetUserStatusNewUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository): GetUserStatusNewUseCase {
-        return GetUserStatusNewUseCase(tokenRepository, accountRepository)
+    fun providesGetUserStatusNewUseCase(tokenRepository: TokenRepository, accountRepository: AccountRepository, mixpanelRepository: MixpanelRepository): GetUserStatusNewUseCase {
+        return GetUserStatusNewUseCase(tokenRepository, accountRepository, mixpanelRepository)
     }
 
     @Singleton
@@ -316,8 +319,8 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesChangeChatRoomStateUseCase(tokenRepository: TokenRepository, chatRepository: ChatRepository): ChangeMyChatRoomStateUseCase {
-        return ChangeMyChatRoomStateUseCase(tokenRepository, chatRepository)
+    fun providesChangeChatRoomStateUseCase(tokenRepository: TokenRepository, chatRepository: ChatRepository, mixpanelRepository: MixpanelRepository): ChangeMyChatRoomStateUseCase {
+        return ChangeMyChatRoomStateUseCase(tokenRepository, chatRepository, mixpanelRepository)
     }
     @Singleton
     @Provides
@@ -426,8 +429,8 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesAnswerQuestionUseCase(tokenRepository: TokenRepository, questionRepository: QuestionRepository): AnswerQuestionUseCase {
-        return AnswerQuestionUseCase(tokenRepository, questionRepository)
+    fun providesAnswerQuestionUseCase(tokenRepository: TokenRepository, questionRepository: QuestionRepository, mixpanelRepository: MixpanelRepository): AnswerQuestionUseCase {
+        return AnswerQuestionUseCase(tokenRepository, questionRepository, mixpanelRepository)
     }
 
     @Singleton
@@ -617,6 +620,19 @@ class UseCaseModule {
     }
 
 
+    /** Mixpanel **/
+
+    @Singleton
+    @Provides
+    fun providesNavigatePageMixpanelUseCase(mixpanelRepository: MixpanelRepository): NavigatePageMixpanelUseCase {
+        return NavigatePageMixpanelUseCase(mixpanelRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesSetInQuestionPageMixpanelUseCase(mixpanelRepository: MixpanelRepository): SetInQuestionPageMixpanelUseCase {
+        return SetInQuestionPageMixpanelUseCase(mixpanelRepository)
+    }
 
 
 

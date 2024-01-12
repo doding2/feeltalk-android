@@ -7,6 +7,7 @@ import com.clonect.feeltalk.new_domain.model.challenge.ChallengeCountDto
 import com.clonect.feeltalk.new_domain.usecase.challenge.GetAddChallengeFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.challenge.GetChallengeCountUseCase
 import com.clonect.feeltalk.new_domain.usecase.challenge.GetDeleteChallengeFlowUseCase
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.NavigatePageMixpanelUseCase
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.completed.SnackbarState
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +26,7 @@ class ChallengeViewModel @Inject constructor(
     private val getChallengeCountUseCase: GetChallengeCountUseCase,
     private val getAddChallengeFlowUseCase: GetAddChallengeFlowUseCase,
     private val getDeleteChallengeFlowUseCase: GetDeleteChallengeFlowUseCase,
+    private val navigatePageMixpanelUseCase: NavigatePageMixpanelUseCase,
 ) : ViewModel() {
 
     private val _snackbarState = MutableStateFlow(SnackbarState())
@@ -112,5 +114,10 @@ class ChallengeViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+
+    fun navigatePage() = viewModelScope.launch {
+        navigatePageMixpanelUseCase()
     }
 }

@@ -21,6 +21,7 @@ import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
 import com.clonect.feeltalk.new_domain.model.signal.Signal
 import com.clonect.feeltalk.new_domain.usecase.account.GetMyInfoUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.PreloadImageUseCase
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.NavigatePageMixpanelUseCase
 import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.signal.GetMySignalUseCase
 import com.clonect.feeltalk.new_domain.usecase.signal.GetPartnerSignalFlowUseCase
@@ -48,6 +49,7 @@ class ImageDetailViewModel @Inject constructor(
     private val getMySignalUseCase: GetMySignalUseCase,
     private val getPartnerSignalFlowUseCase: GetPartnerSignalFlowUseCase,
     private val preloadImageUseCase: PreloadImageUseCase,
+    private val navigatePageMixpanelUseCase: NavigatePageMixpanelUseCase,
 ) : ViewModel() {
 
     private val _errorMessage = MutableSharedFlow<String>()
@@ -197,5 +199,10 @@ class ImageDetailViewModel @Inject constructor(
 
     private fun notifyImageDownloaded(context: Context, uri: Uri) {
         MediaScannerConnection.scanFile(context, arrayOf(uri.path), arrayOf("image/png"), null)
+    }
+
+
+    fun navigatePage() = viewModelScope.launch {
+        navigatePageMixpanelUseCase()
     }
 }

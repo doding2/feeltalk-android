@@ -11,6 +11,7 @@ import com.clonect.feeltalk.new_domain.usecase.challenge.DeleteChallengeUseCase
 import com.clonect.feeltalk.new_domain.usecase.challenge.GetModifyChallengeFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.challenge.ModifyChallengeUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.AddNewChatCacheUseCase
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.NavigatePageMixpanelUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +29,7 @@ class OngoingDetailViewModel @Inject constructor(
     private val completeChallengeUseCase: CompleteChallengeUseCase,
     private val getModifyChallengeFlowUseCase: GetModifyChallengeFlowUseCase,
     private val addNewChatCacheUseCase: AddNewChatCacheUseCase,
+    private val navigatePageMixpanelUseCase: NavigatePageMixpanelUseCase,
 ) : ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
@@ -228,6 +230,11 @@ class OngoingDetailViewModel @Inject constructor(
             )
             initChallenge(edited)
         }
+    }
+
+
+    fun navigatePage() = viewModelScope.launch {
+        navigatePageMixpanelUseCase()
     }
 
 }

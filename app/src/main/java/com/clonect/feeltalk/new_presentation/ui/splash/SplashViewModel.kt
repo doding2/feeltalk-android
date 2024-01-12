@@ -9,9 +9,11 @@ import com.clonect.feeltalk.common.onError
 import com.clonect.feeltalk.common.onSuccess
 import com.clonect.feeltalk.domain.model.data.user.UserInfo
 import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
+import com.clonect.feeltalk.new_domain.model.account.MyInfo
 import com.clonect.feeltalk.new_domain.model.appSettings.AppSettings
 import com.clonect.feeltalk.new_domain.usecase.account.AutoLogInUseCase
 import com.clonect.feeltalk.new_domain.usecase.account.CheckAccountLockedUseCase
+import com.clonect.feeltalk.new_domain.usecase.account.GetMyInfoUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.GetAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCase
 import com.clonect.feeltalk.new_domain.usecase.newAccount.GetUserStatusNewUseCase
@@ -42,7 +44,6 @@ class SplashViewModel @Inject constructor(
     private val getTodayQuestionUseCase: GetTodayQuestionUseCase,
     private val getMySignalUseCase: GetMySignalUseCase,
     private val getPartnerSignalUseCase: GetPartnerSignalUseCase,
-    private val getMixpanelAPIUseCase: GetMixpanelAPIUseCase,
 
     private val getUserStatusNewUseCase: GetUserStatusNewUseCase,
 ) : ViewModel() {
@@ -232,9 +233,4 @@ class SplashViewModel @Inject constructor(
         _toast.emit(message)
     }
 
-
-    private fun logInMixpanel(userInfo: UserInfo) {
-        val mixpanel = getMixpanelAPIUseCase()
-        mixpanel.identify(userInfo.email, true)
-    }
 }

@@ -56,6 +56,7 @@ class ChallengeFragment : Fragment() {
         } else {
             activity.setStatusBarColor(binding.root, requireContext().getColor(R.color.gray_100), true)
         }
+        viewModel.navigatePage()
         return binding.root
     }
 

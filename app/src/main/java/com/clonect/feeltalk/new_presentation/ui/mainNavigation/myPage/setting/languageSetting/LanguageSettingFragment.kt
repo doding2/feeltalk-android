@@ -40,6 +40,7 @@ class LanguageSettingFragment : Fragment() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
         }
+        viewModel.navigatePage()
         return binding.root
     }
 

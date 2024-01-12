@@ -6,6 +6,7 @@ import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.account.MyInfo
 import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
 import com.clonect.feeltalk.new_domain.usecase.account.GetMyInfoUseCase
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.NavigatePageMixpanelUseCase
 import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoFlowUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +22,7 @@ import javax.inject.Inject
 class MyPageViewModel @Inject constructor(
     private val getMyInfoUseCase: GetMyInfoUseCase,
     private val getPartnerInfoFlowUseCase: GetPartnerInfoFlowUseCase,
+    private val navigatePageMixpanelUseCase: NavigatePageMixpanelUseCase,
 ): ViewModel() {
 
     private val _errorMessage = MutableSharedFlow<String>()
@@ -72,6 +74,11 @@ class MyPageViewModel @Inject constructor(
 
     fun setLoading(isLoading: Boolean) = viewModelScope.launch {
         _isLoading.value = isLoading
+    }
+
+
+    fun navigatePage() = viewModelScope.launch {
+        navigatePageMixpanelUseCase()
     }
 
 }

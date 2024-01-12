@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.usecase.challenge.DeleteChallengeUseCase
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.NavigatePageMixpanelUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CompletedDetailViewModel @Inject constructor(
-    private val deleteChallengeUseCase: DeleteChallengeUseCase
+    private val deleteChallengeUseCase: DeleteChallengeUseCase,
+    private val navigatePageMixpanelUseCase: NavigatePageMixpanelUseCase,
 ): ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
@@ -68,5 +70,10 @@ class CompletedDetailViewModel @Inject constructor(
             }
         }
         _isLoading.value = false
+    }
+
+
+    fun navigatePage() = viewModelScope.launch {
+        navigatePageMixpanelUseCase()
     }
 }

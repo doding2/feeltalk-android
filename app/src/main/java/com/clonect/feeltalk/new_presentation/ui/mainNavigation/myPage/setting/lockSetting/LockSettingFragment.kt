@@ -47,6 +47,7 @@ class LockSettingFragment : Fragment() {
         setFragmentResultListener("lockQuestionSettingFragment") { requestKey, bundle ->
             viewModel.setLockEnabled(bundle.getBoolean("lockEnabled", false))
         }
+        viewModel.navigatePage()
         return binding.root
     }
 

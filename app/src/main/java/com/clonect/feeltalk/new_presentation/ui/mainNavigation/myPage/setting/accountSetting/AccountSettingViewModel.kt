@@ -2,6 +2,7 @@ package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.a
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.NavigatePageMixpanelUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +16,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class AccountSettingViewModel @Inject constructor(
-
+    private val navigatePageMixpanelUseCase: NavigatePageMixpanelUseCase,
 ) : ViewModel() {
 
     private val _errorMessage = MutableSharedFlow<String>()
@@ -30,6 +31,11 @@ class AccountSettingViewModel @Inject constructor(
 
     fun setLoading(isLoading: Boolean) = viewModelScope.launch {
         _isLoading.value = isLoading
+    }
+
+
+    fun navigatePage() = viewModelScope.launch {
+        navigatePageMixpanelUseCase()
     }
 
 }

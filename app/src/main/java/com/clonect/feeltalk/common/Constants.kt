@@ -12,6 +12,9 @@ class Constants {
         const val APP_LEVEL_KEY_ALIAS = "AppLevelKey"
         const val APP_LEVEL_CIPHER_ALGORITHM = "AES/GCM/NoPadding"
 
+        const val MIXPANEL_DEBUG_TOKEN = "9f50c4144f59f59ed17bc8dfc922ae75"
+        const val MIXPANEL_RELEASE_TOKEN = "e7341c990703953973ddb05e871b4929"
+
 
         const val VOICE_CACHE_FILE_NAME = "voiceCache.wav"
         const val IMAGE_CACHE_FILE_NAME = "imageCache.png"

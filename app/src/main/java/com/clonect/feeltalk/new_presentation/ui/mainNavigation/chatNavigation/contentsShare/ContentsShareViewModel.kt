@@ -1,16 +1,19 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.contentsShare
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.question.Question
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.NavigatePageMixpanelUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ContentsShareViewModel @Inject constructor(
-
+    private val navigatePageMixpanelUseCase: NavigatePageMixpanelUseCase,
 ): ViewModel() {
 
 
@@ -34,6 +37,11 @@ class ContentsShareViewModel @Inject constructor(
     fun selectChallenge(challenge: Challenge?) {
         _selectedQuestion.value = null
         _selectedChallenge.value = challenge
+    }
+
+
+    fun navigatePage() = viewModelScope.launch {
+        navigatePageMixpanelUseCase()
     }
 
 }

@@ -63,6 +63,7 @@ class SettingFragment : Fragment() {
             }
         }
         loadingDialog = makeLoadingDialog()
+        viewModel.navigatePage()
         return binding.root
     }
 

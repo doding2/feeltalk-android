@@ -65,6 +65,7 @@ class LockQuestionSettingFragment : Fragment() {
             onBackCallback.handleOnBackPressed()
         }
         loadingDialog = makeLoadingDialog()
+        viewModel.navigatePage()
         return binding.root
     }
 

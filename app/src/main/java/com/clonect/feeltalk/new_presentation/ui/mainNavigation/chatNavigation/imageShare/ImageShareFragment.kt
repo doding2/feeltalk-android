@@ -75,8 +75,10 @@ class ImageShareFragment : Fragment() {
             requireArguments().getParcelable("uri") as? Uri
         }
         viewModel.setUri(uri)
+        viewModel.navigatePage()
 
         loadingDialog = makeLoadingDialog()
+
         return binding.root
     }
 

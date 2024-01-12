@@ -18,6 +18,8 @@ import com.clonect.feeltalk.new_data.repository.challenge.dataSource.ChallengeLo
 import com.clonect.feeltalk.new_data.repository.challenge.dataSourceImpl.ChallengeLocalDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatLocalDataSource
 import com.clonect.feeltalk.new_data.repository.chat.dataSourceImpl.ChatLocalDataSourceImpl
+import com.clonect.feeltalk.new_data.repository.mixpanel.dataSource.MixpanelLocalDataSource
+import com.clonect.feeltalk.new_data.repository.mixpanel.dataSourceImpl.MixpanelLocalDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.partner.dataSource.PartnerLocalDataSource
 import com.clonect.feeltalk.new_data.repository.partner.dataSourceImpl.PartnerLocalDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionLocalDataSource
@@ -95,6 +97,15 @@ class LocalDataSourceModule {
         appLevelEncryptHelper: AppLevelEncryptHelper
     ): SignalLocalDataSource {
         return SignalLocalDataSourceImpl(context, appLevelEncryptHelper)
+    }
+
+    @Singleton
+    @Provides
+    fun providesMixpanelLocalDataSource(
+        @ApplicationContext context: Context,
+        appLevelEncryptHelper: AppLevelEncryptHelper
+    ): MixpanelLocalDataSource {
+        return MixpanelLocalDataSourceImpl(context, appLevelEncryptHelper)
     }
 
 

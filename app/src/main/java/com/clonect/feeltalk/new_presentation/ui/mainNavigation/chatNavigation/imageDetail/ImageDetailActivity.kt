@@ -55,7 +55,7 @@ class ImageDetailActivity : TransformationAppCompatActivity() {
             intent.getParcelableExtra("imageChat")
         }
         viewModel.setImageChat(imageChat)
-
+        viewModel.navigatePage()
 
         collectViewModel()
 

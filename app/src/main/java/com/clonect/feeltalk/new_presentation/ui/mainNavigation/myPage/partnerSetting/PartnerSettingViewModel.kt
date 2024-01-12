@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.new_domain.model.partner.PartnerInfo
 import com.clonect.feeltalk.new_domain.usecase.account.GetServiceDataCountUseCase
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.NavigatePageMixpanelUseCase
 import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoFlowUseCase
 import com.clonect.feeltalk.presentation.utils.infoLog
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +24,7 @@ import javax.inject.Inject
 class PartnerSettingViewModel @Inject constructor(
     private val getPartnerInfoFlowUseCase: GetPartnerInfoFlowUseCase,
     private val getServiceDataCountUseCase: GetServiceDataCountUseCase,
+    private val navigatePageMixpanelUseCase: NavigatePageMixpanelUseCase,
 ) : ViewModel() {
 
     private val _errorMessage = MutableSharedFlow<String>()
@@ -70,4 +72,8 @@ class PartnerSettingViewModel @Inject constructor(
         _isLoading.value = isLoading
     }
 
+
+    fun navigatePage() = viewModelScope.launch {
+        navigatePageMixpanelUseCase()
+    }
 }

@@ -274,6 +274,11 @@ class MainNavigationFragment : Fragment() {
                 viewAnswerBehind.visibility = View.VISIBLE
             }
         }
+
+        val isInQuestion = viewModel.getShowQuestionPage() && !isShow
+        viewModel.setInQuestionPage(isInQuestion)
+
+        viewModel.navigatePage()
     }
 
     private fun showSignalSheet(isShow: Boolean) {
@@ -291,6 +296,8 @@ class MainNavigationFragment : Fragment() {
             binding.viewSignalBehind.visibility = View.GONE
             behavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
+
+        viewModel.navigatePage()
     }
 
     private fun showAnswerSheet(isShow: Boolean) {
@@ -309,6 +316,11 @@ class MainNavigationFragment : Fragment() {
             binding.viewAnswerBehind.visibility = View.GONE
             behavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
+
+        val isInQuestion = !viewModel.getShowQuestionPage() && isShow
+        viewModel.setInQuestionPage(isInQuestion)
+
+        viewModel.navigatePage()
     }
 
     private fun showSubmitSucceedSheet(isShow: Boolean) {

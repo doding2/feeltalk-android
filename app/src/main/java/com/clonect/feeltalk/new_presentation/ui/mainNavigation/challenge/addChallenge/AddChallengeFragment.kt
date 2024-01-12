@@ -61,6 +61,7 @@ class AddChallengeFragment : Fragment() {
             binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
         }
         loadingDialog = makeLoadingDialog()
+        viewModel.navigatePage()
         return binding.root
     }
 

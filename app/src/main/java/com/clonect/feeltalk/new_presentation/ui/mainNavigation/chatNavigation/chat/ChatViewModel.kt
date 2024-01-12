@@ -40,6 +40,7 @@ import com.clonect.feeltalk.new_domain.usecase.chat.GetPartnerChatRoomStateFlowU
 import com.clonect.feeltalk.new_domain.usecase.chat.SendImageChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.SendTextChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.SendVoiceChatUseCase
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.NavigatePageMixpanelUseCase
 import com.clonect.feeltalk.new_domain.usecase.partner.GetPartnerInfoFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.ShareQuestionUseCase
@@ -772,6 +773,5 @@ class ChatViewModel @Inject constructor(
         _isVoiceRecordingReplayPaused.value = false
         voiceReplayer?.resume()
     }
-
 
 }

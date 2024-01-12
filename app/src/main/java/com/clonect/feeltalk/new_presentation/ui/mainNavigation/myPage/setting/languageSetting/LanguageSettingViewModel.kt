@@ -3,6 +3,7 @@ package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.l
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.new_domain.model.appSettings.Language
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.NavigatePageMixpanelUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LanguageSettingViewModel @Inject constructor(
-
+    private val navigatePageMixpanelUseCase: NavigatePageMixpanelUseCase,
 ): ViewModel() {
 
     private val _appliedLanguage = MutableStateFlow<Language>(Language.Korean)
@@ -44,5 +45,10 @@ class LanguageSettingViewModel @Inject constructor(
 
     fun changeLanguageSetting(onComplete: () -> Unit) = viewModelScope.launch {
 
+    }
+
+
+    fun navigatePage() = viewModelScope.launch {
+        navigatePageMixpanelUseCase()
     }
 }

@@ -60,11 +60,12 @@ class OngoingDetailFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentOngoingDetailBinding.inflate(inflater, container, false)
+        loadingDialog = makeLoadingDialog()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
         }
         initChallenge()
-        loadingDialog = makeLoadingDialog()
+        viewModel.navigatePage()
         return binding.root
     }
 

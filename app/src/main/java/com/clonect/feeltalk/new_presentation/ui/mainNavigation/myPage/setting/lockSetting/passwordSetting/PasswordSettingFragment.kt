@@ -48,6 +48,7 @@ class PasswordSettingFragment : Fragment() {
         }
         val isLockEnabled = arguments?.getBoolean("isLockEnabled") ?: false
         viewModel.setLockEnabled(isLockEnabled)
+        viewModel.navigatePage()
         loadingDialog = makeLoadingDialog()
         return binding.root
     }

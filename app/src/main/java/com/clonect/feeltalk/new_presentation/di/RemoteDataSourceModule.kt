@@ -16,6 +16,8 @@ import com.clonect.feeltalk.new_data.repository.challenge.dataSource.ChallengeRe
 import com.clonect.feeltalk.new_data.repository.challenge.dataSourceImpl.ChallengeRemoteDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.chat.dataSource.ChatRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.chat.dataSourceImpl.ChatRemoteDataSourceImpl
+import com.clonect.feeltalk.new_data.repository.mixpanel.dataSource.MixpanelRemoteDataSource
+import com.clonect.feeltalk.new_data.repository.mixpanel.dataSourceImpl.MixpanelRemoteDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.partner.dataSource.PartnerRemoteDataSource
 import com.clonect.feeltalk.new_data.repository.partner.dataSourceImpl.PartnerRemoteDataSourceImpl
 import com.clonect.feeltalk.new_data.repository.question.dataSource.QuestionRemoteDataSource
@@ -86,6 +88,14 @@ class RemoteDataSourceModule {
         clonectService: ClonectService
     ): SignalRemoteDataSource {
         return SignalRemoteDataSourceImpl(clonectService)
+    }
+
+    @Singleton
+    @Provides
+    fun providesMixpanelRemoteDataSource(
+        clonectService: ClonectService
+    ): MixpanelRemoteDataSource {
+        return MixpanelRemoteDataSourceImpl(clonectService)
     }
 
 

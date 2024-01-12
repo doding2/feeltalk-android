@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.NavigatePageMixpanelUseCase
 import com.clonect.feeltalk.new_presentation.ui.util.mutableStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -18,7 +19,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class ImageShareViewModel @Inject constructor(
-
+    private val navigatePageMixpanelUseCase: NavigatePageMixpanelUseCase,
 ) : ViewModel() {
 
     private val _errorMessage = MutableSharedFlow<String>()
@@ -49,4 +50,8 @@ class ImageShareViewModel @Inject constructor(
         _bitmap.value = bitmap
     }
 
+
+    fun navigatePage() = viewModelScope.launch {
+        navigatePageMixpanelUseCase()
+    }
 }

@@ -51,6 +51,7 @@ class MyPageFragment : Fragment() {
             activity.setStatusBarColor(binding.root, requireContext().getColor(R.color.gray_100), true)
         }
         loadingDialog = makeLoadingDialog()
+        navViewModel.navigatePage()
         return binding.root
     }
 

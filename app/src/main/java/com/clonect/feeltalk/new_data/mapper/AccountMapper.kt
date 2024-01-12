@@ -9,13 +9,14 @@ import com.clonect.feeltalk.new_domain.model.appSettings.Language
 
 fun MyInfoDto.toMyInfo(): MyInfo {
     return MyInfo(
+        id = id,
         nickname = nickname,
         snsType = when (snsType.lowercase()) {
             "kakao" -> SocialType.Kakao
             "naver" -> SocialType.Naver
             "google" -> SocialType.Google
             "appleandroid" -> SocialType.AppleAndroid
-            "appleiOS" -> SocialType.AppleIOS
+            "appleios" -> SocialType.AppleIOS
             else -> SocialType.valueOf(snsType)
         }
     )
