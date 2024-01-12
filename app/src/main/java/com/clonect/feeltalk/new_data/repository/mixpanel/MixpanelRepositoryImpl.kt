@@ -25,19 +25,23 @@ class MixpanelRepositoryImpl(
 
     override suspend fun navigatePage() {
         val now = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-        var (date, count) = localDataSource.getPageNavigationCount() ?: (now to 0L)
+        var (date, count) = cacheDataSource.getPageNavigationCount()
+            ?: localDataSource.getPageNavigationCount()
+            ?: (now to 0L)
         if (date < now) {
             date = now
             count = 1
         } else {
             count++
         }
+        cacheDataSource.savePageNavigationCount(date, count)
         localDataSource.savePageNavigationCount(date, count)
-        if (count >= 3) {
+
+        if (count == 3L) {
             localDataSource.saveUserActiveDate(date)
         }
 
-        val isActive = localDataSource.getUserActiveDate() == date
+        val isActive = count >= 3L || localDataSource.getUserActiveDate() == date
         val mixpanel = cacheDataSource.getMixpanelInstance()
         mixpanel.registerSuperProperties(JSONObject().apply {
             put("isActive", isActive)

@@ -13,4 +13,7 @@ interface MixpanelCacheDataSource {
 
     fun startQuestionTimer()
     fun cancelQuestionTimer()
+
+    suspend fun savePageNavigationCount(date: String, count: Long)
+    suspend fun getPageNavigationCount(): Pair<String, Long>?
 }

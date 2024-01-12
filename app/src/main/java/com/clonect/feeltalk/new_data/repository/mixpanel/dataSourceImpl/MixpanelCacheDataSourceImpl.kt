@@ -31,6 +31,8 @@ class MixpanelCacheDataSourceImpl(
     private var chatTimer: Timer? = null
     private var questionTimer: Timer? = null
 
+    private var pageCountPair: Pair<String, Long>? = null
+
 
     override fun getMixpanelInstance() = mixpanel
 
@@ -65,5 +67,10 @@ class MixpanelCacheDataSourceImpl(
     override fun cancelQuestionTimer() {
         questionTimer?.cancel()
     }
+
+    override suspend fun savePageNavigationCount(date: String, count: Long) {
+        pageCountPair = date to count
+    }
+    override suspend fun getPageNavigationCount() = pageCountPair
 
 }
