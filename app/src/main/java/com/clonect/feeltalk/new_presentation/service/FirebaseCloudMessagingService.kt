@@ -596,6 +596,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             deadline = challengeFormat.parse(coupleChallenge.deadline) ?: Date(),
             owner = coupleChallenge.creator,
             isCompleted = true,
+            completeDate = Date()
         )
         addNewChatCacheUseCase(
             CompleteChallengeChat(

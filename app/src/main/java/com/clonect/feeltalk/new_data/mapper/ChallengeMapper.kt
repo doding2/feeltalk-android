@@ -25,7 +25,8 @@ fun ChallengeDto.toChallenge(format: SimpleDateFormat = SimpleDateFormat("yyyy-M
             body = content ?: "",
             deadline = format.parse(deadline) ?: throw NullPointerException("Fail to parse challenge deadline"),
             owner = creator,
-            isCompleted = isCompleted
+            isCompleted = isCompleted,
+            completeDate = completeDate?.let { format.parse(it) }
         )
     }
 }

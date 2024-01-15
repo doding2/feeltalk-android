@@ -154,13 +154,13 @@ class ChatViewModel @Inject constructor(
     }
 
 
-    fun resetPartnerPassword(index: Long) = viewModelScope.launch {
+    fun resetPartnerPassword(index: Long, onExpired: () -> Unit, onSuccess: () -> Unit) = viewModelScope.launch {
         unlockPartnerPasswordUseCase(index)
             .onSuccess {
                 if (it.isExpired) {
-                    sendErrorMessage("이미 사용되었습니다.")
+                    onExpired()
                 } else {
-                    sendErrorMessage("연인의 잠금이 해제되었습니다.")
+                    onSuccess()
                 }
             }
             .onError { infoLog("Fail to unlock partner password: ${it.localizedMessage}") }
@@ -200,7 +200,6 @@ class ChatViewModel @Inject constructor(
             is Resource.Success -> {
                 result.data
             }
-
             is Resource.Error -> {
                 infoLog("Fail to get challenge: ${result.throwable.localizedMessage}")
                 null

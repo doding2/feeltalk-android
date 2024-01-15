@@ -1928,7 +1928,7 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                     root.context.getString(R.string.add_challenge_d_day_today)
                 } else if (dDay < 0) {
                     root.context.getString(R.string.add_challenge_d_day_past) + dDay.absoluteValue
-                }  else {
+                } else {
                     root.context.getString(R.string.add_challenge_d_day_normal) + dDay
                 }
 
@@ -2254,10 +2254,9 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 ivCancel.setOnClickListener { onCancel(chat) }
 
                 tvChallengeTitle.text = chat.challenge.title
-                
-                // TODO 완료일 생기면 변경해야됨
+
                 val formatter = SimpleDateFormat(root.context.getString(R.string.complete_challenge_chat_date_format), Locale.getDefault())
-                val str = formatter.format(chat.challenge.deadline)
+                val str = chat.challenge.completeDate?.let { formatter.format(it) }
                 tvChallengeSuccessDate.text = str
 
                 makeContinuous(prevItem, item, nextItem)
@@ -2367,9 +2366,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
 
                 tvChallengeTitle.text = chat.challenge.title
 
-                // TODO 완료일 생기면 변경해야됨
                 val formatter = SimpleDateFormat(root.context.getString(R.string.complete_challenge_chat_date_format), Locale.getDefault())
-                val str = formatter.format(chat.challenge.deadline)
+                val str = chat.challenge.completeDate?.let { formatter.format(it) }
                 tvChallengeSuccessDate.text = str
 
                 makeContinuous(prevItem, item, nextItem)

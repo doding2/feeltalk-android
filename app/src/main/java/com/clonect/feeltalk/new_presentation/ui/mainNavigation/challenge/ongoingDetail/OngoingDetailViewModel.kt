@@ -136,6 +136,7 @@ class OngoingDetailViewModel @Inject constructor(
 
     fun completeChallenge(onSuccess: () -> Unit) = viewModelScope.launch {
         val challenge = _challenge.value ?: return@launch
+        infoLog("complete challenge index: ${challenge.index}")
         _isLoading.value = true
         when (val result = completeChallengeUseCase(challenge)) {
             is Resource.Success -> {
@@ -155,6 +156,7 @@ class OngoingDetailViewModel @Inject constructor(
                                 deadline = challengeFormat.parse(coupleChallenge.deadline) ?: challenge.deadline,
                                 owner = coupleChallenge.creator,
                                 isCompleted = true,
+                                completeDate = Date(),
                                 isNew = challenge.isNew
                             )
                         )

@@ -107,6 +107,7 @@ class AddChallengeViewModel @Inject constructor(
         when (val result = addMyChallengeUseCase(title, deadline, content)) {
             is Resource.Success -> {
                 val challengeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+                infoLog("add challenge, chat index: ${result.data.index}, challenge index: ${result.data.coupleChallenge.index}")
                 addNewChatCacheUseCase(
                     result.data.run {
                         AddChallengeChat(

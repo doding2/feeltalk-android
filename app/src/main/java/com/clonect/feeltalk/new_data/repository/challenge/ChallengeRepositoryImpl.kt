@@ -20,6 +20,7 @@ import com.clonect.feeltalk.new_domain.model.challenge.ShareChallengeChatRespons
 import com.clonect.feeltalk.new_domain.repository.challenge.ChallengeRepository
 import kotlinx.coroutines.flow.Flow
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -113,9 +114,9 @@ class ChallengeRepositoryImpl(
             val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             cacheDataSource.addChallenge(
                 Challenge(
-                    index = result.index,
-                    title = title,
-                    body = content,
+                    index = result.coupleChallenge.index,
+                    title = result.coupleChallenge.challengeTitle,
+                    body = result.coupleChallenge.challengeBody,
                     deadline = format.parse(deadline),
                     owner = "me",
                     isCompleted = false,
@@ -175,7 +176,7 @@ class ChallengeRepositoryImpl(
         return try {
             val result = remoteDataSource.completeChallenge(accessToken, challenge.index)
             cacheDataSource.deleteChallenge(challenge)
-            cacheDataSource.addChallenge(challenge.copy(isCompleted = true))
+            cacheDataSource.addChallenge(challenge.copy(isCompleted = true, completeDate = Date()))
             Resource.Success(result)
         } catch (e: CancellationException) {
             throw e

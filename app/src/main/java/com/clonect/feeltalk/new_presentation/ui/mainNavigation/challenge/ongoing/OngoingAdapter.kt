@@ -16,6 +16,7 @@ import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getScreenWidth
 import java.util.Date
+import kotlin.math.absoluteValue
 import kotlin.math.ceil
 
 class OngoingAdapter: PagingDataAdapter<Challenge, OngoingAdapter.OngoingChallengeViewHolder>(callback) {
@@ -83,6 +84,8 @@ class OngoingAdapter: PagingDataAdapter<Challenge, OngoingAdapter.OngoingChallen
                     root.context.getString(R.string.add_challenge_d_day_over)
                 } else if (dDay == 0) {
                     root.context.getString(R.string.add_challenge_d_day_today)
+                } else if (dDay < 0){
+                    root.context.getString(R.string.add_challenge_d_day_past) + dDay.absoluteValue
                 } else {
                     root.context.getString(R.string.add_challenge_d_day_normal) + dDay
                 }

@@ -7,5 +7,6 @@ data class ChallengeDto(
     val content: String?,
     val creator: String,
     val deadline: String,
-    val isCompleted: Boolean
+    val isCompleted: Boolean,
+    val completeDate: String? = null
 )

@@ -13,5 +13,6 @@ data class Challenge(
     val deadline: Date,
     val owner: String,
     val isCompleted: Boolean,
+    val completeDate: Date? = null,
     val isNew: Boolean = false
 ): Serializable, Parcelable

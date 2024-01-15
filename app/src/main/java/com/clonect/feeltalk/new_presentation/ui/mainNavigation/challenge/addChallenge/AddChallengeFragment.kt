@@ -42,6 +42,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.absoluteValue
 import kotlin.math.ceil
 
 @AndroidEntryPoint
@@ -339,6 +340,8 @@ class AddChallengeFragment : Fragment() {
             requireContext().getString(R.string.add_challenge_d_day_over)
         } else if (dDay == 0) {
             requireContext().getString(R.string.add_challenge_d_day_today)
+        } else if (dDay < 0){
+            requireContext().getString(R.string.add_challenge_d_day_past) + dDay.absoluteValue
         } else {
             requireContext().getString(R.string.add_challenge_d_day_normal) + dDay
         }

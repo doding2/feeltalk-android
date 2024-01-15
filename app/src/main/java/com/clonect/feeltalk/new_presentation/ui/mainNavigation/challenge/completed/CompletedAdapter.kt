@@ -64,7 +64,7 @@ class CompletedAdapter: PagingDataAdapter<Challenge, CompletedAdapter.CompletedC
                 root.setOnClickListener { onItemClick(item) }
                 val format = SimpleDateFormat("yy.MM.dd", Locale.getDefault())
 
-                tvDDay.text = format.format(item.deadline)
+                tvDDay.text = item.completeDate?.let { format.format(it) }
                 tvChallengeTitle.text = item.title
                 tvNickname.text = item.owner
             }

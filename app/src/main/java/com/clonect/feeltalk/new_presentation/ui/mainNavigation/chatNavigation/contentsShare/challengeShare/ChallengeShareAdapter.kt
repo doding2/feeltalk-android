@@ -11,6 +11,7 @@ import com.clonect.feeltalk.databinding.ItemChallengeShareBinding
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import java.util.Date
+import kotlin.math.absoluteValue
 import kotlin.math.ceil
 
 class ChallengeShareAdapter : PagingDataAdapter<Challenge, ChallengeShareAdapter.ChallengeViewHolder>(callback) {
@@ -55,6 +56,8 @@ class ChallengeShareAdapter : PagingDataAdapter<Challenge, ChallengeShareAdapter
                 root.context.getString(R.string.add_challenge_d_day_over)
             } else if (dDay == 0) {
                 root.context.getString(R.string.add_challenge_d_day_today)
+            } else if (dDay < 0){
+                root.context.getString(R.string.add_challenge_d_day_past) + dDay.absoluteValue
             } else {
                 root.context.getString(R.string.add_challenge_d_day_normal) + dDay
             }

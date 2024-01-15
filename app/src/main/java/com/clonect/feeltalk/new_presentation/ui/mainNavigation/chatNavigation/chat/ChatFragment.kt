@@ -57,6 +57,7 @@ import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.im
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageShare.ImageShareFragment
 import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
+import com.clonect.feeltalk.new_presentation.ui.util.showOneButtonDialog
 import com.clonect.feeltalk.new_presentation.ui.util.toBytesInt
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.clonect.feeltalk.presentation.utils.showPermissionRequestDialog
@@ -243,7 +244,15 @@ class ChatFragment : Fragment() {
     }
 
     private fun navigateToChallengeDetail(challenge: Challenge) = lifecycleScope.launch {
-        val loadedChallenge = viewModel.getChallenge(challenge.index) ?: challenge
+        val loadedChallenge = viewModel.getChallenge(challenge.index)
+            ?: run {
+                showOneButtonDialog(
+                    title = requireContext().getString(R.string.deleted_challenge_chat_title),
+                    body = requireContext().getString(R.string.deleted_challenge_chat_body),
+                    onConfirm = {}
+                )
+                return@launch
+            }
         if (loadedChallenge.isCompleted) navigateToCompletedChallengeDetail(loadedChallenge)
         else navigateToOngoingChallengeDetail(loadedChallenge)
     }
@@ -454,7 +463,23 @@ class ChatFragment : Fragment() {
             is AddChallengeChat -> navigateToChallengeDetail(chat.challenge)
             is PokeChat -> navigateToAnswer(chat.questionIndex)
             is AnswerChat -> navigateToAnswer(chat.question)
-            is ResetPartnerPasswordChat -> viewModel.resetPartnerPassword(chat.index)
+            is ResetPartnerPasswordChat -> viewModel.resetPartnerPassword(
+                index = chat.index,
+                onExpired = {
+                    showOneButtonDialog(
+                        title = requireContext().getString(R.string.partner_reset_help_chat_expired_title),
+                        body = requireContext().getString(R.string.partner_reset_help_chat_expired_body),
+                        onConfirm = {}
+                    )
+                },
+                onSuccess = {
+                    showOneButtonDialog(
+                        title = requireContext().getString(R.string.partner_reset_help_chat_success_title),
+                        body = requireContext().getString(R.string.partner_reset_help_chat_success_body),
+                        onConfirm = {}
+                    )
+                }
+            )
         }
     }
 
