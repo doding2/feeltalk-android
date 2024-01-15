@@ -83,7 +83,6 @@ class AnswerFragment : Fragment() {
 
             etAnswer.addTextChangedListener {
                 val answer = it?.toString() ?: ""
-                tvNumAnswer.text = answer.length.toString()
                 viewModel.setAnswer(answer)
                 navViewModel.setUserAnswering(!viewModel.isReadMode.value && answer.isNotEmpty())
             }
@@ -367,11 +366,16 @@ class AnswerFragment : Fragment() {
         ).show()
     }
 
+    private fun applyAnswerChanges(answer: String) = binding.run {
+        tvNumAnswer.text = answer.length.toString()
+    }
+
     private fun collectViewModel() {
         viewModelJob = lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch { viewModel.message.collect(::showSnackBar) }
                 launch { viewModel.question.collectLatest(::changeQuestionView) }
+                launch { viewModel.answer.collectLatest(::applyAnswerChanges) }
 
                 launch {
                     navViewModel.answerTargetQuestion.collectLatest {

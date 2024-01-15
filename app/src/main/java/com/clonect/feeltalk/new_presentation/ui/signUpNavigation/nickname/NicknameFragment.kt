@@ -14,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -49,13 +50,12 @@ class NicknameFragment : Fragment() {
         collectViewModel()
         viewModel.setSignUpProcess(66)
         viewModel.setCurrentPage("nickname")
+        viewModel.setAgreementProcessed(false)
 
         binding.run {
             etNickname.setText(viewModel.nickname.value)
             etNickname.addTextChangedListener {
-                val nickname = it?.toString() ?: ""
-                tvNumNickname.text = nickname.length.toString()
-                viewModel.setNickname(nickname)
+                viewModel.setNickname(it?.toString() ?: "")
             }
 //            etNickname.setOnFocusChangeListener { view, isFocused ->
 //                if (isFocused) {
@@ -235,10 +235,14 @@ class NicknameFragment : Fragment() {
         }
     }
 
+    private fun applyNicknameChanges(nickname: String) = binding.run {
+        tvNumNickname.text = nickname.length.toString()
+    }
 
     private fun collectViewModel() = lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch { viewModel.isNicknameFocused.collectLatest(::applyNicknameFocusedChanges) }
+            launch { viewModel.nickname.collectLatest(::applyNicknameChanges) }
             launch { viewModel.nicknameState.collectLatest(::applyNicknameStateChanges) }
             launch { viewModel.isAddEnabled.collectLatest(::enableNextButton) }
 //            launch {
