@@ -54,6 +54,7 @@
                     android:textSize="12sp"
                     android:textColor="@color/gray_600"
                     android:lines="1"
+                    android:fontFamily="@font/pretendard_regular"
                     android:ellipsize="marquee"
                     android:includeFontPadding="false"
                     android:lineSpacingExtra="4dp"

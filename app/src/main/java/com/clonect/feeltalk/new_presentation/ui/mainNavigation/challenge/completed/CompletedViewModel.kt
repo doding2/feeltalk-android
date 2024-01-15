@@ -59,20 +59,22 @@ class CompletedViewModel @Inject constructor(
                 paging.filter { it.index != event.item.index }
             }
             is PageEvents.InsertItemFooter, is PageEvents.InsertItemHeader -> {
-                var isAlreadyExist = false
                 paging.insertSeparators { before, after ->
+                    val isAlreadyExist = before?.index == event.item.index || after?.index == event.item.index
                     val isFirst = before == null && after == null
+                    val isStart = before == null && after != null
                     val isEnd = before != null && after == null
-
-                    if (!isEnd && before?.index == event.item.index || after?.index == event.item.index) {
-                        isAlreadyExist = true
-                    }
+                    val isMiddle = before != null && after != null
 
                     return@insertSeparators if (isAlreadyExist) {
                         null
                     } else if (isFirst) {
                         event.item
-                    } else if (isEnd) {
+                    } else if (isStart && event.item.completeDate!! >= after!!.completeDate) {
+                        event.item
+                    } else if (isEnd && event.item.completeDate!! < before!!.completeDate) {
+                        event.item
+                    } else if (isMiddle && event.item.completeDate!! < before!!.completeDate && event.item.completeDate!! >= after!!.completeDate) {
                         event.item
                     } else {
                         null
