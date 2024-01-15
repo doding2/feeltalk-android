@@ -74,7 +74,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:indicatorColor="@color/gray_500"
-        android:progress="0"
+        android:progress="33"
         app:trackColor="@color/gray_100"/>
 
     <androidx.fragment.app.FragmentContainerView

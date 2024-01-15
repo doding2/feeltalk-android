@@ -564,11 +564,12 @@ class ChatFragment : Fragment() {
     private val audioPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        infoLog("audio permission is granted: $isGranted")
+        infoLog("audio record permission is granted: $isGranted")
         if (!isGranted) {
-            showPermissionRequestDialog(
-                title = "알림 권한 설정",
-                message = "푸쉬 알림을 활성화 하려면 알림 권한을 설정해주셔야 합니다."
+            showOneButtonDialog(
+                title = requireContext().getString(R.string.record_permission_denied_title),
+                body = requireContext().getString(R.string.record_permission_denied_body),
+                onConfirm = {}
             )
         }
     }

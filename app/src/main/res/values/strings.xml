@@ -15,6 +15,10 @@
     <string name="dialog_cancel">취소</string>
     <string name="dialog_confirm">확인</string>
 
+    <!--  RecordPermissionDeniedDialog  -->
+    <string name="record_permission_denied_title">녹음 권한 설정</string>
+    <string name="record_permission_denied_body">음성 채팅을 사용하려면 녹음 권한을 허용 해주셔야 합니다.</string>
+
     <!--  AnimatedSignUp Error Dialog  -->
     <string name="animated_sign_up_error_title">에러</string>
     <string name="animated_sign_up_error_confirm">확인</string>

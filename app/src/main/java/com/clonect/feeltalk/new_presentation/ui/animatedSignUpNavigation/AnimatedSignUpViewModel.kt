@@ -5,6 +5,7 @@ import android.os.CountDownTimer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.R
+import com.clonect.feeltalk.common.FeelTalkException
 import com.clonect.feeltalk.common.onError
 import com.clonect.feeltalk.common.onSuccess
 import com.clonect.feeltalk.new_domain.usecase.newAccount.RequestAdultAuthCodeUseCase
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 /**
@@ -245,11 +247,16 @@ class AnimatedSignUpViewModel @Inject constructor(
             retryRequestAdultAuthCodeUseCase(
                 sessionUuid = uuid!!
             ).onError {
-                    val message = "Fail to retry request adult auth code: ${it.localizedMessage}"
+                val message = "Fail to retry request adult auth code: ${it.localizedMessage}"
+                infoLog(message)
+
+                if (it is FeelTalkException.ServerIsDownException || it is UnknownHostException) {
                     sendErrorMessage(defaultErrorMessage)
-                    infoLog(message)
+                } else {
+                    setPersonInfoInvalid(true)
                 }
-                .onSuccess { onSuccess() }
+            }
+            .onSuccess { onSuccess() }
         } else {
             requestAdultAuthCodeUseCase(
                 providerId = providerId,
@@ -259,14 +266,19 @@ class AnimatedSignUpViewModel @Inject constructor(
                 userGender = gender,
                 userNation = nation
             ).onError {
-                    val message = "Fail to request adult auth code: ${it.localizedMessage}"
-                    sendErrorMessage("개인 정보가 올바른지 확인해 주세요.")
-                    infoLog(message)
+                val message = "Fail to request adult auth code: ${it.localizedMessage}"
+                infoLog(message)
+
+                if (it is FeelTalkException.ServerIsDownException || it is UnknownHostException) {
+                    sendErrorMessage(defaultErrorMessage)
+                } else {
+                    setPersonInfoInvalid(true)
                 }
-                .onSuccess {
-                    setSessionUuid(it.sessionUuid)
-                    onSuccess()
-                }
+            }
+            .onSuccess {
+                setSessionUuid(it.sessionUuid)
+                onSuccess()
+            }
         }
     }
 

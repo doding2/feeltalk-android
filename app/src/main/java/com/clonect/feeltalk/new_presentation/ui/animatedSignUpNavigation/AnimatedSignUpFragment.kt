@@ -77,6 +77,8 @@ class AnimatedSignUpFragment : Fragment() {
         collectViewModel()
 
         binding.run {
+
+
             ivExit.setOnClickListener { onBackCallback.handleOnBackPressed() }
 
             mcvStartButton.setOnClickListener { navigateFocus() }
