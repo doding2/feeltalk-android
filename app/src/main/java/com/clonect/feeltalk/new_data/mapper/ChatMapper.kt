@@ -112,6 +112,7 @@ suspend fun ChatListDto.toChatList(
                             deadline = format.parse(chatDto.coupleChallenge.deadline) ?: continue,
                             owner = chatDto.coupleChallenge.creator,
                             isCompleted = challenge.isCompleted,
+                            completeDate = challenge.completeDate,
                             isNew = false
                         )
                     )
@@ -160,6 +161,7 @@ suspend fun ChatListDto.toChatList(
                             deadline = format.parse(chatDto.coupleChallenge.deadline) ?: continue,
                             owner = chatDto.coupleChallenge.creator,
                             isCompleted = challenge.isCompleted,
+                            completeDate = challenge.completeDate,
                             isNew = false
                         )
                     )

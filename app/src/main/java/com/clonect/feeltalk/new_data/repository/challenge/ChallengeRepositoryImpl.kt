@@ -18,6 +18,7 @@ import com.clonect.feeltalk.new_domain.model.challenge.ChallengeListDto
 import com.clonect.feeltalk.new_domain.model.challenge.LastChallengePageNoDto
 import com.clonect.feeltalk.new_domain.model.challenge.ShareChallengeChatResponse
 import com.clonect.feeltalk.new_domain.repository.challenge.ChallengeRepository
+import com.clonect.feeltalk.presentation.utils.infoLog
 import kotlinx.coroutines.flow.Flow
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -118,7 +119,7 @@ class ChallengeRepositoryImpl(
                     title = result.coupleChallenge.challengeTitle,
                     body = result.coupleChallenge.challengeBody,
                     deadline = format.parse(deadline),
-                    owner = "me",
+                    owner = result.coupleChallenge.creator,
                     isCompleted = false,
                     isNew = true
                 )
