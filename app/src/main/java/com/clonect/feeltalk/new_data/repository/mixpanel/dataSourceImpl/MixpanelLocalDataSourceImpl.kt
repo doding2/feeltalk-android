@@ -17,6 +17,8 @@ class MixpanelLocalDataSourceImpl(
     private val appLevelEncryptHelper: AppLevelEncryptHelper,
 ) : MixpanelLocalDataSource {
 
+    /* p0 */
+
     override suspend fun saveUserActiveDate(date: String) {
         val file = File(context.filesDir, "userActiveDate.dat")
         val encrypted = appLevelEncryptHelper.encryptObject("userActiveDate", date)
@@ -44,6 +46,24 @@ class MixpanelLocalDataSourceImpl(
         val dataBytes = file.readBytes()
         val decrypted = appLevelEncryptHelper.decryptObject<String>("pageNavigationCount", dataBytes)
         return decrypted as? Pair<String, Long>
+    }
+
+
+
+    /* p1 */
+
+    override suspend fun saveSignalChangeDate(date: String) {
+        val file = File(context.filesDir, "signalChangeDate.dat")
+        val encrypted = appLevelEncryptHelper.encryptObject("signalChangeDate", date)
+        file.writeBytes(encrypted)
+    }
+
+    override suspend fun getSignalChangeDate(): String? {
+        val file = File(context.filesDir, "signalChangeDate.dat")
+        if (!file.exists() || !file.canRead()) return null
+        val dataBytes = file.readBytes()
+        val decrypted = appLevelEncryptHelper.decryptObject<String>("signalChangeDate", dataBytes)
+        return decrypted as? String
     }
 
 }

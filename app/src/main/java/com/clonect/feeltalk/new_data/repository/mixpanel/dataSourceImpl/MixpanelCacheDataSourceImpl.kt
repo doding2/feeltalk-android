@@ -1,11 +1,8 @@
 package com.clonect.feeltalk.new_data.repository.mixpanel.dataSourceImpl
 
 import android.content.Context
-import android.os.CountDownTimer
 import com.clonect.feeltalk.BuildConfig
 import com.clonect.feeltalk.common.Constants
-import com.clonect.feeltalk.common.plusSecondsBy
-import com.clonect.feeltalk.data.mapper.toStringLowercase
 import com.clonect.feeltalk.new_data.repository.mixpanel.dataSource.MixpanelCacheDataSource
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.mixpanel.android.mpmetrics.MixpanelAPI
@@ -14,8 +11,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.Timer
-import java.util.TimerTask
 import kotlin.concurrent.schedule
+import kotlin.concurrent.timer
 
 /**
  * Created by doding2 on 2024/01/12.
@@ -23,6 +20,8 @@ import kotlin.concurrent.schedule
 class MixpanelCacheDataSourceImpl(
     context: Context
 ) : MixpanelCacheDataSource {
+
+    /* p0 */
 
     private val mixpanel: MixpanelAPI by lazy {
         val token = if (BuildConfig.DEBUG) Constants.MIXPANEL_DEBUG_TOKEN else Constants.MIXPANEL_RELEASE_TOKEN
@@ -35,6 +34,13 @@ class MixpanelCacheDataSourceImpl(
 
     private var pageCountPair: Pair<String, Long>? = null
 
+    /* p1 */
+
+    private var contentShareTimer: Timer? = null
+    private var contentShareDurationTime: Long = 0
+
+
+    /* p0 */
 
     override fun getMixpanelInstance() = mixpanel
 
@@ -105,5 +111,40 @@ class MixpanelCacheDataSourceImpl(
         pageCountPair = date to count
     }
     override suspend fun getPageNavigationCount() = pageCountPair
+
+
+    /* p1 */
+
+    override fun startContentShareTimer() {
+        cancelContentShareTimer()
+        contentShareTimer = timer(period = 1000) {
+            contentShareDurationTime += 1000
+        }
+    }
+
+    override fun cancelContentShareTimer() {
+        try {
+            contentShareTimer?.cancel()
+            contentShareTimer = null
+            if (contentShareDurationTime <= 0L)
+                return
+
+            val totalSeconds = contentShareDurationTime / 1000
+            val totalMinutes = totalSeconds / 60
+            val totalHours = totalMinutes / 60
+
+            val seconds = totalSeconds % 60
+            val minutes = totalMinutes % 60
+            val dateTime = "$totalHours:$minutes:$seconds"
+
+            mixpanel.track("Chat Menu Duration Time", JSONObject().apply {
+                put("Time_ChatMenu", dateTime)
+            })
+        } catch (e: Exception) {
+            infoLog("Fail to cancel content share timer: ${e.localizedMessage}")
+        } finally {
+            contentShareDurationTime = 0
+        }
+    }
 
 }

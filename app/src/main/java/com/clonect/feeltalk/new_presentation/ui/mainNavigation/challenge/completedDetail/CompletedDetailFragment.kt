@@ -51,6 +51,7 @@ class CompletedDetailFragment : Fragment() {
         }
         initChallenge()
         viewModel.navigatePage()
+        viewModel.openCompletedChallengeDetail()
         return binding.root
     }
 

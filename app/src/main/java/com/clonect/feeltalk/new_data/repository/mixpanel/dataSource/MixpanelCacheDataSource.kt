@@ -6,6 +6,9 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI
  * Created by doding2 on 2024/01/12.
  */
 interface MixpanelCacheDataSource {
+
+    /* p0 */
+
     fun getMixpanelInstance(): MixpanelAPI
 
     fun startChatTimer()
@@ -19,4 +22,10 @@ interface MixpanelCacheDataSource {
 
     suspend fun savePageNavigationCount(date: String, count: Long)
     suspend fun getPageNavigationCount(): Pair<String, Long>?
+
+
+    /* p1 */
+
+    fun startContentShareTimer()
+    fun cancelContentShareTimer()
 }

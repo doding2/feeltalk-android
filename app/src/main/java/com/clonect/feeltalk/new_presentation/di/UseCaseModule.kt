@@ -28,6 +28,9 @@ import com.clonect.feeltalk.new_domain.usecase.appSettings.SaveAppSettingsUseCas
 import com.clonect.feeltalk.new_domain.usecase.challenge.*
 import com.clonect.feeltalk.new_domain.usecase.chat.*
 import com.clonect.feeltalk.new_domain.usecase.mixpanel.NavigatePageMixpanelUseCase
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.OpenCompletedChallengeDetailMixpanelUseCase
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.OpenSignalSheetMixpanelUseCase
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.SetInContentShareMixpanelUseCase
 import com.clonect.feeltalk.new_domain.usecase.mixpanel.SetInAnswerSheetMixpanelUseCase
 import com.clonect.feeltalk.new_domain.usecase.mixpanel.SetInQuestionPageMixpanelUseCase
 import com.clonect.feeltalk.new_domain.usecase.newAccount.GetUserStatusNewUseCase
@@ -373,8 +376,8 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesAddNewChatCacheUseCase(chatRepository: ChatRepository): AddNewChatCacheUseCase {
-        return AddNewChatCacheUseCase(chatRepository)
+    fun providesAddNewChatCacheUseCase(chatRepository: ChatRepository, mixpanelRepository: MixpanelRepository): AddNewChatCacheUseCase {
+        return AddNewChatCacheUseCase(chatRepository, mixpanelRepository)
     }
 
     @Singleton
@@ -442,8 +445,8 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesShareQuestionUseCase(tokenRepository: TokenRepository, questionRepository: QuestionRepository): ShareQuestionUseCase {
-        return ShareQuestionUseCase(tokenRepository, questionRepository)
+    fun providesShareQuestionUseCase(tokenRepository: TokenRepository, questionRepository: QuestionRepository, mixpanelRepository: MixpanelRepository): ShareQuestionUseCase {
+        return ShareQuestionUseCase(tokenRepository, questionRepository, mixpanelRepository)
     }
 
     @Singleton
@@ -493,8 +496,8 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesAddChallengeUseCase(tokenRepository: TokenRepository, challengeRepository: ChallengeRepository): AddMyChallengeUseCase {
-        return AddMyChallengeUseCase(tokenRepository, challengeRepository)
+    fun providesAddChallengeUseCase(tokenRepository: TokenRepository, challengeRepository: ChallengeRepository, mixpanelRepository: MixpanelRepository): AddMyChallengeUseCase {
+        return AddMyChallengeUseCase(tokenRepository, challengeRepository, mixpanelRepository)
     }
 
     @Singleton
@@ -505,14 +508,14 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesDeleteChallengeUseCase(tokenRepository: TokenRepository, challengeRepository: ChallengeRepository): DeleteChallengeUseCase {
-        return DeleteChallengeUseCase(tokenRepository, challengeRepository)
+    fun providesDeleteChallengeUseCase(tokenRepository: TokenRepository, challengeRepository: ChallengeRepository, mixpanelRepository: MixpanelRepository): DeleteChallengeUseCase {
+        return DeleteChallengeUseCase(tokenRepository, challengeRepository, mixpanelRepository)
     }
 
     @Singleton
     @Provides
-    fun providesCompleteChallengeUseCase(tokenRepository: TokenRepository, challengeRepository: ChallengeRepository): CompleteChallengeUseCase {
-        return CompleteChallengeUseCase(tokenRepository, challengeRepository)
+    fun providesCompleteChallengeUseCase(tokenRepository: TokenRepository, challengeRepository: ChallengeRepository, mixpanelRepository: MixpanelRepository): CompleteChallengeUseCase {
+        return CompleteChallengeUseCase(tokenRepository, challengeRepository, mixpanelRepository)
     }
 
     @Singleton
@@ -577,8 +580,8 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesShareChallengeUseCase(tokenRepository: TokenRepository, challengeRepository: ChallengeRepository): ShareChallengeUseCase {
-        return ShareChallengeUseCase(tokenRepository, challengeRepository)
+    fun providesShareChallengeUseCase(tokenRepository: TokenRepository, challengeRepository: ChallengeRepository, mixpanelRepository: MixpanelRepository): ShareChallengeUseCase {
+        return ShareChallengeUseCase(tokenRepository, challengeRepository, mixpanelRepository)
     }
 
 
@@ -598,8 +601,8 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesChangeMySignalUseCase(tokenRepository: TokenRepository, signalRepository: SignalRepository): ChangeMySignalUseCase {
-        return ChangeMySignalUseCase(tokenRepository, signalRepository)
+    fun providesChangeMySignalUseCase(tokenRepository: TokenRepository, signalRepository: SignalRepository, mixpanelRepository: MixpanelRepository): ChangeMySignalUseCase {
+        return ChangeMySignalUseCase(tokenRepository, signalRepository, mixpanelRepository)
     }
 
     @Singleton
@@ -639,6 +642,24 @@ class UseCaseModule {
     @Provides
     fun providesSetInAnswerSheetMixpanelUseCase(mixpanelRepository: MixpanelRepository): SetInAnswerSheetMixpanelUseCase {
         return SetInAnswerSheetMixpanelUseCase(mixpanelRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesOpenContentShareMixpanelUseCase(mixpanelRepository: MixpanelRepository): SetInContentShareMixpanelUseCase {
+        return SetInContentShareMixpanelUseCase(mixpanelRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesOpenSignalSheetMixpanelUseCase(mixpanelRepository: MixpanelRepository): OpenSignalSheetMixpanelUseCase {
+        return OpenSignalSheetMixpanelUseCase(mixpanelRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun providesOpenCompletedChallengeDetailMixpanelUseCase(mixpanelRepository: MixpanelRepository): OpenCompletedChallengeDetailMixpanelUseCase {
+        return OpenCompletedChallengeDetailMixpanelUseCase(mixpanelRepository)
     }
 
 

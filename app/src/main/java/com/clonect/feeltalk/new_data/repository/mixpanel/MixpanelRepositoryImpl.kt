@@ -18,9 +18,17 @@ class MixpanelRepositoryImpl(
     private val remoteDataSource: MixpanelRemoteDataSource,
 ) : MixpanelRepository {
 
+    /* p0 */
+
     override suspend fun logIn(id: Long) {
         val mixpanel = cacheDataSource.getMixpanelInstance()
         mixpanel.identify("$id", true)
+
+        val now = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+        val isActive = localDataSource.getUserActiveDate() == now
+        mixpanel.registerSuperProperties(JSONObject().apply {
+            put("isActive", isActive)
+        })
     }
 
     override suspend fun navigatePage() {
@@ -80,6 +88,81 @@ class MixpanelRepositoryImpl(
         mixpanel.registerSuperProperties(JSONObject().apply {
             put("isActive", true)
         })
+    }
+
+
+
+
+    /* p1 */
+
+    override suspend fun sendChat() {
+        val mixpanel = cacheDataSource.getMixpanelInstance()
+        mixpanel.track("Send Chat")
+    }
+
+    override suspend fun shareContent() {
+        val mixpanel = cacheDataSource.getMixpanelInstance()
+        mixpanel.track("Click Chat Menu Share Button")
+    }
+
+    override suspend fun setInContentShare(isInContentShare: Boolean) {
+        if (isInContentShare) {
+            cacheDataSource.startContentShareTimer()
+
+            val mixpanel = cacheDataSource.getMixpanelInstance()
+            mixpanel.track("Open Chat Menu")
+        } else {
+            cacheDataSource.cancelContentShareTimer()
+        }
+    }
+
+    override suspend fun openSignalSheet() {
+        val mixpanel = cacheDataSource.getMixpanelInstance()
+        mixpanel.track("Open Signal Sheet")
+    }
+
+    override suspend fun changeMySignal() {
+        val mixpanel = cacheDataSource.getMixpanelInstance()
+        mixpanel.track("Change Signal")
+
+        val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val lastDate = localDataSource.getSignalChangeDate()?.let { formatter.parse(it) }
+        val nowDate = Date()
+        localDataSource.saveSignalChangeDate(formatter.format(nowDate))
+        if (lastDate == null) return
+
+        val diff = nowDate.time - lastDate.time
+        val totalSeconds = diff / 1000
+        val totalMinutes = totalSeconds / 60
+        val totalHours = totalMinutes / 60
+
+        val seconds = totalSeconds % 60
+        val minutes = totalMinutes % 60
+        val dateTime = "$totalHours:$minutes:$seconds"
+
+        mixpanel.track("Signal Change Interval", JSONObject().apply {
+            put("Time_BetweenChangeSignal", dateTime)
+        })
+    }
+
+    override suspend fun addChallenge() {
+        val mixpanel = cacheDataSource.getMixpanelInstance()
+        mixpanel.track("Add Challenge")
+    }
+
+    override suspend fun completeChallenge() {
+        val mixpanel = cacheDataSource.getMixpanelInstance()
+        mixpanel.track("Complete Challenge")
+    }
+
+    override suspend fun deleteChallenge() {
+        val mixpanel = cacheDataSource.getMixpanelInstance()
+        mixpanel.track("Delete Challenge")
+    }
+
+    override suspend fun openCompletedChallengeDetail() {
+        val mixpanel = cacheDataSource.getMixpanelInstance()
+        mixpanel.track("Open Completed Challenge Detail")
     }
 
 }

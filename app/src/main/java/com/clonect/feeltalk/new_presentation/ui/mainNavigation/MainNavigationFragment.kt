@@ -291,6 +291,8 @@ class MainNavigationFragment : Fragment() {
                 binding.viewSignalBehind.visibility = View.VISIBLE
             }
             behavior.state = BottomSheetBehavior.STATE_EXPANDED
+
+            viewModel.openSignalSheet()
         }
         else {
             binding.viewSignalBehind.visibility = View.GONE

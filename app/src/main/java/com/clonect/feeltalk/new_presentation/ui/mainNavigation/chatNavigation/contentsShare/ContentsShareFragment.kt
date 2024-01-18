@@ -19,14 +19,12 @@ import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentContentsShareBinding
 import com.clonect.feeltalk.databinding.TabItemContentsShareBinding
-import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.dpToPx
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.makeLoadingDialog
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
 import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -68,6 +66,7 @@ class ContentsShareFragment : Fragment() {
         loadingDialog = makeLoadingDialog()
 
         viewModel.navigatePage()
+        viewModel.setInContentShare(true)
 
         return binding.root
     }
@@ -206,5 +205,11 @@ class ContentsShareFragment : Fragment() {
                 }
             }
         }
+    }
+
+
+    override fun onDetach() {
+        super.onDetach()
+        viewModel.setInContentShare(false)
     }
 }

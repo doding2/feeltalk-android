@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.question.Question
 import com.clonect.feeltalk.new_domain.usecase.mixpanel.NavigatePageMixpanelUseCase
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.SetInContentShareMixpanelUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,6 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ContentsShareViewModel @Inject constructor(
     private val navigatePageMixpanelUseCase: NavigatePageMixpanelUseCase,
+    private val setInContentShareMixpanelUseCase: SetInContentShareMixpanelUseCase,
 ): ViewModel() {
 
 
@@ -42,6 +44,10 @@ class ContentsShareViewModel @Inject constructor(
 
     fun navigatePage() = viewModelScope.launch {
         navigatePageMixpanelUseCase()
+    }
+
+    fun setInContentShare(isInContentShare: Boolean) = viewModelScope.launch {
+        setInContentShareMixpanelUseCase(isInContentShare)
     }
 
 }

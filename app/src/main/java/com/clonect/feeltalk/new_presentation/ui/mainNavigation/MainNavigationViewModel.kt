@@ -29,6 +29,7 @@ import com.clonect.feeltalk.new_domain.usecase.challenge.SetChallengeUpdatedUseC
 import com.clonect.feeltalk.new_domain.usecase.chat.GetNewChatFlowUseCase
 import com.clonect.feeltalk.new_domain.usecase.chat.GetPartnerLastChatUseCase
 import com.clonect.feeltalk.new_domain.usecase.mixpanel.NavigatePageMixpanelUseCase
+import com.clonect.feeltalk.new_domain.usecase.mixpanel.OpenSignalSheetMixpanelUseCase
 import com.clonect.feeltalk.new_domain.usecase.mixpanel.SetInAnswerSheetMixpanelUseCase
 import com.clonect.feeltalk.new_domain.usecase.mixpanel.SetInQuestionPageMixpanelUseCase
 import com.clonect.feeltalk.new_domain.usecase.question.GetQuestionUpdatedFlowUseCase
@@ -66,6 +67,7 @@ class MainNavigationViewModel @Inject constructor(
     private val navigatePageMixpanelUseCase: NavigatePageMixpanelUseCase,
     private val setInQuestionPageMixpanelUseCase: SetInQuestionPageMixpanelUseCase,
     private val setInAnswerSheetMixpanelUseCase: SetInAnswerSheetMixpanelUseCase,
+    private val openSignalSheetMixpanelUseCase: OpenSignalSheetMixpanelUseCase,
 ): ViewModel() {
 
     // For reducing inflating delay due to complex and too much view components
@@ -391,5 +393,9 @@ class MainNavigationViewModel @Inject constructor(
 
     fun setInAnswerSheet(isInAnswer: Boolean) = viewModelScope.launch {
         setInAnswerSheetMixpanelUseCase(isInAnswer)
+    }
+
+    fun openSignalSheet() = viewModelScope.launch {
+        openSignalSheetMixpanelUseCase()
     }
 }
