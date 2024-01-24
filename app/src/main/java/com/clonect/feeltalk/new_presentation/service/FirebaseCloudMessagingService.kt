@@ -373,7 +373,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         }
 
         notificationHelper.showChatNotification(
-            message = "(질문 채팅)"
+            message = "질문 채팅"
         )
     }
 
@@ -408,7 +408,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         }
 
         notificationHelper.showChatNotification(
-            message = "(답변 채팅)"
+            message = "답변 채팅"
         )
     }
 
@@ -435,7 +435,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         }
 
         notificationHelper.showChatNotification(
-            message = "(콕찌르기 채팅)"
+            message = "콕찌르기 채팅"
         )
     }
 
@@ -540,7 +540,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         }
 
         notificationHelper.showChatNotification(
-            message = "(챌린지 추가 채팅)"
+            message = "챌린지 추가 채팅"
         )
     }
 
@@ -553,6 +553,8 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
     }
 
     private fun handleModifyChallengeData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+        val title = data["title"]
+        val message = data["message"]
         val index = data["index"]?.toLong() ?: return@launch
         val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
             .setGraph(R.navigation.feeltalk_nav_graph)
@@ -572,8 +574,8 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         }
 
         notificationHelper.showNormalNotification(
-            title = "헉 연인이 챌린지를 수정했어요",
-            message = "야호~",
+            title = title ?: "연인이 챌린지를 수정했어요",
+            message = message ?: "앱에 들어와서 확인해보세요",
             channelID = NotificationHelper.CHANNEL_ID_ADD_CHALLENGE,
             notificationID = System.currentTimeMillis().toInt(),
             pendingIntent = deepLinkPendingIntent
@@ -619,7 +621,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         }
 
         notificationHelper.showChatNotification(
-            message = "(챌린지 완료 채팅)"
+            message = "챌린지 완료 채팅"
         )
     }
 
@@ -644,7 +646,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         }
 
         notificationHelper.showChatNotification(
-            message = "(잠금 해제 요청 채팅)"
+            message = "잠금 해제 요청 채팅"
         )
     }
 
