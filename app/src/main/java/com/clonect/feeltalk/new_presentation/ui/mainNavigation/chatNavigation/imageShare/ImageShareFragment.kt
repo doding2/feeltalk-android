@@ -1,17 +1,12 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageShare
 
-import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.Dialog
-import com.clonect.feeltalk.R
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.view.GestureDetector
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
@@ -23,17 +18,17 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentImageShareBinding
 import com.clonect.feeltalk.new_presentation.ui.util.TextSnackbar
 import com.clonect.feeltalk.new_presentation.ui.util.closeRootViewLayout
 import com.clonect.feeltalk.new_presentation.ui.util.extendRootViewLayout
-import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.makeLoadingDialog
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
-import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
-import com.clonect.feeltalk.new_presentation.ui.util.stateFlow
+import com.clonect.feeltalk.new_presentation.ui.util.showOneButtonDialog
 import com.clonect.feeltalk.new_presentation.ui.util.toBitmap
+import com.clonect.feeltalk.presentation.utils.infoLog
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,6 +36,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
+import java.io.File
 
 /**
  * Created by doding2 on 2023/10/24.
@@ -98,6 +95,17 @@ class ImageShareFragment : Fragment() {
 
     private fun sendImageChat() {
         val bitmap = viewModel.bitmap.value ?: return
+        val imageSize = bitmap.allocationByteCount / (1024f * 1024f)
+        infoLog("image chat size: $imageSize MB")
+
+        if (imageSize > 50f) {
+            showOneButtonDialog(
+                title = requireContext().getString(R.string.image_share_big_image_title),
+                body = requireContext().getString(R.string.image_share_big_image_message),
+                onConfirm = {}
+            )
+            return
+        }
 
         setFragmentResult(
             requestKey = REQUEST_KEY,

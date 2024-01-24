@@ -623,6 +623,8 @@
 
     <!--  ImageShare  -->
     <string name="image_share_send">전송</string>
+    <string name="image_share_big_image_title">이미지를 전송할 수 없어요</string>
+    <string name="image_share_big_image_message">이미지의 크기가 너무 커요.</string>
 
     <!--  ImageDetail  -->
     <string name="image_detail_date_format">yyyy년 M월 d일 h:m</string>
