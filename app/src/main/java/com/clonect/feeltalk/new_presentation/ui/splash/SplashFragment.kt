@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -17,6 +18,7 @@ import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.databinding.FragmentSplashBinding
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
+import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -83,9 +85,16 @@ class SplashFragment : Fragment() {
                 R.id.action_splashFragment_to_mainNavigationFragment
         }
 
+        val bundle = bundleOf(
+            "showChat" to arguments?.getBoolean("showChat", false),
+            "questionIndex" to arguments?.getLong("questionIndex", -1),
+            "isTodayQuestion" to arguments?.getBoolean("isTodayQuestion", false),
+            "challengeIndex" to arguments?.getLong("challengeIndex", -1),
+        )
+
         requireParentFragment()
             .findNavController()
-            .navigate(nextDestination)
+            .navigate(nextDestination, bundle)
     }
 
 

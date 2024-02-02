@@ -138,7 +138,7 @@ class NotificationHelper(
 
         val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
             .setGraph(R.navigation.feeltalk_nav_graph)
-            .setDestination(R.id.mainNavigationFragment)
+            .setDestination(R.id.splashFragment)
             .setArguments(
                 bundleOf("showChat" to true)
             )

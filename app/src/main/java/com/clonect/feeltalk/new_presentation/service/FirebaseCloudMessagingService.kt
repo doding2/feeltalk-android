@@ -446,7 +446,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
         val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
             .setGraph(R.navigation.feeltalk_nav_graph)
-            .setDestination(R.id.mainNavigationFragment)
+            .setDestination(R.id.splashFragment)
             .setArguments(
                 bundleOf(
                     "questionIndex" to index,
@@ -477,7 +477,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
 
         val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
             .setGraph(R.navigation.feeltalk_nav_graph)
-            .setDestination(R.id.mainNavigationFragment)
+            .setDestination(R.id.splashFragment)
             .setArguments(
                 bundleOf(
                     "questionIndex" to index,
@@ -558,7 +558,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         val index = data["index"]?.toLong() ?: return@launch
         val deepLinkPendingIntent = NavDeepLinkBuilder(applicationContext)
             .setGraph(R.navigation.feeltalk_nav_graph)
-            .setDestination(R.id.mainNavigationFragment)
+            .setDestination(R.id.splashFragment)
             .setArguments(
                 bundleOf(
                     "challengeIndex" to index,

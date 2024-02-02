@@ -11,12 +11,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavDeepLinkBuilder
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentHomeBinding
 import com.clonect.feeltalk.new_domain.model.question.Question
@@ -32,6 +34,7 @@ import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
 import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
 import com.google.android.material.snackbar.Snackbar
+import com.navercorp.nid.NaverIdLoginSDK.applicationContext
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
@@ -46,6 +49,7 @@ class HomeFragment : Fragment() {
     private val viewModel: HomeViewModel by viewModels()
     private val navViewModel: MainNavigationViewModel by activityViewModels()
     private var viewModelJob: Job? = null
+    @Inject lateinit var notificationHelper: NotificationHelper
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -77,6 +81,9 @@ class HomeFragment : Fragment() {
             mcvAnswer.setOnClickListener { clickAnswerButton() }
             acvMySignal.setOnClickListener {
                 showSignalBottomSheet()
+            }
+            acvPartnerSignal.setOnClickListener {
+//                notificationHelper.showChatNotification("test")
             }
         }
     }

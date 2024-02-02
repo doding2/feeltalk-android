@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -85,9 +86,16 @@ class PasswordFragment : Fragment() {
     }
 
     private fun navigateToMain() {
+        val bundle = bundleOf(
+            "showChat" to arguments?.getBoolean("showChat", false),
+            "questionIndex" to arguments?.getLong("questionIndex", -1),
+            "isTodayQuestion" to arguments?.getBoolean("isTodayQuestion", false),
+            "challengeIndex" to arguments?.getLong("challengeIndex", -1),
+        )
+
         requireParentFragment()
             .findNavController()
-            .navigate(R.id.action_passwordFragment_to_mainNavigationFragment)
+            .navigate(R.id.action_passwordFragment_to_mainNavigationFragment, bundle)
     }
 
     private fun navigateToResetPassword() {
