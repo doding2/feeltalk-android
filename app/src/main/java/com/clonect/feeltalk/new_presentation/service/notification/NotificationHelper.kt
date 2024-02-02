@@ -30,6 +30,7 @@ import com.clonect.feeltalk.new_domain.usecase.signal.GetPartnerSignalFlowUseCas
 import com.clonect.feeltalk.new_domain.usecase.signal.GetPartnerSignalUseCase
 import com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.bubble.BubbleActivity
 import com.clonect.feeltalk.new_presentation.ui.util.toBytesInt
+import com.google.android.material.internal.ManufacturerUtils
 import com.navercorp.nid.NaverIdLoginSDK.applicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -235,7 +236,7 @@ class NotificationHelper(
 
         val notification = NotificationCompat.Builder(applicationContext, CHANNEL_ID_CHAT)
             .setDefaults(Notification.DEFAULT_ALL)
-            .setSmallIcon(R.drawable.n_ic_notification)
+            .setSmallIcon(R.mipmap.ic_launcher_round)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setColor(applicationContext.getColor(R.color.main_500))
             .setCategory(NotificationCompat.CATEGORY_MESSAGE)

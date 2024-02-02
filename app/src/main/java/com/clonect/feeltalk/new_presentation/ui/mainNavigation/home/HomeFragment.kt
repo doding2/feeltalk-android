@@ -49,7 +49,6 @@ class HomeFragment : Fragment() {
     private val viewModel: HomeViewModel by viewModels()
     private val navViewModel: MainNavigationViewModel by activityViewModels()
     private var viewModelJob: Job? = null
-    @Inject lateinit var notificationHelper: NotificationHelper
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -81,9 +80,6 @@ class HomeFragment : Fragment() {
             mcvAnswer.setOnClickListener { clickAnswerButton() }
             acvMySignal.setOnClickListener {
                 showSignalBottomSheet()
-            }
-            acvPartnerSignal.setOnClickListener {
-//                notificationHelper.showChatNotification("test")
             }
         }
     }
