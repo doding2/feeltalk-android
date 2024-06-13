@@ -85,6 +85,9 @@
         <action
             android:id="@+id/action_signUpNavigationFragment_to_agreementPrivacyDetailFragment"
             app:destination="@id/agreementPrivacyDetailFragment" />
+        <action
+            android:id="@+id/action_signUpNavigationFragment_to_privacyPolicyDetailFragment"
+            app:destination="@id/privacyPolicyDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/mainNavigationFragment"

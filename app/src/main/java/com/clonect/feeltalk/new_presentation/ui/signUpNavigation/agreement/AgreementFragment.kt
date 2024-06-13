@@ -14,6 +14,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.clonect.feeltalk.R
 import com.clonect.feeltalk.databinding.FragmentAgreementBinding
 import com.clonect.feeltalk.new_presentation.ui.signUpNavigation.SignUpNavigationViewModel
@@ -56,12 +57,21 @@ class AgreementFragment : Fragment() {
             llAgreement3.setOnClickListener { toggleAgreeSensitive() }
             llAgreement4.setOnClickListener { toggleAgreeMarketing() }
             mcvNext.setOnClickListener { navigateToNickname() }
+
+            ivAgreementMore.setOnClickListener { navigateToPrivacyPolicyDetail() }
         }
     }
 
 //    private fun certifyAdult() {
 //        viewModel.certifyAdult()
 //    }
+
+    private fun navigateToPrivacyPolicyDetail() {
+        requireParentFragment()
+            .requireParentFragment()
+            .findNavController()
+            .navigate(R.id.action_signUpNavigationFragment_to_privacyPolicyDetailFragment)
+    }
 
     private fun navigateToNickname() {
         viewModel.setAgreementProcessed(true)

@@ -39,22 +39,28 @@
             app:layout_constraintBottom_toBottomOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ScrollView
+    <WebView
+        android:id="@+id/wv_privacy_policy_detail"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_height="match_parent"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginHorizontal="20dp"
-            android:text="@string/privacy_policy_detail_dummy"
-            android:textSize="16sp"
-            android:textColor="@color/gray_600"
-            android:fontFamily="@font/pretendard_regular"
-            android:includeFontPadding="false"
-            android:lineSpacingExtra="5dp"
-            android:letterSpacing="-0.01" />
-    </ScrollView>
+<!--    <ScrollView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:fillViewport="true">-->
+
+
+<!--        <TextView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="16dp"-->
+<!--            android:layout_marginHorizontal="20dp"-->
+<!--            android:text="@string/privacy_policy_detail_dummy"-->
+<!--            android:textSize="16sp"-->
+<!--            android:textColor="@color/gray_600"-->
+<!--            android:fontFamily="@font/pretendard_regular"-->
+<!--            android:includeFontPadding="false"-->
+<!--            android:lineSpacingExtra="5dp"-->
+<!--            android:letterSpacing="-0.01" />-->
+<!--    </ScrollView>-->
 </LinearLayout>

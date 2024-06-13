@@ -67,6 +67,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/ll_service_agreement"
         android:layout_width="match_parent"
         android:layout_height="56dp"

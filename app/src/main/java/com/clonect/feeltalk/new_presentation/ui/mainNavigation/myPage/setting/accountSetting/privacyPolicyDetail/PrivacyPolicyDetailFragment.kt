@@ -1,11 +1,16 @@
 package com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.accountSetting.privacyPolicyDetail
 
+import android.app.Dialog
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -13,9 +18,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.clonect.feeltalk.common.Constants
 import com.clonect.feeltalk.databinding.FragmentPrivacyPolicyDetailBinding
 import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
+import com.clonect.feeltalk.new_presentation.ui.util.makeLoadingDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -40,6 +47,7 @@ class PrivacyPolicyDetailFragment : Fragment() {
             binding.root.setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight())
         }
 //        loadingDialog = makeLoadingDialog()
+        initWebView()
         viewModel.navigatePage()
         return binding.root
     }
@@ -52,6 +60,15 @@ class PrivacyPolicyDetailFragment : Fragment() {
         binding.run {
             ivExit.setOnClickListener { onBackCallback.handleOnBackPressed() }
         }
+    }
+
+    private fun initWebView() = binding.wvPrivacyPolicyDetail.run {
+        settings.javaScriptEnabled = true
+        settings.domStorageEnabled = true
+        settings.allowFileAccess = true
+        settings.useWideViewPort = true
+
+        loadUrl(Constants.PRIVACY_POLICY_URL)
     }
 
     private fun showLoading(isLoading: Boolean) {

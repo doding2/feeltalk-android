@@ -3,6 +3,7 @@ package com.clonect.feeltalk.common
 class Constants {
     companion object {
         const val CLONECT_BASE_URL = "https://clonect.net/"
+        const val PRIVACY_POLICY_URL = "https://feeltalk.notion.site/_-515cd387c592497e880dcf03c27f0627#d4862ac3bfbd4e21b51691dbf289729d"
 
         const val APPLE_AUTH_BASE_URL = "https://appleid.apple.com/auth/authorize"
         const val APPLE_AUTH_CLIENT_ID = "clonect.com.feeltalk"
