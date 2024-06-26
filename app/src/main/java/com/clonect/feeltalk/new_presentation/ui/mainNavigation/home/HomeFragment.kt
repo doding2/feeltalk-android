@@ -127,7 +127,7 @@ class HomeFragment : Fragment() {
 
 
     private fun changeTodayQuestionView(todayQuestion: Question?) = binding.run {
-        val index = (todayQuestion?.index ?: 0).toString()
+        val index = (todayQuestion?.index ?: 0).plus(1).toString()
         val title = index + getString(R.string.home_main_title_deco)
         val countFont = ResourcesCompat.getFont(requireContext(), R.font.pretendard_bold)
         val decoFont = ResourcesCompat.getFont(requireContext(), R.font.pretendard_regular)

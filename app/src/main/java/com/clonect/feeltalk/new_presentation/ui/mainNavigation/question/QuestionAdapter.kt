@@ -81,7 +81,7 @@ class QuestionAdapter: PagingDataAdapter<Question, QuestionAdapter.QuestionViewH
     ): QuestionViewHolder(binding.root) {
 
         override fun bind(item: Question) = binding.run {
-            tvIndex.text = item.index.toString()
+            tvIndex.text = item.index.plus(1).toString()
             tvTodayQuestionHeader.text = item.header
             tvTodayQuestionBody.text = item.body
 
@@ -107,7 +107,7 @@ class QuestionAdapter: PagingDataAdapter<Question, QuestionAdapter.QuestionViewH
         override fun bind(item: Question) = binding.run {
             root.setOnClickListener { onItemClick(item, TYPE_NORMAL_QUESTION) }
 
-            tvIndex.text = item.index.toString()
+            tvIndex.text = item.index.plus(1).toString()
             tvQuestionBody.text = item.body
 
 //            val isUserAnswered = item.myAnswer != null
