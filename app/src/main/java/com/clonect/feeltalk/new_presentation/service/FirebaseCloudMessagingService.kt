@@ -373,7 +373,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         }
 
         notificationHelper.showChatNotification(
-            message = "질문 채팅"
+            message = "(질문 채팅)"
         )
     }
 
@@ -408,7 +408,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         }
 
         notificationHelper.showChatNotification(
-            message = "답변 채팅"
+            message = "(답변 채팅)"
         )
     }
 
@@ -435,7 +435,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         }
 
         notificationHelper.showChatNotification(
-            message = "콕찌르기 채팅"
+            message = "(콕찌르기 채팅)"
         )
     }
 
@@ -540,7 +540,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         }
 
         notificationHelper.showChatNotification(
-            message = "챌린지 추가 채팅"
+            message = "(챌린지 추가 채팅)"
         )
     }
 
@@ -621,7 +621,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         }
 
         notificationHelper.showChatNotification(
-            message = "챌린지 완료 채팅"
+            message = "(챌린지 완료 채팅)"
         )
     }
 
@@ -646,7 +646,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
         }
 
         notificationHelper.showChatNotification(
-            message = "잠금 해제 요청 채팅"
+            message = "(잠금 해제 요청 채팅)"
         )
     }
 
