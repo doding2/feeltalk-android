@@ -348,8 +348,8 @@ class ChatViewModel @Inject constructor(
                 _textChat.value = ""
             }
             if (message.isEmpty()) return@launch
-            if (message.length >= 1000) {
-                sendErrorMessage("채팅은 최대 1000글자까지만 보낼 수 있습니다.")
+            if (message.length >= 10000) {
+                sendErrorMessage("채팅은 최대 10000글자까지 보낼 수 있습니다.")
                 return@launch
             }
             onStart()
