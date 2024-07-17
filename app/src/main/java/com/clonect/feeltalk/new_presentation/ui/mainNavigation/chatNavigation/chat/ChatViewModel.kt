@@ -348,10 +348,6 @@ class ChatViewModel @Inject constructor(
                 _textChat.value = ""
             }
             if (message.isEmpty()) return@launch
-            if (message.length >= 10000) {
-                sendErrorMessage("채팅은 최대 10000글자까지 보낼 수 있습니다.")
-                return@launch
-            }
             onStart()
 
             val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
