@@ -401,20 +401,33 @@ class ChatViewModel @Inject constructor(
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         val now = Date()
 
-        val loadingQuestionChat = QuestionChat(
-            index = now.time,
-            pageNo = 0,
-            chatSender = "me",
-            isRead = true,
-            createAt = format.format(now),
-            sendState = Chat.ChatSendState.Sending,
-            question = question
-        )
-        insertLoadingChat(loadingQuestionChat)
+        val isLoadingQuestionChat = question.run { partnerAnswer != null && myAnswer != null }
+        val loadingChat = if (isLoadingQuestionChat) {
+            QuestionChat(
+                index = now.time,
+                pageNo = 0,
+                chatSender = "me",
+                isRead = true,
+                createAt = format.format(now),
+                sendState = Chat.ChatSendState.Sending,
+                question = question
+            )
+        } else {
+            AnswerChat(
+                index = now.time,
+                pageNo = 0,
+                chatSender = "me",
+                isRead = true,
+                createAt = format.format(now),
+                sendState = Chat.ChatSendState.Sending,
+                question = question
+            )
+        }
+        insertLoadingChat(loadingChat)
 
         when (val result = shareQuestionUseCase(question.index)) {
             is Resource.Success -> {
-                removeLoadingChat(loadingQuestionChat)
+                removeLoadingChat(loadingChat)
 
                 val isQuestionChat = result.data.coupleQuestion.run { partnerAnswer != null && selfAnswer != null }
                 if (isQuestionChat) {
@@ -455,7 +468,17 @@ class ChatViewModel @Inject constructor(
 
             is Resource.Error -> {
                 infoLog("Fail to send question chat: ${result.throwable.stackTrace.joinToString("\n")}")
-                editLoadingChat(loadingQuestionChat.copy(sendState = Chat.ChatSendState.Failed))
+                when (loadingChat) {
+                    is QuestionChat -> {
+                        editLoadingChat(loadingChat.copy(sendState = Chat.ChatSendState.Failed))
+                    }
+                    is AnswerChat -> {
+                        editLoadingChat(loadingChat.copy(sendState = Chat.ChatSendState.Failed))
+                    }
+                    else -> {
+                        removeLoadingChat(loadingChat)
+                    }
+                }
             }
         }
     }
