@@ -212,7 +212,7 @@ class ChatViewModel @Inject constructor(
             insertCompleteChat(
                 chat
                     .takeIf { chat.chatSender == "me" }
-                    ?.apply { isRead = isPartnerInChat.value == true }
+                    ?.apply { isRead = (isPartnerInChat.value == true || isRead) }
                     ?: chat
             )
             infoLog("new chat: $chat")
