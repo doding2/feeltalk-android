@@ -110,21 +110,48 @@ class ChatPagingSource(
             val width = bitmap.width
             val height = bitmap.height
 
-            val maxWidth = context.dpToPx(252f).toFloat()
-            val maxHeight = context.dpToPx(300f).toFloat()
-            var mWidth = width.takeIf { it > 0 } ?: maxWidth.toInt()
-            var mHeight = height.takeIf { it > 0 } ?: maxHeight.toInt()
-
-            val heightScale = if (mHeight > maxHeight) maxHeight / mHeight else mHeight / maxHeight
-            mWidth = (mWidth * heightScale).toInt()
-            mHeight = (mHeight * heightScale).toInt()
-
-            val widthScale = if (mWidth > maxWidth) maxWidth / mWidth else mWidth / maxWidth
-            mWidth = (mWidth * widthScale).toInt()
-            mHeight = (mHeight * widthScale).toInt()
+            val mWidth = calculateWidth(context, width, height)
+            val mHeight = calculateHeight(context, width, height)
 
             return Triple(local, mWidth, mHeight)
         }
         return chatRemoteDataSource.preloadImage(index, url)
+    }
+
+    private fun calculateWidth(context: Context, width: Int, height: Int): Int {
+        // resize by ratio and scale
+        val maxWidth = context.dpToPx(252f).toFloat()
+        val maxHeight = context.dpToPx(300f).toFloat()
+
+        val mWidth = width.toFloat().takeIf { it > 0 } ?: return maxWidth.toInt()
+        val mHeight = height.toFloat().takeIf { it > 0 } ?: return maxWidth.toInt()
+
+        val maxRatio = maxWidth / maxHeight
+        val imageRatio = mWidth / mHeight
+
+        return if (imageRatio > maxRatio) {
+            maxWidth
+        } else {
+            mWidth * (maxHeight / mHeight)
+        }.toInt()
+    }
+
+
+    private fun calculateHeight(context: Context, width: Int, height: Int): Int {
+        // resize by ratio and scale
+        val maxWidth = context.dpToPx(252f).toFloat()
+        val maxHeight = context.dpToPx(300f).toFloat()
+
+        val mWidth = width.toFloat().takeIf { it > 0 } ?: return maxHeight.toInt()
+        val mHeight = height.toFloat().takeIf { it > 0 } ?: return maxHeight.toInt()
+
+        val maxRatio = maxWidth / maxHeight
+        val imageRatio = mWidth / mHeight
+
+        return if (imageRatio > maxRatio) {
+            mHeight * (maxWidth / mWidth)
+        } else {
+            maxHeight
+        }.toInt()
     }
 }
