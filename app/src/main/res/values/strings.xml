@@ -627,7 +627,7 @@
     <string name="image_share_big_image_message">이미지의 크기가 너무 커요.</string>
 
     <!--  ImageDetail  -->
-    <string name="image_detail_date_format">yyyy년 M월 d일 h:m</string>
+    <string name="image_detail_date_format">yyyy년 MM월 dd일 HH:mm</string>
     <string name="image_detail_download_succeed">이미지를 다운했습니다.</string>
 
 
