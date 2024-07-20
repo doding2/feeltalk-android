@@ -347,7 +347,31 @@ class MainNavigationViewModel @Inject constructor(
                     "(보이스 채팅)"
                 }
                 ChatType.QuestionChatting -> {
-                    "(질문 공유 채팅)"
+                    "(질문 채팅)"
+                }
+                ChatType.AnswerChatting -> {
+                    "(답변 채팅)"
+                }
+                ChatType.ImageChatting -> {
+                    "(이미지 채팅)"
+                }
+                ChatType.SignalChatting -> {
+                    "(시그널 채팅)"
+                }
+                ChatType.ChallengeChatting -> {
+                    "(챌린지 채팅)"
+                }
+                ChatType.AddChallengeChatting -> {
+                    "(챌린지 추가 채팅)"
+                }
+                ChatType.CompleteChallengeChatting -> {
+                    "(챌린지 완료 채팅)"
+                }
+                ChatType.PokeChatting -> {
+                    "(콕찌르기 채팅)"
+                }
+                ChatType.ResetPartnerPasswordChatting -> {
+                    "(잠금 해제 요청 채팅)"
                 }
                 else -> "(${it.type.raw} 채팅)"
             }
