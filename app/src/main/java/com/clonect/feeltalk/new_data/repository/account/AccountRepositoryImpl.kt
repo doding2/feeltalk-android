@@ -71,7 +71,7 @@ class AccountRepositoryImpl(
                 accessExpiresAt = now.plusHoursBy(1),
                 refreshExpiresAt = formatter.parse(result.expiredTime)
                     ?: throw IllegalStateException("Token expired time is invalid"),
-                snsType = SocialType.AppleAndroid
+                snsType = SocialType.Apple
             )
             Resource.Success(tokenInfo)
         } catch (e: CancellationException) {

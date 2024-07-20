@@ -1038,6 +1038,8 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 }
                 ivPause.setOnClickListener { pause() }
 
+                setPartnerInfo(partnerNickname, partnerSignal)
+
                 CoroutineScope(Dispatchers.IO).launch {
                     vvCount = 5
                     while (vvCount > 0) {
@@ -1096,6 +1098,18 @@ class ChatAdapter: PagingDataAdapter<Chat, ChatAdapter.ChatViewHolder>(diffCallb
                 audioDuration = 0
                 replayTime = 0
             }
+        }
+
+        override fun setPartnerInfo(nickname: String?, signal: Signal) = binding.run {
+            tvPartnerNickname.text = partnerNickname
+            val signalRes = when (partnerSignal) {
+                Signal.One -> R.drawable.n_image_signal_100
+                Signal.ThreeFourth -> R.drawable.n_image_signal_75
+                Signal.Half -> R.drawable.n_image_signal_50
+                Signal.Quarter -> R.drawable.n_image_signal_25
+                Signal.Zero -> R.drawable.n_image_signal_0
+            }
+            ivPartnerProfile.setImageResource(signalRes)
         }
 
         private suspend fun getVoiceFileSize(chat: VoiceChat): Int = withContext(Dispatchers.IO) {

@@ -31,7 +31,6 @@ import com.clonect.feeltalk.new_presentation.ui.util.getNavigationBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.getStatusBarHeight
 import com.clonect.feeltalk.new_presentation.ui.util.makeLoadingDialog
 import com.clonect.feeltalk.new_presentation.ui.util.setLightStatusBars
-import com.clonect.feeltalk.new_presentation.ui.util.setStatusBarColor
 import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.material.snackbar.Snackbar
@@ -164,7 +163,7 @@ class SignUpFragment : Fragment() {
         try {
             val state = AppleAuthHelper.signIn(requireContext(), lifecycle)
             val socialToken = SocialToken(
-                type = SocialType.AppleAndroid,
+                type = SocialType.Apple,
                 state = state
             )
 

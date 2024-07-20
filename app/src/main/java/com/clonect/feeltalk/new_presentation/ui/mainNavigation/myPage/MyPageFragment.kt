@@ -107,7 +107,7 @@ class MyPageFragment : Fragment() {
             SocialType.Google -> R.drawable.n_ic_setting_sns_google
             SocialType.Kakao -> R.drawable.n_ic_setting_sns_kakao
             SocialType.Naver -> R.drawable.n_ic_setting_sns_naver
-            SocialType.AppleIOS, SocialType.AppleAndroid -> R.drawable.n_ic_setting_sns_apple
+            SocialType.Apple, SocialType.Apple -> R.drawable.n_ic_setting_sns_apple
             else -> {
                 ivSnsType.setImageDrawable(null)
                 return@run

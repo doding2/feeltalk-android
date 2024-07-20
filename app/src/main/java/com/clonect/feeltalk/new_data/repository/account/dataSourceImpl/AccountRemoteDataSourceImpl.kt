@@ -21,9 +21,7 @@ import com.clonect.feeltalk.new_domain.model.account.ValidateLockAnswerDto
 import com.clonect.feeltalk.new_domain.model.account.ValidatePasswordDto
 import com.clonect.feeltalk.new_domain.model.newAccount.GetUserStatusNewResponse
 import com.clonect.feeltalk.new_domain.model.newAccount.LogInNewResponse
-import com.clonect.feeltalk.new_domain.model.newAccount.SignUpNewResponse
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
-import com.clonect.feeltalk.presentation.utils.infoLog
 import com.google.gson.JsonObject
 
 class AccountRemoteDataSourceImpl(
@@ -145,7 +143,7 @@ class AccountRemoteDataSourceImpl(
                     addProperty("idToken", socialToken.idToken)
                     addProperty("authCode", socialToken.serverAuthCode)
                 }
-                SocialType.AppleAndroid, SocialType.AppleIOS -> {
+                SocialType.Apple, SocialType.Apple -> {
                     addProperty("state", socialToken.state)
                 }
             }
@@ -178,7 +176,7 @@ class AccountRemoteDataSourceImpl(
                     addProperty("idToken", socialToken.idToken)
                     addProperty("authCode", socialToken.serverAuthCode)
                 }
-                SocialType.AppleAndroid, SocialType.AppleIOS -> {
+                SocialType.Apple, SocialType.Apple -> {
                     addProperty("state", socialToken.state)
                 }
             }

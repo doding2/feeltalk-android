@@ -7,11 +7,9 @@ import com.clonect.feeltalk.R
 import com.clonect.feeltalk.common.Resource
 import com.clonect.feeltalk.common.onError
 import com.clonect.feeltalk.common.onSuccess
-import com.clonect.feeltalk.domain.usecase.mixpanel.GetMixpanelAPIUseCase
 import com.clonect.feeltalk.new_domain.model.account.SocialType
 import com.clonect.feeltalk.new_domain.model.token.SocialToken
 import com.clonect.feeltalk.new_domain.usecase.account.CheckAccountLockedUseCase
-import com.clonect.feeltalk.new_domain.usecase.account.GetMyInfoUseCase
 import com.clonect.feeltalk.new_domain.usecase.account.ReLogInUseCase
 import com.clonect.feeltalk.new_domain.usecase.newAccount.GetUserStatusNewUseCase
 import com.clonect.feeltalk.new_domain.usecase.newAccount.LogInAppleUseCase
@@ -71,7 +69,7 @@ class SignUpViewModel @Inject constructor(
     suspend fun logInNew(socialToken: SocialToken) = viewModelScope.launch {
         setLoading(true)
 
-        val isAppleAuth = socialToken.type == SocialType.AppleAndroid && socialToken.state != null
+        val isAppleAuth = socialToken.type == SocialType.Apple && socialToken.state != null
         val logInResult = if (isAppleAuth) {
             logInAppleUseCase(
                 state = socialToken.state!!
