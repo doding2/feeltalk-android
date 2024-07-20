@@ -16,6 +16,7 @@ import com.clonect.feeltalk.new_domain.model.challenge.Challenge
 import com.clonect.feeltalk.new_domain.model.challenge.CoupleChallengeDto
 import com.clonect.feeltalk.new_domain.model.chat.AddChallengeChat
 import com.clonect.feeltalk.new_domain.model.chat.AnswerChat
+import com.clonect.feeltalk.new_domain.model.chat.ChallengeChat
 import com.clonect.feeltalk.new_domain.model.chat.CompleteChallengeChat
 import com.clonect.feeltalk.new_domain.model.chat.ImageChat
 import com.clonect.feeltalk.new_domain.model.chat.PokeChat
@@ -43,6 +44,7 @@ import com.clonect.feeltalk.new_presentation.service.notification.NotificationHe
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_ADD_CHALLENGE_CHATTING
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_ANSWER_CHATTING
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_ANSWER_QUESTION
+import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_CHALLENGE_CHATTING
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_CHAT_ROOM_STATE
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_COMPLETE_CHALLENGE_CHATTING
 import com.clonect.feeltalk.new_presentation.service.notification.NotificationHelper.Companion.TYPE_CREATE_COUPLE
@@ -185,6 +187,7 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
                 TYPE_SIGNAL_CHATTING -> handleSignalChatData(data)
                 TYPE_QUESTION_CHATTING -> handleQuestionChatData(data)
                 TYPE_ANSWER_CHATTING -> handleAnswerChatData(data)
+                TYPE_CHALLENGE_CHATTING -> handleChallengeChatData(data)
                 TYPE_ADD_CHALLENGE_CHATTING -> handleAddChallengeChatData(data)
                 TYPE_COMPLETE_CHALLENGE_CHATTING -> handleCompleteChallengeData(data)
                 TYPE_RESET_PARTNER_PASSWORD_CHATTING -> handleResetPartnerPasswordChatData(data)
@@ -499,6 +502,42 @@ class FirebaseCloudMessagingService: FirebaseMessagingService() {
             channelID = NotificationHelper.CHANNEL_ID_ANSWER_QUESTION,
             notificationID = System.currentTimeMillis().toInt(),
             pendingIntent = deepLinkPendingIntent
+        )
+    }
+    private fun handleChallengeChatData(data: Map<String, String>) = CoroutineScope(Dispatchers.IO).launch {
+        val index = data["index"]?.toLong() ?: return@launch
+        val isRead = data["isRead"]?.toBoolean() ?: return@launch
+        val createAt = data["createAt"] ?: return@launch
+        val coupleChallengeJson = data["coupleChallenge"] ?: return@launch
+        val coupleChallenge = Gson().fromJson(coupleChallengeJson, CoupleChallengeDto::class.java)
+
+        val challengeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val challenge = Challenge(
+            index = coupleChallenge.index,
+            title = coupleChallenge.challengeTitle,
+            body = coupleChallenge.challengeBody,
+            deadline = challengeFormat.parse(coupleChallenge.deadline) ?: Date(),
+            owner = coupleChallenge.creator,
+            isCompleted = false,
+            isNew = true
+        )
+        addNewChatCacheUseCase(
+            ChallengeChat(
+                index = index,
+                pageNo = 0,
+                chatSender = "partner",
+                isRead = isRead,
+                createAt = createAt,
+                challenge = challenge
+            )
+        )
+
+        if (FeeltalkApp.getAppScreenActive() && FeeltalkApp.getUserInChat()) {
+            return@launch
+        }
+
+        notificationHelper.showChatNotification(
+            message = "(챌린지 채팅)"
         )
     }
 

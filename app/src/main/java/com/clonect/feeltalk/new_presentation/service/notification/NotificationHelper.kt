@@ -55,6 +55,7 @@ class NotificationHelper(
         const val TYPE_SIGNAL_CHATTING = "signalChatting"
         const val TYPE_QUESTION_CHATTING = "questionChatting"
         const val TYPE_ANSWER_CHATTING = "answerChatting"
+        const val TYPE_CHALLENGE_CHATTING = "challengeChatting"
         const val TYPE_ADD_CHALLENGE_CHATTING = "addChallengeChatting"
         const val TYPE_COMPLETE_CHALLENGE_CHATTING = "completeChallengeChatting"
         const val TYPE_PRESS_FOR_ANSWER_CHATTING = "pressForAnswerChatting"
