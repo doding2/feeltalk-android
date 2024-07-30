@@ -81,7 +81,7 @@ class BreakUpCoupleViewModel @Inject constructor(
         setLoading(true)
         when (val result = breakUpCoupleUseCase()) {
             is Resource.Success -> {
-                FirebaseCloudMessagingService.clearFcmToken()
+//                FirebaseCloudMessagingService.clearFcmToken()
                 onComplete()
             }
             is Resource.Error -> {
