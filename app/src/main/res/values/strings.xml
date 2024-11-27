@@ -255,7 +255,7 @@
 
 
     <!--  Challenge  -->
-    <string name="challenge_title">섹스챌린지</string>
+    <string name="challenge_title">챌린지</string>
     <string name="challenge_count_sub_title">너랑 하고싶은</string>
     <string name="challenge_count_title_deco">개의 챌린지</string>
     <string name="challenge_tab_ongoing">진행중</string>
