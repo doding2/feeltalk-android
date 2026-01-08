@@ -57,7 +57,7 @@
 | **Networking** | ![Retrofit](https://img.shields.io/badge/Retrofit-FF7043?style=for-the-badge), ![OkHttp](https://img.shields.io/badge/OkHttp-3E2723?style=for-the-badge), ![REST API](https://img.shields.io/badge/REST%20API-6DB33F?style=for-the-badge) |
 | **Local Data** | ![Room](https://img.shields.io/badge/Room-4285F4?style=for-the-badge), ![SQLCipher](https://img.shields.io/badge/SQLCipher-607D8B?style=for-the-badge) |
 | **Jetpack** | ![ViewModel](https://img.shields.io/badge/ViewModel-795548?style=for-the-badge), ![Navigation](https://img.shields.io/badge/Navigation-673AB7?style=for-the-badge), ![Paging3](https://img.shields.io/badge/Paging3-009688?style=for-the-badge) |
-| **Auth** | ![Google](https://img.shields.io/badge/Google-4285F4?style=for-the-badge&logo=google&logoColor=white), ![Naver](https://img.shields.io/badge/Naver-03C75A?style=for-the-badge), ![Kakao](https://img.shields.io/badge/Kakao-FFEB00?style=for-the-badge), ![Apple](https://img.shields.io/badge/Apple-000000?style=for-the-badge&logo=apple&logoColor=white) |
+| **Auth** | ![Google](https://img.shields.io/badge/Google-4285F4?style=for-the-badge&logo=google&logoColor=white), ![Apple](https://img.shields.io/badge/Apple-000000?style=for-the-badge&logo=apple&logoColor=white), ![Naver](https://img.shields.io/badge/Naver-03C75A?style=for-the-badge), ![Kakao](https://img.shields.io/badge/Kakao-FFEB00?style=for-the-badge) |
 | **Analytics** | ![Mixpanel](https://img.shields.io/badge/Mixpanel-7B1FA2?style=for-the-badge) |
 | **Push** | ![FCM](https://img.shields.io/badge/FCM-F57C00?style=for-the-badge&logo=firebase&logoColor=white) |
 
