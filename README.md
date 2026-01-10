@@ -46,6 +46,30 @@
 
 <br>
 
+## 🧱 Architecture & Design
+
+![Architecture Diagram](image/FeelTalk_architecture_diagram.png)
+
+### MVVM Architecture
+
+필로우톡 프로젝트의 규모가 커져감에 따라 
+프로젝트 설계 단계에서 복잡한 비동기 서버 통신과 UI 상태 관리가 어려울 것이라고 예상되어 
+이를 안정적으로 처리하기 위해 MVVM Architecture를 적용했습니다.
+
+### Clean Architecture
+
+Presentation / Domain / Data 레이어를 분리하여
+비즈니스 로직과 UI 로직의 책임을 명확히 하고,
+데이터 흐름이 단방향으로 유지되도록 설계했습니다.
+
+### Use Case Pattern
+
+여러 Repository와 인증 토큰들(JWT)을 함께 다뤄야 하는 구조에서
+UseCase를 중심으로 흐름을 정리함으로써,
+UI에서는 상태 변화에만 집중할 수 있도록 만들었습니다.
+
+<br>
+
 ## 🛠️ Tech Stack
 | **Category** | **Tech Stack** |
 | --- | --- |
