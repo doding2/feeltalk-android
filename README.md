@@ -85,3 +85,9 @@ UI에서는 상태 변화에만 집중할 수 있도록 만들었습니다.
 | **Analytics** | ![Mixpanel](https://img.shields.io/badge/Mixpanel-7B1FA2?style=for-the-badge) |
 | **Push** | ![FCM](https://img.shields.io/badge/FCM-F57C00?style=for-the-badge&logo=firebase&logoColor=white) |
 
+<br>
+
+## 🔗 Links
+
+- **Notion**  
+  https://feeltalk.notion.site/PILLOW-TALK-338b1e6005284e34b982425f2fb9fbb5
