@@ -1,6 +1,11 @@
 # 필로우톡(feeltalk)
 ![FeelTalk_ProfileImage](./image/FeelTalk_Profile.png)
 
+## ⚠️ Project Status
+현재 백엔드 서버가 종료되어 실제 네트워크 기능은 실행할 수 없습니다.
+플레이스토어 배포도 종료된 상태입니다.
+본 리포지토리는 아키텍처 설계와 구현 방식을 확인할 수 있도록 코드를 공개합니다.
+
 ## 👋 Introduce
 💞 “자기는 이런게 좋아?”, “저런게 좋아?” 여러분은 연인과 이런 대화를 자주 나누시나요?   
 가장 가까운 사이이지만, 깊은 대화를 나누기 어려워하는 연인들이 많다고 합니다.   
@@ -48,7 +53,7 @@
 
 ## 🧱 Architecture & Design
 
-![Architecture Diagram](image/FeelTalk_architecture_diagram.png)
+![Architecture Diagram](image/FeelTalk_Architecture_Diagram.png)
 
 ### MVVM Architecture
 
