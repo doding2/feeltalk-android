@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context=".new_presentation.ui.animatedSignUpNavigation.authAgreement.AuthAgreementBottomSheetFragment">
+    tools:context=".release_presentation.ui.animatedSignUpNavigation.authAgreement.AuthAgreementBottomSheetFragment">
 
     <include layout="@layout/image_view_bottom_sheet_handle" />
 

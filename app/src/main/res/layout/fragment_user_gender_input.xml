@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".presentation.ui.input.UserGenderInputFragment">
+    tools:context=".mvp_presentation.ui.input.UserGenderInputFragment">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -1,0 +1,15 @@
+package com.clonect.feeltalk.release_domain.model.token
+
+import com.clonect.feeltalk.release_domain.model.account.SocialType
+
+data class SocialToken(
+    val type: SocialType,
+    val oauthId: String? = null,
+    val email: String? = null,
+    val name: String? = null,
+    val accessToken: String? = null,
+    val refreshToken: String? = null,
+    val idToken: String? = null,
+    val serverAuthCode: String? = null,
+    val state: String? = null
+)

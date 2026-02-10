@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray_100"
-    tools:context=".new_presentation.ui.mainNavigation.question.QuestionFragment">
+    tools:context=".release_presentation.ui.mainNavigation.question.QuestionFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_question"

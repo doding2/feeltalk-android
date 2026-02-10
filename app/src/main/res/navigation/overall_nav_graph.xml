@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.signUp.SignUpFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.signUp.SignUpFragment"
         android:label="fragment_sign_up"
         tools:layout="@layout/fragment_sign_up" >
         <action
@@ -38,7 +38,7 @@
     </fragment>
     <fragment
         android:id="@+id/bottomNavigationFragment"
-        android:name="com.clonect.feeltalk.presentation.ui.bottom_navigation.BottomNavigationFragment"
+        android:name="com.clonect.feeltalk.mvp_presentation.ui.bottom_navigation.BottomNavigationFragment"
         android:label="fragment_bottom_navigation"
         tools:layout="@layout/fragment_bottom_navigation" >
         <action
@@ -95,18 +95,18 @@
     </fragment>
     <fragment
         android:id="@+id/todayQuestionFragment"
-        android:name="com.clonect.feeltalk.presentation.ui.today_question.TodayQuestionFragment"
+        android:name="com.clonect.feeltalk.mvp_presentation.ui.today_question.TodayQuestionFragment"
         android:label="fragment_today_question"
         tools:layout="@layout/fragment_today_question" >
     </fragment>
     <fragment
         android:id="@+id/newsFragment"
-        android:name="com.clonect.feeltalk.presentation.ui.news.NewsFragment"
+        android:name="com.clonect.feeltalk.mvp_presentation.ui.news.NewsFragment"
         android:label="fragment_news"
         tools:layout="@layout/fragment_news" />
     <fragment
         android:id="@+id/coupleSettingFragment"
-        android:name="com.clonect.feeltalk.presentation.ui.couple_setting.CoupleSettingFragment"
+        android:name="com.clonect.feeltalk.mvp_presentation.ui.couple_setting.CoupleSettingFragment"
         android:label="fragment_couple_setting"
         tools:layout="@layout/fragment_couple_setting" >
         <action
@@ -121,7 +121,7 @@
     </fragment>
     <fragment
         android:id="@+id/coupleRegistrationFragment"
-        android:name="com.clonect.feeltalk.presentation.ui.couple_registration.CoupleRegistrationFragment"
+        android:name="com.clonect.feeltalk.mvp_presentation.ui.couple_registration.CoupleRegistrationFragment"
         android:label="fragment_couple_registration"
         tools:layout="@layout/fragment_couple_registration" >
         <action
@@ -134,7 +134,7 @@
     </fragment>
     <fragment
         android:id="@+id/userNicknameInputFragment"
-        android:name="com.clonect.feeltalk.presentation.ui.input.UserNicknameInputFragment"
+        android:name="com.clonect.feeltalk.mvp_presentation.ui.input.UserNicknameInputFragment"
         android:label="fragment_user_nickname_input"
         tools:layout="@layout/fragment_user_nickname_input" >
         <action
@@ -147,7 +147,7 @@
     </fragment>
     <fragment
         android:id="@+id/userBirthInputFragment"
-        android:name="com.clonect.feeltalk.presentation.ui.input.UserBirthInputFragment"
+        android:name="com.clonect.feeltalk.mvp_presentation.ui.input.UserBirthInputFragment"
         android:label="fragment_user_birth_input"
         tools:layout="@layout/fragment_user_birth_input" >
         <action
@@ -160,7 +160,7 @@
     </fragment>
     <fragment
         android:id="@+id/coupleAnniversaryInputFragment"
-        android:name="com.clonect.feeltalk.presentation.ui.input.CoupleAnniversaryInputFragment"
+        android:name="com.clonect.feeltalk.mvp_presentation.ui.input.CoupleAnniversaryInputFragment"
         android:label="fragment_couple_anniversary_input"
         tools:layout="@layout/fragment_couple_anniversary_input" >
         <action
@@ -173,7 +173,7 @@
     </fragment>
     <fragment
         android:id="@+id/coupleRegistrationDoneFragment"
-        android:name="com.clonect.feeltalk.presentation.ui.couple_registration_done.CoupleRegistrationDoneFragment"
+        android:name="com.clonect.feeltalk.mvp_presentation.ui.couple_registration_done.CoupleRegistrationDoneFragment"
         android:label="fragment_couple_registration_done"
         tools:layout="@layout/fragment_couple_registration_done" >
         <action
@@ -188,7 +188,7 @@
     </fragment>
     <fragment
         android:id="@+id/guideFragment"
-        android:name="com.clonect.feeltalk.presentation.ui.guide.GuideFragment"
+        android:name="com.clonect.feeltalk.mvp_presentation.ui.guide.GuideFragment"
         android:label="fragment_guide"
         tools:layout="@layout/fragment_guide" >
         <action
@@ -201,22 +201,22 @@
     </fragment>
     <fragment
         android:id="@+id/keyRestoringAcceptFragment"
-        android:name="com.clonect.feeltalk.presentation.ui.key_restoring_accept.KeyRestoringAcceptFragment"
+        android:name="com.clonect.feeltalk.mvp_presentation.ui.key_restoring_accept.KeyRestoringAcceptFragment"
         android:label="fragment_key_restoring_accept"
         tools:layout="@layout/fragment_key_restoring_accept" />
     <fragment
         android:id="@+id/keyRestoringRequestFragment"
-        android:name="com.clonect.feeltalk.presentation.ui.key_restoring_request.KeyRestoringRequestFragment"
+        android:name="com.clonect.feeltalk.mvp_presentation.ui.key_restoring_request.KeyRestoringRequestFragment"
         android:label="fragment_key_restoring_request"
         tools:layout="@layout/fragment_key_restoring_request" />
     <fragment
         android:id="@+id/privacyPolicyFragment"
-        android:name="com.clonect.feeltalk.presentation.ui.privacy_policy.PrivacyPolicyFragment"
+        android:name="com.clonect.feeltalk.mvp_presentation.ui.privacy_policy.PrivacyPolicyFragment"
         android:label="fragment_privacy_policy"
         tools:layout="@layout/fragment_privacy_policy" />
     <fragment
         android:id="@+id/userGenderInputFragment"
-        android:name="com.clonect.feeltalk.presentation.ui.input.UserGenderInputFragment"
+        android:name="com.clonect.feeltalk.mvp_presentation.ui.input.UserGenderInputFragment"
         android:label="fragment_user_gender_input"
         tools:layout="@layout/fragment_user_gender_input" >
         <action

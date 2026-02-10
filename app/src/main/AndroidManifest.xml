@@ -16,7 +16,7 @@
         android:required="false" />
 
     <application
-        android:name=".new_presentation.ui.FeeltalkApp"
+        android:name=".release_presentation.ui.FeeltalkApp"
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true"
@@ -32,7 +32,7 @@
         tools:targetApi="tiramisu">
 
         <activity
-            android:name=".new_presentation.ui.mainNavigation.chatNavigation.imageDetail.ImageDetailActivity"
+            android:name=".release_presentation.ui.mainNavigation.chatNavigation.imageDetail.ImageDetailActivity"
             android:exported="false" />
 
         <provider
@@ -46,7 +46,7 @@
         </provider>
 
         <activity
-            android:name=".new_presentation.ui.mainNavigation.chatNavigation.bubble.BubbleActivity"
+            android:name=".release_presentation.ui.mainNavigation.chatNavigation.bubble.BubbleActivity"
             android:allowEmbedded="true"
             android:label="@string/notification_bubble"
             android:resizeableActivity="true">
@@ -60,7 +60,7 @@
             android:value="true" />
 
         <activity
-            android:name=".new_presentation.ui.activity.MainActivity"
+            android:name=".release_presentation.ui.activity.MainActivity"
             android:configChanges="orientation|keyboardHidden"
             android:exported="true"
             android:screenOrientation="portrait"
@@ -87,7 +87,7 @@
         </activity>
 
         <service
-            android:name=".new_presentation.service.FirebaseCloudMessagingService"
+            android:name=".release_presentation.service.FirebaseCloudMessagingService"
             android:directBootAware="true"
             android:exported="true"
             android:permission="com.google.android.c2dm.permission.SEND">
@@ -97,8 +97,8 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".new_presentation.service.notification.NotificationReplyReceiver" />
-        <receiver android:name=".new_presentation.service.notification.NotificationReadReceiver" />
+        <receiver android:name=".release_presentation.service.notification.NotificationReplyReceiver" />
+        <receiver android:name=".release_presentation.service.notification.NotificationReadReceiver" />
     </application>
 
 </manifest>

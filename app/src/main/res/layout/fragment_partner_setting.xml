@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/gray_100"
-    tools:context=".new_presentation.ui.mainNavigation.myPage.partnerSetting.PartnerSettingFragment">
+    tools:context=".release_presentation.ui.mainNavigation.myPage.partnerSetting.PartnerSettingFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

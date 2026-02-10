@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:background="@color/gray_100"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".new_presentation.ui.mainNavigation.myPage.MyPageFragment">
+    tools:context=".release_presentation.ui.mainNavigation.myPage.MyPageFragment">
 
     <LinearLayout
         android:id="@+id/ll_action_bar"

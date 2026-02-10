@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
-    tools:context=".new_presentation.ui.mainNavigation.chatNavigation.imageShare.ImageShareFragment">
+    tools:context=".release_presentation.ui.mainNavigation.chatNavigation.imageShare.ImageShareFragment">
 
     <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
         android:id="@+id/ssiv_image"

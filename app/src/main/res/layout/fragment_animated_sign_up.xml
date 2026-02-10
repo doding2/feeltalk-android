@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".new_presentation.ui.animatedSignUpNavigation.AnimatedSignUpFragment">
+    tools:context=".release_presentation.ui.animatedSignUpNavigation.AnimatedSignUpFragment">
 
     <ImageView
         android:id="@+id/iv_exit"

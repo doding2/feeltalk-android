@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/bubbleChatFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.bubble.BubbleChatFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.chatNavigation.bubble.BubbleChatFragment"
         android:label="BubbleChatFragment"
         tools:layout="@layout/fragment_chat">
         <action
@@ -25,20 +25,20 @@
     </fragment>
     <fragment
         android:id="@+id/contentsShareFragment2"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.contentsShare.ContentsShareFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.chatNavigation.contentsShare.ContentsShareFragment"
         android:label="ContentsShareFragment"
         tools:layout="@layout/fragment_contents_share" />
     <fragment
         android:id="@+id/imageShareFragment2"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageShare.ImageShareFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.chatNavigation.imageShare.ImageShareFragment"
         android:label="fragment_image_share"
         tools:layout="@layout/fragment_image_share" />
     <fragment
         android:id="@+id/ongoingDetailFragment2"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.ongoingDetail.OngoingDetailFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.challenge.ongoingDetail.OngoingDetailFragment"
         android:label="OngoingDetailFragment" />
     <fragment
         android:id="@+id/completedDetailFragment2"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.completedDetail.CompletedDetailFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.challenge.completedDetail.CompletedDetailFragment"
         android:label="CompletedDetailFragment" />
 </navigation>

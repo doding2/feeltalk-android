@@ -1,0 +1,128 @@
+package com.clonect.feeltalk.mvp_presentation.ui.question_list
+
+import android.content.Context
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
+import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import com.clonect.feeltalk.R
+import com.clonect.feeltalk.databinding.FragmentQuestionListBinding
+import com.clonect.feeltalk.mvp_domain.model.data.question.Question2
+import com.clonect.feeltalk.mvp_presentation.ui.bottom_navigation.BottomNavigationViewModel
+import com.clonect.feeltalk.mvp_presentation.utils.infoLog
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@AndroidEntryPoint
+class QuestionListFragment : Fragment() {
+
+    private lateinit var binding: FragmentQuestionListBinding
+    private val viewModel: QuestionListViewModel by viewModels()
+    private val navViewModel: BottomNavigationViewModel by activityViewModels()
+    @Inject
+    lateinit var adapter: QuestionListAdapter
+    private lateinit var onBackCallback: OnBackPressedCallback
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
+        binding = FragmentQuestionListBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        collectQuestionList()
+        initRecyclerView()
+    }
+
+    private fun initRecyclerView() {
+        navViewModel.questionListScrollState.value?.let {
+            binding.rvQuestionList.layoutManager?.onRestoreInstanceState(it)
+            navViewModel.setQuestionListScrollState(null)
+        }
+        binding.rvQuestionList.adapter = adapter
+        adapter.setOnItemClickListener {
+            clickQuestionItem(it)
+        }
+    }
+
+
+    private fun collectQuestionList() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.question2ListState.collectLatest {
+                adapter.differ.submitList(it)
+            }
+        }
+    }
+
+    private fun clickQuestionItem(question2: Question2) {
+        infoLog("클릭한 질문: $question2")
+        if (question2.myAnswer == null || question2.myAnswer?.trim().isNullOrBlank()) {
+            navigateToTodayQuestionPage(question2)
+            return
+        }
+        navigateToChatPage(question2)
+    }
+
+    private fun navigateToTodayQuestionPage(question2: Question2) {
+        val bundle = bundleOf("selectedQuestion" to question2)
+
+        requireParentFragment()
+            .requireParentFragment()
+            .findNavController()
+            .navigate(
+                R.id.action_bottomNavigationFragment_to_todayQuestionFragment,
+                bundle
+            )
+    }
+
+    private fun navigateToChatPage(question2: Question2) {
+        val bundle = bundleOf("selectedQuestion" to question2)
+
+//        requireParentFragment()
+//            .requireParentFragment()
+//            .findNavController()
+//            .navigate(
+//                R.id.action_bottomNavigationFragment_to_chatFragment,
+//                bundle
+//            )
+    }
+
+
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        onBackCallback = object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                this@QuestionListFragment.requireActivity().finish()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, onBackCallback)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        onBackCallback.remove()
+
+        if (!::binding.isInitialized) return
+        val scrollState = binding.rvQuestionList.layoutManager?.onSaveInstanceState()
+        scrollState?.let {
+            navViewModel.setQuestionListScrollState(it)
+        }
+    }
+
+}

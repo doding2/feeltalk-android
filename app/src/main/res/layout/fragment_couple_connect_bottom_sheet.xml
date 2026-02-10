@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".new_presentation.ui.signUpNavigation.couple_connect.CoupleConnectBottomSheetFragment">
+    tools:context=".release_presentation.ui.signUpNavigation.couple_connect.CoupleConnectBottomSheetFragment">
 
     <LinearLayout
         android:id="@+id/ll_clear_focus_area"

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/fragment_background_color"
-    tools:context=".presentation.ui.setting.Setting2Fragment">
+    tools:context=".mvp_presentation.ui.setting.Setting2Fragment">
 
     <!--  App Logo and Another setting button  -->
     <androidx.constraintlayout.widget.ConstraintLayout

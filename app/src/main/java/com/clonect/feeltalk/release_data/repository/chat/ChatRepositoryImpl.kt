@@ -1,0 +1,164 @@
+package com.clonect.feeltalk.release_data.repository.chat
+
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import com.clonect.feeltalk.common.Constants
+import com.clonect.feeltalk.common.Resource
+import com.clonect.feeltalk.release_data.repository.chat.dataSource.ChatCacheDataSource
+import com.clonect.feeltalk.release_data.repository.chat.dataSource.ChatLocalDataSource
+import com.clonect.feeltalk.release_data.repository.chat.dataSource.ChatRemoteDataSource
+import com.clonect.feeltalk.release_data.repository.chat.paging.ChatPagingSource
+import com.clonect.feeltalk.release_domain.model.chat.*
+import com.clonect.feeltalk.release_domain.repository.chat.ChatRepository
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.Flow
+import java.io.File
+
+class ChatRepositoryImpl(
+    private val cacheDataSource: ChatCacheDataSource,
+    private val localDataSource: ChatLocalDataSource,
+    private val remoteDataSource: ChatRemoteDataSource,
+    private val pagingSource: ChatPagingSource,
+): ChatRepository {
+    override suspend fun addNewChatCache(chat: Chat) {
+        cacheDataSource.addNewChat(chat)
+    }
+
+    override suspend fun getNewChatFlow(): Flow<Chat> {
+        return cacheDataSource.getNewChatFlow()
+    }
+
+    override suspend fun changePartnerChatRoomStateCache(isInChat: Boolean) {
+        cacheDataSource.changePartnerChatRoomState(isInChat)
+    }
+
+    override suspend fun getPartnerChatRoomStateFlow(): Flow<Boolean> {
+        return cacheDataSource.getPartnerChatRoomStateFlow()
+    }
+
+
+    override suspend fun changeMyChatRoomState(
+        accessToken: String,
+        isInChat: Boolean,
+    ): Resource<Unit> {
+        return try {
+            val result = remoteDataSource.changeChatRoomState(accessToken, isInChat)
+            cacheDataSource.changeMyChatRoomState(isInChat)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun getMyChatRoomStateCache(): Boolean {
+        return cacheDataSource.getMyChatRoomState()
+    }
+
+
+    override suspend fun getPartnerLastChat(accessToken: String): Resource<PartnerLastChatDto> {
+        return try {
+            val result = remoteDataSource.getPartnerLastChat(accessToken)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun getLastChatPageNo(accessToken: String): Resource<LastChatPageNoDto> {
+        return try {
+            val result = remoteDataSource.getLastChatPageNo(accessToken)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun sendTextChat(
+        accessToken: String,
+        message: String
+    ): Resource<SendTextChatDto> {
+        return try {
+            val result = remoteDataSource.sendTextChat(accessToken, message)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun sendVoiceChat(
+        accessToken: String,
+        voiceFile: File,
+    ): Resource<SendVoiceChatDto> {
+        return try {
+            val result = remoteDataSource.sendVoiceChat(accessToken, voiceFile)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun sendImageChat(
+        accessToken: String,
+        imageFile: File,
+    ): Resource<SendImageChatResponse> {
+        return try {
+            val result = remoteDataSource.sendImageChat(accessToken, imageFile)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override suspend fun sendResetPartnerPasswordChat(
+        accessToken: String
+    ): Resource<SendResetPartnerPasswordChatResponse> {
+        return try {
+            val result = remoteDataSource.sendResetPartnerPasswordChat(accessToken)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+
+    override suspend fun getChatList(accessToken: String, pageNo: Long): Resource<ChatListDto> {
+        return try {
+            val result = remoteDataSource.getChatList(accessToken, pageNo)
+            Resource.Success(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
+
+    override fun getPagingChat(): Flow<PagingData<Chat>> {
+        return Pager(
+            PagingConfig(
+                pageSize = Constants.CHAT_PAGE_SIZE,
+                enablePlaceholders = false
+            )
+        ) {
+            pagingSource
+        }.flow
+    }
+
+    override suspend fun preloadImage(index: Long, url: String): Triple<File?, Int, Int> {
+        return remoteDataSource.preloadImage(index, url)
+    }
+}

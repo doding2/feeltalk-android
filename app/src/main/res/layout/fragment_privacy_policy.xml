@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/fragment_background_color"
-    tools:context=".presentation.ui.privacy_policy.PrivacyPolicyFragment">
+    tools:context=".mvp_presentation.ui.privacy_policy.PrivacyPolicyFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

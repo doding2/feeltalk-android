@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".new_presentation.ui.mainNavigation.myPage.setting.accountSetting.AccountSettingFragment">
+    tools:context=".release_presentation.ui.mainNavigation.myPage.setting.accountSetting.AccountSettingFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

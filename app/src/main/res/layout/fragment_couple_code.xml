@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:clipChildren="false"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".new_presentation.ui.signUpNavigation.couple_code.CoupleCodeFragment">
+    tools:context=".release_presentation.ui.signUpNavigation.couple_code.CoupleCodeFragment">
 
     <TextView
         android:id="@+id/tv_title"

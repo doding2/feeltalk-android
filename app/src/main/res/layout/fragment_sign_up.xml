@@ -7,7 +7,7 @@
     android:scrollbars="none"
     android:fillViewport="true"
     android:background="@color/white"
-    tools:context=".new_presentation.ui.signUp.SignUpFragment">
+    tools:context=".release_presentation.ui.signUp.SignUpFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:animateLayoutChanges="true"
-    tools:context=".new_presentation.ui.mainNavigation.challenge.addChallenge.AddChallengeFragment">
+    tools:context=".release_presentation.ui.mainNavigation.challenge.addChallenge.AddChallengeFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/fragment_background_color"
-    tools:context=".presentation.ui.couple_registration_done.CoupleRegistrationDoneFragment">
+    tools:context=".mvp_presentation.ui.couple_registration_done.CoupleRegistrationDoneFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

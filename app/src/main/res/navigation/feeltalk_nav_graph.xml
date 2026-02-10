@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.splash.SplashFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.splash.SplashFragment"
         android:label="fragment_splash"
         tools:layout="@layout/fragment_splash" >
         <action
@@ -44,7 +44,7 @@
 
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.signUp.SignUpFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.signUp.SignUpFragment"
         android:label="fragment_sign_up"
         tools:layout="@layout/fragment_sign_up" >
         <action
@@ -66,7 +66,7 @@
     </fragment>
     <fragment
         android:id="@+id/signUpNavigationFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.signUpNavigation.SignUpNavigationFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.signUpNavigation.SignUpNavigationFragment"
         android:label="fragment_sign_up_navigation"
         tools:layout="@layout/fragment_sign_up_navigation" >
         <action
@@ -91,7 +91,7 @@
     </fragment>
     <fragment
         android:id="@+id/mainNavigationFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.MainNavigationFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.MainNavigationFragment"
         android:label="fragment_main_navigation"
         tools:layout="@layout/fragment_main_navigation" >
         <action
@@ -124,47 +124,47 @@
     </fragment>
     <fragment
         android:id="@+id/agreementPrivacyDetailFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.agreementPrivacyDetail.AgreementPrivacyDetailFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.agreementPrivacyDetail.AgreementPrivacyDetailFragment"
         android:label="fragment_agreement_privacy_detail"
         tools:layout="@layout/fragment_agreement_privacy_detail" />
     <fragment
         android:id="@+id/agreementSensitiveDetailFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.agreementSensitiveDetail.AgreementSensitiveDetailFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.agreementSensitiveDetail.AgreementSensitiveDetailFragment"
         android:label="fragment_agreement_sensitive_detail"
         tools:layout="@layout/fragment_agreement_sensitive_detail" />
     <fragment
         android:id="@+id/addChallengeFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.addChallenge.AddChallengeFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.challenge.addChallenge.AddChallengeFragment"
         android:label="fragment_add_challenge"
         tools:layout="@layout/fragment_add_challenge" />
     <fragment
         android:id="@+id/contentsShareFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.contentsShare.ContentsShareFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.chatNavigation.contentsShare.ContentsShareFragment"
         android:label="ContentsShareFragment"
         tools:layout="@layout/fragment_contents_share"/>
     <fragment
         android:id="@+id/ongoingChallengeDetailFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.ongoingDetail.OngoingDetailFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.challenge.ongoingDetail.OngoingDetailFragment"
         android:label="OngoingChallengeDetailFragment"
         tools:layout="@layout/fragment_ongoing_detail" />
     <fragment
         android:id="@+id/completedChallengeDetailFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.challenge.completedDetail.CompletedDetailFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.challenge.completedDetail.CompletedDetailFragment"
         android:label="CompletedChallengeDetailFragment"
         tools:layout="@layout/fragment_completed_detail"/>
     <fragment
         android:id="@+id/serverDownFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.serverDown.ServerDownFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.serverDown.ServerDownFragment"
         android:label="fragment_server_down"
         tools:layout="@layout/fragment_server_down" />
     <fragment
         android:id="@+id/networkErrorFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.networkError.NetworkErrorFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.networkError.NetworkErrorFragment"
         android:label="fragment_network_error"
         tools:layout="@layout/fragment_network_error" />
     <fragment
         android:id="@+id/settingFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.SettingFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.myPage.setting.SettingFragment"
         android:label="fragment_setting"
         tools:layout="@layout/fragment_setting" >
         <action
@@ -181,7 +181,7 @@
     </fragment>
     <fragment
         android:id="@+id/lockSettingFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.lockSetting.LockSettingFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.myPage.setting.lockSetting.LockSettingFragment"
         android:label="fragment_lock_setting"
         tools:layout="@layout/fragment_lock_setting" >
         <action
@@ -190,7 +190,7 @@
     </fragment>
     <fragment
         android:id="@+id/passwordSettingFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.lockSetting.passwordSetting.PasswordSettingFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.myPage.setting.lockSetting.passwordSetting.PasswordSettingFragment"
         android:label="fragment_password_setting"
         tools:layout="@layout/fragment_password_setting" >
         <action
@@ -201,17 +201,17 @@
     </fragment>
     <fragment
         android:id="@+id/lockQuestionSettingFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.lockSetting.lockQuestionSetting.LockQuestionSettingFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.myPage.setting.lockSetting.lockQuestionSetting.LockQuestionSettingFragment"
         android:label="fragment_lock_question_setting"
         tools:layout="@layout/fragment_lock_question_setting" />
     <fragment
         android:id="@+id/languageSettingFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.languageSetting.LanguageSettingFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.myPage.setting.languageSetting.LanguageSettingFragment"
         android:label="fragment_language_setting"
         tools:layout="@layout/fragment_language_setting" />
     <fragment
         android:id="@+id/passwordFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.passwordNavigation.password.PasswordFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.passwordNavigation.password.PasswordFragment"
         android:label="PasswordFragment"
         tools:layout="@layout/fragment_password" >
         <action
@@ -225,7 +225,7 @@
     </fragment>
     <fragment
         android:id="@+id/lockResetFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.passwordNavigation.lockReset.LockResetFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.passwordNavigation.lockReset.LockResetFragment"
         android:label="LockResetFragment"
         tools:layout="@layout/fragment_lock_reset">
         <action
@@ -234,22 +234,22 @@
     </fragment>
     <fragment
         android:id="@+id/partnerHelpResetFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.passwordNavigation.partnerHelpReset.PartnerHelpResetFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.passwordNavigation.partnerHelpReset.PartnerHelpResetFragment"
         android:label="PartnerHelpResetFragment"
         tools:layout="@layout/fragment_partner_help_reset"/>
     <fragment
         android:id="@+id/privacyPolicyDetailFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.accountSetting.privacyPolicyDetail.PrivacyPolicyDetailFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.myPage.setting.accountSetting.privacyPolicyDetail.PrivacyPolicyDetailFragment"
         android:label="PrivacyPolicyDetailFragment"
         tools:layout="@layout/fragment_privacy_policy_detail" />
     <fragment
         android:id="@+id/serviceAgreementDetailFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.accountSetting.serviceAgreementDetail.ServiceAgreementDetailFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.myPage.setting.accountSetting.serviceAgreementDetail.ServiceAgreementDetailFragment"
         android:label="ServiceAgreementDetailFragment"
         tools:layout="@layout/fragment_service_agreement_detail" />
     <fragment
         android:id="@+id/breakUpCoupleFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.partnerSetting.breakUpCouple.BreakUpCoupleFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.myPage.partnerSetting.breakUpCouple.BreakUpCoupleFragment"
         android:label="fragment_break_up_couple"
         tools:layout="@layout/fragment_break_up_couple" >
         <action
@@ -260,7 +260,7 @@
     </fragment>
     <fragment
         android:id="@+id/accountSettingFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.accountSetting.AccountSettingFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.myPage.setting.accountSetting.AccountSettingFragment"
         android:label="fragment_account_setting"
         tools:layout="@layout/fragment_account_setting" >
         <action
@@ -275,7 +275,7 @@
     </fragment>
     <fragment
         android:id="@+id/deleteAccountFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.accountSetting.deleteAccount.DeleteAccountFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.myPage.setting.accountSetting.deleteAccount.DeleteAccountFragment"
         android:label="fragment_delete_account"
         tools:layout="@layout/fragment_delete_account" >
         <action
@@ -284,7 +284,7 @@
     </fragment>
     <fragment
         android:id="@+id/deleteAccountDetailFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.accountSetting.deleteAccountDetail.DeleteAccountDetailFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.myPage.setting.accountSetting.deleteAccountDetail.DeleteAccountDetailFragment"
         android:label="fragment_delete_account_detail"
         tools:layout="@layout/fragment_delete_account_detail" >
         <action
@@ -295,7 +295,7 @@
     </fragment>
     <fragment
         android:id="@+id/deleteAccountDoneFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.setting.accountSetting.deleteAccountDone.DeleteAccountDoneFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.myPage.setting.accountSetting.deleteAccountDone.DeleteAccountDoneFragment"
         android:label="DeleteAccountDoneFragment"
         tools:layout="@layout/fragment_delete_account_done">
         <action
@@ -306,17 +306,17 @@
     </fragment>
     <fragment
         android:id="@+id/inquireFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.inquire.InquireFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.myPage.inquire.InquireFragment"
         android:label="InquireFragment"
         tools:layout="@layout/fragment_inquire"/>
     <fragment
         android:id="@+id/suggestQuestionFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.suggestQuestion.SuggestQuestionFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.myPage.suggestQuestion.SuggestQuestionFragment"
         android:label="SuggestQuestionFragment"
         tools:layout="@layout/fragment_suggest_question"/>
     <fragment
         android:id="@+id/partnerSettingFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.myPage.partnerSetting.PartnerSettingFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.myPage.partnerSetting.PartnerSettingFragment"
         android:label="fragment_partner_setting"
         tools:layout="@layout/fragment_partner_setting" >
         <action
@@ -325,12 +325,12 @@
     </fragment>
     <fragment
         android:id="@+id/imageShareFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.imageShare.ImageShareFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.chatNavigation.imageShare.ImageShareFragment"
         android:label="fragment_image_share"
         tools:layout="@layout/fragment_image_share" />
     <fragment
         android:id="@+id/animatedSignUpFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.animatedSignUpNavigation.AnimatedSignUpFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.animatedSignUpNavigation.AnimatedSignUpFragment"
         android:label="fragment_animated_sign_up"
         tools:layout="@layout/fragment_animated_sign_up" >
         <action
@@ -344,7 +344,7 @@
     </fragment>
     <fragment
         android:id="@+id/onboardingFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.onboarding.OnboardingFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.onboarding.OnboardingFragment"
         android:label="fragment_onboarding"
         tools:layout="@layout/fragment_onboarding" >
         <action

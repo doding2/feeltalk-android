@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".presentation.ui.question_list.QuestionListFragment">
+    tools:context=".mvp_presentation.ui.question_list.QuestionListFragment">
 
     <!--  App Logo and more button  -->
     <LinearLayout

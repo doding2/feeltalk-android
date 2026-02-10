@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="new_presentation.ui.mainNavigation.myPage.suggestQuestion.SuggestQuestionFragment">
+    tools:context="release_presentation.ui.mainNavigation.myPage.suggestQuestion.SuggestQuestionFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_action_bar"

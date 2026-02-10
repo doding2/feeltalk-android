@@ -106,7 +106,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"/>
 
-                    <com.clonect.feeltalk.new_presentation.ui.mainNavigation.chatNavigation.chat.audioVisualizer.VisualizerView
+                    <com.clonect.feeltalk.release_presentation.ui.mainNavigation.chatNavigation.chat.audioVisualizer.VisualizerView
                         android:id="@+id/vv_voice_visualizer"
                         android:layout_width="45dp"
                         android:layout_height="36dp"

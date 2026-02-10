@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".new_presentation.ui.signUpNavigation.nickname.NicknameFragment">
+    tools:context=".release_presentation.ui.signUpNavigation.nickname.NicknameFragment">
 
     <LinearLayout
         android:id="@+id/ll_clear_focus_area"

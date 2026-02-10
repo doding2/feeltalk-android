@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/agreementFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.signUpNavigation.agreement.AgreementFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.signUpNavigation.agreement.AgreementFragment"
         android:label="fragment_agreement"
         tools:layout="@layout/fragment_agreement" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/nicknameFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.signUpNavigation.nickname.NicknameFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.signUpNavigation.nickname.NicknameFragment"
         android:label="fragment_nickname"
         tools:layout="@layout/fragment_nickname" >
         <action
@@ -27,7 +27,7 @@
     </fragment>
     <fragment
         android:id="@+id/coupleCodeFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.signUpNavigation.couple_code.CoupleCodeFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.signUpNavigation.couple_code.CoupleCodeFragment"
         android:label="fragment_couple_code"
         tools:layout="@layout/fragment_couple_code" />
 </navigation>

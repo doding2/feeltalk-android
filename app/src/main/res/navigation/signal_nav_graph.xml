@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/signalFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.home.signal.SignalFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.home.signal.SignalFragment"
         android:label="fragment_signal"
         tools:layout="@layout/fragment_signal" />
 </navigation>

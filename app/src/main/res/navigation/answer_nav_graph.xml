@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/answerFragment"
-        android:name="com.clonect.feeltalk.new_presentation.ui.mainNavigation.question.answer.AnswerFragment"
+        android:name="com.clonect.feeltalk.release_presentation.ui.mainNavigation.question.answer.AnswerFragment"
         android:label="fragment_answer"
         tools:layout="@layout/fragment_answer" />
 </navigation>

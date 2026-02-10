@@ -6,7 +6,7 @@
     android:background="@color/fragment_background_color"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".presentation.ui.key_restoring_request.KeyRestoringRequestFragment">
+    tools:context=".mvp_presentation.ui.key_restoring_request.KeyRestoringRequestFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

@@ -85,7 +85,7 @@
 
 
 # Dto들
--keep public class com.clonect.feeltalk.domain.model.*
+-keep public class com.clonect.feeltalk.mvp_domain.model.*
 
 
 

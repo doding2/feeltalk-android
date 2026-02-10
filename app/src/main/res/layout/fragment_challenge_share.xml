@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".new_presentation.ui.mainNavigation.chatNavigation.contentsShare.challengeShare.ChallengeShareFragment">
+    tools:context=".release_presentation.ui.mainNavigation.chatNavigation.contentsShare.challengeShare.ChallengeShareFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_challenge_share"

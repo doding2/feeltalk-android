@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.clonect.feeltalk.presentation.ui.home.HomeFragment"
+        android:name="com.clonect.feeltalk.mvp_presentation.ui.home.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/questionListFragment"
-        android:name="com.clonect.feeltalk.presentation.ui.question_list.QuestionListFragment"
+        android:name="com.clonect.feeltalk.mvp_presentation.ui.question_list.QuestionListFragment"
         android:label="fragment_question_list"
         tools:layout="@layout/fragment_question_list" />
 
     <fragment
         android:id="@+id/setting2Fragment"
-        android:name="com.clonect.feeltalk.presentation.ui.setting.Setting2Fragment"
+        android:name="com.clonect.feeltalk.mvp_presentation.ui.setting.Setting2Fragment"
         android:label="fragment_setting"
         tools:layout="@layout/fragment_setting2" />
 </navigation>

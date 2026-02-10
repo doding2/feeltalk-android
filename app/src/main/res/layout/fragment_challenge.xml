@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray_100"
-    tools:context=".new_presentation.ui.mainNavigation.challenge.ChallengeFragment">
+    tools:context=".release_presentation.ui.mainNavigation.challenge.ChallengeFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"

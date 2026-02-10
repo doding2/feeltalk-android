@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/main_onboarding"
-    tools:context=".new_presentation.ui.onboarding.OnboardingFragment">
+    tools:context=".release_presentation.ui.onboarding.OnboardingFragment">
 
     <ImageView
         android:layout_width="wrap_content"
