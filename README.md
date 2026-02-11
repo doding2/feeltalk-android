@@ -6,14 +6,16 @@
 플레이스토어 배포도 종료된 상태입니다.
 본 리포지토리는 아키텍처 설계와 구현 방식을 확인할 수 있도록 코드를 공개합니다.
 
-## 👋 Introduce
+<br>
+
+## 👋 소개
 💞 “자기는 이런게 좋아?”, “저런게 좋아?” 여러분은 연인과 이런 대화를 자주 나누시나요?   
 가장 가까운 사이이지만, 깊은 대화를 나누기 어려워하는 연인들이 많다고 합니다.   
 우리 앱은 **연인들이 스킨십에 대한 속깊은 이야기를 나눌 수 있도록 돕는 서비스** 입니다.
 
 <br>
 
-## 📱 Screen
+## 📱 스크린
 ### 1. 회원가입 & 로그인
 ![회원가입 플로우](./image/FeelTalk_SignUp_Flow.png)
 * 필로우톡은 소셜 로그인 기반 인증 구조를 사용하여 로그인과 회원가입을 하나의 플로우로 통합했습니다. 인증 성공 시 사용자 존재 여부에 따라 계정을 생성하거나 로그인 처리하여 초기 진입 과정을 단순화했습니다.
@@ -51,31 +53,37 @@
 
 <br>
 
-## 🧱 Architecture & Design
+## 👤 나의 역할
 
-![Architecture Diagram](image/FeelTalk_Architecture_Diagram.png)
-
-### MVVM Architecture
-
-필로우톡 프로젝트의 규모가 커져감에 따라 
-프로젝트 설계 단계에서 복잡한 비동기 서버 통신과 UI 상태 관리가 어려울 것이라고 예상되어 
-이를 안정적으로 처리하기 위해 MVVM Architecture를 적용했습니다.
-
-### Clean Architecture
-
-Presentation / Domain / Data 레이어를 분리하여
-비즈니스 로직과 UI 로직의 책임을 명확히 하고,
-데이터 흐름이 단방향으로 유지되도록 설계했습니다.
-
-### Use Case Pattern
-
-여러 Repository와 인증 토큰들(JWT)을 함께 다뤄야 하는 구조에서
-UseCase를 중심으로 흐름을 정리함으로써,
-UI에서는 상태 변화에만 집중할 수 있도록 만들었습니다.
+- Android 개발자로서 앱 아키텍처 설계 및 기능 구현 담당
+- RSA 암호화를 이용한 앱의 종단간 암호화 구조 설계
+- Backend, iOS 담당 팀원들과 협업하여 API 스펙 정의, JWT 기반 로그인 인증 플로우 설계
 
 <br>
 
-## 🛠️ Tech Stack
+## 🏗️ 아키텍쳐
+
+![Architecture Diagram](image/FeelTalk_Architecture_Diagram.png)
+
+### Clean Architecture
+
+- Presentation / Domain / Data의 3개의 계층으로 분리하여 책임을 명확히 함
+- 핵심 비즈니스 로직(Domain)을 외부 환경(UI, DB, API) 변화로부터 보호하기 위해 Presentation과 Data 계층이 Domain 계층을 향하는 단방향 의존성을 가도록 설계
+- 비즈니스 로직이 데이터 소스의 구체적인 구현에 의존하지 않도록 Domain 계층에서 인터페이스로 정의하고 Data 계층에서 이를 구현하는 의존성 역전 원칙(DIP)을 적용
+
+### MVVM
+
+- UI 로직과 상태 관리를 분리하기 위해 MVVM을 도입
+- ViewModel은 UI의 생명주기와 분리되어 화면 회전과 같은 UI 변경에도 UI 상태를 안전하게 보존해줌
+
+### UseCase Pattern
+
+- ViewModel이 여러 Repository를 직접 참조하고 비즈니스 로직을 조합해야 하는 복잡성을 해결하기 위해 Use Case 패턴을 적용
+  단일한 책임을 갖는 개별 기능을 UseCase 클래스로 캡슐화하여 비즈니스 로직 흐름을 명확하게 정의하고 재사용성을 높임
+
+<br>
+
+## 🛠️ 기술 스택
 | **Category** | **Tech Stack** |
 | --- | --- |
 | **Language** | ![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white) |
@@ -87,7 +95,6 @@ UI에서는 상태 변화에만 집중할 수 있도록 만들었습니다.
 | **Local Data** | ![Room](https://img.shields.io/badge/Room-4285F4?style=for-the-badge), ![SQLCipher](https://img.shields.io/badge/SQLCipher-607D8B?style=for-the-badge) |
 | **Jetpack** | ![ViewModel](https://img.shields.io/badge/ViewModel-795548?style=for-the-badge), ![Navigation](https://img.shields.io/badge/Navigation-673AB7?style=for-the-badge), ![Paging3](https://img.shields.io/badge/Paging3-009688?style=for-the-badge) |
 | **Auth** | ![Google](https://img.shields.io/badge/Google-4285F4?style=for-the-badge&logo=google&logoColor=white), ![Apple](https://img.shields.io/badge/Apple-000000?style=for-the-badge&logo=apple&logoColor=white), ![Naver](https://img.shields.io/badge/Naver-03C75A?style=for-the-badge), ![Kakao](https://img.shields.io/badge/Kakao-FFEB00?style=for-the-badge) |
-| **Analytics** | ![Mixpanel](https://img.shields.io/badge/Mixpanel-7B1FA2?style=for-the-badge) |
 | **Push** | ![FCM](https://img.shields.io/badge/FCM-F57C00?style=for-the-badge&logo=firebase&logoColor=white) |
 
 <br>
