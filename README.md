@@ -88,6 +88,7 @@
 <br>
 
 ## 🛠️ 기술 스택
+
 | **Category** | **Tech Stack** |
 | --- | --- |
 | **Language** | ![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white) |
@@ -103,7 +104,7 @@
 
 <br>
 
-## 🔗 Links
+## 🔗 링크
 
 - **Notion**  
   https://bouncy-rover-a1d.notion.site/2e0f88e182a580f8b46ffe06d1ac7578
