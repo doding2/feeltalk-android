@@ -65,6 +65,28 @@
 
 <br>
 
+## **🔥 주요 구현 포인트**
+
+### 인증 / 보안 설계
+
+- JWT를 이용한 회원가입과 로그인 Stateless 인증 관리
+- RSA 및 AES 를 이용한 혼합 암호화 구조 설계, Android KeyStore를 통한 구현
+- Android WebView를 사용해 Apple Sign-In 우회 구현
+
+### 상태 / 데이터 흐름 관리
+
+- Resource 클래스를 정의해 데이터 로딩 시의 성공/실패 상태를 명확히함
+- Remote + Local 데이터 캐싱을 이용한 로딩 지연 최소화
+- Paging 3를 활용한 페이지네이션으로 대용량 데이터 처리
+
+### UI / UX
+
+- MotionLayout, Lottie 등을 활용해 복잡한 애니메이션 구현
+- Snackbar, Dialog, Button 등의 커스텀 UI 제작으로 UX 개선
+- Firebase Cloud Messaging(FCM)을 통한 실시간 알림
+
+<br>
+
 ## 🏗️ 아키텍쳐
 
 ![Architecture Diagram](image/FeelTalk_Architecture_Diagram.png)
@@ -101,6 +123,122 @@
 | **Jetpack** | ![ViewModel](https://img.shields.io/badge/ViewModel-795548?style=for-the-badge), ![Navigation](https://img.shields.io/badge/Navigation-673AB7?style=for-the-badge), ![Paging3](https://img.shields.io/badge/Paging3-009688?style=for-the-badge) |
 | **Auth** | ![Google](https://img.shields.io/badge/Google-4285F4?style=for-the-badge&logo=google&logoColor=white), ![Apple](https://img.shields.io/badge/Apple-000000?style=for-the-badge&logo=apple&logoColor=white), ![Naver](https://img.shields.io/badge/Naver-03C75A?style=for-the-badge), ![Kakao](https://img.shields.io/badge/Kakao-FFEB00?style=for-the-badge) |
 | **Push** | ![FCM](https://img.shields.io/badge/FCM-F57C00?style=for-the-badge&logo=firebase&logoColor=white) |
+
+<br>
+
+## **🧩 문제 해결 경험**
+
+### **🔹안드로이드에서의 Apple** Sign-In **미지원 문제**
+
+**문제점**
+
+- Apple Sign-In은 iOS와 Web 환경에서만 공식 지원
+- iOS에서 Android로 기기 변경 시 계정 이전이 불가능한 문제가 발생
+
+**해결 방법**
+
+- Android WebView + 서버를 활용해 우회 로그인 구조 설계
+- Apple Sign-In 웹페이지를 호출할 때 redirect_uri를 서버로 지정하여 인증 정보를 서버에서 직접 수신 가능
+- redirect_uri에 클라이언트가 생성한 UUID를 파라미터로 서버에 같이 전달
+- 클라이언트에서 생성한 UUID를 가지고 서버에서 애플 인증 정보를 매칭 가능
+
+**결과**
+
+- Android에서도 Apple 계정으로 로그인 가능
+- 클라이언트는 UUID를 통해 서버에서 인증 결과를 조회
+- 기존에 안드로이드를 지원하지 않는 인증 플랫폼을 웹으로 우회 구현하는 방법을 배움
+
+### **🔹종단간 암호화 구현 도중** RSA 암호화의 텍스트 길이 제한 문제
+
+**문제점**
+
+- RSA는 키 크기보다 암호화 하려는 데이터의 크기가 작아야 함
+- 암호화 가능한 데이터 길이에 제한이 존재해 긴 텍스트를 암호화 할 수 없음
+
+**해결 방법**
+
+- AES와 RSA를 혼합해서 적용
+    - 타겟 텍스트를 랜덤 생성한 AES 키로 암호화
+    - AES 키를 RSA 공개키로 암호화
+- 두 암호화된 텍스트를 하나의 텍스트 채팅으로 묶어서 서버로 전송
+
+**결과**
+
+- 문장의 길이 제한 없이 암호화가 가능해짐
+- RSA의 단점을 보완한 구조를 만들어서 암호화의 안정성이 더욱 상승함
+
+### **🔸**종단간 암호화 기능의 유지보수 및 서비스 방향성 변경 결정
+
+**문제**
+
+- 키 관리 로직이 복잡해서  유지보수 비용이 증가함
+- 커플 양측이 동시에 데이터 손실로 인한 개인키를 분실하면 복호화가 불가능하다는 리스크 존재
+
+**결정 배경**
+
+- 유저들은 암호화 기능의 필요성을 크게 느끼지 않음
+- 기존 종단간 암호화 채팅 앱(텔레그램 등)에 대한 사회적 인식 악화
+
+**결론**
+
+- 암호화 기능은 MVP 버전까지만 유지
+- Release 버전에서는 기능 제거
+
+<br>
+
+## **🔄 개선 방향**
+
+### 🔹 Data Layer 오버 엔지니어링 문제
+
+**문제**
+
+- Data Layer 내부의 DataSource마다 interface를 만들어 놓음
+- 불필요한 boilerplate 코드 증가
+
+**개선 방향**
+
+- DataSource는 어차피 외부(Domain, Presentation)에 노출되지 않으므로 interface 제거
+
+**배운 점**
+
+- Clean Architecture를 사용하는 이유는 유지보수를 어렵게 하기 위함이 아닌
+  쉽게 하기 위함이므로 너무 엄격하고 지엽적인 코드 작성은 오버 엔지니어링이 될 수 있다는 것을 배움
+
+### 🔹 JWT 토큰 관리 방식 개선 필요
+
+**문제**
+
+- API 호출 시마다 토큰 만료 여부를 UseCase에서 직접 체크
+- boilerplate 코드 증가 및 유지보수 비용 증가
+
+**개선 방향**
+
+- 인증 로직을 Data Layer의 네트워크 호출 코드로 위임
+- OkHttp Interceptor를 사용하여 토큰 자동 갱신 처리
+
+**배운 점**
+
+- 반복되는 네트워크 호출에 동일한 로직을 일관적으로 적용해주는 OkHttp Interceptor를 새로 알게됨
+
+### 🔹 실시간 채팅 구조의 한계
+
+**문제**
+
+- 실시간 채팅 기능을 Firebase Cloud Messaging(FCM) 기반으로 구현
+- FCM 기반 메시지는 실시간으로 명확하게 보내는 것이 아니라 메시지간의 순서를 보장하기 어려움
+- 사용량 증가 시 파이어베이스 비용이 부담됨
+
+**개선 방향**
+
+- 실시간 채팅 로직을 WebSocket 기반으로 전환 예정
+- FCM은 백그라운드 알림 용도로만 유지
+
+**배운 점**
+
+- FCM으로 받은 데이터는 포어그라운드 UI를 띄우지 않고 백그라운드에서 처리가 가능하다는 것을 알게 됨
+- WebSocket은 FCM과 달리 연결 상태를 자동으로 관리해주지 않기 때문에
+  Ping-Pong 프레임을 처리하는 등 Keep-alive 메커니즘을 활용한 연결 유지 로직을 직접 설계해야하지만
+  덕분에 채팅 읽음 처리 등의 기능을 더 손쉽게 구현 가능하다는 것을 알게 됨
 
 <br>
 
